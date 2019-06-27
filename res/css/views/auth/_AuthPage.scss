@@ -21,11 +21,21 @@ limitations under the License.
     flex-direction: column;
     background-color: $authpage-bg-color;
 }
+/*insertion for watcha*/
+.mx_AuthPage_modal{
+    width: 300px;
+    min-height: 450px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    margin: auto;
+}
+/*end of insertion*/
+/*removed for watcha
+.mx_AuthPage_modal removed for watcha {
 
-.mx_AuthPage_modal {
     display: flex;
     margin: 100px auto auto;
     border-radius: 4px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.33);
     background-color: $authpage-modal-bg-color;
-}
+}*/

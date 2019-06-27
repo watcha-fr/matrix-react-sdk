@@ -246,8 +246,8 @@ $progressbar-color: #000;
 $room-warning-bg-color: #fff8e3;
 
 $memberstatus-placeholder-color: $roomtile-name-color;
-
-$authpage-bg-color: #2e3649;
+/* change for Watcha change the background color for AuthPage to white*/
+$authpage-bg-color: white;
 $authpage-modal-bg-color: rgba(255, 255, 255, 0.59);
 $authpage-body-bg-color: #ffffff;
 $authpage-focus-bg-color: #dddddd;
@@ -275,7 +275,8 @@ $tooltip-timeline-fg-color: #ffffff;
 // ***** Mixins! *****
 
 @define-mixin mx_DialogButton {
-    /* align images in buttons (eg spinners) */
+    /* removed for watcha*/
+    /* align images in buttons (eg spinners)
     vertical-align: middle;
     border: 0px;
     border-radius: 4px;
@@ -290,6 +291,24 @@ $tooltip-timeline-fg-color: #ffffff;
     cursor: pointer;
     display: inline-block;
     outline: none;
+    */
+/*insertion for watcha*/
+    vertical-align: middle;
+    border: 0px;
+    border-radius: 36px;
+    font-family: $font-family;
+    font-size: 14px;
+    color: $accent-fg-color;
+    background-color:#414141;
+    width: auto;
+    padding: 7px;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+    cursor: pointer;
+    display: inline-block;
+    outline: none;
+    /*end of insertion*/
+
 }
 
 @define-mixin mx_DialogButton_hover {
