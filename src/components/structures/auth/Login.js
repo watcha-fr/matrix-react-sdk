@@ -599,9 +599,11 @@ module.exports = React.createClass({
                     { serverDeadSection }
                     { this.renderServerComponent() }
                     { this.renderLoginComponentForStep() }
+                    {/*remove registration for watcha
                     <a className="mx_AuthBody_changeFlow" onClick={this.onRegisterClick} href="#">
                         { _t('Create account') }
                     </a>
+                  */}
                 </AuthBody>
             </AuthPage>
         );
