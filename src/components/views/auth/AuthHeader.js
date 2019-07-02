@@ -30,7 +30,9 @@ module.exports = React.createClass({
         return (
             <div className="mx_AuthHeader">
                 <AuthHeaderLogo />
+                {/*removed for watcha
                 <LanguageSelector />
+                */}
             </div>
         );
     },

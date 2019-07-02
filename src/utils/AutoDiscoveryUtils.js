@@ -78,6 +78,7 @@ export default class AutoDiscoveryUtils {
 
         let isFatalError = true;
         const errorMessage = err.message ? err.message : err;
+        /*
         if (errorMessage === AutoDiscovery.ERROR_INVALID_IDENTITY_SERVER) {
             isFatalError = false;
             title = _t("Cannot reach identity server");
@@ -104,6 +105,7 @@ export default class AutoDiscoveryUtils {
                 );
             }
         }
+        */
 
         return {
             serverIsAlive: false,

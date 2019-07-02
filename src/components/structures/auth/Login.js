@@ -195,6 +195,7 @@ module.exports = React.createClass({
                     </div>
                 );
             } else if (error.httpStatus === 401 || error.httpStatus === 403) {
+              /* removed for watcha eroor for not matrix server
                 if (SdkConfig.get()['disable_custom_urls']) {
                     errorText = (
                         <div>
@@ -207,7 +208,7 @@ module.exports = React.createClass({
                             </div>
                         </div>
                     );
-                } else {
+                } else*/ {
                     errorText = _t('Incorrect username and/or password.');
                 }
             } else {
@@ -559,6 +560,7 @@ module.exports = React.createClass({
         const Loader = sdk.getComponent("elements.Spinner");
         const AuthPage = sdk.getComponent("auth.AuthPage");
         const AuthHeader = sdk.getComponent("auth.AuthHeader");
+        const LanguageSelector = sdk.getComponent('views.auth.LanguageSelector');
         const AuthBody = sdk.getComponent("auth.AuthBody");
         const loader = this.isBusy() ? <div className="mx_Login_loader"><Loader /></div> : null;
 
@@ -574,6 +576,7 @@ module.exports = React.createClass({
         }
 
         let serverDeadSection;
+        /*
         if (!this.state.serverIsAlive) {
             const classes = classNames({
                 "mx_Login_error": true,
@@ -586,6 +589,7 @@ module.exports = React.createClass({
                 </div>
             );
         }
+        */
 
         return (
             <AuthPage>
@@ -605,6 +609,7 @@ module.exports = React.createClass({
                     </a>
                   */}
                 </AuthBody>
+                <LanguageSelector />
             </AuthPage>
         );
     },

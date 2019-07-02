@@ -262,6 +262,8 @@ export default class PasswordLogin extends React.Component {
 
         if (this.props.onForgotPasswordClick) {
             forgotPasswordJsx = <span>
+            forgot your password? Todo replace with json language string
+            {/*
                 {_t('Not sure of your password? <a>Set a new one</a>', {}, {
                     a: sub => <a className="mx_Login_forgot"
                         onClick={this.onForgotPasswordClick}
@@ -270,6 +272,8 @@ export default class PasswordLogin extends React.Component {
                         {sub}
                     </a>,
                 })}
+                */
+              }
             </span>;
         }
 
@@ -344,7 +348,7 @@ export default class PasswordLogin extends React.Component {
         return (
             <div>
                 <h3>
-                    {signInToText}
+                    {/* removed for watcha signInToText*/}
                     {editLink}
                 </h3>
                 <form onSubmit={this.onSubmitForm}>
