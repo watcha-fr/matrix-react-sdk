@@ -223,7 +223,7 @@ const LeftPanel = React.createClass({
         let tagPanelContainer;
 
         const isCustomTagsEnabled = SettingsStore.isFeatureEnabled("feature_custom_tags");
-
+        /*
         if (tagPanelEnabled) {
             tagPanelContainer = (<div className="mx_LeftPanel_tagPanelContainer">
                 <TagPanel />
@@ -231,6 +231,7 @@ const LeftPanel = React.createClass({
                 <TagPanelButtons />
             </div>);
         }
+        */
 
         const containerClasses = classNames(
             "mx_LeftPanel_container", "mx_fadable",
