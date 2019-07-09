@@ -403,7 +403,9 @@ export default class Stickerpicker extends React.Component {
                 </AccessibleButton>;
         }
         return <div>
-            {stickersButton}
+            {/*removed for watcha
+              stickersButton
+              */}
             {this.state.showStickers && stickerPicker}
         </div>;
     }

@@ -812,7 +812,7 @@ export default class MessageComposerInput extends React.Component {
 
     handleKeyCommand = (command: string): boolean => {
         if (command === 'toggle-mode') {
-            this.enableRichtext(!this.state.isRichTextEnabled);
+            this.enableRichtext(true);
             return true;
         }
 
@@ -1573,10 +1573,13 @@ export default class MessageComposerInput extends React.Component {
                     />
                 </div>
                 <div className={className}>
+                {/* removed for watcha
                     <AccessibleButton className={markdownClasses}
                         onClick={this.onMarkdownToggleClicked}
                         title={this.state.isRichTextEnabled ? _t("Markdown is disabled") : _t("Markdown is enabled")}
                     />
+                    */
+                  }
                     <Editor ref={this._collectEditor}
                             dir="auto"
                             className="mx_MessageComposer_editor"
