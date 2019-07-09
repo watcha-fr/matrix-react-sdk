@@ -25,6 +25,10 @@ import MatrixClientPeg from '../../MatrixClientPeg';
 import Avatar from '../../Avatar';
 import { _t } from '../../languageHandler';
 import dis from "../../dispatcher";
+/* insertion for watcha*/
+import LogoutDialog from "../views/dialogs/LogoutDialog";
+import Modal from "../../Modal";
+/*end of insertion*/
 import {focusCapturedRef} from "../../utils/Accessibility";
 
 const AVATAR_SIZE = 28;
@@ -94,10 +98,28 @@ export default class TopLeftMenuButton extends React.Component {
             return MatrixClientPeg.get().getUserId();
         }
     }
+    /*insertion for watcha*/
+    openSettings() {
+        dis.dispatch({action: 'view_user_settings'});
+        this.closeMenu();
+    }
+
+    signOut() {
+        Modal.createTrackedDialog('Logout E2E Export', '', LogoutDialog);
+        this.closeMenu();
+    }
+    /*end of insertion*/
 
     render() {
         const name = this._getDisplayName();
         let nameElement;
+        /*insertion for watcha*/
+        const signInOutItem = <li className="mx_TopLeftMenu_icon_signout" onClick={this.signOut} tabIndex={0}>
+            </li>;
+
+        const settingsItem = <li className="mx_TopLeftMenu_icon_settings" onClick={this.openSettings} tabIndex={0}>
+        </li>;
+        /*end of insertion*/
         if (!this.props.collapsed) {
             nameElement = <div className="mx_TopLeftMenuButton_name">
                 { name }
@@ -108,10 +130,10 @@ export default class TopLeftMenuButton extends React.Component {
             <AccessibleButton
                 className="mx_TopLeftMenuButton"
                 role="button"
-                onClick={this.onToggleMenu}
                 inputRef={(r) => this._buttonRef = r}
                 aria-label={_t("Your profile")}
             >
+          {/*note for watcha we have removed the onclick props on AccessibleButton component and  added this note here since its seems impossible to comment props*/}
                 <BaseAvatar
                     idName={MatrixClientPeg.get().getUserId()}
                     name={name}
@@ -121,7 +143,17 @@ export default class TopLeftMenuButton extends React.Component {
                     resizeMethod="crop"
                 />
                 { nameElement }
+                {/* insertion for watcha*/}
+                <div className="TopLeftMenuButonsContainer">
+                {settingsItem}
+                {signInOutItem}
+                </div>
+                {/*end of insertion*/}
+                {
+                /*removed for watcha
                 <span className="mx_TopLeftMenuButton_chevron" />
+                */
+              }
             </AccessibleButton>
         );
     }

@@ -13,6 +13,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/* insertion for watcha */
+.TopLeftMenuButonsContainer{
+  display:flex;
+  flex-direction:column;
+  align-items: stretch;
+  justify-content: space-around;
+  height: 80px;
+}
+ li.mx_TopLeftMenu_icon_settings { mask-image: url('$(res)/img/feather-customised/settings.svg');
+   background-color:$accent-color;
+   color:$accent-color;
+   -webkit-mask-repeat: no-repeat;
+ }
+
+ li.mx_TopLeftMenu_icon_signout {
+   mask-image: url('$(res)/img/feather-customised/sign-out.svg');
+   background-color:$accent-color;
+   color:$accent-color;
+   -webkit-mask-repeat: no-repeat;
+ }
+ /*end of insertion*/
 
 .mx_TopLeftMenuButton {
     flex: 0 0 52px;
@@ -22,7 +43,13 @@ limitations under the License.
     display: flex;
     align-items: center;
     min-width: 0;
+    /* removed for watcha
     padding: 0 7px;
+    */
+    /*insertion for watcha*/
+    padding: 10px 7px;
+    justify-content: space-around;
+    /*end of insertion*/
     overflow: hidden;
 }
 
