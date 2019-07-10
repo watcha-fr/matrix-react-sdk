@@ -117,12 +117,13 @@ export default class GeneralUserSettingsTab extends React.Component {
                     {_t("Set a new account password...")}
                 </p>
                 {passwordChangeForm}
-
+                {/*removed for watcha
                 <span className="mx_SettingsTab_subheading">{_t("Email addresses")}</span>
                 <EmailAddresses />
 
                 <span className="mx_SettingsTab_subheading">{_t("Phone numbers")}</span>
                 <PhoneNumbers />
+              */}
             </div>
         );
     }
@@ -175,8 +176,12 @@ export default class GeneralUserSettingsTab extends React.Component {
                 {this._renderProfileSection()}
                 {this._renderAccountSection()}
                 {this._renderLanguageSection()}
+                {
+                /*removed for watcha
                 {this._renderThemeSection()}
                 {this._renderManagementSection()}
+                */
+              }
             </div>
         );
     }

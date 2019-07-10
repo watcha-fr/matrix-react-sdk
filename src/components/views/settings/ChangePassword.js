@@ -60,11 +60,20 @@ module.exports = React.createClass({
                     return {
                         error: _t("New passwords don't match"),
                     };
+                /* removed for watcha
                 } else if (!newPass || newPass.length === 0) {
                     return {
                         error: _t("Passwords can't be empty"),
                     };
                 }
+                */
+                /*insertion for watcha */
+               } else if (!newPass || newPass.length < 8) {
+                    return {
+                        error: _t("Passwords can't be empty"),
+                    };
+                }
+                /*end of insertion */
             },
             confirm: true,
         };
