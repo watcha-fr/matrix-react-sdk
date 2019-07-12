@@ -740,11 +740,13 @@ module.exports = React.createClass({
         }
 
         let masterPushRuleDiv;
+        /* removed for watcha
         if (this.state.masterPushRule) {
             masterPushRuleDiv = <LabelledToggleSwitch value={!this.state.masterPushRule.enabled}
                                                       onChange={this.onEnableNotificationsChange}
                                                       label={_t('Enable notifications for this account')}/>;
         }
+        */
 
         // When enabled, the master rule inhibits all existing rules
         // So do not show all notification settings
@@ -762,6 +764,7 @@ module.exports = React.createClass({
 
         const emailThreepids = this.state.threepids.filter((tp) => tp.medium === "email");
         let emailNotificationsRows;
+        /* removed for watcha
         if (emailThreepids.length === 0) {
             emailNotificationsRows = <div>
                 { _t('Add an email address to configure email notifications') }
@@ -771,6 +774,7 @@ module.exports = React.createClass({
                 threePid.address, `${_t('Enable email notifications')} (${threePid.address})`,
             ));
         }
+        */
 
         // Build external push rules
         const externalRules = [];
@@ -844,17 +848,19 @@ module.exports = React.createClass({
                     <LabelledToggleSwitch value={SettingsStore.getValue("notificationsEnabled")}
                                           onChange={this.onEnableDesktopNotificationsChange}
                                           label={_t('Enable desktop notifications for this device')} />
-
+                                          {
+                    /* removed for watcha
                     <LabelledToggleSwitch value={SettingsStore.getValue("notificationBodyEnabled")}
                                           onChange={this.onEnableDesktopNotificationBodyChange}
                                           label={_t('Show message in desktop notification')} />
-
+                    */
+                  }
                     <LabelledToggleSwitch value={SettingsStore.getValue("audioNotificationsEnabled")}
                                           onChange={this.onEnableAudioNotificationsChange}
                                           label={_t('Enable audible notifications for this device')} />
 
                     { emailNotificationsRows }
-
+                  {/*removed for watcha      
                     <div className="mx_UserNotifSettings_pushRulesTableWrapper">
                         <table className="mx_UserNotifSettings_pushRulesTable">
                             <thead>
@@ -872,6 +878,7 @@ module.exports = React.createClass({
                             </tbody>
                         </table>
                     </div>
+                  */}
 
                     { advancedSettings }
 
