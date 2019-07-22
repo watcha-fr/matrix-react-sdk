@@ -152,7 +152,8 @@ export const SETTINGS = {
     "showAvatarChanges": {
         supportedLevels: LEVELS_ROOM_SETTINGS_WITH_ROOM,
         displayName: _td('Show avatar changes'),
-        default: true,
+        /*changed for watcha*/
+        default: false,
         invertedSettingName: 'hideAvatarChanges',
     },
     "showDisplaynameChanges": {
@@ -170,7 +171,8 @@ export const SETTINGS = {
     "showTwelveHourTimestamps": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td('Show timestamps in 12 hour format (e.g. 2:30pm)'),
-        default: false,
+        /* change value for watcha */
+        default: true,
     },
     "alwaysShowTimestamps": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
@@ -185,7 +187,8 @@ export const SETTINGS = {
     "alwaysShowEncryptionIcons": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td('Always show encryption icons'),
-        default: true,
+        /*change for watcha */
+        default: false,
     },
     "showRoomRecoveryReminder": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
@@ -223,6 +226,7 @@ export const SETTINGS = {
         default: true,
         invertedSettingName: 'dontSendTypingNotifications',
     },
+
     "MessageComposerInput.autoReplaceEmoji": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td('Automatically replace plain text Emoji'),
@@ -349,7 +353,8 @@ export const SETTINGS = {
     "promptBeforeInviteUnknownUsers": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td('Prompt before sending invites to potentially invalid matrix IDs'),
-        default: true,
+        /*change for watcha*/
+        default: false,
     },
     "showDeveloperTools": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,

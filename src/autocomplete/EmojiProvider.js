@@ -81,9 +81,11 @@ export default class EmojiProvider extends AutocompleteProvider {
     }
 
     async getCompletions(query: string, selection: SelectionRange, force?: boolean): Array<Completion> {
+      /*removed for watcha
         if (!SettingsStore.getValue("MessageComposerInput.suggestEmoji")) {
             return []; // don't give any suggestions if the user doesn't want them
         }
+        */
 
         let completions = [];
         const {command, range} = this.getCurrentCommand(query, selection);

@@ -477,7 +477,9 @@ export default class MessageComposerInput extends React.Component {
     }
 
     sendTyping(isTyping) {
+      /*removed for watcha
         if (!SettingsStore.getValue('sendTypingNotifications')) return;
+        */
         if (SettingsStore.getValue('lowBandwidth')) return;
         MatrixClientPeg.get().sendTyping(
             this.props.room.roomId,
@@ -532,7 +534,9 @@ export default class MessageComposerInput extends React.Component {
             const currentStartOffset = editorState.selection.start.offset;
 
             // Automatic replacement of plaintext emoji to Unicode emoji
+            /*removed for watcha
             if (SettingsStore.getValue('MessageComposerInput.autoReplaceEmoji')) {
+            */
                 // The first matched group includes just the matched plaintext emoji
                 const emoticonMatch = REGEX_EMOTICON_WHITESPACE.exec(text.slice(0, currentStartOffset));
                 if (emoticonMatch) {
@@ -555,7 +559,9 @@ export default class MessageComposerInput extends React.Component {
                         editorState = change.value;
                     }
                 }
+                /*removed for watcha
             }
+            */
         }
 
         if (this.props.onInputStateChanged && editorState.blocks.size > 0) {

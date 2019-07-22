@@ -55,16 +55,19 @@ export default class UserSettingsDialog extends React.Component {
             "mx_UserSettingsDialog_bellIcon",
             <NotificationUserSettingsTab />,
         ));
+        /*removed for watcha
         tabs.push(new Tab(
             _td("Preferences"),
             "mx_UserSettingsDialog_preferencesIcon",
             <PreferencesUserSettingsTab />,
         ));
+        */
         tabs.push(new Tab(
             _td("Voice & Video"),
             "mx_UserSettingsDialog_voiceIcon",
             <VoiceUserSettingsTab />,
         ));
+        /*removed for watcha
         tabs.push(new Tab(
             _td("Security & Privacy"),
             "mx_UserSettingsDialog_securityIcon",
@@ -82,6 +85,8 @@ export default class UserSettingsDialog extends React.Component {
             "mx_UserSettingsDialog_helpIcon",
             <HelpUserSettingsTab closeSettingsFn={this.props.onFinished} />,
         ));
+
+        */
 
         return tabs;
     }
