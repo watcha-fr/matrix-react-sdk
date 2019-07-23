@@ -240,7 +240,8 @@ export const SETTINGS = {
     "TagPanel.enableTagPanel": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td('Enable Community Filter Panel'),
-        default: true,
+        /*change for watcha*/
+        default: false,
         invertedSettingName: 'TagPanel.disableTagPanel',
     },
     "theme": {

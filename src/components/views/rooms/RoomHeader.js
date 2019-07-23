@@ -279,6 +279,18 @@ module.exports = React.createClass({
                 </AccessibleButton>;
         }
 
+      /*insertion for watcha*/
+      let inviteRoomButton;
+      if (this.props.inRoom) {
+        inviteRoomButton =
+          <AccessibleButton className="mx_RoomHeader_button mx_RoomHeader_inviteButton"
+          onClick={this.onInviteButton}
+          title={_t('Invite user')}
+          >
+          </AccessibleButton>;
+        }
+
+
         let manageIntegsButton;
         if (this.props.room && this.props.room.roomId && this.props.inRoom) {
             manageIntegsButton = <ManageIntegsButton
@@ -288,11 +300,22 @@ module.exports = React.createClass({
 
         const rightRow =
             <div className="mx_RoomHeader_buttons">
+                {/* insertion for watcha*/
+                  inviteRoomButton
+                /*end of insertion*/}
                 { settingsButton }
-                { pinnedEventsButton }
-                { shareRoomButton }
-                { manageIntegsButton }
-                { forgetButton }
+                { /*removed for watcha
+                  pinnedEventsButton
+                  */}
+                {/*removed for watcha
+                   shareRoomButton
+                 */}
+                { /* removed for watcha
+                  manageIntegsButton
+                */}
+                { /*removed for watcha
+                  forgetButton
+                 */}
                 { searchButton }
             </div>;
 

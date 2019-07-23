@@ -483,7 +483,9 @@ module.exports = React.createClass({
 
         return (
             <div className="mx_MemberList">
-                { inviteButton }
+                { /* removed for watcha
+                  inviteButton
+                */ }
                 <AutoHideScrollbar>
                     <div className="mx_MemberList_wrapper">
                         <TruncatedList className="mx_MemberList_section mx_MemberList_joined" truncateAt={this.state.truncateAtJoined}

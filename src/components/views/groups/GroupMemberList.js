@@ -222,7 +222,9 @@ export default React.createClass({
 
         return (
             <div className="mx_MemberList">
-                { inviteButton }
+                { /* removed for watcha
+                  inviteButton
+                */}
                 <GeminiScrollbarWrapper autoshow={true}>
                     { joined }
                     { invited }

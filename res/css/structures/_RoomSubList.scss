@@ -61,7 +61,8 @@ limitations under the License.
 .mx_RoomSubList_label > span {
     flex: 1 1 auto;
     text-transform: uppercase;
-    color: $roomsublist-label-fg-color;
+    /* change for watcha*/
+    color: white;
     font-weight: 700;
     font-size: 12px;
     margin-left: 8px;
@@ -181,7 +182,16 @@ limitations under the License.
     &.mx_IndicatorScrollbar_topOverflow::before {
         top: 0;
         transition: background-image 0.1s ease-in;
+        /*removed for watcha
         background: linear-gradient(to top, $panel-gradient);
+        */
+        /*insertion for watcha8*/
+        height: 1px;
+        background: linear-gradient(to top, black,black);
+        /*end of insertion*/
+
+
+
     }
 
     /*

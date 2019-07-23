@@ -103,7 +103,8 @@ limitations under the License.
 .mx_RoomTile_name {
     font-size: 14px;
     padding: 0 6px;
-    color: $roomtile-name-color;
+    /*change color for watcha*/
+    color: white;
     white-space: nowrap;
     overflow-x: hidden;
     text-overflow: ellipsis;
