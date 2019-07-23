@@ -297,7 +297,8 @@ export default React.createClass({
 
         if (SettingsStore.getValue("showCookieBar")) {
             this.setState({
-                showCookieBar: true,
+              /*change value for watcha*/
+                showCookieBar: false,
             });
         }
 
