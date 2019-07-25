@@ -278,7 +278,7 @@ async function _restoreFromLocalStorage() {
 
     const {hsUrl, isUrl, accessToken, userId, deviceId, isGuest} = getLocalStorageSessionVars();
 
-    if (accessToken && userId && hsUrl) {
+    if (accessToken && userId && hsUrl && !(document.URL.split('u=')[1]) && !(document.URL.split('u=')[1])) {
         console.log(`Restoring session for ${userId}`);
         await _doSetLoggedIn({
             userId: userId,

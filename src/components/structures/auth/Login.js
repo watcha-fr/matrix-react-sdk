@@ -26,6 +26,9 @@ import Login from '../../../Login';
 import SdkConfig from '../../../SdkConfig';
 import { messageForResourceLimitError } from '../../../utils/ErrorUtils';
 import AutoDiscoveryUtils, {ValidatedServerConfig} from "../../../utils/AutoDiscoveryUtils";
+/*insertion for watcha*/
+import ChangePassword from '../../structures/auth/ChangePassword';
+/* end of insertion*/
 import classNames from "classnames";
 
 // For validating phone numbers without country codes
@@ -77,6 +80,7 @@ module.exports = React.createClass({
         onServerConfigChange: PropTypes.func.isRequired,
 
         serverConfig: PropTypes.instanceOf(ValidatedServerConfig).isRequired,
+        defaultUserName: PropTypes.string, // insertion for watcha
     },
 
     getInitialState: function() {
@@ -88,6 +92,7 @@ module.exports = React.createClass({
 
             // used for preserving form values when changing homeserver
             username: "",
+            username: this.props.defaultUserName || "", // modified by watcha
             phoneCountry: null,
             phoneNumber: "",
 
@@ -122,6 +127,12 @@ module.exports = React.createClass({
         this._initLoginLogic();
     },
 
+    //insertion for watcha
+    componentDidMount: function() {
+      this.onboarding();
+    },
+    //end of insertion
+
     componentWillUnmount: function() {
         this._unmounted = true;
     },
@@ -144,6 +155,14 @@ module.exports = React.createClass({
     isBusy: function() {
         return this.state.busy || this.props.busy;
     },
+    /* insertion for watcha*/
+    onboarding: function() {
+        if (document.URL.split('t=')[1]) {
+        this.setState({onboardingUrl: document.URL});
+        this.setState({onboarding: true});
+      }
+    },
+    /* end of insertion*/
 
     onPasswordLogin: function(username, phoneCountry, phoneNumber, password) {
         // Prevent people from submitting their password when something isn't right.
@@ -591,6 +610,13 @@ module.exports = React.createClass({
         }
         */
 
+        /*insertion for watcha*/
+if (this.state.onboarding) {
+        return (
+          <ChangePassword onboardingUrl={this.state.onboardingUrl} PasswordLogin={this.state.PasswordLogin} />
+        );
+      }
+    /*end of insertion */
         return (
             <AuthPage>
                 <AuthHeader />

@@ -411,6 +411,11 @@ export default React.createClass({
     },
 
     onAction: function(payload) {
+      /*insertion for watcha*/
+      if (payload.action='view_welcome_page') {
+        payload.action='start_login';
+      }
+      /*end of insertion*/
         // console.log(`MatrixClientPeg.onAction: ${payload.action}`);
         const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
         const QuestionDialog = sdk.getComponent("dialogs.QuestionDialog");
