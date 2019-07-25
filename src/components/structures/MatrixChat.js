@@ -552,9 +552,11 @@ export default React.createClass({
             case 'view_group':
                 this._viewGroup(payload);
                 break;
+            /*removed for watcha
             case 'view_welcome_page':
                 this._viewWelcome();
                 break;
+                */
             case 'view_home_page':
                 this._viewHome();
                 break;
@@ -832,6 +834,7 @@ export default React.createClass({
         this.notifyNewScreen('group/' + groupId);
     },
 
+    /*removed for watcha
     _viewSomethingBehindModal() {
         if (this.state.view !== VIEWS.LOGGED_IN) {
             this._viewWelcome();
@@ -841,13 +844,15 @@ export default React.createClass({
             this._viewHome();
         }
     },
-
+    */
+    /*removed for watcha
     _viewWelcome() {
         this.setStateForNewView({
             view: VIEWS.WELCOME,
         });
         this.notifyNewScreen('welcome');
     },
+    */
 
     _viewHome: function() {
         // The home page requires the "logged in" view, so we'll set that.
@@ -1857,11 +1862,12 @@ export default React.createClass({
                 );
             }
         }
-
+        /*removed for watcha
         if (this.state.view === VIEWS.WELCOME) {
             const Welcome = sdk.getComponent('auth.Welcome');
             return <Welcome />;
         }
+      */
 
         if (this.state.view === VIEWS.REGISTER) {
             const Registration = sdk.getComponent('structures.auth.Registration');
