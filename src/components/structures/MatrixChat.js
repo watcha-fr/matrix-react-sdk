@@ -839,7 +839,6 @@ export default React.createClass({
         this.notifyNewScreen('group/' + groupId);
     },
 
-    /*removed for watcha
     _viewSomethingBehindModal() {
         if (this.state.view !== VIEWS.LOGGED_IN) {
             this._viewWelcome();
@@ -849,15 +848,12 @@ export default React.createClass({
             this._viewHome();
         }
     },
-    */
-    /*removed for watcha
     _viewWelcome() {
         this.setStateForNewView({
             view: VIEWS.WELCOME,
         });
         this.notifyNewScreen('welcome');
     },
-    */
 
     _viewHome: function() {
         // The home page requires the "logged in" view, so we'll set that.
