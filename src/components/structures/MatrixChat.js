@@ -412,9 +412,6 @@ export default React.createClass({
 
     onAction: function(payload) {
       /*insertion for watcha*/
-      console.log('******************************************');
-      console.log(payload.action);
-      console.log('******************************************');
       if (payload.action==='view_welcome_page') {
         payload.action='start_login';
       }
