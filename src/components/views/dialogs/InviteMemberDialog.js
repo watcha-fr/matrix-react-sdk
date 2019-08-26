@@ -21,7 +21,7 @@ import { _t } from '../../../languageHandler';
 import sdk from '../../../index';
 import MatrixClientPeg from '../../../MatrixClientPeg';
 import AccessibleButton from '../elements/AccessibleButton';
-import GeneralEntity from '../rooms/GeneralEntity'
+import GeneralEntity from '../rooms/GeneralEntity';
 import Promise from 'bluebird';
 import { addressTypes, getAddressType } from '../../../UserAddress.js';
 import ReactDOM from 'react-dom';
@@ -423,7 +423,7 @@ module.exports = React.createClass({
             }
         }).map(function (user) {
             filteredList.push(user);
-            var commonParams = self.getGeneralEntityDefaultConfig(user, 'img/inviteicon.svg');
+            var commonParams = self.getGeneralEntityDefaultConfig(user, require('../../../../res/img/inviteicon.svg'));
             return React.createElement(GeneralEntity, Object.assign(commonParams, {
                 presenceState: user.isPartner ? 'partner' : 'member',
                 onClick:(e) => self.addtoInviteList(user),
@@ -569,7 +569,8 @@ module.exports = React.createClass({
         let buttonClassName = "button_invite"
 
         if (this.state.email) {
-            addMailButton = <img src="img/plus.svg" alt="plusimg"
+            addMailButton = <img src={require("../../../../res/img/plus.svg")}
+            alt="plusimg"
             className='invite_add_button' width={25}
             height={25} onClick={this.addMailtoInviteList}
             ref='addMailButton' />;
@@ -614,6 +615,7 @@ module.exports = React.createClass({
         let error;
         let addressSelector;
 
+        //console.log(memberList);
         return (
             <div className="mx_ChatInviteDialog">
 
@@ -623,7 +625,7 @@ module.exports = React.createClass({
 
                 <AccessibleButton className="mx_ChatInviteDialog_cancel"
                     onClick={this.onCancel} >
-                    <TintableSvg src="img/icons-close-button.svg" width="35" height="35" />
+                    <TintableSvg src={require("../../../../res/img/icons-close-button.svg")} width="35" height="35" />
                 </AccessibleButton>
 
                 <div className="mx_ChatInviteDialog_label">

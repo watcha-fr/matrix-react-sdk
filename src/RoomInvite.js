@@ -40,6 +40,35 @@ function inviteMultipleToRoom(roomId, addrs) {
     return inviter.invite(addrs).then(states => Promise.resolve({states, inviter}));
 }
 
+/*insertion for watcha*/
+export function showStartChatInviteDialog() {
+    const InviteMemberDialog = sdk.getComponent("dialogs.InviteMemberDialog");
+    Modal.createTrackedDialog('Start a chat', '', InviteMemberDialog, {
+        title: _t('Start a chat'),
+        description: _t("Who would you like to communicate with?"),
+        placeholder: _t("Email, name or ID"),
+        button: _t("Start Chat"),
+        onFinished: _onStartChatFinished,
+    });
+}
+
+export function showRoomInviteDialog(roomId) {
+    const InviteMemberDialog = sdk.getComponent("dialogs.InviteMemberDialog");
+    Modal.createTrackedDialog('Chat Invite', '', InviteMemberDialog, {
+        title: _t('Invite new room members'),
+        description: _t('Who would you like to add to this room?'),
+        button: _t('Send Invites'),
+        placeholder: _t("Email, name or matrix ID"),
+        roomId: roomId,
+        onFinished: (shouldInvite, addrs) => {
+            _onRoomInviteFinished(roomId, shouldInvite, addrs);
+        },
+    });
+}
+/*end of insertion*/
+
+
+/*removed for watcha
 export function showStartChatInviteDialog() {
     const AddressPickerDialog = sdk.getComponent("dialogs.AddressPickerDialog");
     Modal.createTrackedDialog('Start a chat', '', AddressPickerDialog, {
@@ -64,6 +93,7 @@ export function showRoomInviteDialog(roomId) {
         },
     });
 }
+*/
 
 /**
  * Checks if the given MatrixEvent is a valid 3rd party user invite.
@@ -220,4 +250,3 @@ function _getDirectMessageRooms(addr) {
     });
     return rooms;
 }
-
