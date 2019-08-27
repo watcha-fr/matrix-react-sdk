@@ -53,7 +53,6 @@
 @import "./views/dialogs/_Analytics.scss";
 @import "./views/dialogs/_ChangelogDialog.scss";
 @import "./views/dialogs/_ChatCreateOrReuseChatDialog.scss";
-@import "./views/dialogs/_ChatInviteDialog.scss";
 @import "./views/dialogs/_ConfirmUserActionDialog.scss";
 @import "./views/dialogs/_CreateGroupDialog.scss";
 @import "./views/dialogs/_CreateRoomDialog.scss";
@@ -133,7 +132,6 @@
 @import "./views/rooms/_Autocomplete.scss";
 @import "./views/rooms/_AuxPanel.scss";
 @import "./views/rooms/_E2EIcon.scss";
-@import "./views/rooms/_EntityTile.scss";
 @import "./views/rooms/_EventTile.scss";
 @import "./views/rooms/_JumpToBottomButton.scss";
 @import "./views/rooms/_LinkPreviewWidget.scss";
@@ -179,3 +177,7 @@
 @import "./views/voip/_CallView.scss";
 @import "./views/voip/_IncomingCallbox.scss";
 @import "./views/voip/_VideoView.scss";
+/*insertion for watcha*/
+@import "./views/dialogs/_ChatInviteDialog.scss";
+@import "./views/rooms/_EntityTile.scss";
+/*end of insertion*/
