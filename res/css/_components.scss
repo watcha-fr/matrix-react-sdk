@@ -21,6 +21,7 @@
 @import "./structures/_RoomSubList.scss";
 @import "./structures/_RoomView.scss";
 @import "./structures/_ScrollPanel.scss";
+@import "./views/dialogs/_EntityTile.scss";
 @import "./structures/_SearchBox.scss";
 @import "./structures/_TabbedView.scss";
 @import "./structures/_TagPanel.scss";
@@ -52,6 +53,7 @@
 @import "./views/dialogs/_Analytics.scss";
 @import "./views/dialogs/_ChangelogDialog.scss";
 @import "./views/dialogs/_ChatCreateOrReuseChatDialog.scss";
+@import "./views/dialogs/_ChatInviteDialog.scss";
 @import "./views/dialogs/_ConfirmUserActionDialog.scss";
 @import "./views/dialogs/_CreateGroupDialog.scss";
 @import "./views/dialogs/_CreateRoomDialog.scss";
