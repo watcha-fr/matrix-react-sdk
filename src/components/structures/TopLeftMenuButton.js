@@ -21,6 +21,9 @@ import * as ContextualMenu from './ContextualMenu';
 import {TopLeftMenu} from '../views/context_menus/TopLeftMenu';
 import AccessibleButton from '../views/elements/AccessibleButton';
 import BaseAvatar from '../views/avatars/BaseAvatar';
+/* insertion for watcha*/
+import HomePage from '../views/watcha/HomePage'
+/*end of insertion*/
 import MatrixClientPeg from '../../MatrixClientPeg';
 import Avatar from '../../Avatar';
 import { _t } from '../../languageHandler';
@@ -108,6 +111,12 @@ export default class TopLeftMenuButton extends React.Component {
         Modal.createTrackedDialog('Logout E2E Export', '', LogoutDialog);
         this.closeMenu();
     }
+
+    onUserBoxContainerClick(ev) {
+    ev.stopPropagation();
+    dis.dispatch({action: "view_home_page"});
+    }
+
     /*end of insertion*/
 
     render() {
@@ -134,6 +143,7 @@ export default class TopLeftMenuButton extends React.Component {
                 aria-label={_t("Your profile")}
             >
           {/*note for watcha we have removed the onclick props on AccessibleButton component and  added this note here since its seems impossible to comment props*/}
+            <span className="HomePageButton" onClick={this.onUserBoxContainerClick}>
                 <BaseAvatar
                     idName={MatrixClientPeg.get().getUserId()}
                     name={name}
@@ -144,6 +154,7 @@ export default class TopLeftMenuButton extends React.Component {
                 />
                 { nameElement }
                 {/* insertion for watcha*/}
+                </span>
                 <div className="TopLeftMenuButonsContainer">
                 {settingsItem}
                 {signInOutItem}

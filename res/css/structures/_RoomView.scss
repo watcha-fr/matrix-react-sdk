@@ -183,10 +183,10 @@ limitations under the License.
         color: inherit;
     }
 }
-
 .mx_RoomView_empty {
     flex: 1 1 auto;
-    font-size: 13px;
+    /*change for watcha replace 13 px by 20 px for font size making it more visible*/
+    font-size: 20px;
     padding-left: 3em;
     padding-right: 3em;
     margin-right: 20px;

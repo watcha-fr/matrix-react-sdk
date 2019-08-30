@@ -28,6 +28,7 @@ import dis from '../../dispatcher';
 import MatrixClientPeg from '../../MatrixClientPeg';
 import { MatrixClient } from 'matrix-js-sdk';
 import classnames from 'classnames';
+import HomePage from '../views/watcha/HomePage'
 
 export default class EmbeddedPage extends React.PureComponent {
     static propTypes = {
@@ -118,6 +119,14 @@ export default class EmbeddedPage extends React.PureComponent {
         >
         </div>;
 
+        /*insertion for watcha*/
+        if (this.props.className==="mx_HomePage"){
+          return(
+            <HomePage/>
+                      )
+        }
+
+        /*end of insertion for watcha*/
         if (this.props.scrollbar) {
             const GeminiScrollbarWrapper = sdk.getComponent("elements.GeminiScrollbarWrapper");
             return <GeminiScrollbarWrapper autoshow={true} className={classes}>

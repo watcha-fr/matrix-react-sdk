@@ -522,7 +522,7 @@ module.exports = React.createClass({
             for (let i = 0; i < this.state.inviteList.length; i++) {
 
                 if (this.state.inviteList[i].isKnown) {
-                    var commonParams = this.getGeneralEntityDefaultConfig(this.state.inviteList[i], 'img/removeinvite.svg');
+                    var commonParams = this.getGeneralEntityDefaultConfig(this.state.inviteList[i], require("../../../../res/img/removeinvite.svg"));
                     var display = React.createElement(GeneralEntity, Object.assign(commonParams, {
                         presenceState: this.state.inviteList[i].isPartner ? 'partner' : 'member',
                         onClick: (e) => this.removeFromInviteList(this.state.inviteList[i])
@@ -540,7 +540,7 @@ module.exports = React.createClass({
                         onClick: (e) => this.removeMailFromInviteListe(mail),
                         width: AVATAR_SIZE,
                         height: AVATAR_SIZE,
-                        icon: "img/removeinvite.svg"
+                        icon:require("../../../../res/img/removeinvite.svg")
                     }));
                 }
             }
