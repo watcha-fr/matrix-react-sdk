@@ -142,23 +142,27 @@ export default class LogoutDialog extends React.Component {
 
                 dialogContent = <div>
                     <div className="mx_Dialog_content" id='mx_Dialog_content'>
-                        { description }
+                        { /*removed for watcha
+                        description */}
                     </div>
+                    {/*change for watcha we change the  onPrimaryButtonClick from saving backup to dismiss the dialog*/}
                     <DialogButtons primaryButton={setupButtonCaption}
                         hasCancel={false}
-                        onPrimaryButtonClick={this._onSetRecoveryMethodClick}
+                        onPrimaryButtonClick={this.props.onFinished}
                         focus={true}
                     >
                         <button onClick={this._onLogoutConfirm}>
                             {_t("I don't want my encrypted messages")}
                         </button>
                     </DialogButtons>
+                    {/*removed for watcha
                     <details>
                         <summary>{_t("Advanced")}</summary>
                         <p><button onClick={this._onExportE2eKeysClicked}>
                             {_t("Manually export keys")}
                         </button></p>
                     </details>
+                    */}
                 </div>;
             }
             // Not quite a standard question dialog as the primary button cancels

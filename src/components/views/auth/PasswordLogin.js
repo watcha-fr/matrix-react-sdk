@@ -262,7 +262,7 @@ export default class PasswordLogin extends React.Component {
 
         if (this.props.onForgotPasswordClick) {
             forgotPasswordJsx = <span>
-            forgot your password? Todo replace with json language string
+            {_t('Forgot your password? Contact us at registration@watcha.fr')}
             {/*
                 {_t('Not sure of your password? <a>Set a new one</a>', {}, {
                     a: sub => <a className="mx_Login_forgot"
