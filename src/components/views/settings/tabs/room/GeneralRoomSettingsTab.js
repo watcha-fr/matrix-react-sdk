@@ -99,6 +99,7 @@ export default class GeneralRoomSettingsTab extends React.Component {
                     <RoomProfileSettings roomId={this.props.roomId} />
                 </div>
 
+                {/* removed for watcha
                 <span className='mx_SettingsTab_subheading'>{_t("Room Addresses")}</span>
                 <div className='mx_SettingsTab_section mx_SettingsTab_subsectionText'>
                     <AliasSettings roomId={this.props.roomId}
@@ -120,7 +121,7 @@ export default class GeneralRoomSettingsTab extends React.Component {
                                           canSetRelatedGroups={canChangeGroups}
                                           relatedGroupsEvent={groupsEvent} />
                 </div>
-
+                    */}
                 <span className='mx_SettingsTab_subheading'>{_t("URL Previews")}</span>
                 <div className='mx_SettingsTab_section'>
                     <UrlPreviewSettings room={room} />
