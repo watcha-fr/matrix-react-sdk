@@ -24,10 +24,17 @@ module.exports = React.createClass({
     displayName: 'AuthFooter',
 
     render: function() {
+        /*removed for watcha
         return (
             <div className="mx_AuthFooter">
                 <a href="https://matrix.org" target="_blank" rel="noopener">{ _t("powered by Matrix") }</a>
             </div>
         );
+        */
+        /*insertion for watcha*/
+        return (
+            <span></span>
+        );
+        /*end of insertion*/
     },
 });
