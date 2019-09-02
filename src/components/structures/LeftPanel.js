@@ -28,6 +28,9 @@ import TagPanelButtons from './TagPanelButtons';
 import SettingsStore from '../../settings/SettingsStore';
 import {_t} from "../../languageHandler";
 import Analytics from "../../Analytics";
+/*insertion for watcha*/
+import WatchaAdmin from './WatchaAdmin';
+/*end of insertion*/
 
 
 const LeftPanel = React.createClass({
@@ -270,6 +273,9 @@ const LeftPanel = React.createClass({
                         collapsed={this.props.collapsed}
                         searchFilter={this.state.searchFilter}
                         ConferenceHandler={VectorConferenceHandler} />
+                        {/*insertion for watcha*/}
+                        <WatchaAdmin collapsed={false} /> { /* added for Watcha */ }
+                        {/*end of insertion for watcha*/}
                 </aside>
             </div>
         );

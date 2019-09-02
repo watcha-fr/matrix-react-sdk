@@ -15,6 +15,36 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/* insertion for watcha */
+.mx_WatchaAdminContainer {
+    padding-bottom: 29px;
+    margin-left: 20px;
+}
+.mx_WatchaAdmin {
+    border-radius: 3px;
+    border: 0.5px solid rgb(0, 179, 179);
+    display: flex;
+    width: 80%;
+    align-items: flex-end;
+    margin-left: 15px;
+    cursor: pointer !important;
+    color: white;
+    position: relative;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 12px;
+    margin-top: 15px;
+}
+.mx_WatchaAdminText {
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 0px;
+    margin: auto;
+    display: flex;
+}
+/* end of insertion for watcha */
+
 .mx_RoomList {
     /* take up remaining space below TopLeftMenu */
     flex: 1;
