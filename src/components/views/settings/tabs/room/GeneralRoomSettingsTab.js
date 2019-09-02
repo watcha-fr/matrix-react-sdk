@@ -94,7 +94,9 @@ export default class GeneralRoomSettingsTab extends React.Component {
 
         return (
             <div className="mx_SettingsTab mx_GeneralRoomSettingsTab">
-                <div className="mx_SettingsTab_heading">{_t("General")}</div>
+                {
+                    <div className="mx_SettingsTab_heading">{/* removed for watcha _t("General")*/}</div>
+               }
                 <div className='mx_SettingsTab_section mx_GeneralRoomSettingsTab_profileSection'>
                     <RoomProfileSettings roomId={this.props.roomId} />
                 </div>
