@@ -84,15 +84,18 @@ limitations under the License.
 }
 
 .mx_RoomSubList_addRoom {
-    background-color: $roomheader-addroom-bg-color;
+    // removed for watcha background-color: $roomheader-addroom-bg-color;
     border-radius: 10px; // 16/2 + 2 padding
     height: 16px;
     flex: 0 0 16px;
     position: relative;
 
     &::before {
-        background-color: $roomheader-addroom-fg-color;
-        mask: url('$(res)/img/icons-room-add.svg');
+        //change for watcha turn the icon to watcha colo
+        background-color: #00e5e5;
+        //change icon path to use plus icon
+        mask: url('$(res)/img/plus.svg');
+        //enf of changes for watcha
         mask-repeat: no-repeat;
         mask-position: center;
         content: '';

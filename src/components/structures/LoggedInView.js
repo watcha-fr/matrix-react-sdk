@@ -203,7 +203,12 @@ const LoggedInView = React.createClass({
         if (lhsSize !== null) {
             lhsSize = parseInt(lhsSize, 10);
         } else {
+            /*remove for watcha
             lhsSize = 350;
+            */
+            /*insertion for watcha*/
+            lhsSize = 350;
+            /*end of insertion for watcha*/
         }
         this.resizer.forHandleAt(0).resize(lhsSize);
     },
