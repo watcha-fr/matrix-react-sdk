@@ -92,7 +92,7 @@ export default class RoomSettingsDialog extends React.Component {
             <BaseDialog className='mx_RoomSettingsDialog' hasCancel={true}
                         onFinished={this.props.onFinished} title={_t("Room Settings - %(roomName)s", {roomName})}>
                 <div className='ms_SettingsDialog_content'>
-                    <TabbedView tabs={this._getTabs()} />
+                    <TabbedView invisibleTab={true} tabs={this._getTabs()} />
                 </div>
             </BaseDialog>
         );
