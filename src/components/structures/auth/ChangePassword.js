@@ -109,11 +109,13 @@ module.exports = React.createClass({
             // get config.json and synapse URL.
             const configRequest = await fetch('/config.json');
             const configData = JSON.parse(await configRequest.text());
-            const coreUrl = configData['default_hs_url'];
+            // New, complex, format for homeserver location in config.json...
+            // see riot-web.git/src/vector/index.js
+            const coreUrl = configData['default_server_config']['m.homeserver']['base_url'];
             this.setState({coreUrl: coreUrl});
             if (!this.state.coreUrl) {
                 this.setState({error:
-                 'impossible de trouver le server core pour obtenir de l\'aide contactez nous a conctat@watcha.fr ',
+                 'impossible de trouver le server core pour obtenir de l\'aide contactez nous a contact@watcha.fr ',
                });
             } else {
                 const loginRequest = await fetch(this.state.coreUrl + '/_matrix/client/r0/login', {
