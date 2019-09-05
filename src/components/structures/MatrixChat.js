@@ -541,6 +541,7 @@ export default React.createClass({
             }
             break;
             case 'view_room_directory': {
+                /*removed for watcha
                 const RoomDirectory = sdk.getComponent("structures.RoomDirectory");
                 Modal.createTrackedDialog('Room directory', '', RoomDirectory, {
                     config: this.props.config,
@@ -548,7 +549,12 @@ export default React.createClass({
 
                 // View the welcome or home page if we need something to look at
                 this._viewSomethingBehindModal();
+                */
+                /*insertion for watcha*/
+                this._createRoom();
+                /*end of insertion for watcha*/
             }
+
             break;
             case 'view_my_groups':
                 this._setPage(PageTypes.MyGroups);

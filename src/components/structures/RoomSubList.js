@@ -233,10 +233,9 @@ const RoomSubList = React.createClass({
 
         let addRoomButton;
         if (this.props.onAddRoom) {
-          /*change onclick props from this.props.onAddRoom to this.onAddRoom  to matcha watcha need*/
             addRoomButton = (
                 <AccessibleButton
-                    onClick={ this.onAddRoom }
+                    onClick={ this.props.onAddRoom }
                     className="mx_RoomSubList_addRoom"
                     title={this.props.addRoomLabel || _t("Add room")}
                 />
