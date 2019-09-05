@@ -37,7 +37,7 @@ export default React.createClass({
         this.props.onFinished(true, this.refs.textinput.value, this.refs.checkbox.checked);
         */
         /*insertion for watcha*/
-        this.props.onFinished(true, this.refs.textinput.value, this.refs.checkbox.checked);
+        this.props.onFinished(true, this.refs.textinput.value, true);
         /*end of insertion for watcha*/
     },
 
