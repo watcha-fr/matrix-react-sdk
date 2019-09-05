@@ -33,7 +33,12 @@ export default React.createClass({
     },
 
     onOk: function() {
+        /*removed for watcha
         this.props.onFinished(true, this.refs.textinput.value, this.refs.checkbox.checked);
+        */
+        /*insertion for watcha*/
+        this.props.onFinished(true, this.refs.textinput.value, this.refs.checkbox.checked);
+        /*end of insertion for watcha*/
     },
 
     onCancel: function() {
@@ -57,6 +62,7 @@ export default React.createClass({
                         </div>
                         <br />
 
+                            {/*removed for watcha
                         <details className="mx_CreateRoomDialog_details">
                             <summary className="mx_CreateRoomDialog_details_summary">{ _t('Advanced options') }</summary>
                             <div>
@@ -68,6 +74,8 @@ export default React.createClass({
                                 </label>
                             </div>
                         </details>
+                        */
+                            }
                     </div>
                 </form>
                 <DialogButtons primaryButton={_t('Create Room')}
