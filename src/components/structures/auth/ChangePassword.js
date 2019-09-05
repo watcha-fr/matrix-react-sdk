@@ -61,43 +61,32 @@ module.exports = React.createClass({
     },
     getOS: function() {
         const userAgent = window.navigator.userAgent;
-
-
         const platform = window.navigator.platform;
-
-
         const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
-
-
         const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
-
-
         const iosPlatforms = ['iPhone', 'iPad', 'iPod'];
 
-
-        let os = null;
-
         if (macosPlatforms.indexOf(platform) !== -1) {
-            os = 'Mac OS';
+            return 'Mac OS';
         } else if (iosPlatforms.indexOf(platform) !== -1) {
-            os = 'iOS';
+            return 'iOS';
         } else if (windowsPlatforms.indexOf(platform) !== -1) {
-            os = 'Windows';
+            return 'Windows';
         } else if (/Android/.test(userAgent)) {
-            os = 'Android';
-	    this.setState({android:true});
-        } else if (!os && /Linux/.test(platform)) {
-            os = 'Linux';
+            return 'Android';
+        } else if (/Linux/.test(platform)) {
+            return 'Linux';
         }
-        return os;
+        // should not occur, of course...
+        return "Unsupported platform";
     },
 
     noPasswordToken: function() {
-      this.getIdentityToken( btoa(JSON.stringify(this.state.credentialsWithoutPassword).replace(/%([0-9A-F]{2})/g,
+        this.getIdentityToken( btoa(JSON.stringify(this.state.credentialsWithoutPassword).replace(/%([0-9A-F]{2})/g,
                 function toSolidBytes(match, p1) {
                     return String.fromCharCode('0x' + p1);
                 })),
-              );
+                             );
     },
 
     getIdentityToken: function(string) {
@@ -109,11 +98,13 @@ module.exports = React.createClass({
             // get config.json and synapse URL.
             const configRequest = await fetch('/config.json');
             const configData = JSON.parse(await configRequest.text());
-            const coreUrl = configData['default_hs_url'];
+            // New, complex, format for homeserver location in config.json...
+            // see riot-web.git/src/vector/index.js
+            const coreUrl = configData['default_server_config']['m.homeserver']['base_url'];
             this.setState({coreUrl: coreUrl});
             if (!this.state.coreUrl) {
                 this.setState({error:
-                 'impossible de trouver le server core pour obtenir de l\'aide contactez nous a conctat@watcha.fr ',
+                 'impossible de trouver le server core pour obtenir de l\'aide contactez nous a contact@watcha.fr ',
                });
             } else {
                 const loginRequest = await fetch(this.state.coreUrl + '/_matrix/client/r0/login', {
@@ -227,11 +218,11 @@ module.exports = React.createClass({
         let ModulableHeader="wt_Change_Password_Header";
         let passwordPlaceHolder="Définissez votre mot de passe";
         let changePlaceHolder="Confirmez votre mot de passe";
-        if (this.state.passwordFocus&&this.state.android) {
+        if (this.state.passwordFocus && this.state.os==='Android') {
           ModulableHeader="wt_Hidden_Header";
           passwordPlaceHolder="";
         }
-        if (this.state.changeFocus&&this.state.android) {
+        if (this.state.changeFocus && this.state.os==='Android') {
           ModulableHeader="wt_Hidden_Header";
           changePlaceHolder="";
         }
