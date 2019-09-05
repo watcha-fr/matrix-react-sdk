@@ -24,13 +24,13 @@ module.exports = React.createClass({
         case ('iOS'):
             return <div id="install-app-ios-from-desktop" className="install-app-block">
                 <a href="https://itunes.apple.com/us/app/watcha/id1383732254" target="_blank">
-                    <img className="app-store-icon" width="500" src="img/logos/appleStore.png" alt="Apple Store" className="wt_store_logo" />
+                    <img className="app-store-icon" width="500" src={require("../../../../res/img/logos/appleStore.png")} alt="Apple Store" className="wt_store_logo" />
                 </a>
             </div>;
         case ('Android'):
             return <div id="install-app-android-from-desktop" className="install-app-block">
                 <a href="https://play.google.com/store/apps/details?id=im.watcha.app" target="_blank">
-                    <img className="app-store-icon" src="img/logos/googlePlayStore.png" width="500" alt="Google Play Store" className="wt_store_logo" />
+                    <img className="app-store-icon" src={require("../../../../res/img/logos/googlePlayStore.png")} width="500" alt="Google Play Store" className="wt_store_logo" />
                 </a>
             </div>;
         default:
