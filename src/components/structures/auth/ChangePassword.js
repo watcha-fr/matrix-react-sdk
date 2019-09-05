@@ -65,7 +65,6 @@ module.exports = React.createClass({
         const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
         const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
         const iosPlatforms = ['iPhone', 'iPad', 'iPod'];
-        let os = null;
 
         if (macosPlatforms.indexOf(platform) !== -1) {
             return 'Mac OS';
@@ -75,10 +74,10 @@ module.exports = React.createClass({
             return 'Windows';
         } else if (/Android/.test(userAgent)) {
             return 'Android';
-        } else if (!os && /Linux/.test(platform)) {
+        } else if (/Linux/.test(platform)) {
             return 'Linux';
         }
-        // should not occure
+        // should not occur, of course...
         return "Unsupported platform";
     },
 
