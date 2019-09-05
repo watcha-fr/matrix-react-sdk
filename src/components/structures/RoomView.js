@@ -1874,8 +1874,10 @@ module.exports = React.createClass({
         const collapsedRhs = hideRightPanel || this.props.collapsedRhs;
 
         return (
+            /*added roomId in props of roomHeader for watcha to fix the problem with room invitation*/
             <main className={"mx_RoomView" + (inCall ? " mx_RoomView_inCall" : "")} ref="roomView">
                 <RoomHeader ref="header" room={this.state.room} searchInfo={searchInfo}
+                    roomId={this.state.room.roomId}
                     oobData={this.props.oobData}
                     inRoom={myMembership === 'join'}
                     collapsedRhs={collapsedRhs}

@@ -233,9 +233,10 @@ const RoomSubList = React.createClass({
 
         let addRoomButton;
         if (this.props.onAddRoom) {
+          /*change onclick props from this.props.onAddRoom to this.onAddRoom  to matcha watcha need*/
             addRoomButton = (
                 <AccessibleButton
-                    onClick={ this.props.onAddRoom }
+                    onClick={ this.onAddRoom }
                     className="mx_RoomSubList_addRoom"
                     title={this.props.addRoomLabel || _t("Add room")}
                 />
@@ -266,7 +267,12 @@ const RoomSubList = React.createClass({
             </div>
         );
     },
+/*insertion for watcha*/
+    onAddRoom: function() {
+        dis.dispatch({action: 'view_create_room'});
+    },
 
+/*end of insertion for watcha*/
     checkOverflow: function() {
         if (this.refs.scroller) {
             this.refs.scroller.checkOverflow();
