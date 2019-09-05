@@ -20,11 +20,7 @@ class WatchaAdmin extends React.Component {
     componentDidMount() {
         const self = this;
         this.context.matrixClient.isWatchaAdmin().then(function(res) {
-            // getWatchaAdminStats returns nothing if we are not server admin
-            // (maybe it should raise an exception instead ?)
-            self.setState({ isServerAdmin: (res != null) });
-        console.log(this.state.isServerAdmin);
-        console.log('**************************************************');
+            self.setState({ isServerAdmin: res.is_admin });
         }).catch((err) => {
             // not sure this is useful but just in case
             console.log("Error in isServerAdmin:");
