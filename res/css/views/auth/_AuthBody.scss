@@ -15,23 +15,20 @@ limitations under the License.
 */
 
 .mx_AuthBody {
-  /* removed for watcha
-    width: 500px;
-    */
-    background-color: $authpage-body-bg-color;
-    border-radius: 0 4px 4px 0;
-    /*removed for watcha
-    padding: 25px 60px;
-    */
+    // removed for watcha
+    //width: 500px;
+    //background-color: $authpage-body-bg-color;
+    //border-radius: 0 4px 4px 0;
+    // removed for watcha
+    // padding: 25px 60px;
     box-sizing: border-box;
     font-size: 12px;
     color: $authpage-secondary-color;
 
     h2 {
-        /*removed for watcha
-        font-size: 24px;
-        font-weight: 600;
-        */
+        //removed for watcha
+        //font-size: 24px;
+        //font-weight: 600;
         font-size: 18px;
         margin-top: 8px;
         color: $authpage-primary-color;
@@ -161,11 +158,11 @@ limitations under the License.
 }
 //from here is css for watcha changepassword and changepassword fallbackHsUrl
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-    color:lightgray;
+    color: lightgray;
 }
 :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-    color:lightgray;
-   opacity:  1;
+    color: lightgray;
+    opacity: 1;
 }
 ::-moz-placeholder { /* Mozilla Firefox 19+ */
    color:lightgray;
@@ -421,8 +418,8 @@ limitations under the License.
     animation-delay: .2s;
 }
 
-.page-header{
-  margin: 40px 49px 20px;
+.page-header {
+    margin: 40px 49px 20px;
 }
 
 .loadingText span:nth-child(3) {
@@ -433,193 +430,175 @@ limitations under the License.
      */
     animation-delay: .4s;
 }
+
 @media only screen and (max-width: 1200px) {
 
-  .wt_Hidden_Header{
-    visibility: hidden;
-    height: 200px;
-  }
-
-.wt_InputText{
-    width: 800px;
-    height: 120px;
-    border-radius: 3px;
-    border: 1px solid #c7c7c7;
-    font-weight: 300;
-    padding: 9px;
-    margin-bottom: 14px;
-    border-radius: 3px;
-    border: 1px solid $strong-input-border-color;
-    font-weight: 300;
-    font-size: 42px;
-    padding: 9px;
-    margin-bottom: 14px;
-  }
-
-
-.wt_Error{
-  font-size: 2.7vh;
-  color: red;
-}
-
-
-.wt_ChangePasswordHeader{
-  font-size: 6vh;
-  width: -webkit-fill-available;
-  text-align: center;
-}
-
-.wt_Container{
-    height: 100vh;
-    width: 100vw;
-    padding: 1vh;
-    text-align: center;
-  }
-
-  .wt_welcome_text{
-    font-weight: bold;
-    font-size: 4vh;
-    margin-bottom: 7vh;
-    margin-top: 3vh;
-
-  }
-
-  .wt_PasswordLength{
-    font-size: 3vh;
-    margin-bottom: 3vh
-  }
-
-  .wt_pw_form_container{
-    margin-bottom: 2.7vh;
-    margin-top: 3vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .wt_Form-control{
-    margin-bottom: 5vh;
-    height: 4vh;
-    width: 40vw;
-    margin-left: 7.8vh;
-  }
-
-  .wt_SubmitButton{
-    height: 120px;
-    width: 750px;
-    border-radius: 15px;
-    font-size: 50px;
-    margin-top: 40px;
-    font-weight: bold;
-  }
-
-  .wt_logo_row{
-    margin-top: 3vh;
-  }
-
-  .wt_PwInputContainer{
-    width: 100%
-  }
-    .wt_ConfirmInputContainer{
-    width: 100%
-  }
-
-  .wt_InputText{
+    .wt_Hidden_Header {
+        visibility: hidden;
+        height: 200px;
     }
 
-  .wt_PwFormContainer{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    .wt_InputText {
+        width: 800px;
+        height: 120px;
+        border-radius: 3px;
+        font-weight: 300;
+        margin-bottom: 14px;
+        border: 1px solid $strong-input-border-color;
+        font-size: 42px !important;
+        padding: 9px;
+    }
 
-  .wt_PwInputContainer{
-  }
 
-  .wt_ConfirmInputContainer{
-    margin-bottom: 1vh;
-    margin-top: 1vh;
+    .wt_Error {
+        font-size: 2.7vh;
+        color: red;
+    }
 
-  }
 
+    .wt_ChangePasswordHeader {
+        font-size: 6vh;
+        width: -webkit-fill-available;
+        text-align: center;
+    }
+
+    .wt_Container {
+        height: 100vh;
+        width: 100vw;
+        padding: 1vh;
+        text-align: center;
+    }
+
+    .wt_welcome_tex {
+        font-weight: bold;
+        font-size: 4vh;
+        margin-bottom: 7vh;
+        margin-top: 3vh;
+    }
+
+    .wt_PasswordLength {
+        font-size: 3vh;
+        margin-bottom: 3vh;
+    }
+
+    .wt_pw_form_container {
+        margin-bottom: 2.7vh;
+        margin-top: 3vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .wt_Form-control {
+        margin-bottom: 5vh;
+        height: 4vh;
+        width: 40vw;
+        margin-left: 7.8vh;
+    }
+
+    .wt_SubmitButton {
+        height: 120px;
+        width: 750px;
+        border-radius: 15px;
+        font-size: 50px;
+        margin-top: 40px;
+        font-weight: bold;
+    }
+
+    .wt_logo_row {
+        margin-top: 3vh;
+    }
+
+    .wt_PwInputContainer {
+        width: 100%;
+    }
+
+    .wt_ConfirmInputContainer {
+        width: 100%;
+        margin-bottom: 1vh;
+        margin-top: 1vh;
+    }
+
+    .wt_PwFormContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 }
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
-  .wt_Container{
-    height: 100vh;
-    width: 100vw;
-    text-align: center;
-  }
+    .wt_Container {
+        height: 100vh;
+        width: 100vw;
+        text-align: center;
+    }
 
-  .wt_welcome_text{
-    font-weight: bold;
-    font-size: 3vh;
-    margin-bottom: 7vh;
-    margin-top: 3vh;
+    .wt_welcome_text {
+        font-weight: bold;
+        font-size: 3vh;
+        margin-bottom: 7vh;
+        margin-top: 3vh;
+    }
 
-  }
+    .wt_PasswordLength {
+        font-size: 2vh;
+        margin-bottom: 3vh;
+    }
 
+    .wt_pw_form_container {
+        margin-bottom: 2.7vh;
+        margin-top: 3vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-  .wt_PasswordLength{
-    font-size: 2vh;
-    margin-bottom: 3vh
-  }
+    .wt_Form-control {
+        margin-bottom: 5vh;
+        height: 4vh;
+        width: 40vw;
+        margin-left: 7.8vh;
+    }
 
-  .wt_pw_form_container{
-    margin-bottom: 2.7vh;
-    margin-top: 3vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    .wt_SubmitButton {
+        height: 5vh;
+        border-radius: 15px;
+        width: 35vh;
+        font-size: 2vh;
+        margin-top: 3.5vh;
+    }
 
-  .wt_Form-control{
-    margin-bottom: 5vh;
-    height: 4vh;
-    width: 40vw;
-    margin-left: 7.8vh;
-  }
-  .wt_SubmitButton{
-    height: 5vh;
-    border-radius: 15px;
-    width: 35vh;
-    font-size: 2vh;
-    margin-top: 3.5vh;
-  }
+    .wt_logo_row {
+        margin-top: 3vh;
+    }
 
-  .wt_logo_row{
-    margin-top: 3vh;
-  }
+    .wt_InputText {
+        width: 40vh;
+        height: 3vh;
+        font-size: 2.5vh;
+        border-radius: 3px;
+        border: 1px solid $strong-input-border-color;
+        font-weight: 300;
+        padding: 9px;
+        margin-bottom: 14px;
+    }
 
-  .wt_InputText{
-    width: 40vh;
-    height:3vh;
-    font-size: 2.5vh;
-    border-radius: 3px;
-    border: 1px solid $strong-input-border-color;
-    font-weight: 300;
-    padding: 9px;
-    margin-bottom: 14px;
-}
-  .wt_PwFormContainer{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    .wt_PwFormContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-  .wt_PwInputContainer{
-    margin-top: 4vh;
-    width: 40%;
-  }
-
-
-  .wt_ConfirmInputContainer{
-    width: 40%;
-    margin-bottom: 1vh;
-    margin-top: 1vh;
-
-  }
+    .wt_PwInputContainer {
+        margin-top: 4vh;
+        width: 40%;
+    }
 
 
+    .wt_ConfirmInputContainer {
+        width: 40%;
+        margin-bottom: 1vh;
+        margin-top: 1vh;
+    }
 }
