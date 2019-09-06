@@ -992,15 +992,17 @@ export default React.createClass({
         const joinRules = roomToLeave.currentState.getStateEvents('m.room.join_rules', '');
         const warnings = [];
         if (joinRules) {
+            /*removed for watcha
             const rule = joinRules.getContent().join_rule;
             if (rule !== "public") {
                 warnings.push((
                     <span className="warning" key="non_public_warning">
-                        {' '/* Whitespace, otherwise the sentences get smashed together */ }
+                        {' ' Whitespace, otherwise the sentences get smashed together  }
                         { _t("This room is not public. You will not be able to rejoin without an invite.") }
                     </span>
                 ));
             }
+            */
         }
         return warnings;
     },

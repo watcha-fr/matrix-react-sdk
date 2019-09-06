@@ -252,11 +252,13 @@ module.exports = React.createClass({
                     <img className="mx_RoomTileContextMenu_notif_icon mx_filterFlipColor" src={require("../../../../res/img/icon-context-mute-off-copy.svg")} width="16" height="12" />
                     { _t('All messages (noisy)') }
                 </div>
+                {/*removed for watcha
                 <div className={allNotifsClasses} onClick={this._onClickAllNotifs} >
                     <img className="mx_RoomTileContextMenu_notif_activeIcon" src={require("../../../../res/img/notif-active.svg")} width="12" height="12" />
                     <img className="mx_RoomTileContextMenu_notif_icon mx_filterFlipColor" src={require("../../../../res/img/icon-context-mute-off.svg")} width="16" height="12" />
                     { _t('All messages') }
                 </div>
+                */}
                 <div className={mentionsClasses} onClick={this._onClickMentions} >
                     <img className="mx_RoomTileContextMenu_notif_activeIcon" src={require("../../../../res/img/notif-active.svg")} width="12" height="12" />
                     <img className="mx_RoomTileContextMenu_notif_icon mx_filterFlipColor" src={require("../../../../res/img/icon-context-mute-mentions.svg")} width="16" height="12" />
@@ -284,10 +286,12 @@ module.exports = React.createClass({
     _renderSettingsMenu: function() {
         return (
             <div>
+                {/*removed for watcha
                 <div className="mx_RoomTileContextMenu_tag_field" onClick={this._onClickSettings} >
                     <img className="mx_RoomTileContextMenu_tag_icon" src={require("../../../../res/img/icons-settings-room.svg")} width="15" height="15" />
                     { _t('Settings') }
                 </div>
+                */}
             </div>
         );
     },

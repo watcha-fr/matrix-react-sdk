@@ -356,11 +356,11 @@ module.exports = React.createClass({
                 { cancelButton }
                 { forwardButton }
                 { pinButton }
-                { viewSourceButton }
+                { /*removed for watcha viewSourceButton*/ }
                 { viewClearSourceButton }
                 { unhidePreviewButton }
-                { permalinkButton }
-                { quoteButton }
+                { /* removed for watcha permalinkButton*/ }
+                { /* removed for watcha quoteButton */}
                 { externalURLButton }
                 { collapseReplyThread }
                 { e2eInfo }
