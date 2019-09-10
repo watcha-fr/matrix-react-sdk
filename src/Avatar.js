@@ -20,8 +20,19 @@ import MatrixClientPeg from './MatrixClientPeg';
 import DMRoomMap from './utils/DMRoomMap';
 
 module.exports = {
-    avatarUrlForMember: function(member, width, height, resizeMethod) {
-        let url = member.getAvatarUrl(
+    /*this function is hacked for watcha to take in account the directLink case the fact that the type of member change by the presence or not of parameter is a source of bugs FIXME"*/
+        avatarUrlForMember: function(member, width, height, resizeMethod, invite, directLink) {
+        let url
+        if (invite) {
+            url=ContentRepo.getHttpUriForMxc(MatrixClientPeg.get().getHomeserverUrl(), member.avatarMxc, width, height, resizeMethod, true);
+
+         }
+        else if (directLink) {
+          url=ContentRepo.getHttpUriForMxc(MatrixClientPeg.get().getHomeserverUrl(), member, width, height, resizeMethod, true);
+        }
+        else {
+
+         url = member.getAvatarUrl(
             MatrixClientPeg.get().getHomeserverUrl(),
             Math.floor(width * window.devicePixelRatio),
             Math.floor(height * window.devicePixelRatio),
@@ -35,6 +46,7 @@ module.exports = {
             // the inviter.
             url = this.defaultAvatarUrlForString(member ? member.userId : '');
         }
+    } // if (directLink) {..} else {
         return url;
     },
 
