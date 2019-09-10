@@ -220,7 +220,7 @@ module.exports = React.createClass({
         if (this.props.imgUrl) {
             imgUrl = this.props.imgUrl;
         } else if (this.props.direcLink) {
-            imgUrl = Avatar.avatarUrlForMember(this.props.direcLink,this.props.width,this.props.height,null,null,true)
+            imgUrl = Avatar.avatarUrlForMember(this.props.direcLink, this.props.width, this.props.height, null, null, true)
         } else {
             var initialLetter = this._getInitialLetter(this.props.text);
             imgUrl = this.defaultAvatarUrlForString(initialLetter);
