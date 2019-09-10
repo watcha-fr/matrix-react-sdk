@@ -767,7 +767,7 @@ module.exports = withMatrixClient(React.createClass({
                 <h3>{ _t("User Options") }</h3>
                 <div className="mx_MemberInfo_buttons">
                     { readReceiptButton }
-                    { shareUserButton }
+                    {/* removed for watcha  shareUserButton */}
                     { insertPillButton }
                     { ignoreButton }
                     { inviteUserButton }
@@ -1012,7 +1012,7 @@ module.exports = withMatrixClient(React.createClass({
 
                             { startChat }
 
-                            { this._renderDevices() }
+                            { /*removed for watcha this._renderDevices()*/ }
 
                             { spinner }
                         </div>
