@@ -784,6 +784,7 @@ module.exports = React.createClass({
                 order: "recent",
                 incomingCall: incomingCallIfTaggedAs('m.lowpriority'),
             },
+            /*removed for watcha
             {
                 list: this.state.lists['im.vector.fake.archived'],
                 label: _t('Historical'),
@@ -793,6 +794,7 @@ module.exports = React.createClass({
                 showSpinner: this.state.isLoadingLeftRooms,
                 onHeaderClick: this.onArchivedHeaderClick,
             },
+            */
             {
                 list: this.state.lists['m.server_notice'],
                 label: _t('System Alerts'),
