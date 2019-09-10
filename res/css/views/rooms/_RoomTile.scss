@@ -159,7 +159,8 @@ limitations under the License.
 .mx_RoomTile_unread, .mx_RoomTile_highlight {
     .mx_RoomTile_name {
         font-weight: 600;
-        color: $roomtile-selected-color;
+        //change color for watcha
+        color: white;
     }
 }
 
