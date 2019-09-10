@@ -1340,7 +1340,7 @@ module.exports = React.createClass({
 
         const showBar = this.refs.messagePanel.canJumpToReadMarker();
         if (this.state.showTopUnreadMessagesBar != showBar) {
-            this.setState({showTopUnreadMessagesBar: false});
+            this.setState({showTopUnreadMessagesBar: false}); // Modified for Watcha
         }
     },
 
