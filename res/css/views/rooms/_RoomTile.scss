@@ -180,7 +180,8 @@ limitations under the License.
 
 .mx_RoomTile:focus {
     filter: none !important;
-    background-color: $roomtile-focused-bg-color;
+    //change color for watcha
+    background-color: #00b3b3;
 }
 
 .mx_RoomTile_arrow {
