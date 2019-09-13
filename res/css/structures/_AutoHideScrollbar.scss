@@ -51,6 +51,7 @@ This only works in Firefox, which should be fine as this fallback is only needed
 body.mx_scrollbar_nooverlay {
     .mx_AutoHideScrollbar {
         overflow-y: hidden;
+        color: white;
     }
 
     .mx_AutoHideScrollbar:hover {
@@ -85,6 +86,7 @@ body.mx_scrollbar_nooverlay {
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: $scrollbar-thumb-color;
+    //change color for watcha
+    background-color: #00e5e5;
     border-radius: 3px;
 }
