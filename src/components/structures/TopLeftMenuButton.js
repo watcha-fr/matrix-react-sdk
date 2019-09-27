@@ -136,13 +136,14 @@ export default class TopLeftMenuButton extends React.Component {
         }
 
         return (
+          /* changed for watcha: was "onClick={this.onToggleMenu}" in this AccessibleButton */
             <AccessibleButton
                 className="mx_TopLeftMenuButton"
                 role="button"
+                onClick={(e) => {}}
                 inputRef={(r) => this._buttonRef = r}
                 aria-label={_t("Your profile")}
             >
-          {/*note for watcha we have removed the onclick props on AccessibleButton component and  added this note here since its seems impossible to comment props*/}
             <span className="HomePageButton" onClick={this.onUserBoxContainerClick}>
                 <BaseAvatar
                     idName={MatrixClientPeg.get().getUserId()}
