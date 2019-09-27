@@ -92,7 +92,6 @@ export default class RoomSettingsDialog extends React.Component {
         const BaseDialog = sdk.getComponent('views.dialogs.BaseDialog');
 
         const roomName = MatrixClientPeg.get().getRoom(this.props.roomId).name;
-        alert(SdkConfig.get()['watchaE2E']);
         return (
             <BaseDialog className='mx_RoomSettingsDialog' hasCancel={true}
                         onFinished={this.props.onFinished} title={_t("Room Settings - %(roomName)s", {roomName})}>
