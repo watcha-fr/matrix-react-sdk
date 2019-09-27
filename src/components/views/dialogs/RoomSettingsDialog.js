@@ -27,6 +27,7 @@ import NotificationSettingsTab from "../settings/tabs/room/NotificationSettingsT
 import sdk from "../../../index";
 import MatrixClientPeg from "../../../MatrixClientPeg";
 import dis from "../../../dispatcher";
+import SdkConfig from "../../../SdkConfig"; // added for Watcha for (undocument) E2E enablement setting
 
 export default class RoomSettingsDialog extends React.Component {
     static propTypes = {
@@ -58,12 +59,15 @@ export default class RoomSettingsDialog extends React.Component {
             "mx_RoomSettingsDialog_settingsIcon",
             <GeneralRoomSettingsTab roomId={this.props.roomId} />,
         ));
-        /*removed for watcha
+        {/* modified for watcha: conditional with undocumented config */}
+        if (SdkConfig.get()['watchaE2E']) {
         tabs.push(new Tab(
             _td("Security & Privacy"),
             "mx_RoomSettingsDialog_securityIcon",
             <SecurityRoomSettingsTab roomId={this.props.roomId} />,
         ));
+        }
+        /*removed for watcha
         tabs.push(new Tab(
             _td("Roles & Permissions"),
             "mx_RoomSettingsDialog_rolesIcon",
@@ -88,11 +92,13 @@ export default class RoomSettingsDialog extends React.Component {
         const BaseDialog = sdk.getComponent('views.dialogs.BaseDialog');
 
         const roomName = MatrixClientPeg.get().getRoom(this.props.roomId).name;
+        alert(SdkConfig.get()['watchaE2E']);
         return (
             <BaseDialog className='mx_RoomSettingsDialog' hasCancel={true}
                         onFinished={this.props.onFinished} title={_t("Room Settings - %(roomName)s", {roomName})}>
                 <div className='ms_SettingsDialog_content'>
-                    <TabbedView invisibleTab={true} tabs={this._getTabs()} />
+                {/* modified for watcha: do not show tabs when there's only one */}
+                    <TabbedView invisibleTab={!(SdkConfig.get()['watchaE2E'])} tabs={this._getTabs()} />
                 </div>
             </BaseDialog>
         );
