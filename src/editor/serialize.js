@@ -33,10 +33,10 @@ export function mdSerialize(model) {
     }, "");
 }
 
-export function htmlSerializeIfNeeded(model) {
+export function htmlSerializeIfNeeded(model, {forceHTML = false}) {
     const md = mdSerialize(model);
     const parser = new Markdown(md);
-    if (!parser.isPlainText()) {
+    if (!parser.isPlainText() || forceHTML) {
         return parser.toHTML();
     }
 }
@@ -55,16 +55,4 @@ export function textSerialize(model) {
                 return text + `${part.resourceId}`;
         }
     }, "");
-}
-
-export function requiresHtml(model) {
-    return model.parts.some(part => {
-        switch (part.type) {
-            case "room-pill":
-            case "user-pill":
-                return true;
-            default:
-                return false;
-        }
-    });
 }

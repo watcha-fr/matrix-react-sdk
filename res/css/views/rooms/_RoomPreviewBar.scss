@@ -39,6 +39,16 @@ limitations under the License.
         margin: 10px 10px 10px 0;
         flex: 0 0 auto;
     }
+
+    .mx_RoomPreviewBar_footer {
+        font-size: 12px;
+        line-height: 20px;
+
+        .mx_Spinner {
+            vertical-align: middle;
+            display: inline-block;
+        }
+    }
 }
 
 .mx_RoomPreviewBar_dark {
@@ -73,7 +83,7 @@ limitations under the License.
         flex-direction: row;
         padding: 3px 8px;
 
-        &>* {
+        & > * {
             margin-left: 12px;
         }
     }
@@ -84,7 +94,7 @@ limitations under the License.
         display: flex;
         flex-direction: column;
 
-        &>* {
+        & > * {
             margin: 4px;
         }
     }
@@ -102,7 +112,7 @@ limitations under the License.
     .mx_RoomPreviewBar_message {
         flex-direction: column;
 
-        &>* {
+        & > * {
             margin: 5px 0 20px 0;
         }
     }
@@ -113,7 +123,7 @@ limitations under the License.
             padding: 7px 50px;//extra wide
         }
 
-        &>* {
+        & > * {
             margin-top: 12px;
         }
     }

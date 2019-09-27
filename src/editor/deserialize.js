@@ -17,6 +17,7 @@ limitations under the License.
 
 import { MATRIXTO_URL_PATTERN } from '../linkify-matrix';
 import { walkDOMDepthFirst } from "./dom";
+import { checkBlockNode } from "../HtmlUtils";
 
 const REGEX_MATRIXTO = new RegExp(MATRIXTO_URL_PATTERN);
 
@@ -70,7 +71,7 @@ function parseCodeBlock(n, partCreator) {
     return parts;
 }
 
-function parseElement(n, partCreator) {
+function parseElement(n, partCreator, state) {
     switch (n.nodeName) {
         case "A":
             return parseLink(n, partCreator);
@@ -86,12 +87,18 @@ function parseElement(n, partCreator) {
             return partCreator.plain(`\`${n.textContent}\``);
         case "DEL":
             return partCreator.plain(`<del>${n.textContent}</del>`);
-        case "LI":
+        case "LI": {
+            const indent = "  ".repeat(state.listDepth - 1);
             if (n.parentElement.nodeName === "OL") {
-                return partCreator.plain(` 1. `);
+                return partCreator.plain(`${indent}1. `);
             } else {
-                return partCreator.plain(` - `);
+                return partCreator.plain(`${indent}- `);
             }
+        }
+        case "OL":
+        case "UL":
+            state.listDepth = (state.listDepth || 0) + 1;
+        // es-lint-disable-next-line no-fallthrough
         default:
             // don't textify block nodes we'll decend into
             if (!checkDecendInto(n)) {
@@ -109,21 +116,6 @@ function checkDecendInto(node) {
             return false;
         default:
             return checkBlockNode(node);
-    }
-}
-
-function checkBlockNode(node) {
-    switch (node.nodeName) {
-        case "PRE":
-        case "BLOCKQUOTE":
-        case "DIV":
-        case "P":
-        case "UL":
-        case "OL":
-        case "LI":
-            return true;
-        default:
-            return false;
     }
 }
 
@@ -161,6 +153,7 @@ function parseHtmlMessage(html, partCreator) {
     const parts = [];
     let lastNode;
     let inQuote = false;
+    const state = {};
 
     function onNodeEnter(n) {
         if (checkIgnored(n)) {
@@ -178,7 +171,7 @@ function parseHtmlMessage(html, partCreator) {
         if (n.nodeType === Node.TEXT_NODE) {
             newParts.push(...parseAtRoomMentions(n.nodeValue, partCreator));
         } else if (n.nodeType === Node.ELEMENT_NODE) {
-            const parseResult = parseElement(n, partCreator);
+            const parseResult = parseElement(n, partCreator, state);
             if (parseResult) {
                 if (Array.isArray(parseResult)) {
                     newParts.push(...parseResult);
@@ -207,8 +200,14 @@ function parseHtmlMessage(html, partCreator) {
         if (checkIgnored(n)) {
             return;
         }
-        if (n.nodeName === "BLOCKQUOTE") {
-            inQuote = false;
+        switch (n.nodeName) {
+            case "BLOCKQUOTE":
+                inQuote = false;
+                break;
+            case "OL":
+            case "UL":
+                state.listDepth -= 1;
+                break;
         }
         lastNode = n;
     }

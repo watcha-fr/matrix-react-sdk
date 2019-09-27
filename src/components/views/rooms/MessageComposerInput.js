@@ -1,6 +1,7 @@
 /*
 Copyright 2015, 2016 OpenMarket Ltd
 Copyright 2017, 2018 New Vector Ltd
+Copyright 2019 The Matrix.org Foundation C.I.C.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -61,10 +62,9 @@ import {ContentHelpers} from 'matrix-js-sdk';
 import AccessibleButton from '../elements/AccessibleButton';
 import {findEditableEvent} from '../../../utils/EventUtils';
 import ComposerHistoryManager from "../../../ComposerHistoryManager";
+import TypingStore from "../../../stores/TypingStore";
 
 const REGEX_EMOTICON_WHITESPACE = new RegExp('(?:^|\\s)(' + EMOTICON_REGEX.source + ')\\s$');
-
-const TYPING_USER_TIMEOUT = 10000; const TYPING_SERVER_TIMEOUT = 30000;
 
 // the Slate node type to default to for unstyled text
 const DEFAULT_NODE = 'paragraph';
@@ -424,76 +424,6 @@ export default class MessageComposerInput extends React.Component {
         }
     };
 
-    onTypingActivity() {
-        this.isTyping = true;
-        if (!this.userTypingTimer) {
-            this.sendTyping(true);
-        }
-        this.startUserTypingTimer();
-        this.startServerTypingTimer();
-    }
-
-    onFinishedTyping() {
-        this.isTyping = false;
-        this.sendTyping(false);
-        this.stopUserTypingTimer();
-        this.stopServerTypingTimer();
-    }
-
-    startUserTypingTimer() {
-        this.stopUserTypingTimer();
-        const self = this;
-        this.userTypingTimer = setTimeout(function() {
-            self.isTyping = false;
-            self.sendTyping(self.isTyping);
-            self.userTypingTimer = null;
-        }, TYPING_USER_TIMEOUT);
-    }
-
-    stopUserTypingTimer() {
-        if (this.userTypingTimer) {
-            clearTimeout(this.userTypingTimer);
-            this.userTypingTimer = null;
-        }
-    }
-
-    startServerTypingTimer() {
-        if (!this.serverTypingTimer) {
-            const self = this;
-            this.serverTypingTimer = setTimeout(function() {
-                if (self.isTyping) {
-                    self.sendTyping(self.isTyping);
-                    self.startServerTypingTimer();
-                }
-            }, TYPING_SERVER_TIMEOUT / 2);
-        }
-    }
-
-    stopServerTypingTimer() {
-        if (this.serverTypingTimer) {
-            clearTimeout(this.serverTypingTimer);
-            this.serverTypingTimer = null;
-        }
-    }
-
-    sendTyping(isTyping) {
-      /*removed for watcha
-        if (!SettingsStore.getValue('sendTypingNotifications')) return;
-        */
-        if (SettingsStore.getValue('lowBandwidth')) return;
-        MatrixClientPeg.get().sendTyping(
-            this.props.room.roomId,
-            this.isTyping, TYPING_SERVER_TIMEOUT,
-        ).done();
-    }
-
-    refreshTyping() {
-        if (this.typingTimeout) {
-            clearTimeout(this.typingTimeout);
-            this.typingTimeout = null;
-        }
-    }
-
     onChange = (change: Change, originalEditorState?: Value) => {
         let editorState = change.value;
 
@@ -524,9 +454,9 @@ export default class MessageComposerInput extends React.Component {
         }
 
         if (Plain.serialize(editorState) !== '') {
-            this.onTypingActivity();
+            TypingStore.sharedInstance().setSelfTyping(this.props.room.roomId, true);
         } else {
-            this.onFinishedTyping();
+            TypingStore.sharedInstance().setSelfTyping(this.props.room.roomId, false);
         }
 
         if (editorState.startText !== null) {
@@ -534,9 +464,7 @@ export default class MessageComposerInput extends React.Component {
             const currentStartOffset = editorState.selection.start.offset;
 
             // Automatic replacement of plaintext emoji to Unicode emoji
-            /*removed for watcha
             if (SettingsStore.getValue('MessageComposerInput.autoReplaceEmoji')) {
-            */
                 // The first matched group includes just the matched plaintext emoji
                 const emoticonMatch = REGEX_EMOTICON_WHITESPACE.exec(text.slice(0, currentStartOffset));
                 if (emoticonMatch) {
@@ -559,9 +487,7 @@ export default class MessageComposerInput extends React.Component {
                         editorState = change.value;
                     }
                 }
-                /*removed for watcha
             }
-            */
         }
 
         if (this.props.onInputStateChanged && editorState.blocks.size > 0) {
@@ -688,14 +614,6 @@ export default class MessageComposerInput extends React.Component {
         if (this.autocomplete.countCompletions() > 0) {
             if (!(ev.ctrlKey || ev.shiftKey || ev.altKey || ev.metaKey)) {
                 switch (ev.keyCode) {
-                    case KeyCode.LEFT:
-                        this.autocomplete.moveSelection(-1);
-                        ev.preventDefault();
-                        return true;
-                    case KeyCode.RIGHT:
-                        this.autocomplete.moveSelection(+1);
-                        ev.preventDefault();
-                        return true;
                     case KeyCode.UP:
                         this.autocomplete.moveSelection(-1);
                         ev.preventDefault();
@@ -818,6 +736,9 @@ export default class MessageComposerInput extends React.Component {
 
     handleKeyCommand = (command: string): boolean => {
         if (command === 'toggle-mode') {
+            // MODIFIED BY WATCHA -- TODO: THIS MAY BE BROKEN,
+            // and instead of hardcoded, 'isRichTextEnabled' should be set to true when created
+            //this.enableRichtext(!this.state.isRichTextEnabled);
             this.enableRichtext(true);
             return true;
         }
@@ -1212,20 +1133,8 @@ export default class MessageComposerInput extends React.Component {
     onVerticalArrow = (e, up) => {
         if (e.ctrlKey || e.shiftKey || e.metaKey) return;
 
-        // selection must be collapsed
-        const selection = this.state.editorState.selection;
-        if (!selection.isCollapsed) return;
-        // and we must be at the edge of the document (up=start, down=end)
-        const document = this.state.editorState.document;
-        if (up) {
-            if (!selection.anchor.isAtStartOfNode(document)) return;
-        } else {
-            if (!selection.anchor.isAtEndOfNode(document)) return;
-        }
-
-        const editingEnabled = SettingsStore.isFeatureEnabled("feature_message_editing");
-        const shouldSelectHistory = (editingEnabled && e.altKey) || !editingEnabled;
-        const shouldEditLastMessage = editingEnabled && !e.altKey && up;
+        const shouldSelectHistory = e.altKey;
+        const shouldEditLastMessage = !e.altKey && up && !RoomViewStore.getQuotingEvent();
 
         if (shouldSelectHistory) {
             // Try select composer history
@@ -1235,6 +1144,17 @@ export default class MessageComposerInput extends React.Component {
                 e.preventDefault();
             }
         } else if (shouldEditLastMessage) {
+            // selection must be collapsed
+            const selection = this.state.editorState.selection;
+            if (!selection.isCollapsed) return;
+            // and we must be at the edge of the document (up=start, down=end)
+            const document = this.state.editorState.document;
+            if (up) {
+                if (!selection.anchor.isAtStartOfNode(document)) return;
+            } else {
+                if (!selection.anchor.isAtEndOfNode(document)) return;
+            }
+
             const editEvent = findEditableEvent(this.props.room, false);
             if (editEvent) {
                 // We're selecting history, so prevent the key event from doing anything else

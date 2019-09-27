@@ -97,25 +97,26 @@ export default class EditorModel {
         if (diff.removed) {
             removedOffsetDecrease = this.removeText(position, diff.removed.length);
         }
+        const canOpenAutoComplete = inputType !== "insertFromPaste" && inputType !== "insertFromDrop";
         let addedLen = 0;
         if (diff.added) {
-            addedLen = this._addText(position, diff.added);
+            // these shouldn't trigger auto-complete, you just want to append a piece of text
+            addedLen = this._addText(position, diff.added, {validate: canOpenAutoComplete});
         }
         this._mergeAdjacentParts();
         const caretOffset = diff.at - removedOffsetDecrease + addedLen;
-        let newPosition = this.positionForOffset(caretOffset, true);
-        newPosition = newPosition.skipUneditableParts(this._parts);
-        this._setActivePart(newPosition);
+        const newPosition = this.positionForOffset(caretOffset, true);
+        this._setActivePart(newPosition, canOpenAutoComplete);
         this._updateCallback(newPosition);
     }
 
-    _setActivePart(pos) {
+    _setActivePart(pos, canOpenAutoComplete) {
         const {index} = pos;
         const part = this._parts[index];
         if (part) {
             if (index !== this._activePartIdx) {
                 this._activePartIdx = index;
-                if (this._activePartIdx !== this._autoCompletePartIdx) {
+                if (canOpenAutoComplete && this._activePartIdx !== this._autoCompletePartIdx) {
                     // else try to create one
                     const ac = part.createAutoComplete(this._onAutoComplete);
                     if (ac) {
@@ -140,10 +141,9 @@ export default class EditorModel {
         let pos;
         if (replacePart) {
             this._replacePart(this._autoCompletePartIdx, replacePart);
-            let index = this._autoCompletePartIdx;
+            const index = this._autoCompletePartIdx;
             if (caretOffset === undefined) {
-                caretOffset = 0;
-                index += 1;
+                caretOffset = replacePart.text.length;
             }
             pos = new DocumentPosition(index, caretOffset);
         }
@@ -158,11 +158,11 @@ export default class EditorModel {
     }
 
     _mergeAdjacentParts(docPos) {
-        let prevPart = this._parts[0];
-        for (let i = 1; i < this._parts.length; ++i) {
+        let prevPart;
+        for (let i = 0; i < this._parts.length; ++i) {
             let part = this._parts[i];
             const isEmpty = !part.text.length;
-            const isMerged = !isEmpty && prevPart.merge(part);
+            const isMerged = !isEmpty && prevPart && prevPart.merge(part);
             if (isEmpty || isMerged) {
                 // remove empty or merged part
                 part = prevPart;
@@ -219,17 +219,22 @@ export default class EditorModel {
      * inserts `str` into the model at `pos`.
      * @param {Object} pos
      * @param {string} str
+     * @param {Object} options
+     * @param {bool} options.validate Whether characters will be validated by the part.
+     *                                Validating allows the inserted text to be parsed according to the part rules.
      * @return {Number} how far from position (in characters) the insertion ended.
      * This can be more than the length of `str` when crossing non-editable parts, which are skipped.
      */
-    _addText(pos, str) {
+    _addText(pos, str, {validate=true}) {
         let {index} = pos;
         const {offset} = pos;
         let addLen = str.length;
         const part = this._parts[index];
         if (part) {
             if (part.canEdit) {
-                if (part.insertAll(offset, str)) {
+                if (validate && part.validateAndInsert(offset, str)) {
+                    str = null;
+                } else if (!validate && part.insert(offset, str)) {
                     str = null;
                 } else {
                     const splitPart = part.split(offset);
@@ -242,10 +247,19 @@ export default class EditorModel {
                 addLen += part.text.length - offset;
                 index += 1;
             }
+        } else if (index < 0) {
+            // if position was not found (index: -1, as happens for empty editor)
+            // reset it to insert as first part
+            index = 0;
         }
         while (str) {
             const newPart = this._partCreator.createPartForInput(str);
-            str = newPart.appendUntilRejected(str);
+            if (validate) {
+                str = newPart.appendUntilRejected(str);
+            } else {
+                newPart.insert(0, str);
+                str = null;
+            }
             this._insertPart(index, newPart);
             index += 1;
         }
@@ -282,14 +296,5 @@ class DocumentPosition {
 
     get offset() {
         return this._offset;
-    }
-
-    skipUneditableParts(parts) {
-        const part = parts[this.index];
-        if (part && !part.canEdit) {
-            return new DocumentPosition(this.index + 1, 0);
-        } else {
-            return this;
-        }
     }
 }

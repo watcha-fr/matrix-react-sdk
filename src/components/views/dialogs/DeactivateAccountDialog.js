@@ -63,14 +63,20 @@ export default class DeactivateAccountDialog extends React.Component {
             // for this endpoint. In reality it could be any UI auth.
             const auth = {
                 type: 'm.login.password',
+                // TODO: Remove `user` once servers support proper UIA
+                // See https://github.com/vector-im/riot-web/issues/10312
                 user: MatrixClientPeg.get().credentials.userId,
-                password: this._passwordField.value,
+                identifier: {
+                    type: "m.id.user",
+                    user: MatrixClientPeg.get().credentials.userId,
+                },
+                password: this.state.password,
             };
             await MatrixClientPeg.get().deactivateAccount(auth, this.state.shouldErase);
         } catch (err) {
             let errStr = _t('Unknown error');
             // https://matrix.org/jira/browse/SYN-744
-            if (err.httpStatus == 401 || err.httpStatus == 403) {
+            if (err.httpStatus === 401 || err.httpStatus === 403) {
                 errStr = _t('Incorrect password');
                 Velocity(this._passwordField, "callout.shake", 300);
             }
@@ -83,7 +89,7 @@ export default class DeactivateAccountDialog extends React.Component {
 
         Analytics.trackEvent('Account', 'Deactivate Account');
         Lifecycle.onLoggedOut();
-        this.props.onFinished(false);
+        this.props.onFinished(true);
     }
 
     _onCancel() {

@@ -247,10 +247,12 @@ export function mkStubRoom(roomId = null) {
         getVersion: () => '1',
         shouldUpgradeToVersion: () => null,
         getMyMembership: () => "join",
+        maySendMessage: sinon.stub().returns(true),
         currentState: {
             getStateEvents: sinon.stub(),
             mayClientSendStateEvent: sinon.stub().returns(true),
             maySendStateEvent: sinon.stub().returns(true),
+            maySendEvent: sinon.stub().returns(true),
             members: [],
         },
         tags: {
@@ -259,6 +261,8 @@ export function mkStubRoom(roomId = null) {
             },
         },
         setBlacklistUnverifiedDevices: sinon.stub(),
+        on: sinon.stub(),
+        removeListener: sinon.stub(),
     };
 }
 
@@ -268,7 +272,6 @@ export function mkServerConfig(hsUrl, isUrl) {
         hsName: "TEST_ENVIRONMENT",
         hsNameIsDifferent: false, // yes, we lie
         isUrl,
-        identityEnabled: true,
     });
 }
 
