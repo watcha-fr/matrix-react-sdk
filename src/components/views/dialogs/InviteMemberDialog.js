@@ -147,7 +147,10 @@ module.exports = React.createClass({
             busy: true,
             searchError: null,
         });
-        MatrixClientPeg.get().searchUserDirectory({}).then((resp) => {
+        MatrixClientPeg.get().searchUserDirectory({
+            term: '',
+            limit: Number.MAX_SAFE_INTEGER, // get all results at once - will filter locally
+        }).then((resp) => {
             this._processResults(resp.results);
         }).catch((err) => {
             console.error('Error whilst searching user directory: ', err);
