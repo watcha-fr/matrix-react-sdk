@@ -229,7 +229,6 @@ module.exports = React.createClass({
         // add the props imgUrl if we wish to use a direct url instead of using avatarUrlForMember in the component
 
         if (defaultAvatar) {
-            try {
             av = <span className="mx_BaseAvatar" >
                 <div className="mx_BaseAvatar_initial" aria-hidden="true"
                     style={{ fontSize: (this.props.width * 0.65) + "px",
@@ -241,10 +240,7 @@ module.exports = React.createClass({
                     alt="" title={this.props.name}
                     width={this.props.width} height={this.props.height} />
             </span>
-            } catch(err) {
-                console.log("ERR");
-                console.log(err);
-            }
+
         } else {
             av = <img className="mx_BaseAvatar_image" src={imgUrl}
                 onError={this.onError}
