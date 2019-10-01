@@ -160,7 +160,6 @@ module.exports = React.createClass({
 
     render: function() {
         const presenceClass = presenceClassForMember(this.props.presenceState, this.props.presenceLastActiveAgo);
-        const EmojiText = sdk.getComponent('elements.EmojiText');
         var mainClassName = "mx_EntityTile mx_EntityTile_common ";
         mainClassName += presenceClass + (this.props.className ? (" " + this.props.className) : ""); // make a composed className based on the classname of the caller
         var nameEl;
@@ -230,18 +229,22 @@ module.exports = React.createClass({
         // add the props imgUrl if we wish to use a direct url instead of using avatarUrlForMember in the component
 
         if (defaultAvatar) {
+            try {
             av = <span className="mx_BaseAvatar" >
-                <EmojiText className="mx_BaseAvatar_initial" aria-hidden="true"
+                <div className="mx_BaseAvatar_initial" aria-hidden="true"
                     style={{ fontSize: (this.props.width * 0.65) + "px",
                             width: this.props.width + "px",
                     lineHeight: this.props.height + "px" }}>
                     {initialLetter}
-                </EmojiText>
+                </div>
                 <img className="mx_BaseAvatar_image" src={imgUrl}
                     alt="" title={this.props.name}
                     width={this.props.width} height={this.props.height} />
             </span>
-
+            } catch(err) {
+                console.log("ERR");
+                console.log(err);
+            }
         } else {
             av = <img className="mx_BaseAvatar_image" src={imgUrl}
                 onError={this.onError}
