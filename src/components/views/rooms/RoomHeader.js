@@ -293,7 +293,7 @@ module.exports = React.createClass({
         inviteRoomButton =
           <AccessibleButton className="mx_RoomHeader_button mx_RoomHeader_inviteButton"
           onClick={this.onInviteButton}
-          title={_t('Invite user')}
+          title={_t('Invite users')}
           >
           </AccessibleButton>;
         }
