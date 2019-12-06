@@ -45,8 +45,7 @@ limitations under the License.
 
 .mx_TopLeftMenuButton {
     flex: 0 0 52px;
-    /*change value for watcha*/
-    border-bottom: 1px solid #00E5E566;
+    border-bottom: 1px solid $panel-divider-color;
     /*change value for watcha*/
     color: white;
     /*change value for watcha*/
