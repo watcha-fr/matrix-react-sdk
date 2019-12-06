@@ -46,33 +46,23 @@ class WatchaAdmin extends React.Component {
     render() {
         if (!this.props.collapsed) {
             return this.state.isServerAdmin ? (
-                <div className="mx_WatchaAdminContainer mx_BottomLeftMenu">
-                    <div
-                        className=" mx_WatchaAdmin"
-                        data-original-position="30"
-                        data-original-height="25"
-                        data-stuck="none"
+                <div className="mx_WatchaAdminContainer">
+                    <button
+                        type="button"
+                        className="mx_WatchaAdminButton"
                         onClick={this.openWatchaAdmin}
+                        aria-label="Open Watcha administration"
+                        role="button"
                     >
-                        <div className="mx_WatchaAdminText">
-                            Administration
-                            <div className="mx_RoomSubList_add">
-                                <div
-                                    className="mx_RoleButton mx_AccessibleButton"
-                                    aria-label="Open Watcha administration"
-                                    role="button"
-                                >
-                                    <img
-                                        src={require("../../../res/img/watcha_admin.svg")}
-                                        alt="admin"
-                                        className="userBox_button"
-                                        width="15"
-                                        height="15"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        Administration
+                        <img
+                            id="mx_WatchaAdminIcon"
+                            src={require("../../../res/img/watcha_admin.svg")}
+                            alt="admin"
+                            width="15"
+                            height="15"
+                        />
+                    </button>
                 </div>
             ) : (
                 <div>TEST</div>
@@ -80,14 +70,15 @@ class WatchaAdmin extends React.Component {
         } else {
             return (
                 <div
-                    className="mx_BottomLeftMenu"
+                    className="mx_WatchaAdminContainer"
                     aria-label="Open Watcha administration"
                     role="button"
                 >
                     <img
+                        id="mx_WatchaAdminIcon_collapsed"
                         src={require("../../../res/img/watcha_admin.svg")}
+                        onClick={this.openWatchaAdmin}
                         alt="admin"
-                        className="userBox_button"
                         width="25"
                         height="25"
                     />
