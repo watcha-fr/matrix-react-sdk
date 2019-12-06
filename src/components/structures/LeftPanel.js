@@ -273,9 +273,9 @@ const LeftPanel = React.createClass({
                         collapsed={this.props.collapsed}
                         searchFilter={this.state.searchFilter}
                         ConferenceHandler={VectorConferenceHandler} />
-                        {/*insertion for watcha*/}
-                        <WatchaAdmin collapsed={false} /> { /* added for Watcha */ }
-                        {/*end of insertion for watcha*/}
+                    {/*insertion for watcha*/}
+                    <WatchaAdmin collapsed={this.props.collapsed} />
+                    {/*end of insertion for watcha*/}
                 </aside>
             </div>
         );
