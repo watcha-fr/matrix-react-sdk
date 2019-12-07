@@ -92,8 +92,6 @@ class CollapsedAdminAccess extends Component {
         return (
             <div
                 className="mx_WatchaAdminContainer"
-                aria-label="Open Watcha administration"
-                role="button"
             >
                 <img
                     id="mx_WatchaAdminIcon_collapsed"
@@ -102,6 +100,8 @@ class CollapsedAdminAccess extends Component {
                     alt="admin"
                     width="25"
                     height="25"
+                    aria-label="Open Watcha administration"
+                    role="button"
                 />
             </div>
         );
