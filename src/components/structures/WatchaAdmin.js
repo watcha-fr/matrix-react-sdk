@@ -43,29 +43,12 @@ class WatchaAdmin extends Component {
     };
 
     render() {
-        if (!this.state.isServerAdmin) {
-            return <div>TEST</div>;
-        }
-        return this.props.collapsed ? (
-            <CollapsedAdminAccess openWatchaAdmin={this.openWatchaAdmin} />
-        ) : (
-            <AdminAccess openWatchaAdmin={this.openWatchaAdmin} />
-        );
-    }
-}
-
-class AdminAccess extends Component {
-    static contextTypes = {
-        matrixClient: PropTypes.instanceOf(MatrixClient)
-    };
-
-    render() {
-        return (
+        const adminAccess = (
             <div className="mx_WatchaAdminContainer">
                 <button
                     type="button"
                     className="mx_WatchaAdminButton"
-                    onClick={this.props.openWatchaAdmin}
+                    onClick={this.openWatchaAdmin}
                     aria-label="Open Watcha administration"
                     role="button"
                 >
@@ -80,21 +63,12 @@ class AdminAccess extends Component {
                 </button>
             </div>
         );
-    }
-}
-
-class CollapsedAdminAccess extends Component {
-    static contextTypes = {
-        matrixClient: PropTypes.instanceOf(MatrixClient)
-    };
-
-    render() {
-        return (
+        const collapsedAdminAccess = (
             <div className="mx_WatchaAdminContainer">
                 <img
                     id="mx_WatchaAdminIcon_collapsed"
                     src={require("../../../res/img/watcha_admin.svg")}
-                    onClick={this.props.openWatchaAdmin}
+                    onClick={this.openWatchaAdmin}
                     alt="admin"
                     width="25"
                     height="25"
@@ -103,6 +77,10 @@ class CollapsedAdminAccess extends Component {
                 />
             </div>
         );
+        if (!this.state.isServerAdmin) {
+            return <div>TEST</div>;
+        }
+        return this.props.collapsed ? collapsedAdminAccess : adminAccess;
     }
 }
 
