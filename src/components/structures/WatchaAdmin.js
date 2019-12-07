@@ -47,9 +47,9 @@ class WatchaAdmin extends Component {
             return <div>TEST</div>;
         }
         return this.props.collapsed ? (
-            <CollapsedAdminAccess />
+            <CollapsedAdminAccess openWatchaAdmin={this.openWatchaAdmin} />
         ) : (
-            <AdminAccess />
+            <AdminAccess openWatchaAdmin={this.openWatchaAdmin} />
         );
     }
 }
@@ -65,7 +65,7 @@ class AdminAccess extends Component {
                 <button
                     type="button"
                     className="mx_WatchaAdminButton"
-                    onClick={this.openWatchaAdmin}
+                    onClick={this.props.openWatchaAdmin}
                     aria-label="Open Watcha administration"
                     role="button"
                 >
@@ -90,13 +90,11 @@ class CollapsedAdminAccess extends Component {
 
     render() {
         return (
-            <div
-                className="mx_WatchaAdminContainer"
-            >
+            <div className="mx_WatchaAdminContainer">
                 <img
                     id="mx_WatchaAdminIcon_collapsed"
                     src={require("../../../res/img/watcha_admin.svg")}
-                    onClick={this.openWatchaAdmin}
+                    onClick={this.props.openWatchaAdmin}
                     alt="admin"
                     width="25"
                     height="25"
