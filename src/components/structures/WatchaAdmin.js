@@ -13,21 +13,6 @@ class WatchaAdmin extends Component {
         matrixClient: PropTypes.instanceOf(MatrixClient)
     };
 
-    componentDidMount() {
-        const self = this;
-        this.context.matrixClient
-            .isWatchaAdmin()
-            .then(function(res) {
-                self.setState({ isServerAdmin: res.is_admin });
-            })
-            .catch(err => {
-                // not sure this is useful but just in case
-                console.log("Error in isServerAdmin:");
-                console.error(err);
-                self.setState({ isServerAdmin: false });
-            });
-    }
-
     openWatchaAdmin = ev => {
         // the token will be retrieved in watcha-admin.git/src/App.js
         const key = Math.random()
@@ -77,9 +62,6 @@ class WatchaAdmin extends Component {
                 />
             </div>
         );
-        if (!this.state.isServerAdmin) {
-            return <div>TEST</div>;
-        }
         return this.props.collapsed ? collapsedAdminAccess : adminAccess;
     }
 }
