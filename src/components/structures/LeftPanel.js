@@ -254,11 +254,10 @@ const LeftPanel = React.createClass({
             collapsed={this.props.collapsed} />);
 
         let breadcrumbs;
-        /*removed for watcha
+        console.log("this.state.breadcrumbs", this.state.breadcrumbs)
         if (this.state.breadcrumbs) {
             breadcrumbs = (<RoomBreadcrumbs collapsed={this.props.collapsed} />);
         }
-        */
 
         return (
             <div className={containerClasses}>
