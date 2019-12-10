@@ -1499,13 +1499,10 @@ export default class MessageComposerInput extends React.Component {
                     />
                 </div>
                 <div className={className}>
-                {/* removed for watcha
                     <AccessibleButton className={markdownClasses}
                         onClick={this.onMarkdownToggleClicked}
                         title={this.state.isRichTextEnabled ? _t("Markdown is disabled") : _t("Markdown is enabled")}
                     />
-                    */
-                  }
                     <Editor ref={this._collectEditor}
                             dir="auto"
                             className="mx_MessageComposer_editor"

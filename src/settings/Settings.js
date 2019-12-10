@@ -202,11 +202,15 @@ export const SETTINGS = {
     },
     "MessageComposerInput.isRichTextEnabled": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
-        default: false,
+        /*change for watcha*/
+        // default: false,
+        default: true,
     },
     "MessageComposer.showFormatting": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
-        default: false,
+        /*change for watcha*/
+        // default: false,
+        default: true,
     },
     "sendTypingNotifications": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
