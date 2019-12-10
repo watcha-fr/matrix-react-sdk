@@ -736,10 +736,7 @@ export default class MessageComposerInput extends React.Component {
 
     handleKeyCommand = (command: string): boolean => {
         if (command === 'toggle-mode') {
-            // MODIFIED BY WATCHA -- TODO: THIS MAY BE BROKEN,
-            // and instead of hardcoded, 'isRichTextEnabled' should be set to true when created
-            //this.enableRichtext(!this.state.isRichTextEnabled);
-            this.enableRichtext(true);
+            this.enableRichtext(!this.state.isRichTextEnabled);
             return true;
         }
 
