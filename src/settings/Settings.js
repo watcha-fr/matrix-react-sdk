@@ -365,6 +365,8 @@ export const SETTINGS = {
     "breadcrumbs": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td("Show recently visited rooms above the room list"),
+        /*change for watcha*/
+        // default: true,
         default: false,
     },
     "showHiddenEventsInTimeline": {
