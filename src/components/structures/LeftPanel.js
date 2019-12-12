@@ -53,6 +53,23 @@ const LeftPanel = React.createClass({
         };
     },
 
+    /*insertion for watcha*/
+    componentDidMount: function() {
+        const self = this;
+        this.context.matrixClient
+            .isWatchaAdmin()
+            .then(response => {
+                self.setState({ isServerAdmin: response.is_admin }, () => {
+                    self.forceUpdate();
+                });
+            })
+            .catch(error => {
+                console.error(error);
+                self.setState({ isServerAdmin: false });
+            });
+    },
+    /*end of insertion*/
+
     componentWillMount: function() {
         this.focusedElement = null;
 
@@ -259,6 +276,13 @@ const LeftPanel = React.createClass({
         }
         */
 
+        {/*insertion for watcha*/}
+        let watchaAdmin;
+        if (this.state.isServerAdmin) {
+            watchaAdmin = (<WatchaAdmin collapsed={this.props.collapsed} />);
+        };
+        {/*end of insertion*/}
+
         return (
             <div className={containerClasses}>
                 { tagPanelContainer }
@@ -273,9 +297,9 @@ const LeftPanel = React.createClass({
                         collapsed={this.props.collapsed}
                         searchFilter={this.state.searchFilter}
                         ConferenceHandler={VectorConferenceHandler} />
-                        {/*insertion for watcha*/}
-                        <WatchaAdmin collapsed={false} /> { /* added for Watcha */ }
-                        {/*end of insertion for watcha*/}
+                    {/*insertion for watcha*/}
+                    { watchaAdmin }
+                    {/*end of insertion*/}
                 </aside>
             </div>
         );
