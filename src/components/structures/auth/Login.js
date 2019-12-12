@@ -239,8 +239,7 @@ module.exports = React.createClass({
               
                 if (error.errcode === 'M_USER_DEACTIVATED') {
                     errorText = _t('This account has been deactivated.');
-                } else /* removed for watcha error for not matrix server
-                          if (SdkConfig.get()['disable_custom_urls']) {
+                } else if (SdkConfig.get()['disable_custom_urls']) {
                     errorText = (
                         <div>
                             <div>{ _t('Incorrect username and/or password.') }</div>
@@ -252,7 +251,7 @@ module.exports = React.createClass({
                             </div>
                         </div>
                     );
-                } else*/ {
+                } else {
                     errorText = _t('Incorrect username and/or password.');
                 }
             } else {

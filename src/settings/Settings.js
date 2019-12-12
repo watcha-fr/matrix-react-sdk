@@ -202,11 +202,15 @@ export const SETTINGS = {
     },
     "MessageComposerInput.isRichTextEnabled": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
-        default: false,
+        /*change for watcha*/
+        // default: false,
+        default: true,
     },
     "MessageComposer.showFormatting": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
-        default: false,
+        /*change for watcha*/
+        // default: false,
+        default: true,
     },
     "sendTypingNotifications": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
@@ -228,10 +232,16 @@ export const SETTINGS = {
     "TagPanel.enableTagPanel": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td('Enable Community Filter Panel'),
-        /*change for watcha*/
-        default: false,
+        default: true,
         invertedSettingName: 'TagPanel.disableTagPanel',
     },
+    /*insertion for watcha*/
+    "TagPanel.disableTagPanel": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td('Disable Community Filter Panel'),
+        default: true,
+    },
+    /*end of insertion*/
     "theme": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         default: "light",
@@ -365,7 +375,9 @@ export const SETTINGS = {
     "breadcrumbs": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td("Show recently visited rooms above the room list"),
-        default: true,
+        /*change for watcha*/
+        // default: true,
+        default: false,
     },
     "showHiddenEventsInTimeline": {
         displayName: _td("Show hidden events in timeline"),
