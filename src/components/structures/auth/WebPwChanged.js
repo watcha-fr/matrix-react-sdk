@@ -1,7 +1,9 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
 import { _t } from '../../../languageHandler';
 import sdk from '../../../index';
-module.exports = React.createClass({
+
+module.exports = createReactClass({
     displayName: 'WebPwChanged',
 
     getInitialState: function() {

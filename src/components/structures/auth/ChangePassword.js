@@ -1,8 +1,9 @@
 import React from 'react';
+import createReactClass from 'create-react-class';
 import WebPwChanged from './WebPwChanged';
 import MobileOnboarding from './MobileOnboarding';
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'ChangePassword',
 
     getInitialState: function() {

@@ -30,6 +30,7 @@ if this.props.presenceState=offline will return a greyed element
 'use strict';
 
 var React = require('react');
+import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
 var MatrixClientPeg = require('../../../MatrixClientPeg');
@@ -71,7 +72,7 @@ function presenceClassForMember(presenceState, lastActiveAgo) {
     }
 }
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'GeneralEntity',
 
     propTypes: {

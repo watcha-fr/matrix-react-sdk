@@ -16,6 +16,7 @@ limitations under the License.
 */
 import GeminiScrollbar from 'react-gemini-scrollbar';
 import React from 'react';
+import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { _t } from '../../../languageHandler';
 import sdk from '../../../index';
@@ -33,7 +34,7 @@ const QUERY_USER_DIRECTORY_DEBOUNCE_MS = 200;
 const AVATAR_SIZE = 36;
 const CALLOUT_ANIM_DURATION = 1000;
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: "InviteMemberDialog",
 
     propTypes: {

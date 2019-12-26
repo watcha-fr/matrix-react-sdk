@@ -1,5 +1,7 @@
 import React from 'react';
-module.exports = React.createClass({
+import createReactClass from 'create-react-class';
+
+module.exports = createReactClass({
     displayName: 'MobileOnboarding',
 
     getInitialState: function() {
