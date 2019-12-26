@@ -18,6 +18,7 @@ limitations under the License.
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import GeminiScrollbar from 'react-gemini-scrollbar';
 import request from 'browser-request';
 import { _t } from '../../../languageHandler';
@@ -29,12 +30,12 @@ module.exports = React.createClass({
 
     propTypes: {
         // URL base of the team server. Optional.
-        teamServerUrl: React.PropTypes.string,
+        teamServerUrl: PropTypes.string,
         // Team token. Optional. If set, used to get the static homepage of the team
         //      associated. If unset, homePageUrl will be used.
-        teamToken: React.PropTypes.string,
+        teamToken: PropTypes.string,
         // URL to use as the iFrame src. Defaults to /home.html.
-        homePageUrl: React.PropTypes.string,
+        homePageUrl: PropTypes.string,
     },
 
     getInitialState: function() {
