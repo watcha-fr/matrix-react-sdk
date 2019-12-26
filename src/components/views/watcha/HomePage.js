@@ -24,7 +24,7 @@ import GeminiScrollbar from 'react-gemini-scrollbar';
 import request from 'browser-request';
 import { _t } from '../../../languageHandler';
 import sanitizeHtml from 'sanitize-html';
-import NotificationPanel from './NotificationPanel';
+import NotificationPanel from '../../structures/NotificationPanel';
 
 module.exports = createReactClass({
     displayName: 'HomePage',
