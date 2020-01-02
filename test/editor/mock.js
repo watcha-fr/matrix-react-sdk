@@ -40,12 +40,12 @@ class MockAutoComplete {
             } else {
                 pill = this._partCreator.roomPill(match.resourceId);
             }
-            this._updateCallback({replacePart: pill, close});
+            this._updateCallback({replaceParts: [pill], close});
         }
     }
 
     // called by EditorModel when typing into pill-candidate part
-    onPartUpdate(part, offset) {
+    onPartUpdate(part, pos) {
         this._part = part;
     }
 }
@@ -65,5 +65,5 @@ export function createPartCreator(completions = []) {
     const autoCompleteCreator = (partCreator) => {
         return (updateCallback) => new MockAutoComplete(updateCallback, partCreator, completions);
     };
-    return new PartCreator(autoCompleteCreator, new MockRoom(), new MockClient());
+    return new PartCreator(new MockRoom(), new MockClient(), autoCompleteCreator);
 }

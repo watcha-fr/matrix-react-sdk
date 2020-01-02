@@ -19,13 +19,14 @@ import Matrix from 'matrix-js-sdk';
 const InteractiveAuth = Matrix.InteractiveAuth;
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 
 import {getEntryComponentForLoginType} from '../views/auth/InteractiveAuthEntryComponents';
 
 import sdk from '../../index';
 
-export default React.createClass({
+export default createReactClass({
     displayName: 'InteractiveAuth',
 
     propTypes: {
@@ -120,7 +121,7 @@ export default React.createClass({
             this.setState({
                 errorText: msg,
             });
-        }).done();
+        });
 
         this._intervalId = null;
         if (this.props.poll) {

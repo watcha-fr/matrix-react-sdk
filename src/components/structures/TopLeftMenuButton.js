@@ -121,30 +121,33 @@ export default class TopLeftMenuButton extends React.Component {
 
     render() {
         const name = this._getDisplayName();
-        let nameElement;
         /*insertion for watcha*/
+        /* TODO: this is not clean (li's inside a div??) */
         const signInOutItem = <li className="mx_TopLeftMenu_icon_signout" onClick={this.signOut} tabIndex={0}>
             </li>;
 
         const settingsItem = <li className="mx_TopLeftMenu_icon_settings" onClick={this.openSettings} tabIndex={0}>
         </li>;
         /*end of insertion*/
+        let nameElement;
+        let chevronElement;
         if (!this.props.collapsed) {
             nameElement = <div className="mx_TopLeftMenuButton_name">
                 { name }
             </div>;
+            chevronElement = <span className="mx_TopLeftMenuButton_chevron" />;
         }
-
         return (
-          /* changed for watcha: was "onClick={this.onToggleMenu}" in this AccessibleButton */
+            
             <AccessibleButton
                 className="mx_TopLeftMenuButton"
-                role="button"
+                {/* changed for watcha: was "onClick={this.onToggleMenu}" in this AccessibleButton */}
                 onClick={(e) => {}}
                 inputRef={(r) => this._buttonRef = r}
                 aria-label={_t("Your profile")}
+                aria-haspopup={true}
+                aria-expanded={this.state.menuDisplayed}
             >
-            <span className="HomePageButton" onClick={this.onUserBoxContainerClick}>
                 <BaseAvatar
                     idName={MatrixClientPeg.get().getUserId()}
                     name={name}
@@ -154,18 +157,11 @@ export default class TopLeftMenuButton extends React.Component {
                     resizeMethod="crop"
                 />
                 { nameElement }
-                {/* insertion for watcha*/}
-                </span>
                 <div className="TopLeftMenuButonsContainer">
                 {settingsItem}
                 {signInOutItem}
                 </div>
-                {/*end of insertion*/}
-                {
-                /*removed for watcha
-                <span className="mx_TopLeftMenuButton_chevron" />
-                */
-              }
+                {/*removed for watcha  chevronElement */}
             </AccessibleButton>
         );
     }

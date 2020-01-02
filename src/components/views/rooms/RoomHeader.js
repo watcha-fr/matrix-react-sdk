@@ -14,10 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-'use strict';
-
 import React from 'react';
 import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
 import classNames from 'classnames';
 import sdk from '../../../index';
 import { _t } from '../../../languageHandler';
@@ -31,8 +30,11 @@ import {CancelButton} from './SimpleRoomHeader';
 import SettingsStore from "../../../settings/SettingsStore";
 import RoomHeaderButtons from '../right_panel/RoomHeaderButtons';
 import E2EIcon from './E2EIcon';
+/* insertion for watcha */
 const dis = require("../../../dispatcher");
-module.exports = React.createClass({
+/* end of insertion */
+
+module.exports = createReactClass({
     displayName: 'RoomHeader',
 
     propTypes: {

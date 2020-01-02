@@ -19,10 +19,10 @@ limitations under the License.
 
 import SettingsStore from "../../settings/SettingsStore";
 
-const React = require('react');
-const ReactDOM = require("react-dom");
+import React from 'react';
+import createReactClass from 'create-react-class';
+import ReactDOM from "react-dom";
 import PropTypes from 'prop-types';
-import Promise from 'bluebird';
 
 const Matrix = require("matrix-js-sdk");
 const EventTimeline = Matrix.EventTimeline;
@@ -41,8 +41,6 @@ import EditorStateTransfer from '../../utils/EditorStateTransfer';
 
 const PAGINATE_SIZE = 20;
 const INITIAL_SIZE = 20;
-const READ_MARKER_INVIEW_THRESHOLD_MS = 1 * 1000;
-const READ_MARKER_OUTOFVIEW_THRESHOLD_MS = 30 * 1000;
 const READ_RECEIPT_INTERVAL_MS = 500;
 
 const DEBUG = false;
@@ -58,7 +56,7 @@ if (DEBUG) {
  *
  * Also responsible for handling and sending read receipts.
  */
-const TimelinePanel = React.createClass({
+const TimelinePanel = createReactClass({
     displayName: 'TimelinePanel',
 
     propTypes: {
@@ -190,6 +188,12 @@ const TimelinePanel = React.createClass({
 
             // always show timestamps on event tiles?
             alwaysShowTimestamps: SettingsStore.getValue("alwaysShowTimestamps"),
+
+            // how long to show the RM for when it's visible in the window
+            readMarkerInViewThresholdMs: SettingsStore.getValue("readMarkerInViewThresholdMs"),
+
+            // how long to show the RM for when it's scrolled off-screen
+            readMarkerOutOfViewThresholdMs: SettingsStore.getValue("readMarkerOutOfViewThresholdMs"),
         };
     },
 
@@ -457,7 +461,7 @@ const TimelinePanel = React.createClass({
         // timeline window.
         //
         // see https://github.com/vector-im/vector-web/issues/1035
-        this._timelineWindow.paginate(EventTimeline.FORWARDS, 1, false).done(() => {
+        this._timelineWindow.paginate(EventTimeline.FORWARDS, 1, false).then(() => {
             if (this.unmounted) { return; }
 
             const { events, liveEvents } = this._getEvents();
@@ -592,8 +596,8 @@ const TimelinePanel = React.createClass({
 
     _readMarkerTimeout(readMarkerPosition) {
         return readMarkerPosition === 0 ?
-            READ_MARKER_INVIEW_THRESHOLD_MS :
-            READ_MARKER_OUTOFVIEW_THRESHOLD_MS;
+            this.state.readMarkerInViewThresholdMs :
+            this.state.readMarkerOutOfViewThresholdMs;
     },
 
     updateReadMarkerOnUserActivity: async function() {
@@ -684,20 +688,26 @@ const TimelinePanel = React.createClass({
             }
             this.lastRMSentEventId = this.state.readMarkerEventId;
 
+            const roomId = this.props.timelineSet.room.roomId;
+            const hiddenRR = !SettingsStore.getValue("sendReadReceipts", roomId);
+
             debuglog('TimelinePanel: Sending Read Markers for ',
                 this.props.timelineSet.room.roomId,
                 'rm', this.state.readMarkerEventId,
                 lastReadEvent ? 'rr ' + lastReadEvent.getId() : '',
+                ' hidden:' + hiddenRR,
             );
             MatrixClientPeg.get().setRoomReadMarkers(
                 this.props.timelineSet.room.roomId,
                 this.state.readMarkerEventId,
                 lastReadEvent, // Could be null, in which case no RR is sent
+                {hidden: hiddenRR},
             ).catch((e) => {
                 // /read_markers API is not implemented on this HS, fallback to just RR
                 if (e.errcode === 'M_UNRECOGNIZED' && lastReadEvent) {
                     return MatrixClientPeg.get().sendReadReceipt(
                         lastReadEvent,
+                        {hidden: hiddenRR},
                     ).catch((e) => {
                         console.error(e);
                         this.lastRRSentEventId = undefined;
@@ -1053,8 +1063,6 @@ const TimelinePanel = React.createClass({
             });
         };
 
-        let prom = this._timelineWindow.load(eventId, INITIAL_SIZE);
-
         // if we already have the event in question, TimelineWindow.load
         // returns a resolved promise.
         //
@@ -1063,9 +1071,14 @@ const TimelinePanel = React.createClass({
         // quite slow. So we detect that situation and shortcut straight to
         // calling _reloadEvents and updating the state.
 
-        if (prom.isFulfilled()) {
+        const timeline = this.props.timelineSet.getTimelineForEvent(eventId);
+        if (timeline) {
+            // This is a hot-path optimization by skipping a promise tick
+            // by repeating a no-op sync branch in TimelineSet.getTimelineForEvent & MatrixClient.getEventTimeline
+            this._timelineWindow.load(eventId, INITIAL_SIZE); // in this branch this method will happen in sync time
             onLoaded();
         } else {
+            const prom = this._timelineWindow.load(eventId, INITIAL_SIZE);
             this.setState({
                 events: [],
                 liveEvents: [],
@@ -1073,11 +1086,8 @@ const TimelinePanel = React.createClass({
                 canForwardPaginate: false,
                 timelineLoading: true,
             });
-
-            prom = prom.then(onLoaded, onError);
+            prom.then(onLoaded, onError);
         }
-
-        prom.done();
     },
 
     // handle the completion of a timeline load or localEchoUpdate, by

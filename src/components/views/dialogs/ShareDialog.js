@@ -20,7 +20,7 @@ import {Room, User, Group, RoomMember, MatrixEvent} from 'matrix-js-sdk';
 import sdk from '../../../index';
 import { _t } from '../../../languageHandler';
 import QRCode from 'qrcode-react';
-import {RoomPermalinkCreator, makeGroupPermalink, makeUserPermalink} from "../../../matrix-to";
+import {RoomPermalinkCreator, makeGroupPermalink, makeUserPermalink} from "../../../utils/permalinks/Permalinks";
 import * as ContextualMenu from "../../structures/ContextualMenu";
 
 const socials = [
@@ -153,7 +153,7 @@ export default class ShareDialog extends React.Component {
                     <input type="checkbox"
                            id="mx_ShareDialog_checkbox"
                            checked={this.state.linkSpecificEvent}
-                           onClick={this.onLinkSpecificEventCheckboxClick} />
+                           onChange={this.onLinkSpecificEventCheckboxClick} />
                     <label htmlFor="mx_ShareDialog_checkbox">
                         { _t('Link to most recent message') }
                     </label>

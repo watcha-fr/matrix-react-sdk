@@ -84,31 +84,9 @@ export default class MessageActionBar extends React.PureComponent {
         });
     };
 
-    onOptionsClick = (ev) => {
-        const MessageContextMenu = sdk.getComponent('context_menus.MessageContextMenu');
+    getMenuOptions = (ev) => {
+        const menuOptions = {};
         const buttonRect = ev.target.getBoundingClientRect();
-
-        const { getTile, getReplyThread } = this.props;
-        const tile = getTile && getTile();
-        const replyThread = getReplyThread && getReplyThread();
-
-        let e2eInfoCallback = null;
-        if (this.props.mxEvent.isEncrypted()) {
-            e2eInfoCallback = () => this.onCryptoClick();
-        }
-
-        const menuOptions = {
-            mxEvent: this.props.mxEvent,
-            chevronFace: "none",
-            permalinkCreator: this.props.permalinkCreator,
-            eventTileOps: tile && tile.getEventTileOps ? tile.getEventTileOps() : undefined,
-            collapseReplyThread: replyThread && replyThread.canCollapse() ? replyThread.collapse : undefined,
-            e2eInfoCallback: e2eInfoCallback,
-            onFinished: () => {
-                this.onFocusChange(false);
-            },
-        };
-
         // The window X and Y offsets are to adjust position when zoomed in to page
         const buttonRight = buttonRect.right + window.pageXOffset;
         const buttonBottom = buttonRect.bottom + window.pageYOffset;
@@ -122,53 +100,96 @@ export default class MessageActionBar extends React.PureComponent {
         } else {
             menuOptions.bottom = window.innerHeight - buttonTop;
         }
+        return menuOptions;
+    };
+
+    onReactClick = (ev) => {
+        const ReactionPicker = sdk.getComponent('emojipicker.ReactionPicker');
+
+        const menuOptions = {
+            ...this.getMenuOptions(ev),
+            mxEvent: this.props.mxEvent,
+            reactions: this.props.reactions,
+            chevronFace: "none",
+            onFinished: () => this.onFocusChange(false),
+        };
+
+        createMenu(ReactionPicker, menuOptions);
+
+        this.onFocusChange(true);
+    };
+
+    onOptionsClick = (ev) => {
+        const MessageContextMenu = sdk.getComponent('context_menus.MessageContextMenu');
+
+        const { getTile, getReplyThread } = this.props;
+        const tile = getTile && getTile();
+        const replyThread = getReplyThread && getReplyThread();
+
+        let e2eInfoCallback = null;
+        if (this.props.mxEvent.isEncrypted()) {
+            e2eInfoCallback = () => this.onCryptoClick();
+        }
+
+        const menuOptions = {
+            ...this.getMenuOptions(ev),
+            mxEvent: this.props.mxEvent,
+            chevronFace: "none",
+            permalinkCreator: this.props.permalinkCreator,
+            eventTileOps: tile && tile.getEventTileOps ? tile.getEventTileOps() : undefined,
+            collapseReplyThread: replyThread && replyThread.canCollapse() ? replyThread.collapse : undefined,
+            e2eInfoCallback: e2eInfoCallback,
+            onFinished: () => {
+                this.onFocusChange(false);
+            },
+        };
 
         createMenu(MessageContextMenu, menuOptions);
 
         this.onFocusChange(true);
     };
 
-    renderReactButton() {
-        const ReactMessageAction = sdk.getComponent('messages.ReactMessageAction');
-        const { mxEvent, reactions } = this.props;
-
-        return <ReactMessageAction
-            mxEvent={mxEvent}
-            reactions={reactions}
-            onFocusChange={this.onFocusChange}
-        />;
-    }
-
     render() {
+        const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
+
         let reactButton;
         let replyButton;
         let editButton;
 
         if (isContentActionable(this.props.mxEvent)) {
             if (this.context.room.canReact) {
-                reactButton = this.renderReactButton();
+                reactButton = <AccessibleButton
+                    className="mx_MessageActionBar_maskButton mx_MessageActionBar_reactButton"
+                    title={_t("React")}
+                    onClick={this.onReactClick}
+                />;
             }
             if (this.context.room.canReply) {
-                replyButton = <span className="mx_MessageActionBar_maskButton mx_MessageActionBar_replyButton"
+                replyButton = <AccessibleButton
+                    className="mx_MessageActionBar_maskButton mx_MessageActionBar_replyButton"
                     title={_t("Reply")}
                     onClick={this.onReplyClick}
                 />;
             }
         }
         if (canEditContent(this.props.mxEvent)) {
-            editButton = <span className="mx_MessageActionBar_maskButton mx_MessageActionBar_editButton"
+            editButton = <AccessibleButton
+                className="mx_MessageActionBar_maskButton mx_MessageActionBar_editButton"
                 title={_t("Edit")}
                 onClick={this.onEditClick}
             />;
         }
 
-        return <div className="mx_MessageActionBar">
+        // aria-live=off to not have this read out automatically as navigating around timeline, gets repetitive.
+        return <div className="mx_MessageActionBar" role="toolbar" aria-label={_t("Message Actions")} aria-live="off">
             {reactButton}
             {replyButton}
             {editButton}
-            <span className="mx_MessageActionBar_maskButton mx_MessageActionBar_optionsButton"
+            <AccessibleButton
+                className="mx_MessageActionBar_maskButton mx_MessageActionBar_optionsButton"
                 title={_t("Options")}
                 onClick={this.onOptionsClick}
+                aria-haspopup={true}
             />
         </div>;
     }

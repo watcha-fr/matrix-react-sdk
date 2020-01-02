@@ -232,13 +232,13 @@ Example:
 }
 */
 
-import SdkConfig from './SdkConfig';
 import MatrixClientPeg from './MatrixClientPeg';
 import { MatrixEvent } from 'matrix-js-sdk';
 import dis from './dispatcher';
 import WidgetUtils from './utils/WidgetUtils';
 import RoomViewStore from './stores/RoomViewStore';
 import { _t } from './languageHandler';
+import {IntegrationManagers} from "./integrations/IntegrationManagers";
 
 function sendResponse(event, res) {
     const data = JSON.parse(JSON.stringify(event.data));
@@ -279,7 +279,7 @@ function inviteUser(event, roomId, userId) {
         }
     }
 
-    client.invite(roomId, userId).done(function() {
+    client.invite(roomId, userId).then(function() {
         sendResponse(event, {
             success: true,
         });
@@ -398,7 +398,7 @@ function setPlumbingState(event, roomId, status) {
         sendError(event, _t('You need to be logged in.'));
         return;
     }
-    client.sendStateEvent(roomId, "m.room.plumbing", { status: status }).done(() => {
+    client.sendStateEvent(roomId, "m.room.plumbing", { status: status }).then(() => {
         sendResponse(event, {
             success: true,
         });
@@ -414,7 +414,7 @@ function setBotOptions(event, roomId, userId) {
         sendError(event, _t('You need to be logged in.'));
         return;
     }
-    client.sendStateEvent(roomId, "m.room.bot.options", event.data.content, "_" + userId).done(() => {
+    client.sendStateEvent(roomId, "m.room.bot.options", event.data.content, "_" + userId).then(() => {
         sendResponse(event, {
             success: true,
         });
@@ -444,7 +444,7 @@ function setBotPower(event, roomId, userId, level) {
             },
         );
 
-        client.setPowerLevel(roomId, userId, level, powerEvent).done(() => {
+        client.setPowerLevel(roomId, userId, level, powerEvent).then(() => {
             sendResponse(event, {
                 success: true,
             });
@@ -548,7 +548,8 @@ const onMessage = function(event) {
     // (See https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage)
     let configUrl;
     try {
-        configUrl = new URL(SdkConfig.get().integrations_ui_url);
+        if (!openManagerUrl) openManagerUrl = IntegrationManagers.sharedInstance().getPrimaryManager().uiUrl;
+        configUrl = new URL(openManagerUrl);
     } catch (e) {
         // No integrations UI URL, ignore silently.
         return;
@@ -656,6 +657,7 @@ const onMessage = function(event) {
 };
 
 let listenerCount = 0;
+let openManagerUrl = null;
 module.exports = {
     startListening: function() {
         if (listenerCount === 0) {
@@ -677,5 +679,9 @@ module.exports = {
             );
             console.error(e);
         }
+    },
+
+    setOpenManagerUrl: function(url) {
+        openManagerUrl = url;
     },
 };

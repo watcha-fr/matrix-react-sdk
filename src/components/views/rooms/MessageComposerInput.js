@@ -48,20 +48,18 @@ import Markdown from '../../../Markdown';
 import MessageComposerStore from '../../../stores/MessageComposerStore';
 import ContentMessages from '../../../ContentMessages';
 
-import {MATRIXTO_URL_PATTERN} from '../../../linkify-matrix';
-
 import EMOJIBASE from 'emojibase-data/en/compact.json';
 import EMOTICON_REGEX from 'emojibase-regex/emoticon';
 
 import SettingsStore, {SettingLevel} from "../../../settings/SettingsStore";
-import {makeUserPermalink} from "../../../matrix-to";
+import {getPrimaryPermalinkEntity, makeUserPermalink} from "../../../utils/permalinks/Permalinks";
 import ReplyPreview from "./ReplyPreview";
 import RoomViewStore from '../../../stores/RoomViewStore';
 import ReplyThread from "../elements/ReplyThread";
 import {ContentHelpers} from 'matrix-js-sdk';
 import AccessibleButton from '../elements/AccessibleButton';
 import {findEditableEvent} from '../../../utils/EventUtils';
-import ComposerHistoryManager from "../../../ComposerHistoryManager";
+import SlateComposerHistoryManager from "../../../SlateComposerHistoryManager";
 import TypingStore from "../../../stores/TypingStore";
 
 const REGEX_EMOTICON_WHITESPACE = new RegExp('(?:^|\\s)(' + EMOTICON_REGEX.source + ')\\s$');
@@ -141,7 +139,7 @@ export default class MessageComposerInput extends React.Component {
 
     client: MatrixClient;
     autocomplete: Autocomplete;
-    historyManager: ComposerHistoryManager;
+    historyManager: SlateComposerHistoryManager;
 
     constructor(props, context) {
         super(props, context);
@@ -224,18 +222,15 @@ export default class MessageComposerInput extends React.Component {
                         // special case links
                         if (tag === 'a') {
                             const href = el.getAttribute('href');
-                            let m;
-                            if (href) {
-                                m = href.match(MATRIXTO_URL_PATTERN);
-                            }
-                            if (m) {
+                            const permalinkEntity = getPrimaryPermalinkEntity(href);
+                            if (permalinkEntity) {
                                 return {
                                     object: 'inline',
                                     type: 'pill',
                                     data: {
                                         href,
                                         completion: el.innerText,
-                                        completionId: m[1],
+                                        completionId: permalinkEntity,
                                     },
                                 };
                             } else {
@@ -331,7 +326,7 @@ export default class MessageComposerInput extends React.Component {
 
     componentWillMount() {
         this.dispatcherRef = dis.register(this.onAction);
-        this.historyManager = new ComposerHistoryManager(this.props.room.roomId, 'mx_slate_composer_history_');
+        this.historyManager = new SlateComposerHistoryManager(this.props.room.roomId, 'mx_slate_composer_history_');
     }
 
     componentWillUnmount() {
@@ -541,7 +536,7 @@ export default class MessageComposerInput extends React.Component {
 
         const textWithMdPills = this.plainWithMdPills.serialize(editorState);
         const markdown = new Markdown(textWithMdPills);
-        // HTML deserialize has custom rules to turn matrix.to links into pill objects.
+        // HTML deserialize has custom rules to turn permalinks into pill objects.
         return this.html.deserialize(markdown.toHTML());
     }
 

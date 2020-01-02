@@ -23,7 +23,7 @@ import {
 } from "./controllers/NotificationControllers";
 import CustomStatusController from "./controllers/CustomStatusController";
 import ThemeController from './controllers/ThemeController';
-import LowBandwidthController from "./controllers/LowBandwidthController";
+import ReloadOnChangeController from "./controllers/ReloadOnChangeController";
 
 // These are just a bunch of helper arrays to avoid copy/pasting a bunch of times
 const LEVELS_ROOM_SETTINGS = ['device', 'room-device', 'room-account', 'account', 'config'];
@@ -113,6 +113,51 @@ export const SETTINGS = {
         displayName: _td("Render simple counters in room header"),
         supportedLevels: LEVELS_FEATURE,
         default: false,
+    },
+    "feature_many_integration_managers": {
+        isFeature: true,
+        displayName: _td("Multiple integration managers"),
+        supportedLevels: LEVELS_FEATURE,
+        default: false,
+    },
+    "feature_mjolnir": {
+        isFeature: true,
+        displayName: _td("Try out new ways to ignore people (experimental)"),
+        supportedLevels: LEVELS_FEATURE,
+        default: false,
+    },
+    "mjolnirRooms": {
+        supportedLevels: ['account'],
+        default: [],
+    },
+    "mjolnirPersonalRoom": {
+        supportedLevels: ['account'],
+        default: null,
+    },
+    "feature_dm_verification": {
+        isFeature: true,
+        displayName: _td("Send verification requests in direct message," +
+            " including a new verification UX in the member panel."),
+        supportedLevels: LEVELS_FEATURE,
+        default: false,
+    },
+    "feature_cross_signing": {
+        isFeature: true,
+        displayName: _td("Enable cross-signing to verify per-user instead of per-device (in development)"),
+        supportedLevels: LEVELS_FEATURE,
+        default: false,
+        controller: new ReloadOnChangeController(),
+    },
+    "feature_event_indexing": {
+        isFeature: true,
+        supportedLevels: LEVELS_FEATURE,
+        displayName: _td("Enable local event indexing and E2EE search (requires restart)"),
+        default: false,
+    },
+    "useCiderComposer": {
+        displayName: _td("Use the new, faster, composer for writing messages"),
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        default: true,
     },
     "MessageComposerInput.suggestEmoji": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
@@ -247,6 +292,15 @@ export const SETTINGS = {
         default: "light",
         controller: new ThemeController(),
     },
+    "custom_themes": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        default: [],
+    },
+    "use_system_theme": {
+        supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS,
+        default: true,
+        displayName: _td("Match system theme"),
+    },
     "webRtcAllowPeerToPeer": {
         supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS_WITH_CONFIG,
         displayName: _td('Allow Peer-to-Peer for 1:1 calls'),
@@ -273,6 +327,14 @@ export const SETTINGS = {
         supportedLevels: ['account'],
         default: [],
     },
+    "integrationProvisioning": {
+        supportedLevels: ['account'],
+        default: true,
+    },
+    "allowedWidgets": {
+        supportedLevels: ['room-account'],
+        default: {}, // none allowed
+    },
     "analyticsOptIn": {
         supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS_WITH_CONFIG,
         displayName: _td('Send analytics data'),
@@ -285,6 +347,14 @@ export const SETTINGS = {
     "autocompleteDelay": {
         supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS_WITH_CONFIG,
         default: 200,
+    },
+    "readMarkerInViewThresholdMs": {
+        supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS_WITH_CONFIG,
+        default: 3000,
+    },
+    "readMarkerOutOfViewThresholdMs": {
+        supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS_WITH_CONFIG,
+        default: 30000,
     },
     "blacklistUnverifiedDevices": {
         // We specifically want to have room-device > device so that users may set a device default
@@ -388,6 +458,27 @@ export const SETTINGS = {
         supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS_WITH_CONFIG,
         displayName: _td('Low bandwidth mode'),
         default: false,
-        controller: new LowBandwidthController(),
+        controller: new ReloadOnChangeController(),
+    },
+    "fallbackICEServerAllowed": {
+        supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS,
+        displayName: _td(
+            "Allow fallback call assist server turn.matrix.org when your homeserver " +
+            "does not offer one (your IP address would be shared during a call)",
+        ),
+        // This is a tri-state value, where `null` means "prompt the user".
+        default: null,
+    },
+    "sendReadReceipts": {
+        supportedLevels: LEVELS_ROOM_SETTINGS,
+        displayName: _td(
+            "Send read receipts for messages (requires compatible homeserver to disable)",
+        ),
+        default: true,
+    },
+    "showImages": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("Show previews/thumbnails for images"),
+        default: true,
     },
 };

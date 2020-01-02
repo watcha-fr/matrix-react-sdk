@@ -1,6 +1,7 @@
 /*
 Copyright 2015, 2016 OpenMarket Ltd
 Copyright 2017, 2018, 2019 New Vector Ltd
+Copyright 2019 The Matrix.org Foundation C.I.C.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,6 +17,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import { _t } from '../../../languageHandler';
 import sdk from '../../../index';
@@ -37,7 +39,7 @@ const PHASE_EMAIL_SENT = 3;
 // User has clicked the link in email and completed reset
 const PHASE_DONE = 4;
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'ForgotPassword',
 
     propTypes: {
@@ -62,10 +64,12 @@ module.exports = React.createClass({
             serverIsAlive: true,
             serverErrorIsFatal: false,
             serverDeadError: "",
+            serverRequiresIdServer: null,
         };
     },
 
     componentWillMount: function() {
+        this.reset = null;
         this._checkServerLiveliness(this.props.serverConfig);
     },
 
@@ -83,7 +87,14 @@ module.exports = React.createClass({
                 serverConfig.hsUrl,
                 serverConfig.isUrl,
             );
-            this.setState({serverIsAlive: true});
+
+            const pwReset = new PasswordReset(serverConfig.hsUrl, serverConfig.isUrl);
+            const serverRequiresIdServer = await pwReset.doesServerRequireIdServerParam();
+
+            this.setState({
+                serverIsAlive: true,
+                serverRequiresIdServer,
+            });
         } catch (e) {
             this.setState(AutoDiscoveryUtils.authComponentStateForError(e, "forgot_password"));
         }
@@ -94,7 +105,7 @@ module.exports = React.createClass({
             phase: PHASE_SENDING_EMAIL,
         });
         this.reset = new PasswordReset(this.props.serverConfig.hsUrl, this.props.serverConfig.isUrl);
-        this.reset.resetPassword(email, password).done(() => {
+        this.reset.resetPassword(email, password).then(() => {
             this.setState({
                 phase: PHASE_EMAIL_SENT,
             });
@@ -106,17 +117,18 @@ module.exports = React.createClass({
         });
     },
 
-    onVerify: function(ev) {
+    onVerify: async function(ev) {
         ev.preventDefault();
         if (!this.reset) {
             console.error("onVerify called before submitPasswordReset!");
             return;
         }
-        this.reset.checkEmailLinkClicked().done((res) => {
+        try {
+            await this.reset.checkEmailLinkClicked();
             this.setState({ phase: PHASE_DONE });
-        }, (err) => {
+        } catch (err) {
             this.showErrorDialog(err.message);
-        });
+        }
     },
 
     onSubmitForm: async function(ev) {
@@ -199,6 +211,7 @@ module.exports = React.createClass({
             serverConfig={this.props.serverConfig}
             onServerConfigChange={this.props.onServerConfigChange}
             delayTimeMs={0}
+            showIdentityServerIfRequiredByHomeserver={true}
             onAfterSubmit={this.onServerDetailsNextPhaseClick}
             submitText={_t("Next")}
             submitClass="mx_Login_submit"
@@ -254,6 +267,22 @@ module.exports = React.createClass({
             >
                 {_t('Change')}
             </a>;
+        }
+
+        if (!this.props.serverConfig.isUrl && this.state.serverRequiresIdServer) {
+            return <div>
+                <h3>
+                    {yourMatrixAccountText}
+                    {editLink}
+                </h3>
+                {_t(
+                    "No identity server is configured: " +
+                    "add one in server settings to reset your password.",
+                )}
+                <a className="mx_AuthBody_changeFlow" onClick={this.onLoginClick} href="#">
+                    {_t('Sign in instead')}
+                </a>
+            </div>;
         }
 
         return <div>

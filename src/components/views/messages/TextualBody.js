@@ -16,27 +16,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-'use strict';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
 import highlight from 'highlight.js';
 import * as HtmlUtils from '../../../HtmlUtils';
 import {formatDate} from '../../../DateUtils';
 import sdk from '../../../index';
-import ScalarAuthClient from '../../../ScalarAuthClient';
 import Modal from '../../../Modal';
-import SdkConfig from '../../../SdkConfig';
 import dis from '../../../dispatcher';
 import { _t } from '../../../languageHandler';
 import * as ContextualMenu from '../../structures/ContextualMenu';
 import SettingsStore from "../../../settings/SettingsStore";
 import ReplyThread from "../elements/ReplyThread";
-import {host as matrixtoHost} from '../../../matrix-to';
 import {pillifyLinks} from '../../../utils/pillify';
+import {IntegrationManagers} from "../../../integrations/IntegrationManagers";
+import {isPermalinkHost} from "../../../utils/permalinks/Permalinks";
 
-module.exports = React.createClass({
+module.exports = createReactClass({
     displayName: 'TextualBody',
 
     propTypes: {
@@ -95,6 +93,8 @@ module.exports = React.createClass({
     },
 
     _applyFormatting() {
+        this.activateSpoilers(this.refs.content.children);
+
         // pillifyLinks BEFORE linkifyElement because plain room/user URLs in the composer
         // are still sent as plaintext URLs. If these are ever pillified in the composer,
         // we should be pillify them here by doing the linkifying BEFORE the pillifying.
@@ -144,7 +144,7 @@ module.exports = React.createClass({
     },
 
     shouldComponentUpdate: function(nextProps, nextState) {
-        //console.log("shouldComponentUpdate: ShowUrlPreview for %s is %s", this.props.mxEvent.getId(), this.props.showUrlPreview);
+        //console.info("shouldComponentUpdate: ShowUrlPreview for %s is %s", this.props.mxEvent.getId(), this.props.showUrlPreview);
 
         // exploit that events are immutable :)
         return (nextProps.mxEvent.getId() !== this.props.mxEvent.getId() ||
@@ -159,7 +159,7 @@ module.exports = React.createClass({
     },
 
     calculateUrlPreview: function() {
-        //console.log("calculateUrlPreview: ShowUrlPreview for %s is %s", this.props.mxEvent.getId(), this.props.showUrlPreview);
+        //console.info("calculateUrlPreview: ShowUrlPreview for %s is %s", this.props.mxEvent.getId(), this.props.showUrlPreview);
 
         if (this.props.showUrlPreview) {
             let links = this.findLinks(this.refs.content.children);
@@ -180,6 +180,34 @@ module.exports = React.createClass({
                     this.setState({ widgetHidden: hidden });
                 }
             }
+        }
+    },
+
+    activateSpoilers: function(nodes) {
+        let node = nodes[0];
+        while (node) {
+            if (node.tagName === "SPAN" && typeof node.getAttribute("data-mx-spoiler") === "string") {
+                const spoilerContainer = document.createElement('span');
+
+                const reason = node.getAttribute("data-mx-spoiler");
+                const Spoiler = sdk.getComponent('elements.Spoiler');
+                node.removeAttribute("data-mx-spoiler"); // we don't want to recurse
+                const spoiler = <Spoiler
+                    reason={reason}
+                    contentHtml={node.outerHTML}
+                />;
+
+                ReactDOM.render(spoiler, spoilerContainer);
+                node.parentNode.replaceChild(spoilerContainer, node);
+
+                node = spoilerContainer;
+            }
+
+            if (node.childNodes && node.childNodes.length) {
+                this.activateSpoilers(node.childNodes);
+            }
+
+            node = node.nextSibling;
         }
     },
 
@@ -220,10 +248,10 @@ module.exports = React.createClass({
             const url = node.getAttribute("href");
             const host = url.match(/^https?:\/\/(.*?)(\/|$)/)[1];
 
-            // never preview matrix.to links (if anything we should give a smart
+            // never preview permalinks (if anything we should give a smart
             // preview of the room/user they point to: nobody needs to be reminded
             // what the matrix.to site looks like).
-            if (host === matrixtoHost) return false;
+            if (isPermalinkHost(host)) return false;
 
             if (node.textContent.toLowerCase().trim().startsWith(host.toLowerCase())) {
                 // it's a "foo.pl" style link
@@ -318,12 +346,19 @@ module.exports = React.createClass({
         // which requires the user to click through and THEN we can open the link in a new tab because
         // the window.open command occurs in the same stack frame as the onClick callback.
 
+        const managers = IntegrationManagers.sharedInstance();
+        if (!managers.hasManager()) {
+            managers.openNoManagerDialog();
+            return;
+        }
+
         // Go fetch a scalar token
-        const scalarClient = new ScalarAuthClient();
+        const integrationManager = managers.getPrimaryManager();
+        const scalarClient = integrationManager.getScalarClient();
         scalarClient.connect().then(() => {
             const completeUrl = scalarClient.getStarterLink(starterLink);
             const QuestionDialog = sdk.getComponent("dialogs.QuestionDialog");
-            const integrationsUrl = SdkConfig.get().integrations_ui_url;
+            const integrationsUrl = integrationManager.uiUrl;
             Modal.createTrackedDialog('Add an integration', '', QuestionDialog, {
                 title: _t("Add an Integration"),
                 description:
@@ -383,8 +418,8 @@ module.exports = React.createClass({
 
     render: function() {
         if (this.props.editState) {
-            const MessageEditor = sdk.getComponent('elements.MessageEditor');
-            return <MessageEditor editState={this.props.editState} className="mx_EventTile_content" />;
+            const EditMessageComposer = sdk.getComponent('rooms.EditMessageComposer');
+            return <EditMessageComposer editState={this.props.editState} className="mx_EventTile_content" />;
         }
         const mxEvent = this.props.mxEvent;
         const content = mxEvent.getContent();
