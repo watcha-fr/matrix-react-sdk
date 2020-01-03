@@ -86,7 +86,7 @@ export function showStartChatInviteDialog() {
         validAddressTypes: ['mx-user-id', 'email'],
         button: _t("Start Chat"),
         onFinished: _onStartDmFinished,
-    }, /*className=*/null, /*isPriority=*/false, /*isStatic=*/true);
+    }, /*className=* /null, /*isPriority=* /false, /*isStatic=* /true);
 }
 
 export function showRoomInviteDialog(roomId) {
@@ -107,7 +107,7 @@ export function showRoomInviteDialog(roomId) {
         onFinished: (shouldInvite, addrs) => {
             _onRoomInviteFinished(roomId, shouldInvite, addrs);
         },
-    }, /*className=*/null, /*isPriority=*/false, /*isStatic=*/true);
+    }, /*className=* /null, /*isPriority=* /false, /*isStatic=* /true);
 }
 */
 

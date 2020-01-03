@@ -1954,8 +1954,8 @@ module.exports = createReactClass({
         return (
             <main className={"mx_RoomView" + (inCall ? " mx_RoomView_inCall" : "")} ref="roomView">
                 <ErrorBoundary>
+                    {/* added for watcha: added roomId to fix the problem with room invitation */}
                     <RoomHeader ref="header" room={this.state.room} searchInfo={searchInfo}
-                        {/* added for watcha: added roomId to fix the problem with room invitation */}
                         roomId={this.state.room.roomId}
                         oobData={this.props.oobData}
                         inRoom={myMembership === 'join'}

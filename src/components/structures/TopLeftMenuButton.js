@@ -137,11 +137,10 @@ export default class TopLeftMenuButton extends React.Component {
             </div>;
             chevronElement = <span className="mx_TopLeftMenuButton_chevron" />;
         }
+        /* changed for watcha: AccessibleButton below had onClick=this.onToggleMenu */
         return (
-            
             <AccessibleButton
                 className="mx_TopLeftMenuButton"
-                {/* changed for watcha: was "onClick={this.onToggleMenu}" in this AccessibleButton */}
                 onClick={(e) => {}}
                 inputRef={(r) => this._buttonRef = r}
                 aria-label={_t("Your profile")}
