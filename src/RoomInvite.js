@@ -48,7 +48,7 @@ export function showStartChatInviteDialog() {
         description: _t("Who would you like to communicate with?"),
         placeholder: _t("Email, name"),
         button: _t("Start Chat"),
-        onFinished: _onStartChatFinished,
+        onFinished: _onStartDmFinished,
     });
 }
 
@@ -56,7 +56,6 @@ export function showRoomInviteDialog(roomId) {
     const InviteMemberDialog = sdk.getComponent("dialogs.InviteMemberDialog");
     Modal.createTrackedDialog('Chat Invite', '', InviteMemberDialog, {
         title: _t('Invite new room members'),
-        description: _t('Who would you like to add to this room?'),
         button: _t('Send Invites'),
         placeholder: _t("Email, name"),
         roomId: roomId,

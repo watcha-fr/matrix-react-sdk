@@ -347,12 +347,7 @@ const RoomSubList = createReactClass({
             </div>
         );
     },
-/*insertion for watcha*/
-    onAddRoom: function() {
-        dis.dispatch({action: 'view_create_room'});
-    },
 
-/*end of insertion for watcha*/
     checkOverflow: function() {
         if (this.refs.scroller) {
             this.refs.scroller.checkOverflow();

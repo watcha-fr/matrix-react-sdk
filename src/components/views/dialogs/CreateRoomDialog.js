@@ -65,13 +65,17 @@ export default createReactClass({
     },
 
     componentDidMount() {
+        /* removed for watcha
         this._detailsRef.addEventListener("toggle", this.onDetailsToggled);
+        */
         // move focus to first field when showing dialog
         this._nameFieldRef.focus();
     },
 
     componentWillUnmount() {
+        /* removed for watcha
         this._detailsRef.removeEventListener("toggle", this.onDetailsToggled);
+        */
     },
 
     _onKeyDown: function(event) {
