@@ -287,19 +287,19 @@ module.exports = React.createClass({
                 </AccessibleButton>;
         }
 
-      /*insertion for watcha*/
-      let inviteRoomButton;
-      if (this.props.inRoom) {
-        // TODO: should we *not* have this button for one-on-one chats ?
-        inviteRoomButton =
-          <AccessibleButton className="mx_RoomHeader_button mx_RoomHeader_inviteButton"
-          // this string already exists in other places in Riot,
-          // but we also add its translation in our resources files,
-          // in case Riot would change their string...
-          onClick={this.onInviteButton}
-          title={_t('Invite users')}
-          >
-          </AccessibleButton>;
+        /*insertion for watcha*/
+        let inviteRoomButton;
+        if (this.props.inRoom) {
+          // TODO: should we *not* have this button for one-on-one chats ?
+          inviteRoomButton =
+            <AccessibleButton className="mx_RoomHeader_button mx_RoomHeader_inviteButton"
+            // this string already exists in other places in Riot,
+            // but we also add its translation in our resources files,
+            // in case Riot would change their string...
+            onClick={this.onInviteButton}
+            title={_t('Invite users')}
+            >
+            </AccessibleButton>;
         }
         /*end of insertion*/
 
