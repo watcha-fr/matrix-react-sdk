@@ -290,7 +290,6 @@ module.exports = React.createClass({
         /*insertion for watcha*/
         let inviteRoomButton;
         if (this.props.inRoom) {
-          // TODO: should we *not* have this button for one-on-one chats ?
           inviteRoomButton =
             <AccessibleButton className="mx_RoomHeader_button mx_RoomHeader_inviteButton"
             // this string already exists in other places in Riot,
