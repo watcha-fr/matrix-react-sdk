@@ -232,8 +232,9 @@ limitations under the License.
 
 /*insertion for watcha*/
 .mx_RoomHeader_inviteButton{
-mask-image: url('$(res)/img/feather-customised/user-add.svg');
-padding: 2px;
+    mask-image: url('$(res)/img/feather-customised/user-add.svg');
+    margin-top: 2px;
+    -webkit-mask-repeat: no-repeat;
 }
 /*end of insertion*/
 
