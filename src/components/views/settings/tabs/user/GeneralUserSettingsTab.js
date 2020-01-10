@@ -452,7 +452,9 @@ export default class GeneralUserSettingsTab extends React.Component {
 
         return (
             <div className="mx_SettingsTab">
+                {/*removed for watcha
                 <div className="mx_SettingsTab_heading">{_t("General")}</div>
+                */}
                 {this._renderProfileSection()}
                 {this._renderAccountSection()}
                 {this._renderLanguageSection()}
@@ -461,7 +463,7 @@ export default class GeneralUserSettingsTab extends React.Component {
                 {this._renderThemeSection()}
                 <div className="mx_SettingsTab_heading">{discoWarning} {_t("Discovery")}</div>
                 {this._renderDiscoverySection()}
-                {this._renderIntegrationManagerSection() /* Has its own title */}
+                {this._renderIntegrationManagerSection() /* Has its own title *(comment edited for watcha)/}
                 <div className="mx_SettingsTab_heading">{_t("Deactivate account")}</div>
                 {this._renderManagementSection()}
                 */
