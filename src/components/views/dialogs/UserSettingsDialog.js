@@ -126,6 +126,9 @@ export default class UserSettingsDialog extends React.Component {
 
         return (
             <BaseDialog className='mx_UserSettingsDialog' hasCancel={true}
+                        /* change for watcha
+                        onFinished={this.props.onFinished} title={_t("Settings")}>
+                        */
                         onFinished={this.props.onFinished}>
                 <div className='ms_SettingsDialog_content'>
                     <TabbedView tabs={this._getTabs()} />
