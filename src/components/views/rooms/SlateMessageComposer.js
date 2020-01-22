@@ -74,6 +74,14 @@ CallButton.propTypes = {
 }
 
 function VideoCallButton(props) {
+    /* insertion for watcha */
+    const room = MatrixClientPeg.get().getRoom(props.roomId)
+    const members = room.getJoinedMembers();
+    if (members.length > 2) {
+        return null;
+    }
+    /* end of insertion */
+
     const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
     const onCallClick = (ev) => {
         dis.dispatch({
