@@ -39,6 +39,14 @@ ComposerAvatar.propTypes = {
 };
 
 function CallButton(props) {
+    /* insertion for watcha */
+    const room = MatrixClientPeg.get().getRoom(props.roomId)
+    const members = room.getJoinedMembers();
+    if (members.length > 2) {
+        return null;
+    }
+    /* end of insertion */
+
     const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
     const onVoiceCallClick = (ev) => {
         dis.dispatch({
