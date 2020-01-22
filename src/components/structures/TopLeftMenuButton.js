@@ -141,15 +141,18 @@ export default class TopLeftMenuButton extends React.Component {
         return (
             <AccessibleButton
                 className="mx_TopLeftMenuButton"
-                onClick={(e) => {}} // changed for watcha: was onClick=this.onToggleMenu
+                /* changed for watcha
+                onClick={this.onToggleMenu}
+                */
+                onClick={e => {}}
                 inputRef={(r) => this._buttonRef = r}
                 aria-label={_t("Your profile")}
                 aria-haspopup={true}
                 aria-expanded={this.state.menuDisplayed}
             >
-            {/* insertion for watcha*/}
+            {/* insertion for watcha */}
             <span className="HomePageButton" onClick={this.onUserBoxContainerClick}>
-            {/* end of insertion*/}
+            {/* end of insertion */}
                 <BaseAvatar
                     idName={MatrixClientPeg.get().getUserId()}
                     name={name}
@@ -159,16 +162,16 @@ export default class TopLeftMenuButton extends React.Component {
                     resizeMethod="crop"
                 />
                 { nameElement }
-            {/* insertion for watcha*/}
+            {/* insertion for watcha */}
             </span>
              <div className="TopLeftMenuButonsContainer">
                 {settingsItem}
                 {signInOutItem}
             </div>
-            {/* end of insertion*/}
-                {/*removed for watcha  
-                { chevronElement }
-                 */}
+            {/* end of insertion */}
+            {/* deletion for watcha  
+            { chevronElement }
+            */}
             </AccessibleButton>
         );
     }
