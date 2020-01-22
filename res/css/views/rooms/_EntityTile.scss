@@ -25,7 +25,7 @@ limitations under the License.
     padding-right: 30px;
     position: relative; // to keep the chevron aligned
 }
-/*removed for watcha
+
 .mx_EntityTile:hover::before {
     content: "";
     position: absolute;
@@ -37,7 +37,6 @@ limitations under the License.
     height: 16px;
     background-color: $rightpanel-button-color;
 }
-*/
 
 .mx_EntityTile .mx_PresenceLabel {
     display: none;
