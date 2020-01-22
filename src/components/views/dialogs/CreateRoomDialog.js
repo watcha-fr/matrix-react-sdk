@@ -65,7 +65,7 @@ export default createReactClass({
     },
 
     componentDidMount() {
-        /* removed for watcha
+        /* deletion for watcha
         this._detailsRef.addEventListener("toggle", this.onDetailsToggled);
         */
         // move focus to first field when showing dialog
@@ -73,7 +73,7 @@ export default createReactClass({
     },
 
     componentWillUnmount() {
-        /* removed for watcha
+        /* deletion for watcha
         this._detailsRef.removeEventListener("toggle", this.onDetailsToggled);
         */
     },

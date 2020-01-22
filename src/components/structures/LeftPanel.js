@@ -28,10 +28,9 @@ import TagPanelButtons from './TagPanelButtons';
 import SettingsStore from '../../settings/SettingsStore';
 import {_t} from "../../languageHandler";
 import Analytics from "../../Analytics";
-/*insertion for watcha*/
+/* insertion for watcha */
 import WatchaAdmin from './WatchaAdmin';
-/*end of insertion*/
-
+/* end of insertion */
 
 const LeftPanel = createReactClass({
     displayName: 'LeftPanel',
@@ -53,7 +52,7 @@ const LeftPanel = createReactClass({
         };
     },
 
-    /*insertion for watcha*/
+    /* insertion for watcha */
     componentDidMount: function() {
         const self = this;
         this.context.matrixClient
@@ -68,7 +67,7 @@ const LeftPanel = createReactClass({
                 self.setState({ isServerAdmin: false });
             });
     },
-    /*end of insertion*/
+    /* end of insertion */
 
     componentWillMount: function() {
         this.focusedElement = null;
@@ -302,12 +301,12 @@ const LeftPanel = createReactClass({
             breadcrumbs = (<RoomBreadcrumbs collapsed={this.props.collapsed} />);
         }
 
-        {/*insertion for watcha*/}
+        {/* insertion for watcha */}
         let watchaAdmin;
         if (this.state.isServerAdmin) {
             watchaAdmin = (<WatchaAdmin collapsed={this.props.collapsed} />);
         };
-        {/*end of insertion*/}
+        {/* end of insertion */}
 
         return (
             <div className={containerClasses}>
@@ -317,9 +316,9 @@ const LeftPanel = createReactClass({
                     { breadcrumbs }
                     <CallPreview ConferenceHandler={VectorConferenceHandler} />
                     <div className="mx_LeftPanel_exploreAndFilterRow" onKeyDown={this._onKeyDown} onFocus={this._onFocus} onBlur={this._onBlur}>
-                        { /* removed for watcha
+                        {/* deletion for watcha
                         { exploreButton }
-                        */ }
+                        */}
                         { searchBox }
                     </div>
                     <RoomList
@@ -331,9 +330,9 @@ const LeftPanel = createReactClass({
                         collapsed={this.props.collapsed}
                         searchFilter={this.state.searchFilter}
                         ConferenceHandler={VectorConferenceHandler} />
-                    {/*insertion for watcha*/}
+                    {/* insertion for watcha */}
                     { watchaAdmin }
-                    {/*end of insertion*/}
+                    {/* end of insertion */}
                 </aside>
             </div>
         );
