@@ -230,13 +230,13 @@ limitations under the License.
     mask-image: url('$(res)/img/feather-customised/share.svg');
 }
 
-/*insertion for watcha*/
+/* insertion for watcha */
 .mx_RoomHeader_inviteButton{
     mask-image: url('$(res)/img/feather-customised/user-add.svg');
     margin-top: 2px;
-    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
 }
-/*end of insertion*/
+/* end of insertion */
 
 .mx_RoomHeader_manageIntegsButton::before {
     mask-image: url('$(res)/img/feather-customised/grid.svg');
