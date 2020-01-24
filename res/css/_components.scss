@@ -201,8 +201,12 @@
 @import "./views/voip/_CallView.scss";
 @import "./views/voip/_IncomingCallbox.scss";
 @import "./views/voip/_VideoView.scss";
-/*insertion for watcha*/
+/* insertion for watcha */
 @import "./views/dialogs/_ChatInviteDialog.scss";
 @import "./views/rooms/_EntityTile.scss";
-@import "./views/elements/_WatchaAdminButton.scss";
-/*end of insertion*/
+@import "./structures/_watcha_AdminAccess.scss";
+@import "./structures/_watcha_FileExplorer.scss";
+@import "./views/elements/_watcha_OutlineButton.scss";
+@import "./views/elements/_watcha_OutlineIconButton.scss";
+@import "./views/elements/_watcha_IconButton.scss";
+/* end of insertion */

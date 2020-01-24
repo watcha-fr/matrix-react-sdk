@@ -1,0 +1,17 @@
+.watcha_OutlineIconButton {
+    width: 1.2em;
+    height: 1.2em;
+    margin-left: 0.75em;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    background-color: aqua;
+    transition: 0.15s ease-in-out;
+}
+
+.watcha_OutlineIconButton_container {
+    &:hover {
+        .watcha_OutlineIconButton {
+            background-color: white;
+        }
+    }
+}

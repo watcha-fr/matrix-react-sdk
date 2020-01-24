@@ -29,8 +29,9 @@ import SettingsStore from '../../settings/SettingsStore';
 import {_t} from "../../languageHandler";
 import Analytics from "../../Analytics";
 /* insertion for watcha */
-import WatchaAdmin from './WatchaAdmin';
+import AdminAccess from './watcha_AdminAccess';
 /* end of insertion */
+
 
 const LeftPanel = createReactClass({
     displayName: 'LeftPanel',
@@ -302,9 +303,9 @@ const LeftPanel = createReactClass({
         }
 
         {/* insertion for watcha */}
-        let watchaAdmin;
+        let adminAccess;
         if (this.state.isServerAdmin) {
-            watchaAdmin = (<WatchaAdmin collapsed={this.props.collapsed} />);
+            adminAccess = (<AdminAccess collapsed={this.props.collapsed} />);
         };
         {/* end of insertion */}
 
@@ -331,7 +332,7 @@ const LeftPanel = createReactClass({
                         searchFilter={this.state.searchFilter}
                         ConferenceHandler={VectorConferenceHandler} />
                     {/* insertion for watcha */}
-                    { watchaAdmin }
+                    { adminAccess }
                     {/* end of insertion */}
                 </aside>
             </div>

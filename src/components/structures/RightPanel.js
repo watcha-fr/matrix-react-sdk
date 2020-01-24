@@ -169,7 +169,18 @@ export default class RightPanel extends React.Component {
         const UserInfo = sdk.getComponent('right_panel.UserInfo');
         const ThirdPartyMemberInfo = sdk.getComponent('rooms.ThirdPartyMemberInfo');
         const NotificationPanel = sdk.getComponent('structures.NotificationPanel');
+        
+        /* deletion for Watcha
         const FilePanel = sdk.getComponent('structures.FilePanel');
+        */
+
+        /* insertion for Watcha */
+        const FilePanel = sdk.getComponent(
+            SettingsStore.getValue("fileExplorer")
+                ? "structures.watcha_FilePanel"
+                : "structures.FilePanel"
+        );
+        /* end of insertion */
 
         const GroupMemberList = sdk.getComponent('groups.GroupMemberList');
         const GroupMemberInfo = sdk.getComponent('groups.GroupMemberInfo');

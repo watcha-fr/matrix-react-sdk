@@ -37,8 +37,10 @@ limitations under the License.
 }
 
 .mx_AccessibleButton_kind_secondary {
-    //change color for watcha
-    color: white;
+    /* change for watcha
+    color: $accent-color;
+    */
+    color: #6c757d;
     font-weight: 600;
 }
 

@@ -481,4 +481,11 @@ export const SETTINGS = {
         displayName: _td("Show previews/thumbnails for images"),
         default: true,
     },
+    /* insertion for watcha */
+    "fileExplorer": {
+        supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS,
+        displayName: _td("Show a file explorer in the right panel"),
+        default: true,
+    }
+    /* end of insertion */
 };

@@ -123,6 +123,16 @@ export function formatTime(date, showTwelveHour=false) {
     return pad(date.getHours()) + ':' + pad(date.getMinutes());
 }
 
+/* insertion for watcha */
+export function formatFileExplorerDate(date, showTwelveHour = false) {
+    const day = date.getDate();
+    const month = pad(date.getMonth() + 1);
+    const fullYear = date.getFullYear();
+    const time = formatTime(date, showTwelveHour);
+    return `${day}/${month}/${fullYear} ${time}`;
+}
+/* end of insertion */
+
 const MILLIS_IN_DAY = 86400000;
 export function wantsDateSeparator(prevEventDate, nextEventDate) {
     if (!nextEventDate || !prevEventDate) {

@@ -1,0 +1,22 @@
+.watcha_AdminAccess {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5em;
+    border-top: 1px solid $panel-divider-color;
+    > * {
+        margin-bottom: 1.5em;
+    }
+    > *:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.watcha_AdminAccess_collapsed {
+    padding: .5em;
+}
+
+.watcha_AdminAccess_OutlineIconButton,
+.watcha_AdminAccess_IconButton::before {
+    mask-image: url("$(res)/img/watcha_admin.svg");
+}
