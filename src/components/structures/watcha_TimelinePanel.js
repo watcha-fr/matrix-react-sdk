@@ -132,8 +132,16 @@ class WatchaTimelinePanel extends TimelinePanel {
             );
         }
 
+        // despite having been filtered on the server side,
+        // the timeline contains events other than m.room.message,
+        // especially events related to widgets, so we have to filter
+        // it again to avoid the app from crashing
+        const events = this.state.events.filter(
+            ev => ev.getType() === "m.room.message"
+        );
+
         if (
-            this.state.events.length == 0 &&
+            events.length == 0 &&
             !this.state.canBackPaginate &&
             this.props.empty
         ) {
@@ -150,7 +158,7 @@ class WatchaTimelinePanel extends TimelinePanel {
 
         return (
             <FileExplorer
-                events={this.state.events}
+                {...{events}}
                 showTwelveHour={this.state.isTwelveHour}
             />
         );

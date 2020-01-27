@@ -105,7 +105,7 @@ module.exports = createReactClass({
             this.setState({coreUrl: coreUrl});
             if (!this.state.coreUrl) {
                 this.setState({error:
-                 'impossible de trouver le server core pour obtenir de l\'aide contactez nous a contact@watcha.fr ',
+                 "Impossible de trouver le serveur core. Pour obtenir de l'aide contactez nous à contact@watcha.fr ",
                });
             } else {
                 const loginRequest = await fetch(this.state.coreUrl + '/_matrix/client/r0/login', {
@@ -134,7 +134,7 @@ module.exports = createReactClass({
             }
         } catch (e) {
             this.setState({error:
-             'Une erreur imprevu s\'est produite pour obtenir de l\'aide envoyer ce message a contact@watcha.fr :'+e,
+             "Une erreur imprévue s'est produite. Pour obtenir de l'aide envoyer ce message à contact@watcha.fr :" + e,
            });
         }
                 this.setState({loading: false});
@@ -169,12 +169,12 @@ module.exports = createReactClass({
 
 
             if (changePasswordRequest.status !== 200 && this.state.accessToken) {
-                this.setState({error: 'impossible de definir le nouveau mot de passe pour obtenir de l\'aide contacter nous a contact@watcha.fr'});
+                this.setState({error: "Impossible de définir le nouveau mot de passe. Pour obtenir de l'aide contacter nous à contact@watcha.fr"});
             } else {
                 this.setState({successChange: true});
             }
         } catch (e) {
-            this.setState({error: 'impossible de definir le nouveau mot de passe pour obtenir de l\'aide contacter nous a contact@watcha.fr'});
+            this.setState({error: "Impossible de définir le nouveau mot de passe. Pour obtenir de l'aide contacter nous à contact@watcha.fr"});
         }
         this.setState({loading:false});
     },

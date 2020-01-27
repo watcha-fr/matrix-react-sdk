@@ -52,7 +52,8 @@
 }
 
 .watcha_FileExplorer_DetailPanel_Scrollbar {
-    max-width: 16em;
+    min-width: 14em;
+    max-width: 14em;
 }
 
 .watcha_FileExplorer_DetailPanel {
@@ -84,6 +85,7 @@
     }
     > img {
         width: 50%;
+        height: 100%;
         margin: 1em;
     }
 }

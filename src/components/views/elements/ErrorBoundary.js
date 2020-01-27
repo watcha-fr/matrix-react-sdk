@@ -76,6 +76,21 @@ export default class ErrorBoundary extends React.PureComponent {
             return <div className="mx_ErrorBoundary">
                 <div className="mx_ErrorBoundary_body">
                     <h1>{_t("Something went wrong!")}</h1>
+                    {/* insertion for Watcha */}
+                    <p>
+                        {_t("Refresh the page to restart the application.")}
+                    </p>
+                    <p>
+                        {_t(
+                            "Should the failure happen again, please contact us at"
+                        )}{" "}
+                        <a href="mailto:contact@watcha.fr">
+                            contact@watcha.fr
+                        </a>
+                        .
+                    </p>
+                    {/* end of insertion */}
+                    {/* deletion for Watcha
                     <p>{_t(
                         "Please <newIssueLink>create a new issue</newIssueLink> " +
                         "on GitHub so that we can investigate this bug.", {}, {
@@ -97,6 +112,7 @@ export default class ErrorBoundary extends React.PureComponent {
                     <AccessibleButton onClick={this._onClearCacheAndReload} kind='danger'>
                         {_t("Clear cache and reload")}
                     </AccessibleButton>
+                    */}
                 </div>
             </div>;
         }
