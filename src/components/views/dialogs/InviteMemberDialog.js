@@ -540,7 +540,7 @@ module.exports = createReactClass({
                         text: mail.address,
                         presenceState :"partner",
                         subText: _t("An invitation will be sent to this email"),
-                        imgUrl: "img/mail.png",
+                        imgUrl: require("../../../../res/img/watcha_mail.png"),
                         onClick: (e) => this.removeMailFromInviteListe(mail),
                         width: AVATAR_SIZE,
                         height: AVATAR_SIZE,
