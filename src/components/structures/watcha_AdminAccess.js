@@ -1,3 +1,13 @@
+/*
+
+Copyright 2020 Watcha
+
+This code is not licensed unless directly agreed with Watcha
+
+New code for the Admin button
+
+*/
+
 import PropTypes from "prop-types";
 import { Component } from "react";
 import { MatrixClient } from "matrix-js-sdk";

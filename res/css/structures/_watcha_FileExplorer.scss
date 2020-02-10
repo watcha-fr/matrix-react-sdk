@@ -35,16 +35,34 @@
     tr:last-child > td {
         border-bottom: 0;
     }
+}
 
-    .isSorted {
-        margin-left: 1em;
-        font-size: smaller;
-    }
+.watcha_FileExplorer_th {
+    display: flex;
+    align-items: center;
 }
 
 .watcha_FileExplorer_Body {
     display: flex;
     height: 100%;
+}
+
+.watcha_FileExplorer_chevron {
+    mask: url("$(res)/img/watcha_dropdown-arrow.svg");
+    mask-repeat: no-repeat;
+    width: 1em;
+    height: 0.5em;
+    margin-left: 1em;
+    background-color: $roomsublist-label-fg-color;
+    transition: transform 0.2s ease-in;
+}
+
+.watcha_FileExplorer_chevronDown {
+    transform: rotateZ(0deg);
+}
+
+.watcha_FileExplorer_chevronUp {
+    transform: rotateZ(-180deg);
 }
 
 .watcha_FileExplorer_SelectedRow {

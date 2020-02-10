@@ -31,7 +31,13 @@ const MEMBER_PHASES = [
 
 export default class RoomHeaderButtons extends HeaderButtons {
     constructor(props) {
+        /* change for watcha
         super(props, RightPanel.Phase.RoomMemberList);
+        */
+        let rhsPhase = window.localStorage.getItem("watcha_rhs_phase");
+        let initialPhase = rhsPhase || RightPanel.Phase.RoomMemberList
+        super(props, initialPhase);
+        /* end of change */
         this._onMembersClicked = this._onMembersClicked.bind(this);
         this._onFilesClicked = this._onFilesClicked.bind(this);
         this._onNotificationsClicked = this._onNotificationsClicked.bind(this);
@@ -46,7 +52,12 @@ export default class RoomHeaderButtons extends HeaderButtons {
                 this.setPhase(RightPanel.Phase.RoomMemberList);
             }
         } else if (payload.action === "view_room" && !this.props.collapsedRhs) {
+            /* change for watcha
             this.setPhase(RightPanel.Phase.RoomMemberList);
+            */
+            let rhsPhase = window.localStorage.getItem("watcha_rhs_phase");
+            this.setPhase(rhsPhase || RightPanel.Phase.RoomMemberList);
+            /* end of change */
         } else if (payload.action === "view_3pid_invite") {
             if (payload.event) {
                 this.setPhase(RightPanel.Phase.Room3pidMemberInfo, {event: payload.event});
@@ -82,7 +93,7 @@ export default class RoomHeaderButtons extends HeaderButtons {
                 onClick={this._onFilesClicked}
                 analytics={['Right Panel', 'File List Button', 'click']}
             />,
-            /*removed for watcha
+            /* deletion for watcha
             <HeaderButton key="notifsButton" name="notifsButton"
                 title={_t('Notifications')}
                 isHighlighted={this.isPhase(RightPanel.Phase.NotificationPanel)}

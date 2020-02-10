@@ -1,3 +1,13 @@
+/*
+
+Copyright 2020 Watcha
+
+This code is not licensed unless directly agreed with Watcha
+
+New code for the new File explorer view.
+
+*/
+
 import filesize from "filesize";
 import matchSorter from "match-sorter";
 import React, { useMemo, useRef, useEffect } from "react";
@@ -16,38 +26,44 @@ import { formatFullDate, formatFileExplorerDate } from "../../DateUtils";
 import { _t } from "../../languageHandler";
 
 function FileExplorer({ events, showTwelveHour }) {
+    const SenderProfile = sdk.getComponent("messages.SenderProfile");
+
     const columns = useMemo(
         () => [
             {
-                Header: "Name",
+                Header: _t("Name"),
                 accessor: "filename",
                 filter: "fuzzyText",
+                sortType: compareLowerCase,
                 Cell: ({ cell: { value } }) => (
                     <span title={value}>{value}</span>
                 )
             },
             {
-                Header: "Size",
+                Header: _t("Type"),
+                accessor: "type",
+                sortType: compareLowerCase
+            },
+            {
+                Header: _t("Size"),
                 accessor: "size",
                 // FIXME: Some files like movies recorded in the ios app (named video_xxxxxxx.mp4) don't seem to have a size...
                 Cell: ({ cell: { value } }) => (value ? filesize(value) : "")
             },
             {
-                Header: "Date",
+                Header: _t("Added on"),
                 accessor: "timestamp",
                 Cell: ({ cell: { value } }) => (
                     <LightDate timestamp={value} {...{ showTwelveHour }} />
                 )
             },
             {
-                Header: "Type",
-                accessor: "type",
-                sortType: sortType
-            },
-            {
-                Header: "Sender",
+                Header: _t("By"),
                 accessor: "sender",
-                disableSortBy: true
+                sortType: compareLowerCase,
+                Cell: ({ cell: { row } }) => (
+                    <SenderProfile mxEvent={row.original.mxEvent} />
+                )
             }
         ],
         []
@@ -71,13 +87,23 @@ function FileExplorer({ events, showTwelveHour }) {
         []
     );
 
+    const initialState = useMemo(
+        () => ({
+            sortBy: [{ id: "timestamp", desc: true }]
+        }),
+        []
+    );
+
     // Use the state and functions returned from useTable to build your UI
     const tableInstance = useTable(
         {
             columns,
             data,
             defaultColumn, // Be sure to pass the defaultColumn option
-            filterTypes
+            filterTypes,
+            initialState,
+            disableSortRemove: true,
+            autoResetSortBy: false
         },
         useFilters,
         useSortBy,
@@ -169,16 +195,21 @@ function Table({ tableInstance }) {
                                     column.getSortByToggleProps()
                                 )}
                             >
-                                {column.render("Header")}
-                                {column.canSort && (
-                                    <span className="isSorted">
-                                        {column.isSorted
-                                            ? column.isSortedDesc
-                                                ? "⮟"
-                                                : "⮝"
-                                            : ""}
-                                    </span>
-                                )}
+                                <span className="watcha_FileExplorer_th">
+                                    {column.render("Header")}
+                                    {column.isSorted ? (
+                                        <span
+                                            className={
+                                                "watcha_FileExplorer_chevron " +
+                                                (column.isSortedDesc
+                                                    ? "watcha_FileExplorer_chevronDown"
+                                                    : "watcha_FileExplorer_chevronUp")
+                                            }
+                                        />
+                                    ) : (
+                                        undefined
+                                    )}
+                                </span>
                             </th>
                         ))}
                     </tr>
@@ -360,7 +391,7 @@ function ShowMessageButton({ mxEvent }) {
             onClick={onClick}
             title={_t("Show the corresponding message in the room timeline")}
         >
-            {_t("Message")}
+            {_t("View message")}
         </OutlineIconButton>
     );
 }
@@ -471,11 +502,10 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 // Let the table remove the filter if the string is empty
 fuzzyTextFilterFn.autoRemove = val => !val;
 
-function sortType(rowA, rowB) {
-    const key = "type";
-    const a = rowA.original[key].toLowerCase();
-    const b = rowB.original[key].toLowerCase();
-    return a === b ? 0 : a > b ? 1 : -1;
+function compareLowerCase(rowA, rowB, columnId) {
+    const a = rowA.values[columnId].toLowerCase();
+    const b = rowB.values[columnId].toLowerCase();
+    return a === b ? 0 : a < b || b === "" ? -1 : 1;
 }
 
 function getData(events) {
@@ -491,24 +521,22 @@ function getData(events) {
 }
 
 function getEventData(mxEvent) {
-    const SenderProfile = sdk.getComponent("messages.SenderProfile");
-
     const content = mxEvent.getContent();
 
     const filename = content.body;
+    const mimeType = content.info.mimetype;
+    const type = mimeType ? formatMimeType({ mimeType, filename }) : "";
     const size = content.info.size;
     const timestamp = mxEvent.getTs();
-    const mimeType = content.info.mimetype;
-    const type = mimeType ? formatMimeType({ mimeType, filename }) : mimeType;
-    const sender = <SenderProfile mxEvent={mxEvent} enableFlair={true} />;
+    const sender = mxEvent.sender ? mxEvent.sender.name : mxEvent.getSender();
     const key = mxEvent.getId();
 
     return {
         filename,
-        size,
-        timestamp,
         type,
+        size,
         sender,
+        timestamp,
         key,
         mxEvent
     };
