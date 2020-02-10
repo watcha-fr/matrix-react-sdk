@@ -285,9 +285,10 @@ module.exports = createReactClass({
         const ConfirmUserActionDialog = sdk.getComponent("dialogs.ConfirmUserActionDialog");
         Modal.createTrackedDialog('Confirm User Action Dialog', 'onKick', ConfirmUserActionDialog, {
             member: this.props.member,
-            action: membership === "invite" ? _t("Disinvite") : _t("Kick"),
-            title: membership === "invite" ? _t("Disinvite this user?") : _t("Kick this user?"),
-            askReason: membership === "join",
+            /* change for watcha */
+            action: _t("Remove from group"),
+            title: _t("Remove this user from group?"),
+            /* end of change */
             danger: true,
             onFinished: (proceed, reason) => {
                 if (!proceed) return;
@@ -973,8 +974,9 @@ module.exports = createReactClass({
         }
 
         if (this.state.can.kick) {
-            const membership = this.props.member.membership;
-            const kickLabel = membership === "invite" ? _t("Disinvite") : _t("Kick");
+            /* change for watcha */
+            const kickLabel = _t("Remove from group");
+            /* end of change */
             kickButton = (
                 <AccessibleButton className="mx_MemberInfo_field"
                         onClick={this.onKick}>

@@ -42,7 +42,7 @@ function CallButton(props) {
     /* insertion for watcha */
     const room = MatrixClientPeg.get().getRoom(props.roomId)
     const members = room.getJoinedMembers();
-    if (members.length > 2) {
+    if (members.length) {
         return null;
     }
     /* end of insertion */
@@ -70,7 +70,7 @@ function VideoCallButton(props) {
     /* insertion for watcha */
     const room = MatrixClientPeg.get().getRoom(props.roomId)
     const members = room.getJoinedMembers();
-    if (members.length > 2) {
+    if (members.length) {
         return null;
     }
     /* end of insertion */
