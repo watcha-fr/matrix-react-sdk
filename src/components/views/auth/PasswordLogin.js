@@ -69,8 +69,16 @@ export default class PasswordLogin extends React.Component {
 
     constructor(props) {
         super(props);
+        /*insertion for watcha
+        var username = this.props.username ? this.props.username : this.props.initialUsername;
+        */
         this.state = {
+            /*removed for watcha
             username: this.props.initialUsername,
+            */
+           /*Insertion for watcha*/
+            username:username, 
+            /*end of insertion*/
             password: this.props.initialPassword,
             phoneCountry: this.props.initialPhoneCountry,
             phoneNumber: this.props.initialPhoneNumber,
@@ -96,6 +104,8 @@ export default class PasswordLogin extends React.Component {
     }
 
     onSubmitForm(ev) {
+
+        console.log('*********'+this.state.username);
         ev.preventDefault();
 
         let username = ''; // XXX: Synapse breaks if you send null here:

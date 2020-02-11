@@ -63,7 +63,7 @@ module.exports = createReactClass({
                 <div className="wt_web_body_fallback">
                     <h1>Bienvenue sur Watcha</h1>
                     <div className="wt_web_username">{ this.getTitle() }</div>
-                    <a href={window.location.origin} > Cliquez ici pour vous connecter </a>
+                    <a href={window.location.origin+'?m='+this.state.credUser} > Cliquez ici pour vous connecter </a>
                 </div>
             </div>
         );

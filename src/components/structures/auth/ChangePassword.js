@@ -122,6 +122,8 @@ module.exports = createReactClass({
                     },
                 });
                 const loginData = JSON.parse(await loginRequest.text());
+                console.log("*****loginData*****");
+                console.log(loginData);
 
                 if (!loginData['access_token']) {
                     this.noPasswordToken();
@@ -258,7 +260,7 @@ module.exports = createReactClass({
                     </div>
                     <div className="wt_pw_form_container">
                         <div className="wt_PwInputContainer">
-                            <input autocomplete="off" onFocus={this.onPasswordFocus} onBlur={this.onPasswordBlur} type="password" name="wt_NewPassword" placeholder={passwordPlaceHolder} className="wt_InputText" onChange={this.onPasswordChange} />
+                            <input autoComplete="off" onFocus={this.onPasswordFocus} onBlur={this.onPasswordBlur} type="password" name="wt_NewPassword" placeholder={passwordPlaceHolder} className="wt_InputText" onChange={this.onPasswordChange} />
                         </div>
                         <div className="wt_ConfirmInputContainer">
                             <input autocomplete="off" onFocus={this.onChangeFocus} onBlur={this.onChangeBlur}type="password" name="wt_ConfirmPassword" placeholder={changePlaceHolder} className="wt_InputText" onChange={this.onConfirmChange} />

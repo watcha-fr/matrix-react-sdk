@@ -160,6 +160,10 @@ module.exports = createReactClass({
         this.setState({onboardingUrl: document.URL});
         this.setState({onboarding: true});
       }
+      if (document.URL.split('m=')[1]) {
+        this.setState({usernamefield: document.URL.split('m=')[1]});
+      }
+
     },
     /* end of insertion*/
 
@@ -581,6 +585,9 @@ module.exports = createReactClass({
 
         return (
             <PasswordLogin
+               /*INSERTION FOR WATCHA*/
+               username={this.state.usernamefield}
+               /*END OF INSERTION*/
                onSubmit={this.onPasswordLogin}
                onError={this.onPasswordLoginError}
                onEditServerDetailsClick={onEditServerDetailsClick}
