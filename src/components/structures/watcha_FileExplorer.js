@@ -9,6 +9,7 @@ New code for the new File explorer view.
 */
 
 import filesize from "filesize";
+import ReactGeminiScrollbar from "react-gemini-scrollbar";
 import matchSorter from "match-sorter";
 import React, { useMemo, useRef, useEffect } from "react";
 import { useTable, useSortBy, useFilters, useRowSelect } from "react-table";
@@ -34,10 +35,7 @@ function FileExplorer({ events, showTwelveHour }) {
                 Header: _t("Name"),
                 accessor: "filename",
                 filter: "fuzzyText",
-                sortType: compareLowerCase,
-                Cell: ({ cell: { value } }) => (
-                    <span title={value}>{value}</span>
-                )
+                sortType: compareLowerCase
             },
             {
                 Header: _t("Type"),
@@ -144,23 +142,25 @@ function FileExplorer({ events, showTwelveHour }) {
 }
 
 function Body({ tableInstance }) {
-    const GeminiScrollbarWrapper = sdk.getComponent(
-        "elements.GeminiScrollbarWrapper"
-    );
     const { selectedFlatRows } = tableInstance;
     const table = (
-        <GeminiScrollbarWrapper autoshow={true} minThumbSize={50}>
+        <ReactGeminiScrollbar
+            forceGemini={true}
+            autoshow={true}
+            minThumbSize={50}
+        >
             <Table {...{ tableInstance }} />
-        </GeminiScrollbarWrapper>
+        </ReactGeminiScrollbar>
     );
     const detailPanel = (
-        <GeminiScrollbarWrapper
+        <ReactGeminiScrollbar
             className="watcha_FileExplorer_DetailPanel_Scrollbar"
+            forceGemini={true}
             autoshow={true}
             minThumbSize={50}
         >
             <DetailPanel {...{ selectedFlatRows }} />
-        </GeminiScrollbarWrapper>
+        </ReactGeminiScrollbar>
     );
     return (
         <div className="watcha_FileExplorer_Body">
@@ -195,7 +195,7 @@ function Table({ tableInstance }) {
                                     column.getSortByToggleProps()
                                 )}
                             >
-                                <span className="watcha_FileExplorer_th">
+                                <span>
                                     {column.render("Header")}
                                     {column.isSorted ? (
                                         <span
@@ -237,22 +237,28 @@ function Table({ tableInstance }) {
                     };
                     return (
                         <tr
-                            className={
-                                row.isSelected
+                            {...row.getRowProps({
+                                className: row.isSelected
                                     ? "watcha_FileExplorer_SelectedRow"
                                     : undefined
-                            }
-                            {...row.getRowProps()}
+                            })}
                         >
                             {row.cells.map(cell => {
                                 return (
                                     <td
-                                        onClick={
-                                            cell.column.id !== "selection"
-                                                ? selectRow
-                                                : undefined
-                                        }
-                                        {...cell.getCellProps()}
+                                        {...cell.getCellProps({
+                                            title: [
+                                                "filename",
+                                                "type",
+                                                "sender"
+                                            ].includes(cell.column.id)
+                                                ? cell.value
+                                                : undefined,
+                                            onClick:
+                                                cell.column.id !== "selection"
+                                                    ? selectRow
+                                                    : undefined
+                                        })}
                                     >
                                         {cell.render("Cell")}
                                     </td>
