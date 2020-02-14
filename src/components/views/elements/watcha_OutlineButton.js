@@ -12,8 +12,8 @@ function OutlineButton({ children, ...restProps }) {
     );
 }
 
-OutlineButton.PropTypes = {
-    children: PropTypes.element.isRequired
+OutlineButton.propTypes = {
+    children: PropTypes.isRequired
 };
 
 export default OutlineButton;

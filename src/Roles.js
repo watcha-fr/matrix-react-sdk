@@ -19,10 +19,12 @@ export function levelRoleMap(usersDefault) {
     return {
         undefined: _t('Default'),
         0: _t('Restricted'),
-        /* change for watcha */
+        // modified for watcha
         [usersDefault]: _t('Member'),
+        /* removed for watcha
+        50: _t('Moderator'),
+        */
         100: _t('Administrator'),
-        /* end of change */
     };
 }
 

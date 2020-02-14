@@ -16,8 +16,8 @@ function OutlineIconButton({ children, className, ...restProps }) {
     );
 }
 
-OutlineIconButton.PropTypes = {
-    children: PropTypes.element.isRequired,
+OutlineIconButton.propTypes = {
+    children: PropTypes.string.isRequired,
     className: PropTypes.string.isRequired
 };
 

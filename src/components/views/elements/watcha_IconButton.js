@@ -12,7 +12,7 @@ function IconButton({ className, onClick, ...restProps }) {
     );
 }
 
-IconButton.PropTypes = {
+IconButton.propTypes = {
     className: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired
 };

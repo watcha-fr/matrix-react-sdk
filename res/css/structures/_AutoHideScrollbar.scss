@@ -75,7 +75,8 @@ body.mx_scrollbar_nooverlay {
 // style the native scrollbars ...
 // ... standard css scrollbars (firefox at time of writing)
 .mx_AutoHideScrollbar {
-    scrollbar-color: $scrollbar-thumb-color $scrollbar-track-color;
+    // changed for watcha
+    scrollbar-color: #00e5e5 $scrollbar-track-color;
     scrollbar-width: thin;
 }
 // or fallback for webkit browsers
