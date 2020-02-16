@@ -23,6 +23,7 @@ import {
 } from "../../watcha_mimeTypeUtils";
 import OutlineIconButton from "../views/elements/watcha_OutlineIconButton";
 import sdk from "../../index";
+import { getUserNameColorClass } from "../../utils/FormattingUtils";
 import { formatFullDate, formatFileExplorerDate } from "../../DateUtils";
 import { _t } from "../../languageHandler";
 
@@ -59,9 +60,11 @@ function FileExplorer({ events, showTwelveHour }) {
                 Header: _t("By"),
                 accessor: "sender",
                 sortType: compareLowerCase,
-                Cell: ({ cell: { row } }) => (
-                    <SenderProfile mxEvent={row.original.mxEvent} />
-                )
+                Cell: ({ cell: { row } }) => {
+                    // common but buggy way (returns either the userId or the displayname in an unpredictable way):
+                    // <SenderProfile mxEvent={row.original.mxEvent} />
+                    return <Sender mxEvent={row.original.mxEvent} />;
+                }
             }
         ],
         []
@@ -249,8 +252,7 @@ function Table({ tableInstance }) {
                                         {...cell.getCellProps({
                                             title: [
                                                 "filename",
-                                                "type",
-                                                "sender"
+                                                "type"
                                             ].includes(cell.column.id)
                                                 ? cell.value
                                                 : undefined,
@@ -361,6 +363,18 @@ function LightDate({ timestamp, showTwelveHour }) {
     const title = formatFullDate(date, showTwelveHour);
     const formattedDate = formatFileExplorerDate(date, showTwelveHour);
     return <span title={title}>{formattedDate}</span>;
+}
+
+function Sender({ mxEvent }) {
+    const member = getMemberFromEvent(mxEvent);
+    const userId = member.userId;
+    const displayname = member.rawDisplayName;
+    const className = getUserNameColorClass(userId);
+    return (
+        <span title={displayname} {...{ className }}>
+            {displayname}
+        </span>
+    );
 }
 
 function DownloadButton({ mxEvent, selectedEvents }) {
@@ -534,7 +548,7 @@ function getEventData(mxEvent) {
     const type = mimeType ? formatMimeType({ mimeType, filename }) : "";
     const size = content.info.size;
     const timestamp = mxEvent.getTs();
-    const sender = mxEvent.sender ? mxEvent.sender.name : mxEvent.getSender();
+    const sender = getMemberFromEvent(mxEvent).rawDisplayName;
     const key = mxEvent.getId();
 
     return {
@@ -546,6 +560,12 @@ function getEventData(mxEvent) {
         key,
         mxEvent
     };
+}
+
+function getMemberFromEvent(mxEvent) {
+    const client = MatrixClientPeg.get();
+    const room = client.getRoom(mxEvent.getRoomId());
+    return room.getMember(mxEvent.getSender());
 }
 
 function shouldHideEvent(mxEvent) {
