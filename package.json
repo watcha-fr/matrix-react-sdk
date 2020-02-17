@@ -102,7 +102,7 @@
     "react-beautiful-dnd": "^4.0.1",
     "react-dom": "^16.9.0",
     "react-gemini-scrollbar": "^2.3.4",
-    "react-table": "^7.0.0-rc.15",
+    "react-table": "7.0.0-rc.15",
     "resize-observer-polyfill": "^1.5.0",
     "sanitize-html": "^1.18.4",
     "slate": "^0.41.2",
