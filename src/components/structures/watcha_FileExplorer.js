@@ -110,7 +110,7 @@ function FileExplorer({ events, showTwelveHour }) {
         useSortBy,
         useRowSelect,
         hooks => {
-            hooks.flatColumns.push(columns => [
+            hooks.visibleColumns.push(columns => [
                 // Let's make a column for selection
                 {
                     id: "selection",
