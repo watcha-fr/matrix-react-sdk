@@ -69,9 +69,9 @@ export default class PasswordLogin extends React.Component {
 
     constructor(props) {
         super(props);
-        /*insertion for watcha
+        /*insertion for watcha*/
         var username = this.props.username ? this.props.username : this.props.initialUsername;
-        */
+        /*end of insertion for watcha*/
         this.state = {
             /*removed for watcha
             username: this.props.initialUsername,
@@ -105,7 +105,6 @@ export default class PasswordLogin extends React.Component {
 
     onSubmitForm(ev) {
 
-        console.log('*********'+this.state.username);
         ev.preventDefault();
 
         let username = ''; // XXX: Synapse breaks if you send null here:
