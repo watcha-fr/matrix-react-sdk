@@ -34,6 +34,10 @@
         &:nth-child(6) {
             max-width: 8em;
         }
+        &:first-child {
+            padding: 0;
+            visibility: hidden;
+        }
     }
 
     td,

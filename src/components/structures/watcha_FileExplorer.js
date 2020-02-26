@@ -8,28 +8,27 @@ New code for the new File explorer view.
 
 */
 
+import * as Mime from "mime";
 import filesize from "filesize";
-import ReactGeminiScrollbar from "react-gemini-scrollbar";
 import matchSorter from "match-sorter";
 import React, { useMemo, useRef, useEffect } from "react";
+import GeminiScrollbar from "react-gemini-scrollbar";
 import { useTable, useSortBy, useFilters, useRowSelect } from "react-table";
 
 import dis from "../../dispatcher";
 import MatrixClientPeg from "../../MatrixClientPeg";
 import Modal from "../../Modal";
+import OutlineIconButton from "../views/elements/watcha_OutlineIconButton";
+import sdk from "../../index";
+import { _t } from "../../languageHandler";
+import { formatFullDate, formatFileExplorerDate } from "../../DateUtils";
 import {
     formatMimeType,
     getIconFromMimeType
 } from "../../watcha_mimeTypeUtils";
-import OutlineIconButton from "../views/elements/watcha_OutlineIconButton";
-import sdk from "../../index";
 import { getUserNameColorClass } from "../../utils/FormattingUtils";
-import { formatFullDate, formatFileExplorerDate } from "../../DateUtils";
-import { _t } from "../../languageHandler";
 
 function FileExplorer({ events, showTwelveHour }) {
-    const SenderProfile = sdk.getComponent("messages.SenderProfile");
-
     const columns = useMemo(
         () => [
             {
@@ -147,23 +146,19 @@ function FileExplorer({ events, showTwelveHour }) {
 function Body({ tableInstance }) {
     const { selectedFlatRows } = tableInstance;
     const table = (
-        <ReactGeminiScrollbar
-            forceGemini={true}
-            autoshow={true}
-            minThumbSize={50}
-        >
+        <GeminiScrollbar forceGemini={true} autoshow={true} minThumbSize={50}>
             <Table {...{ tableInstance }} />
-        </ReactGeminiScrollbar>
+        </GeminiScrollbar>
     );
     const detailPanel = (
-        <ReactGeminiScrollbar
+        <GeminiScrollbar
             className="watcha_FileExplorer_DetailPanel_Scrollbar"
             forceGemini={true}
             autoshow={true}
             minThumbSize={50}
         >
             <DetailPanel {...{ selectedFlatRows }} />
-        </ReactGeminiScrollbar>
+        </GeminiScrollbar>
     );
     return (
         <div className="watcha_FileExplorer_Body">
@@ -195,7 +190,9 @@ function Table({ tableInstance }) {
                         {headerGroup.headers.map(column => (
                             <th
                                 {...column.getHeaderProps(
-                                    column.getSortByToggleProps()
+                                    column.getSortByToggleProps({
+                                        title: undefined
+                                    })
                                 )}
                             >
                                 <span>
@@ -293,7 +290,8 @@ function Thumbnail({ selectedEvents }) {
     if (selectedEvents.length === 1) {
         const mxEvent = selectedEvents[0];
         const content = mxEvent.getContent();
-        const mimeType = content.info.mimetype;
+        const filename = content.body;
+        const mimeType = Mime.getType(filename);
         const msgtype = content.msgtype;
         const isMultimedia = ["m.image", "m.video", "m.audio"].includes(
             msgtype
@@ -544,7 +542,7 @@ function getEventData(mxEvent) {
     const content = mxEvent.getContent();
 
     const filename = content.body;
-    const mimeType = content.info.mimetype;
+    const mimeType = Mime.getType(filename);
     const type = mimeType ? formatMimeType({ mimeType, filename }) : "";
     const size = content.info.size;
     const timestamp = mxEvent.getTs();
