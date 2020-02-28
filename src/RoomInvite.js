@@ -56,7 +56,7 @@ export function showRoomInviteDialog(roomId) {
     const InviteMemberDialog = sdk.getComponent("dialogs.InviteMemberDialog");
     Modal.createTrackedDialog('Chat Invite', '', InviteMemberDialog, {
         title: _t('Invite new room members'),
-        button: _t('Send Invites'),
+        button: _t('Invite'),
         placeholder: _t("Email, name"),
         roomId: roomId,
         onFinished: (shouldInvite, addrs) => {

@@ -129,7 +129,9 @@ module.exports = createReactClass({
 
     render: function() {
         let picker;
-        const label = typeof this.props.label === "undefined" ? _t("Power level") : this.props.label;
+        /* change for watcha */
+        const label = typeof this.props.label === "undefined" ? _t("User rights") : this.props.label;
+        /* end of change */
         if (this.state.custom) {
             picker = (
                 <Field id={`powerSelector_custom_${this.props.powerLevelKey}`} type="number"
@@ -145,7 +147,9 @@ module.exports = createReactClass({
                     text: Roles.textualPowerLevel(level, this.props.usersDefault),
                 };
             });
+            /* deletion for watcha
             options.push({ value: "SELECT_VALUE_CUSTOM", text: _t("Custom level") });
+            */
             options = options.map((op) => {
                 return <option value={op.value} key={op.value}>{ op.text }</option>;
             });

@@ -1,0 +1,9 @@
+/* override gemini-scrollbar default styles */
+
+.gm-scrollbar {
+    .thumb,
+    .thumb:hover,
+    .thumb:active {
+        background-color: #00e5e5;
+    }
+}

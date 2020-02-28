@@ -66,6 +66,9 @@ export default class HeaderButtons extends React.Component {
                 action: 'hide_right_panel',
             });
         } else {
+            /* insertion for watcha */
+            window.localStorage.setItem("watcha_rhs_phase", phase)
+            /* end of insertion */
             this.setPhase(phase);
         }
     }

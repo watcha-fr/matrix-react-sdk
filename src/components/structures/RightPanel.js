@@ -79,7 +79,12 @@ export default class RightPanel extends React.Component {
         } else if (this.props.user) {
             return RightPanel.Phase.RoomMemberInfo;
         } else {
+            /* change for watcha
             return RightPanel.Phase.RoomMemberList;
+            */
+            let rhsPhase = window.localStorage.getItem("watcha_rhs_phase");
+            return rhsPhase ? rhsPhase : RightPanel.Phase.RoomMemberList;
+            /* end of change */
         }
     }
 

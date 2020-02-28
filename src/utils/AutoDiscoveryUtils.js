@@ -87,7 +87,9 @@ export default class AutoDiscoveryUtils {
 
         let isFatalError = true;
         const errorMessage = err.message ? err.message : err;
-        /*
+        // TODO: commenting this code is probably not useful anyway : as of Riot 1.4.0,
+        // identity servers are optional. So there should be no error message with a correct config.json
+        /* deletion for watcha
         if (errorMessage === AutoDiscovery.ERROR_INVALID_IDENTITY_SERVER) {
             isFatalError = false;
             title = _t("Cannot reach identity server");

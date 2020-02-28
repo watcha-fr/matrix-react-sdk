@@ -57,7 +57,7 @@ function CallButton(props) {
     /* insertion for watcha */
     const room = MatrixClientPeg.get().getRoom(props.roomId)
     const members = room.getJoinedMembers();
-    if (members.length > 2) {
+    if (members.length) {
         return null;
     }
     /* end of insertion */
@@ -85,7 +85,7 @@ function VideoCallButton(props) {
     /* insertion for watcha */
     const room = MatrixClientPeg.get().getRoom(props.roomId)
     const members = room.getJoinedMembers();
-    if (members.length > 2) {
+    if (members.length) {
         return null;
     }
     /* end of insertion */
@@ -399,11 +399,13 @@ export default class SlateMessageComposer extends React.Component {
                 <div className="mx_MessageComposer_formatbar">
                 { formatButtons }
                 <div style={{ flex: 1 }}></div>
+                {/* deletion for watcha
                 <AccessibleButton
                     className="mx_MessageComposer_formatbar_markdown mx_MessageComposer_markdownDisabled"
                     onClick={this.onToggleMarkdownClicked}
                     title={_t("Markdown is disabled")}
                 />
+                */}
                 <AccessibleButton element="img" title={_t("Hide Text Formatting Toolbar")}
                     onClick={this.onToggleFormattingClicked}
                     className="mx_MessageComposer_formatbar_cancel mx_filterFlipColor"

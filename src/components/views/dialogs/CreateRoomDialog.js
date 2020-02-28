@@ -184,14 +184,16 @@ export default createReactClass({
             privateLabel = (<p>{_t("This room is private, and can only be joined by invitation.")}</p>);
         }
 
-        const title = this.state.isPublic ? _t('Create a public room') : _t('Create a private room');
+        {/* changed for watcha */}
+        const title = this.state.isPublic ? _t('Create a public room') : _t('Create a room');
         return (
             <BaseDialog className="mx_CreateRoomDialog" onFinished={this.props.onFinished}
                 title={title}
             >
                 <form onSubmit={this.onOk} onKeyDown={this._onKeyDown}>
                     <div className="mx_Dialog_content">
-                        <Field id="name" ref={ref => this._nameFieldRef = ref} label={ _t('Name') } onChange={this.onNameChange} onValidate={this.onNameValidate} value={this.state.name} className="mx_CreateRoomDialog_name" />
+                        {/* changed for watcha */}
+                        <Field id="name" ref={ref => this._nameFieldRef = ref} label={ _t('Room name') } onChange={this.onNameChange} onValidate={this.onNameValidate} value={this.state.name} className="mx_CreateRoomDialog_name" />
                         <Field id="topic" label={ _t('Topic (optional)') } onChange={this.onTopicChange} value={this.state.topic} />
                         {/*removed for watcha
                         <LabelledToggleSwitch label={ _t("Make this room public")} onChange={this.onPublicChange} value={this.state.isPublic} />

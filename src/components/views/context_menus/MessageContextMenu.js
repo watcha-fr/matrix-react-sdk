@@ -487,15 +487,21 @@ module.exports = createReactClass({
                 { cancelButton }
                 { forwardButton }
                 { pinButton }
-                { /*removed for watcha viewSourceButton*/ }
+                {/* removed for watcha 
+                { viewSourceButton }
+                */}
                 { viewClearSourceButton }
                 { unhidePreviewButton }
-                { /* removed for watcha permalinkButton*/ }
-                { /* removed for watcha quoteButton */}
+                {/* removed for watcha
+                { permalinkButton }
+                { quoteButton }
+                */}
                 { externalURLButton }
                 { collapseReplyThread }
                 { e2eInfo }
+                {/* removed for watcha
                 { reportEventButton }
+                */}
             </div>
         );
     },

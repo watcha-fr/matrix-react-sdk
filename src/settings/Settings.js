@@ -157,7 +157,10 @@ export const SETTINGS = {
     "useCiderComposer": {
         displayName: _td("Use the new, faster, composer for writing messages"),
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        /* change for watcha
         default: true,
+        */
+        default: false,
     },
     "MessageComposerInput.suggestEmoji": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
@@ -246,16 +249,16 @@ export const SETTINGS = {
         invertedSettingName: 'TextualBody.disableBigEmoji',
     },
     "MessageComposerInput.isRichTextEnabled": {
-        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
-        /*change for watcha*/
-        // default: false,
+        /* change for watcha */
+        supportedLevels: [],
         default: true,
+        /* end of change */
     },
     "MessageComposer.showFormatting": {
-        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
-        /*change for watcha*/
-        // default: false,
-        default: true,
+        /* change for watcha */
+        supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS,
+        /* end of change */
+        default: false,
     },
     "sendTypingNotifications": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,

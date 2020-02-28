@@ -285,9 +285,10 @@ module.exports = createReactClass({
         const ConfirmUserActionDialog = sdk.getComponent("dialogs.ConfirmUserActionDialog");
         Modal.createTrackedDialog('Confirm User Action Dialog', 'onKick', ConfirmUserActionDialog, {
             member: this.props.member,
-            action: membership === "invite" ? _t("Disinvite") : _t("Kick"),
-            title: membership === "invite" ? _t("Disinvite this user?") : _t("Kick this user?"),
-            askReason: membership === "join",
+            /* change for watcha */
+            action: _t("Remove from group"),
+            title: _t("Remove this user from group?"),
+            /* end of change */
             danger: true,
             onFinished: (proceed, reason) => {
                 if (!proceed) return;
@@ -973,8 +974,9 @@ module.exports = createReactClass({
         }
 
         if (this.state.can.kick) {
-            const membership = this.props.member.membership;
-            const kickLabel = membership === "invite" ? _t("Disinvite") : _t("Kick");
+            /* change for watcha */
+            const kickLabel = _t("Remove from group");
+            /* end of change */
             kickButton = (
                 <AccessibleButton className="mx_MemberInfo_field"
                         onClick={this.onKick}>
@@ -1091,17 +1093,23 @@ module.exports = createReactClass({
         let roomMemberDetails = null;
         let e2eIconElement;
 
+        /* insertion for watcha */
+        const members = room.getJoinedMembers();
+        /* end of insertion */
+
         if (this.props.member.roomId) { // is in room
             const PowerSelector = sdk.getComponent('elements.PowerSelector');
             roomMemberDetails = <div>
-                <div className="mx_MemberInfo_profileField">
+                {/* change for watcha */}
+                { members.length > 2 && <div className="mx_MemberInfo_profileField">
                     <PowerSelector
                         value={parseInt(this.props.member.powerLevel)}
                         maxValue={this.state.can.modifyLevelMax}
                         disabled={!this.state.can.modifyLevel}
                         usersDefault={powerLevelUsersDefault}
                         onChange={this.onPowerChange} />
-                </div>
+                </div> }
+                {/* end of change */}
                 <div className="mx_MemberInfo_profileField">
                     {presenceLabel}
                     {statusLabel}
@@ -1148,9 +1156,10 @@ module.exports = createReactClass({
                         { roomMemberDetails }
                     </div>
                 </div>
-                <AutoHideScrollbar className="mx_MemberInfo_scrollContainer">
+                {/* change for watcha */}
+                { members.length > 2 && <AutoHideScrollbar className="mx_MemberInfo_scrollContainer">
                     <div className="mx_MemberInfo_container">
-                        { this._renderUserOptions() }
+                        { this.state.can.modifyLevel && this._renderUserOptions() }
 
                         { adminTools }
 
@@ -1162,7 +1171,8 @@ module.exports = createReactClass({
 
                         { spinner }
                     </div>
-                </AutoHideScrollbar>
+                </AutoHideScrollbar> }
+                {/* end of change */}
             </div>
         );
     },

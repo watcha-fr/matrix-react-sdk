@@ -328,7 +328,7 @@ export default class SecurityRoomSettingsTab extends React.Component {
 
         return (
             <div className="mx_SettingsTab mx_SecurityRoomSettingsTab">
-                <div className="mx_SettingsTab_heading">{_t("Security & Privacy")}</div>
+                <div className="mx_SettingsTab_heading">{/* removed for watcha _t("Security & Privacy") */}</div>
 
                 <span className='mx_SettingsTab_subheading'>{_t("Encryption")}</span>
                 <div className='mx_SettingsTab_section mx_SecurityRoomSettingsTab_encryptionSection'>

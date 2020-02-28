@@ -1,53 +1,69 @@
+/*
+
+Copyright 2020 Watcha
+
+This code is not licensed unless directly agreed with Watcha
+
+New code for the new File explorer view.
+
+*/
+
+import * as Mime from "mime";
 import filesize from "filesize";
 import matchSorter from "match-sorter";
 import React, { useMemo, useRef, useEffect } from "react";
+import GeminiScrollbar from "react-gemini-scrollbar";
 import { useTable, useSortBy, useFilters, useRowSelect } from "react-table";
 
 import dis from "../../dispatcher";
 import MatrixClientPeg from "../../MatrixClientPeg";
 import Modal from "../../Modal";
+import OutlineIconButton from "../views/elements/watcha_OutlineIconButton";
+import sdk from "../../index";
+import { _t } from "../../languageHandler";
+import { formatFullDate, formatFileExplorerDate } from "../../DateUtils";
 import {
     formatMimeType,
     getIconFromMimeType
 } from "../../watcha_mimeTypeUtils";
-import OutlineIconButton from "../views/elements/watcha_OutlineIconButton";
-import sdk from "../../index";
-import { formatFullDate, formatFileExplorerDate } from "../../DateUtils";
-import { _t } from "../../languageHandler";
+import { getUserNameColorClass } from "../../utils/FormattingUtils";
 
 function FileExplorer({ events, showTwelveHour }) {
     const columns = useMemo(
         () => [
             {
-                Header: "Name",
+                Header: _t("Name"),
                 accessor: "filename",
                 filter: "fuzzyText",
-                Cell: ({ cell: { value } }) => (
-                    <span title={value}>{value}</span>
-                )
+                sortType: compareLowerCase
             },
             {
-                Header: "Size",
+                Header: _t("Type"),
+                accessor: "type",
+                sortType: compareLowerCase
+            },
+            {
+                Header: _t("Size"),
                 accessor: "size",
                 // FIXME: Some files like movies recorded in the ios app (named video_xxxxxxx.mp4) don't seem to have a size...
                 Cell: ({ cell: { value } }) => (value ? filesize(value) : "")
             },
             {
-                Header: "Date",
+                Header: _t("Added on"),
                 accessor: "timestamp",
                 Cell: ({ cell: { value } }) => (
                     <LightDate timestamp={value} {...{ showTwelveHour }} />
                 )
             },
             {
-                Header: "Type",
-                accessor: "type",
-                sortType: sortType
-            },
-            {
-                Header: "Sender",
+                Header: _t("By"),
                 accessor: "sender",
-                disableSortBy: true
+                sortType: compareLowerCase,
+                Cell: ({ cell: { row } }) => {
+                    // common but buggy way (returns either the userId or the displayname in an unpredictable way):
+                    // <SenderProfile mxEvent={row.original.mxEvent} />
+                    return <Sender mxEvent={row.original.mxEvent} />;
+                }
             }
         ],
         []
@@ -71,19 +87,29 @@ function FileExplorer({ events, showTwelveHour }) {
         []
     );
 
+    const initialState = useMemo(
+        () => ({
+            sortBy: [{ id: "timestamp", desc: true }]
+        }),
+        []
+    );
+
     // Use the state and functions returned from useTable to build your UI
     const tableInstance = useTable(
         {
             columns,
             data,
             defaultColumn, // Be sure to pass the defaultColumn option
-            filterTypes
+            filterTypes,
+            initialState,
+            disableSortRemove: true,
+            autoResetSortBy: false
         },
         useFilters,
         useSortBy,
         useRowSelect,
         hooks => {
-            hooks.flatColumns.push(columns => [
+            hooks.visibleColumns.push(columns => [
                 // Let's make a column for selection
                 {
                     id: "selection",
@@ -118,23 +144,21 @@ function FileExplorer({ events, showTwelveHour }) {
 }
 
 function Body({ tableInstance }) {
-    const GeminiScrollbarWrapper = sdk.getComponent(
-        "elements.GeminiScrollbarWrapper"
-    );
     const { selectedFlatRows } = tableInstance;
     const table = (
-        <GeminiScrollbarWrapper autoshow={true} minThumbSize={50}>
+        <GeminiScrollbar forceGemini={true} autoshow={true} minThumbSize={50}>
             <Table {...{ tableInstance }} />
-        </GeminiScrollbarWrapper>
+        </GeminiScrollbar>
     );
     const detailPanel = (
-        <GeminiScrollbarWrapper
+        <GeminiScrollbar
             className="watcha_FileExplorer_DetailPanel_Scrollbar"
+            forceGemini={true}
             autoshow={true}
             minThumbSize={50}
         >
             <DetailPanel {...{ selectedFlatRows }} />
-        </GeminiScrollbarWrapper>
+        </GeminiScrollbar>
     );
     return (
         <div className="watcha_FileExplorer_Body">
@@ -166,19 +190,26 @@ function Table({ tableInstance }) {
                         {headerGroup.headers.map(column => (
                             <th
                                 {...column.getHeaderProps(
-                                    column.getSortByToggleProps()
+                                    column.getSortByToggleProps({
+                                        title: undefined
+                                    })
                                 )}
                             >
-                                {column.render("Header")}
-                                {column.canSort && (
-                                    <span className="isSorted">
-                                        {column.isSorted
-                                            ? column.isSortedDesc
-                                                ? "⮟"
-                                                : "⮝"
-                                            : ""}
-                                    </span>
-                                )}
+                                <span>
+                                    {column.render("Header")}
+                                    {column.isSorted ? (
+                                        <span
+                                            className={
+                                                "watcha_FileExplorer_chevron " +
+                                                (column.isSortedDesc
+                                                    ? "watcha_FileExplorer_chevronDown"
+                                                    : "watcha_FileExplorer_chevronUp")
+                                            }
+                                        />
+                                    ) : (
+                                        undefined
+                                    )}
+                                </span>
                             </th>
                         ))}
                     </tr>
@@ -206,22 +237,27 @@ function Table({ tableInstance }) {
                     };
                     return (
                         <tr
-                            className={
-                                row.isSelected
+                            {...row.getRowProps({
+                                className: row.isSelected
                                     ? "watcha_FileExplorer_SelectedRow"
                                     : undefined
-                            }
-                            {...row.getRowProps()}
+                            })}
                         >
                             {row.cells.map(cell => {
                                 return (
                                     <td
-                                        onClick={
-                                            cell.column.id !== "selection"
-                                                ? selectRow
-                                                : undefined
-                                        }
-                                        {...cell.getCellProps()}
+                                        {...cell.getCellProps({
+                                            title: [
+                                                "filename",
+                                                "type"
+                                            ].includes(cell.column.id)
+                                                ? cell.value
+                                                : undefined,
+                                            onClick:
+                                                cell.column.id !== "selection"
+                                                    ? selectRow
+                                                    : undefined
+                                        })}
                                     >
                                         {cell.render("Cell")}
                                     </td>
@@ -254,7 +290,8 @@ function Thumbnail({ selectedEvents }) {
     if (selectedEvents.length === 1) {
         const mxEvent = selectedEvents[0];
         const content = mxEvent.getContent();
-        const mimeType = content.info.mimetype;
+        const filename = content.body;
+        const mimeType = Mime.getType(filename);
         const msgtype = content.msgtype;
         const isMultimedia = ["m.image", "m.video", "m.audio"].includes(
             msgtype
@@ -326,6 +363,18 @@ function LightDate({ timestamp, showTwelveHour }) {
     return <span title={title}>{formattedDate}</span>;
 }
 
+function Sender({ mxEvent }) {
+    const member = getMemberFromEvent(mxEvent);
+    const userId = member.userId;
+    const displayname = member.rawDisplayName;
+    const className = getUserNameColorClass(userId);
+    return (
+        <span title={displayname} {...{ className }}>
+            {displayname}
+        </span>
+    );
+}
+
 function DownloadButton({ mxEvent, selectedEvents }) {
     const content = mxEvent.getContent();
     const contentUrl = MatrixClientPeg.get().mxcUrlToHttp(content.url);
@@ -360,7 +409,7 @@ function ShowMessageButton({ mxEvent }) {
             onClick={onClick}
             title={_t("Show the corresponding message in the room timeline")}
         >
-            {_t("Message")}
+            {_t("View message")}
         </OutlineIconButton>
     );
 }
@@ -471,11 +520,10 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 // Let the table remove the filter if the string is empty
 fuzzyTextFilterFn.autoRemove = val => !val;
 
-function sortType(rowA, rowB) {
-    const key = "type";
-    const a = rowA.original[key].toLowerCase();
-    const b = rowB.original[key].toLowerCase();
-    return a === b ? 0 : a > b ? 1 : -1;
+function compareLowerCase(rowA, rowB, columnId) {
+    const a = rowA.values[columnId].toLowerCase();
+    const b = rowB.values[columnId].toLowerCase();
+    return a === b ? 0 : a < b || b === "" ? -1 : 1;
 }
 
 function getData(events) {
@@ -491,27 +539,31 @@ function getData(events) {
 }
 
 function getEventData(mxEvent) {
-    const SenderProfile = sdk.getComponent("messages.SenderProfile");
-
     const content = mxEvent.getContent();
 
     const filename = content.body;
+    const mimeType = Mime.getType(filename);
+    const type = mimeType ? formatMimeType({ mimeType, filename }) : "";
     const size = content.info.size;
     const timestamp = mxEvent.getTs();
-    const mimeType = content.info.mimetype;
-    const type = mimeType ? formatMimeType({ mimeType, filename }) : mimeType;
-    const sender = <SenderProfile mxEvent={mxEvent} enableFlair={true} />;
+    const sender = getMemberFromEvent(mxEvent).rawDisplayName;
     const key = mxEvent.getId();
 
     return {
         filename,
-        size,
-        timestamp,
         type,
+        size,
         sender,
+        timestamp,
         key,
         mxEvent
     };
+}
+
+function getMemberFromEvent(mxEvent) {
+    const client = MatrixClientPeg.get();
+    const room = client.getRoom(mxEvent.getRoomId());
+    return room.getMember(mxEvent.getSender());
 }
 
 function shouldHideEvent(mxEvent) {

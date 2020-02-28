@@ -1,6 +1,33 @@
+/*
+Copyright 2016 OpenMarket Ltd
+Copyright 2017 Vector Creations Ltd
+Copyright 2019 New Vector Ltd
+Copyright 2019 The Matrix.org Foundation C.I.C.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+/*
+
+This file is entirely copied from ./TimelinePanel.js by watcha
+with some adaptations. Should be cleaned up later :)
+
+*/
+
 import Matrix from "matrix-js-sdk";
 const EventTimeline = Matrix.EventTimeline;
 
+import MatrixClientPeg from "../../MatrixClientPeg";
 import sdk from "../../index";
 import SettingsStore from "../../settings/SettingsStore";
 import TimelinePanel from "./TimelinePanel";
@@ -9,6 +36,7 @@ import { _t } from "../../languageHandler";
 import FileExplorer from "./watcha_FileExplorer";
 
 const PAGINATE_SIZE = 1000;
+const INITIAL_SIZE = 1000;
 
 const DEBUG = false;
 
@@ -31,10 +59,6 @@ class WatchaTimelinePanel extends TimelinePanel {
         this._showHiddenEventsInTimeline = SettingsStore.getValue(
             "showHiddenEventsInTimeline"
         );
-    }
-
-    componentDidMount() {
-        this.fill();
     }
 
     fill() {
@@ -108,6 +132,101 @@ class WatchaTimelinePanel extends TimelinePanel {
         });
     }
 
+    _loadTimeline = (eventId, pixelOffset, offsetBase) => {
+        this._timelineWindow = new Matrix.TimelineWindow(
+            MatrixClientPeg.get(), this.props.timelineSet,
+            {windowLimit: this.props.timelineCap});
+
+        const onLoaded = () => {
+            // clear the timeline min-height when
+            // (re)loading the timeline
+            if (this.refs.messagePanel) {
+                this.refs.messagePanel.onTimelineReset();
+            }
+            this._reloadEvents();
+
+            // If we switched away from the room while there were pending
+            // outgoing events, the read-marker will be before those events.
+            // We need to skip over any which have subsequently been sent.
+            this._advanceReadMarkerPastMyEvents();
+
+            this.setState({
+                canBackPaginate: this._timelineWindow.canPaginate(EventTimeline.BACKWARDS),
+                canForwardPaginate: this._timelineWindow.canPaginate(EventTimeline.FORWARDS),
+                timelineLoading: false,
+            }, () => {
+                this.fill();
+            });
+        };
+
+        const onError = (error) => {
+            this.setState({ timelineLoading: false });
+            console.error(
+                `Error loading timeline panel at ${eventId}: ${error}`,
+            );
+            const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
+
+            let onFinished;
+
+            // if we were given an event ID, then when the user closes the
+            // dialog, let's jump to the end of the timeline. If we weren't,
+            // something has gone badly wrong and rather than causing a loop of
+            // undismissable dialogs, let's just give up.
+            if (eventId) {
+                onFinished = () => {
+                    // go via the dispatcher so that the URL is updated
+                    dis.dispatch({
+                        action: 'view_room',
+                        room_id: this.props.timelineSet.room.roomId,
+                    });
+                };
+            }
+            let message;
+            if (error.errcode == 'M_FORBIDDEN') {
+                message = _t(
+                    "Tried to load a specific point in this room's timeline, but you " +
+                    "do not have permission to view the message in question.",
+                );
+            } else {
+                message = _t(
+                    "Tried to load a specific point in this room's timeline, but was " +
+                    "unable to find it.",
+                );
+            }
+            Modal.createTrackedDialog('Failed to load timeline position', '', ErrorDialog, {
+                title: _t("Failed to load timeline position"),
+                description: message,
+                onFinished: onFinished,
+            });
+        };
+
+        // if we already have the event in question, TimelineWindow.load
+        // returns a resolved promise.
+        //
+        // In this situation, we don't really want to defer the update of the
+        // state to the next event loop, because it makes room-switching feel
+        // quite slow. So we detect that situation and shortcut straight to
+        // calling _reloadEvents and updating the state.
+
+        const timeline = this.props.timelineSet.getTimelineForEvent(eventId);
+        if (timeline) {
+            // This is a hot-path optimization by skipping a promise tick
+            // by repeating a no-op sync branch in TimelineSet.getTimelineForEvent & MatrixClient.getEventTimeline
+            this._timelineWindow.load(eventId, INITIAL_SIZE); // in this branch this method will happen in sync time
+            onLoaded();
+        } else {
+            const prom = this._timelineWindow.load(eventId, INITIAL_SIZE);
+            this.setState({
+                events: [],
+                liveEvents: [],
+                canBackPaginate: false,
+                canForwardPaginate: false,
+                timelineLoading: true,
+            });
+            prom.then(onLoaded, onError);
+        }
+    }
+
     onRoomTimeline = (ev, room, toStartOfTimeline, removed, data) => {
         // ignore events for other timeline sets
         if (data.timeline.getTimelineSet() !== this.props.timelineSet) return;
@@ -118,7 +237,16 @@ class WatchaTimelinePanel extends TimelinePanel {
 
         // tell the timeline window to try to advance itself, but not to make
         // an http request to do so.
-        this._timelineWindow.paginate(EventTimeline.FORWARDS, 1, false)
+        this._timelineWindow.paginate(EventTimeline.FORWARDS, 1, false).then(() => {
+            if (this.unmounted) { return; }
+
+            const { events, liveEvents } = this._getEvents();
+
+            this.setState({
+                events,
+                liveEvents,
+            });
+        });
     }
 
     render() {
