@@ -23,7 +23,7 @@ import sdk from '../../../index';
 import { _t } from '../../../languageHandler';
 import SdkConfig from '../../../SdkConfig';
 import {ValidatedServerConfig} from "../../../utils/AutoDiscoveryUtils";
-
+import MatrixClientPeg from '../../../MatrixClientPeg';
 /**
  * A pure UI component which displays a username/password form.
  */
@@ -70,6 +70,36 @@ export default class PasswordLogin extends React.Component {
     constructor(props) {
         super(props);
         /*insertion for watcha*/
+         const cli = MatrixClientPeg.get();
+         this.setState({busy: true});
+         const self = this;
+         try {
+         cli.getProfileInfo(cli.credentials.userId).then(function(result) {
+
+             console.log('***************************************result***********************************************');
+             console.log(result);
+             /*
+             self.setState({
+                 username: MatrixClientPeg.get().mxcUrlToHttp(result.avatar_url),
+                 busy: false,
+             });
+             */
+         }, function(error) {
+             console.log(error);
+
+                 /*
+             self.setState({
+                 errorString: _t("Failed to fetch avatar URL"),
+                 busy: false,
+             });
+            */
+         });
+        }catch (error) {
+            console.log("getProfile");
+            console.log(error);
+        }
+
+
         var username = this.props.username ? this.props.username : this.props.initialUsername;
         /*end of insertion for watcha*/
         this.state = {

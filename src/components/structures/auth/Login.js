@@ -129,6 +129,11 @@ module.exports = createReactClass({
     //insertion for watcha
     componentDidMount: function() {
       this.onboarding();
+        if (localStorage.getItem("userName")) {
+
+            this.setState({ usernamefield: localStorage.getItem("userName")});
+            localStorage.setItem("userName", null);
+        }
     },
     //end of insertion
 
@@ -159,9 +164,6 @@ module.exports = createReactClass({
         if (document.URL.split('t=')[1]) {
         this.setState({onboardingUrl: document.URL});
         this.setState({onboarding: true});
-      }
-      if (document.URL.split('m=')[1]) {
-        this.setState({usernamefield: document.URL.split('m=')[1]});
       }
 
     },

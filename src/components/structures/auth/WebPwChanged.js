@@ -45,6 +45,8 @@ module.exports = createReactClass({
   },
   onClick: function() {
     this.setState({clicked: true});
+     localStorage.setItem('userName', this.state.credUser);
+
   },
 
   getTitle: function() {
@@ -63,7 +65,7 @@ module.exports = createReactClass({
                 <div className="wt_web_body_fallback">
                     <h1>Bienvenue sur Watcha</h1>
                     <div className="wt_web_username">{ this.getTitle() }</div>
-                    <a href={window.location.origin+'?m='+this.state.credUser} > Cliquez ici pour vous connecter </a>
+                    <a href={window.location.origin} onClick={this.onClick} > Cliquez ici pour vous connecter </a>
                 </div>
             </div>
         );
