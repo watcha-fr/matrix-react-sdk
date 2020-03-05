@@ -44,9 +44,7 @@ module.exports = createReactClass({
   alert("Copied the text: " + copyText.value);
   },
   onClick: function() {
-    this.setState({clicked: true});
      localStorage.setItem('userName', this.state.credUser);
-
   },
 
   getTitle: function() {
