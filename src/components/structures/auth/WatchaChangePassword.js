@@ -1,12 +1,12 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
-import WebPwChanged from './WebPwChanged';
-import MobileOnboarding from './MobileOnboarding';
+import WatchaWebPwChanged from './WatchaWebPwChanged';
+import WatchaMobileOnboarding from './WatchaMobileOnboarding';
 
 module.exports = createReactClass({
-    displayName: 'ChangePassword',
+    displayName: 'WatchaChangePassword',
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             passwordLength: true,
             passwordMatch: true,
@@ -16,24 +16,24 @@ module.exports = createReactClass({
 
         };
     },
-    componentDidMount: function() {
+    componentDidMount() {
         this.setState({ os: this.getOS() });
         this.getUrlParameters();
     },
 
-    onPasswordChange: function(evt) {
+    onPasswordChange(evt) {
         this.setState({ password: evt.target.value });
     },
 
-    onDisplaynameChange: function(evt) {
+    onDisplaynameChange(evt) {
         this.setState({ displayName: evt.target.value });
     },
 
-    onConfirmChange: function (evt) {
+    onConfirmChange(evt) {
         this.setState({ confirm: evt.target.value });
     },
 
-    convertUserId: function(user) {
+    convertUserId(user) {
         let simplifiedUserId = user;
         if (user[0] === '@') {
             simplifiedUserId = user.replace('@', '');
@@ -41,11 +41,10 @@ module.exports = createReactClass({
             simplifiedUserId = simplifiedUserId[0];
         }
         return simplifiedUserId;
-
     },
 
 
-    getUrlParameters: async function() {
+    async getUrlParameters() {
         const arr = this.props.onboardingUrl.split('t=');
         const encodedString = arr[1];
         const CredsString = this.b64DecodeUnicode(encodedString); //there is probably a better way to parse an url parameter bud i did not find any?
@@ -61,13 +60,13 @@ module.exports = createReactClass({
         this.setState({ user: this.convertUserId(user) });
         this.setState({ credPassword: password });
         this.setState({ credServer: window.location.hostname });
-        this.setState({ credentialsWithoutPassword: credentialsWithoutPassword });
+        this.setState({ credentialsWithoutPassword });
         this.getAccessToken();
     },
-    connect: function(password) {
+    connect(password) {
         this.changePassword();
     },
-    getOS: function() {
+    getOS() {
         const userAgent = window.navigator.userAgent;
         const platform = window.navigator.platform;
         const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
@@ -89,7 +88,7 @@ module.exports = createReactClass({
         return "Unsupported platform";
     },
 
-    noPasswordToken: function() {
+    noPasswordToken() {
         this.getIdentityToken(btoa(JSON.stringify(this.state.credentialsWithoutPassword).replace(/%([0-9A-F]{2})/g,
             function toSolidBytes(match, p1) {
                 return String.fromCharCode('0x' + p1);
@@ -97,26 +96,21 @@ module.exports = createReactClass({
         );
     },
 
-    getIdentityToken: function(string) {
+    getIdentityToken(string) {
         this.setState({ identityToken: string });
     },
 
-    getAccessToken: async function() {
+    async getAccessToken() {
         try {
             // get config.json and synapse URL.
             const configRequest = await fetch('/config.json');
-            console.log('configRequest');
-            console.log(configRequest);
             const configData = JSON.parse(await configRequest.text());
-            console.log('configData');
-            console.log(configData);
             // New, complex, format for homeserver location in config.json...
             // see riot-web.git/src/vector/index.js
             const coreUrl = configData['default_server_config']['m.homeserver']['base_url'];
             const server = configData['default_server_config']['m.homeserver']['server_name'];
-            this.setState({ coreUrl: coreUrl });
-            this.setState({ server: server });
-            console.log(server+'server********')
+            this.setState({ coreUrl });
+            this.setState({ server });
             if (!this.state.coreUrl) {
                 this.setState({
                     error:
@@ -137,8 +131,6 @@ module.exports = createReactClass({
                     },
                 });
                 const loginData = JSON.parse(await loginRequest.text());
-                console.log("*****loginData*****");
-                console.log(loginData);
 
                 if (!loginData['access_token']) {
                     this.noPasswordToken();
@@ -159,12 +151,12 @@ module.exports = createReactClass({
 
     },
 
-    b64DecodeUnicode: function(str) {
+    b64DecodeUnicode(str) {
         return decodeURIComponent(atob(str).split('').map(function(c) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
     },
-    changePassword: async function() {
+    async changePassword() {
         this.setState({ loading: true });
         try {
             // XHR POST to change password
@@ -197,7 +189,7 @@ module.exports = createReactClass({
         this.setState({ loading: false });
     },
 
-    changeDisplayname: async function() {
+    async changeDisplayname() {
         this.setState({ loading: true });
         try {
             // XHR POST to change password
@@ -227,7 +219,7 @@ module.exports = createReactClass({
     },
 
 
-    onChangePassword: function() {
+    onChangePassword() {
         const PASSWORD_MATCH = (this.state.password === this.state.confirm);
         const PASSWORD_LENGTH = (this.state.password.length > 7);
         this.setState({ passwordMatch: PASSWORD_MATCH });
@@ -236,23 +228,23 @@ module.exports = createReactClass({
             this.connect(this.state.password);
         }
     },
-    onPasswordBlur: function() {
+    onPasswordBlur() {
         this.setState({ passwordFocus: false });
     },
-    onChangeBlur: function() {
+    onChangeBlur() {
         this.setState({ changeFocus: false });
     },
-    onChangeFocus: function() {
+    onChangeFocus() {
         this.setState({ changeFocus: true });
     },
-    onPasswordFocus: function() {
+    onPasswordFocus() {
         this.setState({ passwordFocus: true });
     },
-    onDisplaynameFocus: function() {
+    onDisplaynameFocus() {
         this.setState({ displaynameFocus: true });
     },
 
-    render: function() {
+    render() {
         if (this.state.loading) {
             return (
                 <div className='loading'>
@@ -284,9 +276,9 @@ module.exports = createReactClass({
         }
         if (this.state.passwordAlreadyChanged || this.state.successChange) {
             if (this.state.os === 'iOS' || this.state.os === 'Android') {
-                return <MobileOnboarding os={this.state.os} identityToken={this.state.identityToken} firstConnection={!this.state.passwordAlreadyChanged} user={this.state.credUser} />;
+                return <WatchaMobileOnboarding os={this.state.os} identityToken={this.state.identityToken} firstConnection={!this.state.passwordAlreadyChanged} user={this.state.credUser} />;
             } else {
-                return <WebPwChanged passwordLogin={this.props.PasswordLogin} identityToken={this.state.identityToken} firstConnection={!this.state.passwordAlreadyChanged} user={this.convertUserId(this.state.credUser)} />;
+                return <WatchaWebPwChanged passwordLogin={this.props.PasswordLogin} identityToken={this.state.identityToken} firstConnection={!this.state.passwordAlreadyChanged} user={this.convertUserId(this.state.credUser)} />;
             }
         }
         return (

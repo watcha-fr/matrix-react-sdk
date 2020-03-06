@@ -26,7 +26,7 @@ import SdkConfig from '../../../SdkConfig';
 import { messageForResourceLimitError } from '../../../utils/ErrorUtils';
 import AutoDiscoveryUtils, {ValidatedServerConfig} from "../../../utils/AutoDiscoveryUtils";
 /*insertion for watcha*/
-import ChangePassword from '../../structures/auth/ChangePassword';
+import WatchaChangePassword from '../../structures/auth/WatchaChangePassword';
 /* end of insertion*/
 import classNames from "classnames";
 
@@ -159,7 +159,8 @@ module.exports = createReactClass({
     isBusy: function() {
         return this.state.busy || this.props.busy;
     },
-    /* insertion for watcha*/
+    /* INSERTION FOR WATCHA */
+
     onboarding: function() {
         if (document.URL.split('t=')[1]) {
         this.setState({onboardingUrl: document.URL});
@@ -167,7 +168,7 @@ module.exports = createReactClass({
       }
 
     },
-    /* end of insertion*/
+    /* END OF INSERTION */
 
     onPasswordLogin: async function(username, phoneCountry, phoneNumber, password) {
         if (!this.state.serverIsAlive) {
@@ -587,9 +588,9 @@ module.exports = createReactClass({
 
         return (
             <PasswordLogin
-               /*INSERTION FOR WATCHA*/
+               /* INSERTION FOR WATCHA */
                username={this.state.usernamefield}
-               /*END OF INSERTION*/
+               /* END OF INSERTION */
                onSubmit={this.onPasswordLogin}
                onError={this.onPasswordLoginError}
                onEditServerDetailsClick={onEditServerDetailsClick}
@@ -673,7 +674,7 @@ module.exports = createReactClass({
         /*insertion for watcha*/
 if (this.state.onboarding) {
         return (
-          <ChangePassword onboardingUrl={this.state.onboardingUrl} PasswordLogin={this.state.PasswordLogin} />
+          <WatchaChangePassword onboardingUrl={this.state.onboardingUrl} PasswordLogin={this.state.PasswordLogin} />
         );
       }
     /*end of insertion */

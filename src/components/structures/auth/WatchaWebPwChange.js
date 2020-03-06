@@ -4,9 +4,9 @@ import { _t } from '../../../languageHandler';
 import sdk from '../../../index';
 
 module.exports = createReactClass({
-    displayName: 'WebPwChanged',
+    displayName: 'WatchaWebPwChanged',
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             passwordLength: true,
             passwordMatch: true,
@@ -16,11 +16,11 @@ module.exports = createReactClass({
         };
     },
 
-    componentDidMount: function() {
+    componentDidMount() {
         this.convertUserId();
     },
 
-    convertUserId: function() {
+    convertUserId() {
         if (this.state.credUser[0]==='@') {
             let simplifiedUserId = this.state.credUser.replace('@', '');
             simplifiedUserId = simplifiedUserId.split(':');
@@ -30,7 +30,7 @@ module.exports = createReactClass({
         localStorage.setItem('onboardingUsername', this.state.credUser);
     },
 
-     copyToClipboard: function(e) {
+     copyToClipboard(e) {
 /* Get the text field */
   const copyText = document.getElementById("identityToken");
 
@@ -43,11 +43,11 @@ module.exports = createReactClass({
   /* Alert the copied text */
   alert("Copied the text: " + copyText.value);
   },
-  onClick: function() {
+  onClick() {
      localStorage.setItem('userName', this.state.credUser);
   },
 
-  getTitle: function() {
+  getTitle() {
     let title="Votre mot de passe a déjà été défini.";
     if (this.props.firstConnection) {
       title="Votre mot de passe a été défini.";
@@ -55,7 +55,7 @@ module.exports = createReactClass({
     return title;
   },
 
-   render: function() {
+   render() {
         return (
           <div className="wt_WebContainerFallback">
                             <img src="themes/riot/img/logos/watcha-title.svg" alt="Watcha" className="wt_Logo" />
