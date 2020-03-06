@@ -3,7 +3,7 @@ import createReactClass from 'create-react-class';
 import WatchaWebPwChanged from './WatchaWebPwChanged';
 import WatchaMobileOnboarding from './WatchaMobileOnboarding';
 
-module.exports = React.createReactClass({
+module.exports = createReactClass({
     displayName: 'WatchaChangePassword',
 
     getInitialState() {
