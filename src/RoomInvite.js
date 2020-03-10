@@ -40,34 +40,31 @@ function inviteMultipleToRoom(roomId, addrs) {
     return inviter.invite(addrs).then(states => Promise.resolve({states, inviter}));
 }
 
-/*insertion for watcha*/
+/* insertion for watcha */
 export function showStartChatInviteDialog() {
-    const InviteMemberDialog = sdk.getComponent("dialogs.InviteMemberDialog");
+    const InviteMemberDialog = sdk.getComponent("dialogs.watcha_InviteMemberDialog");
     Modal.createTrackedDialog('Start a chat', '', InviteMemberDialog, {
         title: _t('Start a chat'),
-        description: _t("Who would you like to communicate with?"),
-        placeholder: _t("Email, name"),
         button: _t("Start Chat"),
         onFinished: _onStartDmFinished,
     });
 }
 
 export function showRoomInviteDialog(roomId) {
-    const InviteMemberDialog = sdk.getComponent("dialogs.InviteMemberDialog");
+    const InviteMemberDialog = sdk.getComponent("dialogs.watcha_InviteMemberDialog");
     Modal.createTrackedDialog('Chat Invite', '', InviteMemberDialog, {
         title: _t('Invite new room members'),
         button: _t('Invite'),
-        placeholder: _t("Email, name"),
         roomId: roomId,
         onFinished: (shouldInvite, addrs) => {
             _onRoomInviteFinished(roomId, shouldInvite, addrs);
         },
     });
 }
-/*end of insertion*/
+/* end of insertion */
 
 
-/*removed for watcha
+/* removed for watcha
 export function showStartChatInviteDialog() {
     const AddressPickerDialog = sdk.getComponent("dialogs.AddressPickerDialog");
 

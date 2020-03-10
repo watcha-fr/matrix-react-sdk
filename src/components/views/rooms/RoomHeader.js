@@ -120,14 +120,14 @@ module.exports = createReactClass({
         });
     },
 
-    /*insertion for watcha*/
-    onInviteButton:function() {
+    /* insertion for watcha */
+    onInviteButtonClick: function() {
             dis.dispatch({
                 action: 'view_invite',
                 roomId: this.props.roomId,
             });
     },
-    /*end of insertion for watcha*/
+    /* end of insertion for watcha */
 
     _hasUnreadPins: function() {
         const currentPinEvent = this.props.room.currentState.getStateEvents("m.room.pinned_events", '');
@@ -289,20 +289,50 @@ module.exports = createReactClass({
                 </AccessibleButton>;
         }
 
-        /*insertion for watcha*/
-        let inviteRoomButton;
-        if (this.props.inRoom) {
-          inviteRoomButton =
-            <AccessibleButton className="mx_RoomHeader_button mx_RoomHeader_inviteButton"
-            // this string already exists in other places in Riot,
-            // but we also add its translation in our resources files,
-            // in case Riot would change their string...
-            onClick={this.onInviteButton}
-            title={_t('Invite users')}
-            >
-            </AccessibleButton>;
+        /* insertion for watcha */
+        let inviteButton;
+        const client = MatrixClientPeg.get();
+
+        if (
+            this.props.inRoom &&
+            this.props.room &&
+            this.props.room.getMyMembership() === "join"
+        ) {
+            let canInvite = true;
+
+            const plEvent = this.props.room.currentState.getStateEvents(
+                "m.room.power_levels",
+                ""
+            );
+            const me = this.props.room.getMember(client.getUserId());
+            if (plEvent && me) {
+                const content = plEvent.getContent();
+                if (content && content.invite > me.powerLevel) {
+                    canInvite = false;
+                }
+            }
+
+            const otherProps = canInvite
+                ? {
+                      title: _t("Invite users"),
+                      disabled: false
+                  }
+                : {
+                      title: _t(
+                          "You do not have the required privileges to invite users to this room."
+                      ),
+                      disabled: true
+                  };
+
+            inviteButton = (
+                <AccessibleButton
+                    className="mx_RoomHeader_button mx_RoomHeader_inviteButton"
+                    onClick={this.onInviteButtonClick}
+                    {...otherProps}
+                />
+            );
         }
-        /*end of insertion*/
+        /* end of insertion */
 
 
         let manageIntegsButton;
@@ -314,22 +344,16 @@ module.exports = createReactClass({
 
         const rightRow =
             <div className="mx_RoomHeader_buttons">
-                {/* insertion for watcha*/
-                  inviteRoomButton
-                /*end of insertion*/}
+                {/* insertion for watcha */}
+                { inviteButton }
+                {/* end of insertion */}
                 { settingsButton }
-                { /*removed for watcha
-                  pinnedEventsButton
-                  */}
-                {/*removed for watcha
-                   shareRoomButton
-                 */}
-                { /* removed for watcha
-                  manageIntegsButton
+                {/* deletion for watcha
+                { pinnedEventsButton }
+                { shareRoomButton }
+                { manageIntegsButton }
+                { forgetButton }
                 */}
-                { /*removed for watcha
-                  forgetButton
-                 */}
                 { searchButton }
             </div>;
 

@@ -231,10 +231,22 @@ limitations under the License.
 }
 
 /* insertion for watcha */
-.mx_RoomHeader_inviteButton{
-    mask-image: url('$(res)/img/feather-customised/user-add.svg');
-    margin-top: 2px;
+.mx_RoomHeader_inviteButton {
+    height: 20px;
+    width: 25px;
+    mask-image: url("$(res)/img/feather-customised/user-add.svg");
+    mask-size: contain;
     mask-repeat: no-repeat;
+    &.mx_RoomHeader_button::before {
+        width: 25px;
+    }
+}
+
+.mx_RoomHeader_inviteButton.mx_AccessibleButton_disabled {
+    cursor: not-allowed;
+    &::before {
+        opacity:0.3;
+    }
 }
 /* end of insertion */
 

@@ -282,7 +282,8 @@ input[type=text]:focus, input[type=password]:focus, textarea:focus {
     font-size: 15px;
     position: relative;
     padding: 25px 30px 30px 30px;
-    max-height: 80%;
+    // modified for watcha
+    max-height: 90%;
     box-shadow: 2px 15px 30px 0 $dialog-shadow-color;
     border-radius: 4px;
     overflow-y: auto;

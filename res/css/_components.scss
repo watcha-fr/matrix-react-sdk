@@ -21,7 +21,6 @@
 @import "./structures/_RoomSubList.scss";
 @import "./structures/_RoomView.scss";
 @import "./structures/_ScrollPanel.scss";
-@import "./views/dialogs/_EntityTile.scss";
 @import "./structures/_SearchBox.scss";
 @import "./structures/_TabbedView.scss";
 @import "./structures/_TagPanel.scss";
@@ -202,12 +201,11 @@
 @import "./views/voip/_IncomingCallbox.scss";
 @import "./views/voip/_VideoView.scss";
 /* insertion for watcha */
-@import "./views/dialogs/_ChatInviteDialog.scss";
-@import "./views/rooms/_EntityTile.scss";
 @import "./structures/_watcha_AdminAccess.scss";
 @import "./structures/_watcha_FileExplorer.scss";
+@import "./structures/_watcha_ReactGeminiScrollbar.scss";
+@import "./views/dialogs/_watcha_InviteMemberDialog.scss";
+@import "./views/elements/_watcha_IconButton.scss";
 @import "./views/elements/_watcha_OutlineButton.scss";
 @import "./views/elements/_watcha_OutlineIconButton.scss";
-@import "./views/elements/_watcha_IconButton.scss";
-@import "./structures/_watcha_ReactGeminiScrollbar.scss";
 /* end of insertion */
