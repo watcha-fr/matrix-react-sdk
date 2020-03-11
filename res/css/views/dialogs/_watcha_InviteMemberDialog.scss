@@ -143,4 +143,17 @@ This code is not licensed unless directly agreed with Watcha
 
 .watcha_InviteMemberDialog_addEmailAddressButton_valid {
     border: 2px solid aqua;
+    > span {
+        animation: slide 1s ease-in-out infinite;
+    }
+}
+
+@keyframes slide {
+    0%,
+    100% {
+        transform: translate(-0.15em);
+    }
+    50% {
+        transform: translate(0.15em);
+    }
 }
