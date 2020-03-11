@@ -74,10 +74,6 @@ This code is not licensed unless directly agreed with Watcha
     }
 }
 
-.watcha_EmailInvitation > p {
-    margin-top: 0;
-}
-
 .watcha_InviteMemberDialog_EntityTile_roomMember {
     cursor: initial;
     &.mx_EntityTile:hover {
@@ -111,29 +107,32 @@ This code is not licensed unless directly agreed with Watcha
     }
 }
 
+.watcha_EmailInvitation > p {
+    margin-top: 0;
+}
+
 .watcha_InviteMemberDialog_emailAddressContainer {
     display: flex;
-    align-items: center;
+    height: 2.5em;
     .mx_Field {
         margin: 0;
         &:not(:focus-within) {
             border-color: $input-darker-fg-color;
         }
     }
-    .mx_Field_postfix {
-        width: 3em;
-    }
 }
 
 .watcha_InviteMemberDialog_addEmailAddressButton {
-    &::before {
-        content: "";
-        width: 3em;
-        height: 100%;
-        position: absolute;
-        mask: url("$(res)/img/member_chevron.png");
-        mask-position: center;
+    display: flex;
+    width: 3em;
+    margin-left: 0.5em;
+    border: 1px solid $input-darker-fg-color;
+    border-radius: 4px;
+    > span {
+        width: 100%;
+        mask-image: url("$(res)/img/member_chevron.png");
         mask-repeat: no-repeat;
+        mask-position: center;
         background-color: $rightpanel-button-color;
     }
     &:hover {

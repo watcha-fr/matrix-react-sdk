@@ -541,14 +541,6 @@ class EmailInvitation extends Component {
     render() {
         const Field = sdk.getComponent("views.elements.Field");
 
-        const addEmailAddressButton = (
-            <span
-                className="watcha_InviteMemberDialog_addEmailAddressButton"
-                title={_t("Add an email address to the invitation list.")}
-                onClick={this.onOk}
-            />
-        );
-
         return (
             <div className="watcha_EmailInvitation">
                 <div
@@ -563,9 +555,17 @@ class EmailInvitation extends Component {
                         value={this.state.emailAddress}
                         onChange={this.onChange}
                         onValidate={this.onValidate}
-                        postfix={addEmailAddressButton}
                         className="mx_CreateRoomDialog_name"
                     />
+                    <div
+                        className="watcha_InviteMemberDialog_addEmailAddressButton"
+                        title={_t(
+                            "Add an email address to the invitation list."
+                        )}
+                        onClick={this.onOk}
+                    >
+                        <span />
+                    </div>
                 </div>
             </div>
         );
