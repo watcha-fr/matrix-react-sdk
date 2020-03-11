@@ -37,7 +37,7 @@ class InviteMemberDialog extends Component {
         button: PropTypes.string,
         onFinished: PropTypes.func.isRequired,
         roomId: PropTypes.string,
-        title: PropTypes.string.isRequired
+        title: PropTypes.node.isRequired
     };
 
     constructor(props) {
