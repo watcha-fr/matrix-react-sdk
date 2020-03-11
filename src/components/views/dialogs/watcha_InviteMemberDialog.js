@@ -377,7 +377,7 @@ class InviteMemberDialog extends Component {
             >
                 <div className="mx_Dialog_content">
                     <div className="watcha_InviteMemberDialog_sourceContainer">
-                        <Section header={_t("User directory")}>
+                        <Section header={_t("Invite users")}>
                             <SuggestedList
                                 busy={this.state.busy}
                                 onSearch={this.onSearch}
@@ -386,7 +386,7 @@ class InviteMemberDialog extends Component {
                                 {suggestedTiles}
                             </SuggestedList>
                         </Section>
-                        <Section header={_t("Email invitation")}>
+                        <Section header={_t("Invite by email")}>
                             <EmailInvitation
                                 {...{ roomMembers }}
                                 selectedList={this.state.selectedList}
@@ -551,11 +551,6 @@ class EmailInvitation extends Component {
 
         return (
             <div className="watcha_EmailInvitation">
-                <p>
-                    {_t(
-                        "If the person you want to invite is not in the user directory, enter his or her email address below to add him or her to the invitation list. When you validate this form, a personalized email will be sent to him/her so that he/she can join the room."
-                    )}
-                </p>
                 <div
                     className="watcha_InviteMemberDialog_emailAddressContainer"
                     onKeyDown={this.onKeyDown}
@@ -692,7 +687,29 @@ class SelectedList extends Component {
     }
 
     render() {
-        const hint = <p>{_t("You haven't selected anyone yet.")}</p>;
+        const hint = (
+            <div className="watcha_InviteMemberDialog_SelectedList_hint">
+                <p>
+                    {_t(
+                        "Select the person you want to invite from the <strong>Invite users</strong> list.",
+                        {},
+                        { strong: label => <strong>{label}</strong> }
+                    )}
+                </p>
+                <p>
+                    {_t(
+                        "If the person to invite is not in the list, enter their email address in the <strong>Invite by email</strong> field.",
+                        {},
+                        { strong: label => <strong>{label}</strong> }
+                    )}
+                </p>
+                <p>
+                    {_t(
+                        "When you validate this form, an email will be sent to them, so that they can join the room."
+                    )}
+                </p>
+            </div>
+        );
 
         const feedbackVisible = this.state.feedbackVisible;
         const divClasses = classNames(

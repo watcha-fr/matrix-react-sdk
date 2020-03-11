@@ -42,23 +42,32 @@ function inviteMultipleToRoom(roomId, addrs) {
 
 /* insertion for watcha */
 export function showStartChatInviteDialog() {
-    const InviteMemberDialog = sdk.getComponent("dialogs.watcha_InviteMemberDialog");
-    Modal.createTrackedDialog('Start a chat', '', InviteMemberDialog, {
-        title: _t('Start a chat'),
-        button: _t("Start Chat"),
-        onFinished: _onStartDmFinished,
+    const InviteMemberDialog = sdk.getComponent(
+        "dialogs.watcha_InviteMemberDialog"
+    );
+    Modal.createTrackedDialog("Start a private conversation", "", InviteMemberDialog, {
+        title: _t("Start a private conversation"),
+        button: _t("OK"),
+        onFinished: _onStartDmFinished
     });
 }
 
 export function showRoomInviteDialog(roomId) {
-    const InviteMemberDialog = sdk.getComponent("dialogs.watcha_InviteMemberDialog");
-    Modal.createTrackedDialog('Chat Invite', '', InviteMemberDialog, {
-        title: _t('Invite new room members'),
-        button: _t('Invite'),
+    const room = MatrixClientPeg.get().getRoom(roomId);
+    const InviteMemberDialog = sdk.getComponent(
+        "dialogs.watcha_InviteMemberDialog"
+    );
+    Modal.createTrackedDialog("Invite in the room", "", InviteMemberDialog, {
+        title: _t(
+            "Invite in the room <strong>%(roomName)s</strong>",
+            { roomName: room.name },
+            { strong: label => <strong>{label}</strong> }
+        ),
+        button: _t("OK"),
         roomId: roomId,
         onFinished: (shouldInvite, addrs) => {
             _onRoomInviteFinished(roomId, shouldInvite, addrs);
-        },
+        }
     });
 }
 /* end of insertion */

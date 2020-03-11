@@ -67,6 +67,13 @@ This code is not licensed unless directly agreed with Watcha
     border-color: $input-invalid-border-color;
 }
 
+.watcha_InviteMemberDialog_SelectedList_hint {
+    color: $input-darker-fg-color;
+    strong {
+        font-weight: bold;
+    }
+}
+
 .watcha_EmailInvitation > p {
     margin-top: 0;
 }
