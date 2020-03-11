@@ -485,10 +485,14 @@ class EmailInvitation extends Component {
                 test: async ({ value }) => !!value
             },
             {
-                key: "isValid",
+                key: "isValidOnSubmit",
                 test: async ({ value }) =>
                     !value || !this.state.onSubmit || Email.looksValid(value),
                 invalid: () => _t("Please enter a valid email address.")
+            },
+            {
+                key: "isValid",
+                test: async ({ value }) => !value || Email.looksValid(value)
             },
             {
                 key: "alreadyInInvitations",
@@ -556,7 +560,13 @@ class EmailInvitation extends Component {
                         className="mx_CreateRoomDialog_name"
                     />
                     <div
-                        className="watcha_InviteMemberDialog_addEmailAddressButton"
+                        className={classNames(
+                            "watcha_InviteMemberDialog_addEmailAddressButton",
+                            {
+                                watcha_InviteMemberDialog_addEmailAddressButton_valid: this
+                                    .state.isValid
+                            }
+                        )}
                         title={_t(
                             "Add an email address to the invitation list."
                         )}
