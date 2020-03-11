@@ -152,10 +152,8 @@ class InviteMemberDialog extends Component {
                     className="watcha_InviteMemberDialog_EntityTile_roomMember"
                     subtextLabel={
                         user.membership === "join"
-                            ? _t("This user is already in the room.")
-                            : _t(
-                                  "An invitation has already been sent to this user."
-                              )
+                            ? _t("Already room member.")
+                            : _t("Invitation already sent.")
                     }
                     presenceState="offline"
                     suppressOnHover={true}
