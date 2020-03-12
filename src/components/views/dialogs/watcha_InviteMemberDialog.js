@@ -452,7 +452,8 @@ class EmailInvitation extends Component {
     onValidate = async fieldState => {
         const result = await this._validationRules(fieldState);
         this.setState({ isValid: result.valid });
-        return result;
+        /* For now we disable the red textfile it looks too much like the user is making a mistake when typing in the field, however we keep this part of code cause adding some sort of hint looks like a good idea */
+        return true;
     };
 
     _onOk = async () => {
