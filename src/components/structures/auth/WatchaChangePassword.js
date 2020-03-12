@@ -193,7 +193,7 @@ module.exports = createReactClass({
         this.setState({ loading: true });
         try {
             // XHR POST to change password
-            const changeDisplayNameRequest = await fetch(this.state.coreUrl+'/_matrix/client/r0/profile/%40'+this.state.user+'%3A'+this.state.server+'/displayname', {
+            const changeDisplayNameRequest = await fetch(this.state.coreUrl+'/_matrix/client/r0/profile/%40'+encodeURIComponent(this.state.user)+'%3A'+(this.state.server)+'/displayname', {
                 method: 'PUT',
                 body: JSON.stringify({
                     displayname: this.state.displayName,
