@@ -2,9 +2,9 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 
 module.exports = createReactClass({
-    displayName: 'MobileOnboarding',
+    displayName: 'WatchaMobileOnboarding',
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             passwordLength: true,
             passwordMatch: true,
@@ -17,11 +17,11 @@ module.exports = createReactClass({
         };
     },
 
-    componentDidMount: function() {
+    componentDidMount() {
         this.convertUserId();
     },
 
-    getInstanceLink: function() {
+    getInstanceLink() {
         switch (this.props.os) {
         case ('iOS'):
             return <div id="install-app-ios-from-desktop" className="install-app-block">
@@ -40,7 +40,7 @@ module.exports = createReactClass({
         }
     },
 
-    convertUserId: function() {
+    convertUserId() {
         if (this.state.credUser[0]==='@') {
             let simplifiedUserId = this.state.credUser.replace('@', '');
             simplifiedUserId = simplifiedUserId.split(':');
@@ -49,7 +49,7 @@ module.exports = createReactClass({
         }
     },
 
-     copyToClipboard: function(e) {
+     copyToClipboard(e) {
 /* Get the text field */
   const copyText = document.getElementById("identityToken");
   if (this.props.os==="iOS") {
@@ -82,7 +82,7 @@ module.exports = createReactClass({
   this.setState({copyTokenClass: "wt_inactive_step"});
   },
 
-  getTitle: function() {
+  getTitle() {
     if (this.props.firstConnection) {
         return "Votre mot de passe a bien été défini.";
     } else {
@@ -91,7 +91,7 @@ module.exports = createReactClass({
   },
 
 
-    render: function() {
+    render() {
       const title= this.getTitle();
       const instanceLink=this.getInstanceLink();
         return (

@@ -430,7 +430,17 @@ limitations under the License.
     animation-delay: .4s;
 }
 
+.wt_ChangePasswordSubtitles {
+    font-size: 1.5vh;
+    font-style: italic;
+}
+
 @media only screen and (max-width: 1200px) {
+
+    .wt_ChangePasswordSubtitles {
+        font-size: 1.5vh;
+        font-style: italic;
+    }
 
     .wt_Hidden_Header {
         visibility: hidden;
@@ -477,7 +487,6 @@ limitations under the License.
 
     .wt_PasswordLength {
         font-size: 3vh;
-        margin-bottom: 3vh;
     }
 
     .wt_pw_form_container {
@@ -527,6 +536,11 @@ limitations under the License.
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
+    .wt_ChangePasswordSubtitles {
+        font-size: 1.5vh;
+        font-style: italic;
+    }
+
     .wt_Container {
         height: 100vh;
         width: 100vw;
@@ -542,7 +556,7 @@ limitations under the License.
 
     .wt_PasswordLength {
         font-size: 2vh;
-        margin-bottom: 3vh;
+        margin-bottom: 1vh;
     }
 
     .wt_pw_form_container {
@@ -590,7 +604,6 @@ limitations under the License.
     }
 
     .wt_PwInputContainer {
-        margin-top: 4vh;
         width: 40%;
     }
 

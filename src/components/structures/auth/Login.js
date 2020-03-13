@@ -26,7 +26,7 @@ import SdkConfig from '../../../SdkConfig';
 import { messageForResourceLimitError } from '../../../utils/ErrorUtils';
 import AutoDiscoveryUtils, {ValidatedServerConfig} from "../../../utils/AutoDiscoveryUtils";
 /*insertion for watcha*/
-import ChangePassword from '../../structures/auth/ChangePassword';
+import WatchaChangePassword from '../../structures/auth/WatchaChangePassword';
 /* end of insertion*/
 import classNames from "classnames";
 
@@ -129,6 +129,11 @@ module.exports = createReactClass({
     //insertion for watcha
     componentDidMount: function() {
       this.onboarding();
+        if (localStorage.getItem("userName")) {
+
+            this.setState({ usernamefield: localStorage.getItem("userName")});
+            localStorage.setItem("userName", null);
+        }
     },
     //end of insertion
 
@@ -154,14 +159,16 @@ module.exports = createReactClass({
     isBusy: function() {
         return this.state.busy || this.props.busy;
     },
-    /* insertion for watcha*/
+    /* INSERTION FOR WATCHA */
+
     onboarding: function() {
         if (document.URL.split('t=')[1]) {
         this.setState({onboardingUrl: document.URL});
         this.setState({onboarding: true});
       }
+
     },
-    /* end of insertion*/
+    /* END OF INSERTION */
 
     onPasswordLogin: async function(username, phoneCountry, phoneNumber, password) {
         if (!this.state.serverIsAlive) {
@@ -581,6 +588,9 @@ module.exports = createReactClass({
 
         return (
             <PasswordLogin
+               /* INSERTION FOR WATCHA */
+               username={this.state.usernamefield}
+               /* END OF INSERTION */
                onSubmit={this.onPasswordLogin}
                onError={this.onPasswordLoginError}
                onEditServerDetailsClick={onEditServerDetailsClick}
@@ -664,7 +674,7 @@ module.exports = createReactClass({
         /*insertion for watcha*/
 if (this.state.onboarding) {
         return (
-          <ChangePassword onboardingUrl={this.state.onboardingUrl} PasswordLogin={this.state.PasswordLogin} />
+          <WatchaChangePassword onboardingUrl={this.state.onboardingUrl} PasswordLogin={this.state.PasswordLogin} />
         );
       }
     /*end of insertion */
