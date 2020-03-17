@@ -426,12 +426,17 @@ class EmailInvitation extends Component {
         this.state = {
             emailAddress: "",
             isValid: false,
+            emailLooksValid: false,
             onSubmit: false
         };
     }
 
     onChange = event => {
-        this.setState({ emailAddress: event.target.value });
+        const emailLooksValid = Email.looksValid(this._fieldRef.input.value);
+        this.setState({
+            emailAddress: event.target.value,
+            emailLooksValid
+        });
     };
 
     onKeyDown = event => {
@@ -452,8 +457,7 @@ class EmailInvitation extends Component {
     onValidate = async fieldState => {
         const result = await this._validationRules(fieldState);
         this.setState({ isValid: result.valid });
-        /* For now we disable the red textfile it looks too much like the user is making a mistake when typing in the field, however we keep this part of code cause adding some sort of hint looks like a good idea */
-        return true;
+        return result;
     };
 
     _onOk = async () => {
@@ -492,15 +496,11 @@ class EmailInvitation extends Component {
                 invalid: () => _t("Please enter a valid email address.")
             },
             {
-                key: "isValid",
-                test: async ({ value }) => !value || Email.looksValid(value)
-            },
-            {
                 key: "alreadyInInvitations",
                 test: async ({ value }) =>
                     !value ||
                     !this.props.selectedList.some(
-                        user => user.address === convertEmailToUserId(value)
+                        user => user.address === value
                     ),
                 invalid: () =>
                     _t(
@@ -527,12 +527,11 @@ class EmailInvitation extends Component {
                 test: async ({ value }) =>
                     !value ||
                     !this.props.roomMembers ||
-                    !this.props.roomMembers.some(user => {
-                        return (
+                    !this.props.roomMembers.some(
+                        user =>
                             user.userId === convertEmailToUserId(value) &&
                             user.membership === "invite"
-                        );
-                    }),
+                    ),
                 invalid: () =>
                     _t(
                         "An invitation has already been sent to this email address."
@@ -564,8 +563,9 @@ class EmailInvitation extends Component {
                         className={classNames(
                             "watcha_InviteMemberDialog_addEmailAddressButton",
                             {
-                                watcha_InviteMemberDialog_addEmailAddressButton_valid: this
-                                    .state.isValid
+                                watcha_InviteMemberDialog_addEmailAddressButton_valid:
+                                    this.state.isValid &&
+                                    this.state.emailLooksValid
                             }
                         )}
                         title={_t(
