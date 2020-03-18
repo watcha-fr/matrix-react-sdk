@@ -59,7 +59,7 @@ export function showRoomInviteDialog(roomId) {
     );
     Modal.createTrackedDialog("Invite in the room", "", InviteMemberDialog, {
         title: _t(
-            "Invite in the room <strong>%(roomName)s</strong>",
+            "Invite in the <strong>%(roomName)s</strong> room",
             { roomName: room.name },
             { strong: label => <strong>{label}</strong> }
         ),

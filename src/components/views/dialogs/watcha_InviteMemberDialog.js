@@ -153,7 +153,7 @@ class InviteMemberDialog extends Component {
                     subtextLabel={
                         user.membership === "join"
                             ? _t("Already room member.")
-                            : _t("Invitation already sent.")
+                            : _t("Already invited.")
                     }
                     presenceState="offline"
                     suppressOnHover={true}
