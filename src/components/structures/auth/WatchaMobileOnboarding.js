@@ -1,27 +1,24 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 
-module.exports = createReactClass({
-    displayName: 'MobileOnboarding',
 
-    getInitialState: function() {
-        return {
-            passwordLength: true,
+class WatchaMobileOnboarding extends React.Component {
+  constructor(props) {
+    super(props);
+    this.convertUserId;
+    this.state = {passwordLength: true,
             passwordMatch: true,
             credUser: this.props.user,
             password: '',
             copyButton: "Copier",
             buttonClassName: "wt_copy_button",
             installAppClass: "wt_inactive_step",
-            copyTokenClass: "wt_active_step",
-        };
-    },
+            copyTokenClass: "wt_active_step",}
+};
+  
+    
 
-    componentDidMount: function() {
-        this.convertUserId();
-    },
-
-    getInstanceLink: function() {
+    getInstanceLink() {
         switch (this.props.os) {
         case ('iOS'):
             return <div id="install-app-ios-from-desktop" className="install-app-block">
@@ -38,18 +35,18 @@ module.exports = createReactClass({
         default:
         return 'Web';
         }
-    },
+    }
 
-    convertUserId: function() {
+    convertUserId() {
         if (this.state.credUser[0]==='@') {
             let simplifiedUserId = this.state.credUser.replace('@', '');
             simplifiedUserId = simplifiedUserId.split(':');
             simplifiedUserId = simplifiedUserId[0];
             this.setState({credUser: simplifiedUserId});
         }
-    },
+    }
 
-     copyToClipboard: function(e) {
+     copyToClipboard(e) {
 /* Get the text field */
   const copyText = document.getElementById("identityToken");
   if (this.props.os==="iOS") {
@@ -80,18 +77,18 @@ module.exports = createReactClass({
   document.activeElement.blur();
   this.setState({installAppClass: "wt_active_step"});
   this.setState({copyTokenClass: "wt_inactive_step"});
-  },
+  }
 
-  getTitle: function() {
+  getTitle() {
     if (this.props.firstConnection) {
         return "Votre mot de passe a bien été défini.";
     } else {
         return "Votre mot de passe est déjà défini.";
       }
-  },
+  }
 
 
-    render: function() {
+    render() {
       const title= this.getTitle();
       const instanceLink=this.getInstanceLink();
         return (
@@ -121,6 +118,5 @@ module.exports = createReactClass({
                 </div>
             </div>
         );
-    },
-},
-);
+    }
+}

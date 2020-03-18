@@ -23,7 +23,6 @@ import sdk from '../../../index';
 import { _t } from '../../../languageHandler';
 import SdkConfig from '../../../SdkConfig';
 import {ValidatedServerConfig} from "../../../utils/AutoDiscoveryUtils";
-
 /**
  * A pure UI component which displays a username/password form.
  */
@@ -69,8 +68,17 @@ export default class PasswordLogin extends React.Component {
 
     constructor(props) {
         super(props);
+        /* INSERTION FOR WATCHA */
+        const username = this.props.username ? this.props.username : this.props.initialUsername;
+        /* END OF INSERTION FOR WATCHA */
         this.state = {
+            /* REMOVED FOR WATCHA
             username: this.props.initialUsername,
+            */
+           /* INSERTION FOR WATCHA */
+            busy: true,
+            username: username,
+            /* END OF INSERTION */
             password: this.props.initialPassword,
             phoneCountry: this.props.initialPhoneCountry,
             phoneNumber: this.props.initialPhoneNumber,
