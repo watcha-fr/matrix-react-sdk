@@ -15,8 +15,8 @@ class WatchaMobileOnboarding extends React.Component {
             installAppClass: "wt_inactive_step",
             copyTokenClass: "wt_active_step",}
 };
-  
-    
+
+
 
     getInstanceLink() {
         switch (this.props.os) {

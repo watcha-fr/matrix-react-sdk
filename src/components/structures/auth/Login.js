@@ -241,7 +241,7 @@ module.exports = createReactClass({
                     </div>
                 );
             } else if (error.httpStatus === 401 || error.httpStatus === 403) {
-              
+
                 if (error.errcode === 'M_USER_DEACTIVATED') {
                     errorText = _t('This account has been deactivated.');
                 } else if (SdkConfig.get()['disable_custom_urls']) {
