@@ -271,8 +271,12 @@ export default class PasswordLogin extends React.Component {
         let forgotPasswordJsx;
 
         if (this.props.onForgotPasswordClick) {
+            const mail = SdkConfig.get().recovery_email || "registration@watcha.fr";
             forgotPasswordJsx = <span>
-            {_t('Forgot your password? Contact us at registration@watcha.fr')}
+                {_t('Forgot your password? Contact us at <a>%(mail_link)s</a>',
+                    { mail_link: mail },
+                    { a: sub => <a href={"mailto:" + sub}>{sub}</a> }
+                   )}
             {/*
                 {_t('Not sure of your password? <a>Set a new one</a>', {}, {
                     a: sub => <a className="mx_Login_forgot"
