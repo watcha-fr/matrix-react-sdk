@@ -260,14 +260,16 @@ class InviteMemberDialog extends Component {
                 membership = this.getMembership(roomMembers, userId);
             }
 
-            suggestedList.push({
-                address: userId,
-                addressType: "mx-user-id",
-                avatarUrl: user.avatar_url,
-                displayName,
-                isKnown: true,
-                membership
-            });
+            if (this.state.selectedList.every(user => user.address != userId)) {
+                suggestedList.push({
+                    address: userId,
+                    addressType: "mx-user-id",
+                    avatarUrl: user.avatar_url,
+                    displayName,
+                    isKnown: true,
+                    membership
+                });
+            }
         }
 
         this.setState({ suggestedList: this.sortedUserList(suggestedList) });
