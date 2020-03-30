@@ -260,14 +260,16 @@ class InviteMemberDialog extends Component {
                 membership = this.getMembership(roomMembers, userId);
             }
 
-            suggestedList.push({
-                address: userId,
-                addressType: "mx-user-id",
-                avatarUrl: user.avatar_url,
-                displayName,
-                isKnown: true,
-                membership
-            });
+            if (this.state.selectedList.every(user => user.address != userId)) {
+                suggestedList.push({
+                    address: userId,
+                    addressType: "mx-user-id",
+                    avatarUrl: user.avatar_url,
+                    displayName,
+                    isKnown: true,
+                    membership
+                });
+            }
         }
 
         this.setState({ suggestedList: this.sortedUserList(suggestedList) });
@@ -432,11 +434,7 @@ class EmailInvitation extends Component {
     }
 
     onChange = event => {
-        const emailLooksValid = Email.looksValid(this._fieldRef.input.value);
-        this.setState({
-            emailAddress: event.target.value,
-            emailLooksValid
-        });
+        this.setState({ emailAddress: event.target.value });
     };
 
     onKeyDown = event => {
@@ -456,7 +454,11 @@ class EmailInvitation extends Component {
 
     onValidate = async fieldState => {
         const result = await this._validationRules(fieldState);
-        this.setState({ isValid: result.valid });
+        const emailLooksValid = Email.looksValid(this._fieldRef.input.value);
+        this.setState({
+            isValid: result.valid,
+            emailLooksValid
+        });
         return result;
     };
 
