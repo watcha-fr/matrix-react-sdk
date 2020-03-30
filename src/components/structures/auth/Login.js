@@ -126,16 +126,11 @@ module.exports = createReactClass({
         this._initLoginLogic();
     },
 
-    /* INSERTION FOR WATCHA */
-    componentDidMount: function() {
-      this.onboarding();
-        if (localStorage.getItem("userName")) {
-
-            this.setState({ usernamefield: localStorage.getItem("userName")});
-            localStorage.setItem("userName", null);
-        }
+    /* insertion for watcha */
+    componentDidMount: function () {
+        this.onboarding();
     },
-    /* END OF INSERTION */
+    /* end of insertion */
 
     componentWillUnmount: function() {
         this._unmounted = true;
@@ -587,9 +582,9 @@ module.exports = createReactClass({
 
         return (
             <PasswordLogin
-               /* INSERTION FOR WATCHA */
-               username={this.state.usernamefield}
-               /* END OF INSERTION */
+                /* insertion for watcha */
+                username={this.props.username || this.state.usernamefield}
+                /* end of insertion */
                onSubmit={this.onPasswordLogin}
                onError={this.onPasswordLoginError}
                onEditServerDetailsClick={onEditServerDetailsClick}
@@ -671,12 +666,15 @@ module.exports = createReactClass({
         */
 
         /*insertion for watcha*/
-if (this.state.onboarding) {
-        return (
-          <WatchaChangePassword onboardingUrl={this.state.onboardingUrl} PasswordLogin={this.state.PasswordLogin} />
-        );
-      }
-    /*end of insertion */
+        if (!this.props.username && this.state.onboarding) {
+            return (
+                <WatchaChangePassword
+                    onboardingUrl={this.state.onboardingUrl}
+                    PasswordLogin={this.state.PasswordLogin}
+                />
+            );
+        }
+        /*end of insertion */
         return (
             <AuthPage>
                 <AuthHeader />
