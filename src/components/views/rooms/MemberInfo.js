@@ -49,6 +49,10 @@ import E2EIcon from "./E2EIcon";
 import AutoHideScrollbar from "../../structures/AutoHideScrollbar";
 import MatrixClientPeg from "../../../MatrixClientPeg";
 import {EventTimeline} from "matrix-js-sdk";
+/* insertion for watcha */
+import Field from "../elements/Field";
+import * as Roles from '../../../Roles';
+/* end of insertion */
 
 module.exports = createReactClass({
     displayName: 'MemberInfo',
@@ -286,8 +290,8 @@ module.exports = createReactClass({
         Modal.createTrackedDialog('Confirm User Action Dialog', 'onKick', ConfirmUserActionDialog, {
             member: this.props.member,
             /* change for watcha */
-            action: _t("Remove from group"),
-            title: _t("Remove this user from group?"),
+            action: _t("Remove from room"),
+            title: _t("Remove this user from room?"),
             /* end of change */
             danger: true,
             onFinished: (proceed, reason) => {
@@ -884,12 +888,18 @@ module.exports = createReactClass({
 
         return (
             <div>
+                {/* deletion for watcha
                 <h3>{ _t("User Options") }</h3>
+                */}
                 <div className="mx_MemberInfo_buttons">
+                    {/* deletion for watcha
                     { readReceiptButton }
-                    {/* removed for watcha  shareUserButton */}
+                    { shareUserButton }
+                    */}
                     { insertPillButton }
+                    {/* deletion for watcha
                     { ignoreButton }
+                    */}
                     { inviteUserButton }
                 </div>
             </div>
@@ -975,7 +985,7 @@ module.exports = createReactClass({
 
         if (this.state.can.kick) {
             /* change for watcha */
-            const kickLabel = _t("Remove from group");
+            const kickLabel = _t("Remove from room");
             /* end of change */
             kickButton = (
                 <AccessibleButton className="mx_MemberInfo_field"
@@ -1036,15 +1046,20 @@ module.exports = createReactClass({
         if (kickButton || banButton || muteButton || giveModButton || synapseDeactivateButton || redactButton) {
             adminTools =
                 <div>
+                    {/* deletion for watcha
                     <h3>{ _t("Admin Tools") }</h3>
-
+                    */}
                     <div className="mx_MemberInfo_buttons">
+                        {/* deletion for watcha
                         { muteButton }
+                        */}
                         { kickButton }
+                        {/* deletion for watcha
                         { banButton }
                         { redactButton }
                         { giveModButton }
                         { synapseDeactivateButton }
+                        */}
                     </div>
                 </div>;
         }
@@ -1093,27 +1108,54 @@ module.exports = createReactClass({
         let roomMemberDetails = null;
         let e2eIconElement;
 
-        /* insertion for watcha */
-        const members = room.getJoinedMembers();
+        /* insertion for watcha
+        room.getInvitedAndJoinedMemberCount() is not reliable enough to determine if it is a private conversation,
+        as it sometimes returns a value that is higher than expected. */
+        const isDMRoom =
+            room.getJoinedMemberCount() +
+                room.getMembersWithMembership("invite").length ===
+            2;
+        const isMe =
+            this.props.member.userId === this.context.matrixClient.getUserId();
         /* end of insertion */
 
         if (this.props.member.roomId) { // is in room
             const PowerSelector = sdk.getComponent('elements.PowerSelector');
             roomMemberDetails = <div>
                 {/* change for watcha */}
-                { members.length > 2 && <div className="mx_MemberInfo_profileField">
-                    <PowerSelector
-                        value={parseInt(this.props.member.powerLevel)}
-                        maxValue={this.state.can.modifyLevelMax}
-                        disabled={!this.state.can.modifyLevel}
-                        usersDefault={powerLevelUsersDefault}
-                        onChange={this.onPowerChange} />
-                </div> }
+                {!isDMRoom && (
+                    <div className="mx_MemberInfo_profileField">
+                        {this.state.can.modifyLevel ? (
+                            <PowerSelector
+                                value={parseInt(
+                                    this.props.member.powerLevel
+                                )}
+                                maxValue={this.state.can.modifyLevelMax}
+                                disabled={!this.state.can.modifyLevel}
+                                usersDefault={powerLevelUsersDefault}
+                                onChange={this.onPowerChange}
+                            />
+                        ) : (
+                            <Field
+                                id="powerLevelField"
+                                element="input"
+                                label={_t("Role")}
+                                value={Roles.textualPowerLevel(
+                                    this.props.member.powerLevel,
+                                    powerLevelUsersDefault
+                                )}
+                                disabled={true}
+                            />
+                        )}
+                    </div>
+                )}
                 {/* end of change */}
+                {/* deletion for watcha
                 <div className="mx_MemberInfo_profileField">
                     {presenceLabel}
                     {statusLabel}
                 </div>
+                */}
             </div>;
 
             const isEncrypted = this.context.matrixClient.isRoomEncrypted(this.props.member.roomId);
@@ -1156,23 +1198,25 @@ module.exports = createReactClass({
                         { roomMemberDetails }
                     </div>
                 </div>
-                {/* change for watcha */}
-                { members.length > 2 && <AutoHideScrollbar className="mx_MemberInfo_scrollContainer">
+                <AutoHideScrollbar className="mx_MemberInfo_scrollContainer">
                     <div className="mx_MemberInfo_container">
-                        { this.state.can.modifyLevel && this._renderUserOptions() }
+                        {/* change for watcha */}
+                        { !isMe && !isDMRoom && <React.Fragment>
+                            { this._renderUserOptions() }
 
-                        { adminTools }
+                            { adminTools }
+                        </React.Fragment> }
+                        {/* end of change */}
 
                         { startChat }
 
-                        { /*removed for watcha 
+                        {/* deletion for watcha 
                         { this._renderDevices() }
-                        */ }
+                        */} 
 
                         { spinner }
                     </div>
-                </AutoHideScrollbar> }
-                {/* end of change */}
+                </AutoHideScrollbar>
             </div>
         );
     },

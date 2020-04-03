@@ -22,6 +22,12 @@ limitations under the License.
     overflow-y: hidden;
 }
 
+/* insertion for watcha */
+.mx_RoomList .mx_RoomTile_name {
+    color: white !important;
+}
+/* end of insertion */
+
 .mx_RoomList .mx_ResizeHandle {
     // needed so the z-index takes effect
     position: relative;
