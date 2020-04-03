@@ -64,6 +64,7 @@ module.exports = createReactClass({
             email,
             credentialsWithoutPassword,
         });
+        this.getAccessToken();
     },
 
     connect(password) {
