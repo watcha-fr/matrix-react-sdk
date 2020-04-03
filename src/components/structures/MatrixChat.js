@@ -200,10 +200,6 @@ export default createReactClass({
             syncError: null, // If the current syncing status is ERROR, the error object, otherwise null.
             resizeNotifier: new ResizeNotifier(),
             showNotifierToolbar: false,
-
-            /* insertion for watcha */
-            usernameForLoginPage: null,
-            /* end of insertion */
         };
         return s;
     },
@@ -764,12 +760,6 @@ export default createReactClass({
                     showCookieBar: false,
                 });
                 break;
-            /* insertion for watcha */
-            case 'show_login_page_with_autofill_email':
-                this.setState({usernameForLoginPage: payload.username});
-                dis.dispatch({action: 'start_login'});   
-            /* end of insertion */
-            
         }
     },
 
@@ -1968,9 +1958,6 @@ export default createReactClass({
                     defaultDeviceDisplayName={this.props.defaultDeviceDisplayName}
                     onForgotPasswordClick={this.onForgotPasswordClick}
                     onServerConfigChange={this.onServerConfigChange}
-                    /* insertion for Watcha */
-                    username={this.state.usernameForLoginPage}
-                    /* end of insertion */
                     {...this.getServerProperties()}
                 />
             );
