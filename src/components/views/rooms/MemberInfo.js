@@ -77,6 +77,9 @@ module.exports = createReactClass({
             devicesLoading: true,
             devices: null,
             isIgnoring: false,
+            // insertion for watcha
+            email: undefined
+            // end of insertion
         };
     },
 
@@ -106,6 +109,11 @@ module.exports = createReactClass({
     },
 
     componentDidMount: function() {
+        // insertion for watcha
+        this.context.matrixClient
+            .getProfileInfo(this.props.member.userId)
+            .then(({ email }) => email && this.setState({ email }));
+        // end of insertion
         this._updateStateForNewMember(this.props.member);
     },
 
@@ -1193,7 +1201,9 @@ module.exports = createReactClass({
 
                     <div className="mx_MemberInfo_profile">
                         <div className="mx_MemberInfo_profileField">
-                            { this.props.member.userId }
+                            {/* change for watcha */}
+                            {this.state.email || this.props.member.userId}
+                            {/* end of change */}
                         </div>
                         { roomMemberDetails }
                     </div>
