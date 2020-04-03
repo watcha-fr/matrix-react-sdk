@@ -767,7 +767,7 @@ export default createReactClass({
             /* insertion for watcha */
             case 'show_login_page_with_autofill_email':
                 this.setState({usernameForLoginPage: payload.username});
-                dis.dispatch({action: 'start_login', screenAfterLogin: "view_home_page"});
+                dis.dispatch({action: 'start_login'});   
             /* end of insertion */
             
         }
