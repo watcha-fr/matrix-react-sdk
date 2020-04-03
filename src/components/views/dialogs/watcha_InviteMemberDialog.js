@@ -146,15 +146,15 @@ class InviteMemberDialog extends Component {
                 name: user.displayName,
                 avatarJsx: this.getBaseAvatar(user)
             };
-            return user.membership ? (
+            const subtextLabel = {
+                join: _t("Already room member."),
+                invite: _t("Already invited.")
+            };
+            return subtextLabel.hasOwnProperty(user.membership) ? (
                 <EntityTile
                     {...commonProps}
                     className="watcha_InviteMemberDialog_EntityTile_roomMember"
-                    subtextLabel={
-                        user.membership === "join"
-                            ? _t("Already room member.")
-                            : _t("Already invited.")
-                    }
+                    subtextLabel={subtextLabel[user.membership]}
                     presenceState="offline"
                     suppressOnHover={true}
                 />
