@@ -100,8 +100,7 @@ limitations under the License.
 .mx_RoomTile_name {
     font-size: 14px;
     padding: 0 6px;
-    /*change color for watcha*/
-    color: white;
+    color: $roomtile-name-color;
     white-space: nowrap;
     overflow-x: hidden;
     text-overflow: ellipsis;
@@ -166,8 +165,7 @@ limitations under the License.
 .mx_RoomTile_unread, .mx_RoomTile_highlight {
     .mx_RoomTile_name {
         font-weight: 600;
-        //change color for watcha
-        color: white;
+        color: $roomtile-selected-color;
     }
 }
 

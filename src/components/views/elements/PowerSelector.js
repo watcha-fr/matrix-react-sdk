@@ -130,7 +130,7 @@ module.exports = createReactClass({
     render: function() {
         let picker;
         /* change for watcha */
-        const label = typeof this.props.label === "undefined" ? _t("User rights") : this.props.label;
+        const label = typeof this.props.label === "undefined" ? _t("Role") : this.props.label;
         /* end of change */
         if (this.state.custom) {
             picker = (
