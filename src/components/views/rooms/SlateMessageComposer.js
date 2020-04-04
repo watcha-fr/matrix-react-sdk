@@ -16,6 +16,7 @@ limitations under the License.
 */
 import React from 'react';
 import PropTypes from 'prop-types';
+import SdkConfig from '../../../SdkConfig';
 import { _t, _td } from '../../../languageHandler';
 import CallHandler from '../../../CallHandler';
 import MatrixClientPeg from '../../../MatrixClientPeg';
@@ -55,9 +56,8 @@ ComposerAvatar.propTypes = {
 
 function CallButton(props) {
     /* insertion for watcha */
-    const room = MatrixClientPeg.get().getRoom(props.roomId)
-    const members = room.getJoinedMembers();
-    if (members.length) {
+    const config = SdkConfig.get();    
+    if (!config.meet_url) {
         return null;
     }
     /* end of insertion */
@@ -83,9 +83,8 @@ CallButton.propTypes = {
 
 function VideoCallButton(props) {
     /* insertion for watcha */
-    const room = MatrixClientPeg.get().getRoom(props.roomId)
-    const members = room.getJoinedMembers();
-    if (members.length) {
+    const config = SdkConfig.get();    
+    if (!config.meet_url) {
         return null;
     }
     /* end of insertion */
