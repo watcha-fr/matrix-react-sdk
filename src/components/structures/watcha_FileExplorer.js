@@ -11,7 +11,7 @@ New code for the new File explorer view.
 import * as Mime from "mime";
 import filesize from "filesize";
 import matchSorter from "match-sorter";
-import React, { useMemo, useRef, useEffect } from "react";
+import React, { useMemo, useRef, useEffect, useState } from "react";
 import GeminiScrollbar from "react-gemini-scrollbar";
 import { useTable, useSortBy, useFilters, useRowSelect } from "react-table";
 
@@ -59,10 +59,10 @@ function FileExplorer({ events, showTwelveHour }) {
                 Header: _t("By"),
                 accessor: "sender",
                 sortType: compareLowerCase,
-                Cell: ({ cell: { row } }) => {
+                Cell: ({ cell: { value } }) => {
                     // common but buggy way (returns either the userId or the displayname in an unpredictable way):
                     // <SenderProfile mxEvent={row.original.mxEvent} />
-                    return <Sender mxEvent={row.original.mxEvent} />;
+                    return <Sender userId={value} />;
                 }
             }
         ],
@@ -363,10 +363,11 @@ function LightDate({ timestamp, showTwelveHour }) {
     return <span title={title}>{formattedDate}</span>;
 }
 
-function Sender({ mxEvent }) {
-    const member = getMemberFromEvent(mxEvent);
-    const userId = member.userId;
-    const displayname = member.rawDisplayName;
+function Sender({ userId }) {
+    const [displayname, setDisplayname] = useState();
+    MatrixClientPeg.get()
+        .getProfileInfo(userId)
+        .then(({ displayname }) => setDisplayname(displayname));
     const className = getUserNameColorClass(userId);
     return (
         <span title={displayname} {...{ className }}>
@@ -546,7 +547,7 @@ function getEventData(mxEvent) {
     const type = mimeType ? formatMimeType({ mimeType, filename }) : "";
     const size = content.info.size;
     const timestamp = mxEvent.getTs();
-    const sender = getMemberFromEvent(mxEvent).rawDisplayName;
+    const sender = mxEvent.getSender();
     const key = mxEvent.getId();
 
     return {
@@ -558,12 +559,6 @@ function getEventData(mxEvent) {
         key,
         mxEvent
     };
-}
-
-function getMemberFromEvent(mxEvent) {
-    const client = MatrixClientPeg.get();
-    const room = client.getRoom(mxEvent.getRoomId());
-    return room.getMember(mxEvent.getSender());
 }
 
 function shouldHideEvent(mxEvent) {
