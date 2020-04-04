@@ -365,6 +365,9 @@ function LightDate({ timestamp, showTwelveHour }) {
 
 function Sender({ mxEvent }) {
     const member = getMemberFromEvent(mxEvent);
+    if (!member) {
+        return null;
+    }
     const userId = member.userId;
     const displayname = member.rawDisplayName;
     const className = getUserNameColorClass(userId);
@@ -546,14 +549,15 @@ function getEventData(mxEvent) {
     const type = mimeType ? formatMimeType({ mimeType, filename }) : "";
     const size = content.info.size;
     const timestamp = mxEvent.getTs();
-    const sender = getMemberFromEvent(mxEvent).rawDisplayName;
+    const sender = getMemberFromEvent(mxEvent);
+    const senderDisplayName = sender ? sender.rawDisplayName : "";
     const key = mxEvent.getId();
 
     return {
         filename,
         type,
         size,
-        sender,
+        sender: senderDisplayName,
         timestamp,
         key,
         mxEvent
@@ -563,7 +567,14 @@ function getEventData(mxEvent) {
 function getMemberFromEvent(mxEvent) {
     const client = MatrixClientPeg.get();
     const room = client.getRoom(mxEvent.getRoomId());
-    return room.getMember(mxEvent.getSender());
+    const member = room.getMember(mxEvent.getSender());
+    if (!member) {
+        // TODO: this can happen if the sender is not part of the room,
+        // either because she was removed from the room,
+        // or (maybe ?) because the file was copied from another room ?
+        console.error("No member found for event sender " + mxEvent.getSender());
+    }
+    return member;
 }
 
 function shouldHideEvent(mxEvent) {
