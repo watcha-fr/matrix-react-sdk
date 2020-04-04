@@ -2,7 +2,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 
 
-class WatchaMobileOnboarding extends React.Component {
+export default class WatchaMobileOnboarding extends React.Component {
   constructor(props) {
     super(props);
     this.convertUserId;
