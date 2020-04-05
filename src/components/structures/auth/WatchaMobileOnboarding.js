@@ -14,9 +14,11 @@ export default class WatchaMobileOnboarding extends React.Component {
             buttonClassName: "wt_copy_button",
             installAppClass: "wt_inactive_step",
             copyTokenClass: "wt_active_step",}
-};
-
-
+    this.getInstanceLink = this.getInstanceLink.bind(this);
+    this.convertUserId = this.convertUserId.bind(this);
+    this.copyToClipboard = this.copyToClipboard.bind(this);
+    this.getTitle = this.getTitle.bind(this);
+  };
 
     getInstanceLink() {
         switch (this.props.os) {
