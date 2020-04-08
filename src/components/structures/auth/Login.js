@@ -132,7 +132,7 @@ module.exports = createReactClass({
         if (localStorage.getItem("userName")) {
 
             this.setState({ usernamefield: localStorage.getItem("userName")});
-            localStorage.setItem("userName", null);
+            localStorage.removeItem("userName");
         }
     },
     /* END OF INSERTION */
