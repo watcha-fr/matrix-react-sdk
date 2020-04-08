@@ -40,18 +40,41 @@ export default class ProfileSettings extends React.Component {
         let avatarUrl = user.avatarUrl;
         if (avatarUrl) avatarUrl = client.mxcUrlToHttp(avatarUrl, 96, 96, 'crop', false);
         this.state = {
+            /* removed for watcha op272
             userId: user.userId,
             originalDisplayName: user.displayName,
             displayName: user.displayName,
             originalAvatarUrl: avatarUrl,
             avatarUrl: avatarUrl,
+            */
+            // insertion for watcha op272
+            originalDisplayName: undefined,
+            displayName: undefined,
+            originalAvatarUrl: undefined,
+            avatarUrl: undefined,
+            // end of insertion
             avatarFile: null,
             enableProfileSave: false,
             // insertion for watcha
             email: undefined,
             // end of insertion
         };
+        // insertion for Watcha
+        // fetch the user's real profile each time, not per-room, or stale, profile op272
+        client.getProfileInfo(client.getUserId()).then((user) => {
+            let avatarUrl = user.avatarUrl;
+            if (avatarUrl) avatarUrl = client.mxcUrlToHttp(avatarUrl, 96, 96, 'crop', false);
+            this.setState({
+                displayName: user.displayname,
+                originalDisplayName: user.displayname,
+                originalAvatarUrl: avatarUrl,
+                avatarUrl: avatarUrl,
+            });
+        }).catch((e) => {
+            console.warn("User profile could not be fetched:", e);
+        });
     }
+    // end of insertion
 
     // insertion for watcha
     componentDidMount() {
