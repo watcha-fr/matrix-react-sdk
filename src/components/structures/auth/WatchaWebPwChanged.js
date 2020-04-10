@@ -28,7 +28,6 @@ module.exports = createReactClass({
             simplifiedUserId = simplifiedUserId[0];
             this.setState({ credUser: simplifiedUserId });
         }
-        localStorage.setItem("onboardingUsername", this.state.credUser);
     },
 
     copyToClipboard(e) {
