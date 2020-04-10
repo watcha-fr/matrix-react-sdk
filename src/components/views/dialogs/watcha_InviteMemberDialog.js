@@ -114,6 +114,9 @@ class InviteMemberDialog extends Component {
                     {...commonProps}
                     avatarJsx={this.getBaseAvatar(user)}
                     onClick={e => this.removeFromSelectedList(user)}
+                    subtextLabel={
+                        user.displayName !== user.email ? user.email : undefined
+                    }
                 />
             ) : (
                 <EntityTile
@@ -148,7 +151,7 @@ class InviteMemberDialog extends Component {
             };
             const subtextLabel = {
                 join: _t("Already room member."),
-                invite: _t("Already invited.")
+                invite: _t("Already invited."),
             };
             return subtextLabel.hasOwnProperty(user.membership) ? (
                 <EntityTile
@@ -164,6 +167,9 @@ class InviteMemberDialog extends Component {
                     title={_t("Click to add this user to the invitation list.")}
                     showPresence={false}
                     onClick={e => this.addToSelectedList(user)}
+                    subtextLabel={
+                        user.displayName !== user.email ? user.email : undefined
+                    }
                 />
             );
         });
@@ -250,8 +256,8 @@ class InviteMemberDialog extends Component {
             if (userId === client.credentials.userId) {
                 continue; // remove the actual user from the list of users
             }
-
-            const displayName = user.display_name || userId;
+            const email = user.email
+            const displayName = user.display_name || email || userId;
 
             let membership;
             if (this.props.roomId) {
@@ -265,9 +271,10 @@ class InviteMemberDialog extends Component {
                     address: userId,
                     addressType: "mx-user-id",
                     avatarUrl: user.avatar_url,
-                    displayName,
                     isKnown: true,
-                    membership
+                    displayName,
+                    membership,
+                    email,
                 });
             }
         }
