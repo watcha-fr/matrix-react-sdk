@@ -40,8 +40,8 @@ export default class ProfileSettings extends React.Component {
         let avatarUrl = user.avatarUrl;
         if (avatarUrl) avatarUrl = client.mxcUrlToHttp(avatarUrl, 96, 96, 'crop', false);
         this.state = {
-            /* removed for watcha op272
             userId: user.userId,
+            /* removed for watcha op272
             originalDisplayName: user.displayName,
             displayName: user.displayName,
             originalAvatarUrl: avatarUrl,
