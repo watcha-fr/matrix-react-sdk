@@ -467,7 +467,16 @@ async function _startCallApp(roomId, type) {
         'isAudioConf='+(type === 'voice' ? 'true' : 'false'),
         'displayName=$matrix_display_name',
         'avatarUrl=$matrix_avatar_url',
-        'email=$matrix_user_id',
+        // start modified for watcha (op230)
+        // Needed by the integration server,
+        // not sure how it could have worked before
+        'domain='+SdkConfig.get().meet_url.replace(/(^\w+:|^)\/\//, ''),
+        'userId=$matrix_user_id',
+        // not working yet - will work when we upgrade matrix-dimension
+        // (but careful! $matrix_user_id can appear only once,
+        // because of poor code in WidgetUtils.js)
+        //'email=$matrix_user_id',
+        // end modified for watcha
     ].join('&');
 
     let widgetUrl;
