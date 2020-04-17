@@ -132,6 +132,18 @@ module.exports = createReactClass({
         });
     },
 
+    // insertion for watcha op213
+    onEnableShowChatEventsChange: function(checked) {
+        SettingsStore.setValue(
+            "showChatEvents", null,
+            SettingLevel.ACCOUNT,
+            checked,
+        ).finally(() => {
+            this.forceUpdate();
+        });
+    },
+    // end of insertion
+
     /*
      * Returns the email pusher (pusher of type 'email') for a given
      * email address. Email pushers all have the same app ID, so since
@@ -866,22 +878,26 @@ module.exports = createReactClass({
 
                     { spinner }
 
+                    {/* insertion for watcha op213 */}
+                    <LabelledToggleSwitch value={SettingsStore.getValue("showChatEvents")}
+                                          onChange={this.onEnableShowChatEventsChange}
+                                          label={SettingsStore.getDisplayName("showChatEvents")} />
+                    {/* end of insertion */}
+
                     <LabelledToggleSwitch value={SettingsStore.getValue("notificationsEnabled")}
                                           onChange={this.onEnableDesktopNotificationsChange}
                                           label={_t('Enable desktop notifications for this device')} />
-                                          {
-                    /* removed for watcha
+                    {/* removed for watcha
                     <LabelledToggleSwitch value={SettingsStore.getValue("notificationBodyEnabled")}
                                           onChange={this.onEnableDesktopNotificationBodyChange}
                                           label={_t('Show message in desktop notification')} />
-                    */
-                  }
+                    */}
                     <LabelledToggleSwitch value={SettingsStore.getValue("audioNotificationsEnabled")}
                                           onChange={this.onEnableAudioNotificationsChange}
                                           label={_t('Enable audible notifications for this device')} />
 
                     { emailNotificationsRows }
-                  {/*removed for watcha      
+                    {/* removed for watcha      
                     <div className="mx_UserNotifSettings_pushRulesTableWrapper">
                         <table className="mx_UserNotifSettings_pushRulesTable">
                             <thead>
@@ -899,7 +915,7 @@ module.exports = createReactClass({
                             </tbody>
                         </table>
                     </div>
-                  */}
+                    */}
 
                     { advancedSettings }
 

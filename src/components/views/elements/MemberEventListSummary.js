@@ -20,6 +20,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 import { _t } from '../../../languageHandler';
+import SettingsStore from "../../../settings/SettingsStore"; // added for watcha
 import { formatCommaSeparatedList } from '../../../utils/FormattingUtils';
 import sdk from "../../../index";
 import {MatrixEvent} from "matrix-js-sdk";
@@ -363,6 +364,12 @@ module.exports = createReactClass({
     },
 
     render: function() {
+        // added for watcha op213
+        if (!SettingsStore.getValue("showChatEvents")) {
+            return null;
+        }
+        // end added for watcha
+
         const eventsToRender = this.props.events;
 
         // Map user IDs to an array of objects:

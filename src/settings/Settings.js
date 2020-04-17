@@ -489,6 +489,13 @@ export const SETTINGS = {
         supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS,
         displayName: _td("Show a file explorer in the right panel"),
         default: true,
+    },
+    // watcha op213
+    "showChatEvents": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("See arrival, departures, and other events in chats"),
+        default: false,
+        controller: new ReloadOnChangeController(),
     }
     /* end of insertion */
 };
