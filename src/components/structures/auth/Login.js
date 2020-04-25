@@ -583,7 +583,7 @@ module.exports = createReactClass({
         return (
             <PasswordLogin
                 /* insertion for watcha */
-                username={this.props.username || this.state.usernamefield}
+                username={this.props.username}
                 /* end of insertion */
                onSubmit={this.onPasswordLogin}
                onError={this.onPasswordLoginError}

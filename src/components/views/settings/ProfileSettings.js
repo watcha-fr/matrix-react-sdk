@@ -55,6 +55,9 @@ export default class ProfileSettings extends React.Component {
             // end of insertion
             avatarFile: null,
             enableProfileSave: false,
+            // insertion for watcha
+            email: undefined,
+            // end of insertion
         };
         // insertion for Watcha
         // fetch the user's real profile each time, not per-room, or stale, profile op272
@@ -70,6 +73,19 @@ export default class ProfileSettings extends React.Component {
         }).catch((e) => {
             console.warn("User profile could not be fetched:", e);
         });
+    }
+    // end of insertion
+
+    // insertion for watcha
+    componentDidMount() {
+        MatrixClientPeg.get()
+            .getThreePids()
+            .then(({ threepids }) => {
+                const email = threepids.filter(
+                    threepid => threepid.medium === "email"
+                )[0].address;
+                this.setState({ email });
+            });
     }
     // end of insertion
 
@@ -184,7 +200,9 @@ export default class ProfileSettings extends React.Component {
                 <div className="mx_ProfileSettings_profile">
                     <div className="mx_ProfileSettings_controls">
                         <p>
-                            {this.state.userId}
+                            {/* change for watcha */}
+                            {this.state.email || this.state.userId}
+                            {/* end of change */}
                             {hostingSignup}
                         </p>
                         <Field id="profileDisplayName" label={_t("Display Name")}

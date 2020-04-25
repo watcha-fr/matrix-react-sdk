@@ -24,6 +24,10 @@ const sdk = require('../../../index');
 const dis = require('../../../dispatcher');
 import { _t } from '../../../languageHandler';
 
+// insertion for watcha
+import MatrixClientPeg from '../../../MatrixClientPeg'
+// end of insertion
+
 module.exports = createReactClass({
     displayName: 'MemberTile',
 
@@ -41,10 +45,18 @@ module.exports = createReactClass({
     getInitialState: function() {
         return {
             statusMessage: this.getStatusMessage(),
+            // insertion for watcha
+            email: undefined
+            // end of insertion
         };
     },
 
     componentDidMount() {
+        // insertion for watcha
+        MatrixClientPeg.get()
+            .getProfileInfo(this.props.member.userId)
+            .then(({ email }) => email && this.setState({ email }));
+        // end of insertion
         if (!SettingsStore.isFeatureEnabled("feature_custom_status")) {
             return;
         }
@@ -82,6 +94,11 @@ module.exports = createReactClass({
     },
 
     shouldComponentUpdate: function(nextProps, nextState) {
+        // insertion for watcha
+        if (nextState.email !== this.state.email) {
+            return true;
+        }
+        // end of insertion
         if (
             this.member_last_modified_time === undefined ||
             this.member_last_modified_time < nextProps.member.getLastModifiedTime()
@@ -130,7 +147,9 @@ module.exports = createReactClass({
         }
 
         const av = (
-            <MemberAvatar member={member} width={36} height={36} />
+            // change for watcha
+            <MemberAvatar member={member} title={this.state.email} width={36} height={36}/>
+            // end of change
         );
 
         if (member.user) {
@@ -159,7 +178,9 @@ module.exports = createReactClass({
                 presenceLastActiveAgo={member.user ? member.user.lastActiveAgo : 0}
                 presenceLastTs={member.user ? member.user.lastPresenceTs : 0}
                 presenceCurrentlyActive={member.user ? member.user.currentlyActive : false}
-                avatarJsx={av} title={this.getPowerLabel()} onClick={this.onClick}
+                // change for watcha
+                avatarJsx={av} title={this.state.email || member.userId} onClick={this.onClick}
+                // end of change
                 name={name} powerStatus={powerStatus} showPresence={this.props.showPresence}
                 subtextLabel={statusMessage}
             />
