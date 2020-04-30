@@ -54,6 +54,7 @@ module.exports = createReactClass({
         const credentialsWithoutPassword = {
             user: this.convertUserId(user),
             server: window.location.host,
+            email: email,
         };
         this.setState({
             loading: true,

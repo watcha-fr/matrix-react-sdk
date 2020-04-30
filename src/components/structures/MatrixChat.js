@@ -768,6 +768,7 @@ export default createReactClass({
             case 'show_login_page_with_autofill_email':
                 this.setState({usernameForLoginPage: payload.username});
                 dis.dispatch({action: 'start_login', screenAfterLogin: "view_home_page"});
+                break;
             /* end of insertion */
             
         }
