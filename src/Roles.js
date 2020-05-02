@@ -23,7 +23,7 @@ export function levelRoleMap(usersDefault) {
         /* removed for watcha
         50: _t('Moderator'),
         */
-        100: _t('Room administrator'), // modified for watcha
+        100: _t('Room administrator').replace(/ /g, "\u2005"), // modified for watcha op296
     };
 }
 
