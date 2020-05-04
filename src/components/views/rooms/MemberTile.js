@@ -123,16 +123,13 @@ module.exports = createReactClass({
     },
 
     _getDisplayName: function() {
-        /*return this.props.member.name;*/ /*deletion for watcha OP277 */
-        /*insertion for watcha OP277 */
-        let user = this.props.member;
-        let name = user.name
-        if(user.isDisambiguate){
-            name = name.replace(user.userId, this.state.email)
+        // added for watcha op277
+        const user = this.props.member;
+        if (user.needsDisplayNameDisambiguation) {
+            return user.name.replace(user.userId, this.state.email);
         }
-        return name;
-        /* end of insertion */
-        /* return this.props.member.name; */ /*deletion for watcha OP277 */
+        // end added for watcha op277
+        return this.props.member.name;
     },
 
     getPowerLabel: function() {
