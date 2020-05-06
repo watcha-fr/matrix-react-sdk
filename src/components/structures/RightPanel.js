@@ -101,7 +101,7 @@ export default class RightPanel extends React.Component {
             return RIGHT_PANEL_PHASES.RoomMemberInfo;
         } else {
             // added for watcha
-            let rhsPhase = window.localStorage.getItem("watcha_rhs_phase");
+            let rhsPhase = null; // TODO watcha op340 disabled temporaly because possibly crashing: window.localStorage.getItem("watcha_rhs_phase");
             if (rhsPhase) {
                 return rhsPhase;
             }

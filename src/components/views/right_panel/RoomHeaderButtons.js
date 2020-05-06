@@ -36,7 +36,7 @@ export default class RoomHeaderButtons extends HeaderButtons {
         /* change for watcha
         super(props, HEADER_KIND_ROOM);
         */
-        let rhsPhase = window.localStorage.getItem("watcha_rhs_phase");
+        let rhsPhase = null; // TODO watcha op340 disabled temporarly because is it crashing: window.localStorage.getItem("watcha_rhs_phase");
         let initialPhase = rhsPhase || HEADER_KIND_ROOM;
         super(props, initialPhase);
         /* end of change */

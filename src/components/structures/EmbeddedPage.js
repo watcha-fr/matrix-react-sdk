@@ -118,11 +118,13 @@ export default class EmbeddedPage extends React.PureComponent {
         </div>;
 
         /*insertion for watcha*/
+        /* TODO watcha op340: this was added from by us, but isn't working after the merge... disabling temporarly
         if (this.props.className==="mx_HomePage"){
           return(
             <HomePage/>
                       )
         }
+        */
 
         /*end of insertion for watcha*/
         if (this.props.scrollbar) {
