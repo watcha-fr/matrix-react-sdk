@@ -67,7 +67,7 @@ export default class MainSplit extends React.Component {
     }
 
     componentDidMount() {
-        if (this.props.panel && !this.props.collapsedRhs) {
+        if (this.props.panel) {
             this._createResizer();
         }
     }
@@ -80,17 +80,15 @@ export default class MainSplit extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        const wasExpanded = !this.props.collapsedRhs && prevProps.collapsedRhs;
-        const wasCollapsed = this.props.collapsedRhs && !prevProps.collapsedRhs;
         const wasPanelSet = this.props.panel && !prevProps.panel;
         const wasPanelCleared = !this.props.panel && prevProps.panel;
 
-        if (this.resizeContainer && (wasExpanded || wasPanelSet)) {
+        if (this.resizeContainer && wasPanelSet) {
             // The resizer can only be created when **both** expanded and the panel is
             // set. Once both are true, the container ref will mount, which is required
             // for the resizer to work.
             this._createResizer();
-        } else if (this.resizer && (wasCollapsed || wasPanelCleared)) {
+        } else if (this.resizer && wasPanelCleared) {
             this.resizer.detach();
             this.resizer = null;
         }
@@ -100,14 +98,19 @@ export default class MainSplit extends React.Component {
         const bodyView = React.Children.only(this.props.children);
         const panelView = this.props.panel;
 
-        if (this.props.collapsedRhs || !panelView) {
-            return bodyView;
-        } else {
-            return <div className="mx_MainSplit" ref={this._setResizeContainerRef}>
-                { bodyView }
+        const hasResizer = !this.props.collapsedRhs && panelView;
+
+        let children;
+        if (hasResizer) {
+            children = <React.Fragment>
                 <ResizeHandle reverse={true} />
                 { panelView }
-            </div>;
+            </React.Fragment>;
         }
+
+        return <div className="mx_MainSplit" ref={hasResizer ? this._setResizeContainerRef : undefined}>
+            { bodyView }
+            { children }
+        </div>;
     }
 }

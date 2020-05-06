@@ -19,12 +19,10 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { MatrixClient } from 'matrix-js-sdk';
 import { Key } from '../../Keyboard';
-import sdk from '../../index';
+import * as sdk from '../../index';
 import dis from '../../dispatcher';
-import VectorConferenceHandler from '../../VectorConferenceHandler';
-import TagPanelButtons from './TagPanelButtons';
+import * as VectorConferenceHandler from '../../VectorConferenceHandler';
 import SettingsStore from '../../settings/SettingsStore';
 import {_t} from "../../languageHandler";
 import Analytics from "../../Analytics";
@@ -40,10 +38,6 @@ const LeftPanel = createReactClass({
     // shouldComponentUpdate!
     propTypes: {
         collapsed: PropTypes.bool.isRequired,
-    },
-
-    contextTypes: {
-        matrixClient: PropTypes.instanceOf(MatrixClient),
     },
 
     getInitialState: function() {
@@ -155,9 +149,6 @@ const LeftPanel = createReactClass({
         if (!this.focusedElement) return;
 
         switch (ev.key) {
-            case Key.TAB:
-                this._onMoveFocus(ev, ev.shiftKey);
-                break;
             case Key.ARROW_UP:
                 this._onMoveFocus(ev, true, true);
                 break;
@@ -263,7 +254,6 @@ const LeftPanel = createReactClass({
             tagPanelContainer = (<div className="mx_LeftPanel_tagPanelContainer">
                 <TagPanel />
                 { isCustomTagsEnabled ? <CustomRoomTagPanel /> : undefined }
-                <TagPanelButtons />
             </div>);
         }
 
@@ -340,4 +330,4 @@ const LeftPanel = createReactClass({
     },
 });
 
-module.exports = LeftPanel;
+export default LeftPanel;

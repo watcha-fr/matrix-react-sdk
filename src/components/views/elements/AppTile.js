@@ -2,6 +2,7 @@
 Copyright 2017 Vector Creations Ltd
 Copyright 2018 New Vector Ltd
 Copyright 2019 Michael Telatynski <7t3chguy@gmail.com>
+Copyright 2020 The Matrix.org Foundation C.I.C.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,15 +18,15 @@ limitations under the License.
 */
 
 import url from 'url';
-import qs from 'querystring';
-import React from 'react';
+import qs from 'qs';
+import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
-import MatrixClientPeg from '../../../MatrixClientPeg';
+import {MatrixClientPeg} from '../../../MatrixClientPeg';
 import WidgetMessaging from '../../../WidgetMessaging';
 import AccessibleButton from './AccessibleButton';
 import Modal from '../../../Modal';
 import { _t } from '../../../languageHandler';
-import sdk from '../../../index';
+import * as sdk from '../../../index';
 import AppPermission from './AppPermission';
 import AppWarning from './AppWarning';
 import MessageSpinner from './MessageSpinner';
@@ -35,18 +36,36 @@ import ActiveWidgetStore from '../../../stores/ActiveWidgetStore';
 import classNames from 'classnames';
 import {IntegrationManagers} from "../../../integrations/IntegrationManagers";
 import SettingsStore, {SettingLevel} from "../../../settings/SettingsStore";
-import {createMenu} from "../../structures/ContextualMenu";
+import {aboveLeftOf, ContextMenu, ContextMenuButton} from "../../structures/ContextMenu";
 import PersistedElement from "./PersistedElement";
 
 const ALLOWED_APP_URL_SCHEMES = ['https:', 'http:'];
 const ENABLE_REACT_PERF = false;
+
+/**
+ * Does template substitution on a URL (or any string). Variables will be
+ * passed through encodeURIComponent.
+ * @param {string} uriTemplate The path with template variables e.g. '/foo/$bar'.
+ * @param {Object} variables The key/value pairs to replace the template
+ * variables with. E.g. { '$bar': 'baz' }.
+ * @return {string} The result of replacing all template variables e.g. '/foo/baz'.
+ */
+function uriFromTemplate(uriTemplate, variables) {
+    let out = uriTemplate;
+    for (const [key, val] of Object.entries(variables)) {
+        out = out.replace(
+            '$' + key, encodeURIComponent(val),
+        );
+    }
+    return out;
+}
 
 export default class AppTile extends React.Component {
     constructor(props) {
         super(props);
 
         // The key used for PersistedElement
-        this._persistKey = 'widget_' + this.props.id;
+        this._persistKey = 'widget_' + this.props.app.id;
 
         this.state = this._getNewState(props);
 
@@ -62,6 +81,10 @@ export default class AppTile extends React.Component {
         this._revokeWidgetPermission = this._revokeWidgetPermission.bind(this);
         this._onPopoutWidgetClick = this._onPopoutWidgetClick.bind(this);
         this._onReloadWidgetClick = this._onReloadWidgetClick.bind(this);
+
+        this._contextMenuButton = createRef();
+        this._appFrame = createRef();
+        this._menu_bar = createRef();
     }
 
     /**
@@ -74,7 +97,7 @@ export default class AppTile extends React.Component {
         // This is a function to make the impact of calling SettingsStore slightly less
         const hasPermissionToLoad = () => {
             const currentlyAllowedWidgets = SettingsStore.getValue("allowedWidgets", newProps.room.roomId);
-            return !!currentlyAllowedWidgets[newProps.eventId];
+            return !!currentlyAllowedWidgets[newProps.app.eventId];
         };
 
         const PersistedElement = sdk.getComponent("elements.PersistedElement");
@@ -82,13 +105,14 @@ export default class AppTile extends React.Component {
             initialising: true, // True while we are mangling the widget URL
             // True while the iframe content is loading
             loading: this.props.waitForIframeLoad && !PersistedElement.isMounted(this._persistKey),
-            widgetUrl: this._addWurlParams(newProps.url),
+            widgetUrl: this._addWurlParams(newProps.app.url),
             // Assume that widget has permission to load if we are the user who
             // added it to the room, or if explicitly granted by the user
             hasPermissionToLoad: newProps.userId === newProps.creatorUserId || hasPermissionToLoad(),
             error: null,
             deleting: false,
             widgetPageTitle: newProps.widgetPageTitle,
+            menuDisplayed: false,
         };
     }
 
@@ -98,7 +122,7 @@ export default class AppTile extends React.Component {
      * @return {Boolean}            True if capability supported
      */
     _hasCapability(capability) {
-        return ActiveWidgetStore.widgetHasCapability(this.props.id, capability);
+        return ActiveWidgetStore.widgetHasCapability(this.props.app.id, capability);
     }
 
     /**
@@ -120,7 +144,7 @@ export default class AppTile extends React.Component {
 
         const params = qs.parse(u.query);
         // Append widget ID to query parameters
-        params.widgetId = this.props.id;
+        params.widgetId = this.props.app.id;
         // Append current / parent URL, minus the hash because that will change when
         // we view a different room (ie. may change for persistent widgets)
         params.parentUrl = window.location.href.split('#', 2)[0];
@@ -132,11 +156,11 @@ export default class AppTile extends React.Component {
 
     isMixedContent() {
         const parentContentProtocol = window.location.protocol;
-        const u = url.parse(this.props.url);
+        const u = url.parse(this.props.app.url);
         const childContentProtocol = u.protocol;
         if (parentContentProtocol === 'https:' && childContentProtocol !== 'https:') {
             console.warn("Refusing to load mixed-content app:",
-            parentContentProtocol, childContentProtocol, window.location, this.props.url);
+            parentContentProtocol, childContentProtocol, window.location, this.props.app.url);
             return true;
         }
         return false;
@@ -159,8 +183,8 @@ export default class AppTile extends React.Component {
         dis.unregister(this.dispatcherRef);
 
         // if it's not remaining on screen, get rid of the PersistedElement container
-        if (!ActiveWidgetStore.getWidgetPersistence(this.props.id)) {
-            ActiveWidgetStore.destroyPersistentWidget(this.props.id);
+        if (!ActiveWidgetStore.getWidgetPersistence(this.props.app.id)) {
+            ActiveWidgetStore.destroyPersistentWidget(this.props.app.id);
             const PersistedElement = sdk.getComponent("elements.PersistedElement");
             PersistedElement.destroyElement(this._persistKey);
         }
@@ -171,11 +195,11 @@ export default class AppTile extends React.Component {
      * Component initialisation is only complete when this function has resolved
      */
     setScalarToken() {
-        if (!WidgetUtils.isScalarUrl(this.props.url)) {
+        if (!WidgetUtils.isScalarUrl(this.props.app.url)) {
             console.warn('Non-scalar widget, not setting scalar token!', url);
             this.setState({
                 error: null,
-                widgetUrl: this._addWurlParams(this.props.url),
+                widgetUrl: this._addWurlParams(this.props.app.url),
                 initialising: false,
             });
             return;
@@ -186,7 +210,7 @@ export default class AppTile extends React.Component {
             console.warn("No integration manager - not setting scalar token", url);
             this.setState({
                 error: null,
-                widgetUrl: this._addWurlParams(this.props.url),
+                widgetUrl: this._addWurlParams(this.props.app.url),
                 initialising: false,
             });
             return;
@@ -199,7 +223,7 @@ export default class AppTile extends React.Component {
             console.warn('Non-scalar manager, not setting scalar token!', url);
             this.setState({
                 error: null,
-                widgetUrl: this._addWurlParams(this.props.url),
+                widgetUrl: this._addWurlParams(this.props.app.url),
                 initialising: false,
             });
             return;
@@ -212,7 +236,7 @@ export default class AppTile extends React.Component {
         this._scalarClient.getScalarToken().then((token) => {
             // Append scalar_token as a query param if not already present
             this._scalarClient.scalarToken = token;
-            const u = url.parse(this._addWurlParams(this.props.url));
+            const u = url.parse(this._addWurlParams(this.props.app.url));
             const params = qs.parse(u.query);
             if (!params.scalar_token) {
                 params.scalar_token = encodeURIComponent(token);
@@ -241,7 +265,7 @@ export default class AppTile extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.url !== this.props.url) {
+        if (nextProps.app.url !== this.props.app.url) {
             this._getNewState(nextProps);
             // Fetch IM token for new URL if we're showing and have permission to load
             if (this.props.show && this.state.hasPermissionToLoad) {
@@ -275,7 +299,7 @@ export default class AppTile extends React.Component {
     }
 
     _onEditClick() {
-        console.log("Edit widget ID ", this.props.id);
+        console.log("Edit widget ID ", this.props.app.id);
         if (this.props.onEditClick) {
             this.props.onEditClick();
         } else {
@@ -284,13 +308,13 @@ export default class AppTile extends React.Component {
                 IntegrationManagers.sharedInstance().openAll(
                     this.props.room,
                     'type_' + this.props.type,
-                    this.props.id,
+                    this.props.app.id,
                 );
             } else {
                 IntegrationManagers.sharedInstance().getPrimaryManager().open(
                     this.props.room,
                     'type_' + this.props.type,
-                    this.props.id,
+                    this.props.app.id,
                 );
             }
         }
@@ -298,7 +322,7 @@ export default class AppTile extends React.Component {
 
     _onSnapshotClick() {
         console.warn("Requesting widget snapshot");
-        ActiveWidgetStore.getWidgetMessaging(this.props.id).getScreenshot()
+        ActiveWidgetStore.getWidgetMessaging(this.props.app.id).getScreenshot()
             .catch((err) => {
                 console.error("Failed to get screenshot", err);
             })
@@ -334,19 +358,19 @@ export default class AppTile extends React.Component {
                     // HACK: This is a really dirty way to ensure that Jitsi cleans up
                     // its hold on the webcam. Without this, the widget holds a media
                     // stream open, even after death. See https://github.com/vector-im/riot-web/issues/7351
-                    if (this.refs.appFrame) {
+                    if (this._appFrame.current) {
                         // In practice we could just do `+= ''` to trick the browser
                         // into thinking the URL changed, however I can foresee this
                         // being optimized out by a browser. Instead, we'll just point
                         // the iframe at a page that is reasonably safe to use in the
                         // event the iframe doesn't wink away.
                         // This is relative to where the Riot instance is located.
-                        this.refs.appFrame.src = 'about:blank';
+                        this._appFrame.current.src = 'about:blank';
                     }
 
                     WidgetUtils.setRoomWidget(
                         this.props.room.roomId,
-                        this.props.id,
+                        this.props.app.id,
                     ).catch((e) => {
                         console.error('Failed to delete widget', e);
                         const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
@@ -364,7 +388,7 @@ export default class AppTile extends React.Component {
     }
 
     _onRevokeClicked() {
-        console.info("Revoke widget permissions - %s", this.props.id);
+        console.info("Revoke widget permissions - %s", this.props.app.id);
         this._revokeWidgetPermission();
     }
 
@@ -375,10 +399,10 @@ export default class AppTile extends React.Component {
         // Destroy the old widget messaging before starting it back up again. Some widgets
         // have startup routines that run when they are loaded, so we just need to reinitialize
         // the messaging for them.
-        ActiveWidgetStore.delWidgetMessaging(this.props.id);
+        ActiveWidgetStore.delWidgetMessaging(this.props.app.id);
         this._setupWidgetMessaging();
 
-        ActiveWidgetStore.setRoomId(this.props.id, this.props.room.roomId);
+        ActiveWidgetStore.setRoomId(this.props.app.id, this.props.room.roomId);
         this.setState({loading: false});
     }
 
@@ -386,10 +410,10 @@ export default class AppTile extends React.Component {
         // FIXME: There's probably no reason to do this here: it should probably be done entirely
         // in ActiveWidgetStore.
         const widgetMessaging = new WidgetMessaging(
-            this.props.id, this.props.url, this.props.userWidget, this.refs.appFrame.contentWindow);
-        ActiveWidgetStore.setWidgetMessaging(this.props.id, widgetMessaging);
+            this.props.app.id, this._getRenderedUrl(), this.props.userWidget, this._appFrame.current.contentWindow);
+        ActiveWidgetStore.setWidgetMessaging(this.props.app.id, widgetMessaging);
         widgetMessaging.getCapabilities().then((requestedCapabilities) => {
-            console.log(`Widget ${this.props.id} requested capabilities: ` + requestedCapabilities);
+            console.log(`Widget ${this.props.app.id} requested capabilities: ` + requestedCapabilities);
             requestedCapabilities = requestedCapabilities || [];
 
             // Allow whitelisted capabilities
@@ -401,7 +425,7 @@ export default class AppTile extends React.Component {
                 }, this.props.whitelistCapabilities);
 
                 if (requestedWhitelistCapabilies.length > 0 ) {
-                    console.warn(`Widget ${this.props.id} allowing requested, whitelisted properties: ` +
+                    console.warn(`Widget ${this.props.app.id} allowing requested, whitelisted properties: ` +
                         requestedWhitelistCapabilies,
                     );
                 }
@@ -409,18 +433,24 @@ export default class AppTile extends React.Component {
 
             // TODO -- Add UI to warn about and optionally allow requested capabilities
 
-            ActiveWidgetStore.setWidgetCapabilities(this.props.id, requestedWhitelistCapabilies);
+            ActiveWidgetStore.setWidgetCapabilities(this.props.app.id, requestedWhitelistCapabilies);
 
             if (this.props.onCapabilityRequest) {
                 this.props.onCapabilityRequest(requestedCapabilities);
             }
+
+            // We only tell Jitsi widgets that we're ready because they're realistically the only ones
+            // using this custom extension to the widget API.
+            if (this.props.app.type === 'jitsi') {
+                widgetMessaging.flagReadyToContinue();
+            }
         }).catch((err) => {
-            console.log(`Failed to get capabilities for widget type ${this.props.type}`, this.props.id, err);
+            console.log(`Failed to get capabilities for widget type ${this.props.app.type}`, this.props.app.id, err);
         });
     }
 
     _onAction(payload) {
-        if (payload.widgetId === this.props.id) {
+        if (payload.widgetId === this.props.app.id) {
             switch (payload.action) {
                 case 'm.sticker':
                 if (this._hasCapability('m.sticker')) {
@@ -449,9 +479,9 @@ export default class AppTile extends React.Component {
 
     _grantWidgetPermission() {
         const roomId = this.props.room.roomId;
-        console.info("Granting permission for widget to load: " + this.props.eventId);
+        console.info("Granting permission for widget to load: " + this.props.app.eventId);
         const current = SettingsStore.getValue("allowedWidgets", roomId);
-        current[this.props.eventId] = true;
+        current[this.props.app.eventId] = true;
         SettingsStore.setValue("allowedWidgets", roomId, SettingLevel.ROOM_ACCOUNT, current).then(() => {
             this.setState({hasPermissionToLoad: true});
 
@@ -465,14 +495,14 @@ export default class AppTile extends React.Component {
 
     _revokeWidgetPermission() {
         const roomId = this.props.room.roomId;
-        console.info("Revoking permission for widget to load: " + this.props.eventId);
+        console.info("Revoking permission for widget to load: " + this.props.app.eventId);
         const current = SettingsStore.getValue("allowedWidgets", roomId);
-        current[this.props.eventId] = false;
+        current[this.props.app.eventId] = false;
         SettingsStore.setValue("allowedWidgets", roomId, SettingLevel.ROOM_ACCOUNT, current).then(() => {
             this.setState({hasPermissionToLoad: false});
 
             // Force the widget to be non-persistent (able to be deleted/forgotten)
-            ActiveWidgetStore.destroyPersistentWidget(this.props.id);
+            ActiveWidgetStore.destroyPersistentWidget(this.props.app.id);
             const PersistedElement = sdk.getComponent("elements.PersistedElement");
             PersistedElement.destroyElement(this._persistKey);
         }).catch(err => {
@@ -483,8 +513,8 @@ export default class AppTile extends React.Component {
 
     formatAppTileName() {
         let appTileName = "No name";
-        if (this.props.name && this.props.name.trim()) {
-            appTileName = this.props.name.trim();
+        if (this.props.app.name && this.props.app.name.trim()) {
+            appTileName = this.props.app.name.trim();
         }
         return appTileName;
     }
@@ -493,7 +523,7 @@ export default class AppTile extends React.Component {
         ev.preventDefault();
 
         // Ignore clicks on menu bar children
-        if (ev.target !== this.refs.menu_bar) {
+        if (ev.target !== this._menu_bar.current) {
             return;
         }
 
@@ -508,14 +538,78 @@ export default class AppTile extends React.Component {
         }
     }
 
-    _getSafeUrl() {
-        const parsedWidgetUrl = url.parse(this.state.widgetUrl, true);
+    /**
+     * Replace the widget template variables in a url with their values
+     *
+     * @param {string} u The URL with template variables
+     *
+     * @returns {string} url with temlate variables replaced
+     */
+    _templatedUrl(u) {
+        const myUserId = MatrixClientPeg.get().credentials.userId;
+        const myUser = MatrixClientPeg.get().getUser(myUserId);
+        const vars = Object.assign({
+            domain: "jitsi.riot.im", // v1 widgets have this hardcoded
+        }, this.props.app.data, {
+            'matrix_user_id': myUserId,
+            'matrix_room_id': this.props.room.roomId,
+            'matrix_display_name': myUser ? myUser.displayName : myUserId,
+            'matrix_avatar_url': myUser ? MatrixClientPeg.get().mxcUrlToHttp(myUser.avatarUrl) : '',
+
+            // TODO: Namespace themes through some standard
+            'theme': SettingsStore.getValue("theme"),
+        });
+
+        if (vars.conferenceId === undefined) {
+            // we'll need to parse the conference ID out of the URL for v1 Jitsi widgets
+            const parsedUrl = new URL(this.props.app.url);
+            vars.conferenceId = parsedUrl.searchParams.get("confId");
+        }
+
+        return uriFromTemplate(u, vars);
+    }
+
+    /**
+     * Get the URL used in the iframe
+     * In cases where we supply our own UI for a widget, this is an internal
+     * URL different to the one used if the widget is popped out to a separate
+     * tab / browser
+     *
+     * @returns {string} url
+     */
+    _getRenderedUrl() {
+        let url;
+
+        if (this.props.app.type === 'jitsi') {
+            console.log("Replacing Jitsi widget URL with local wrapper");
+            url = WidgetUtils.getLocalJitsiWrapperUrl({forLocalRender: true});
+            url = this._addWurlParams(url);
+        } else {
+            url = this._getSafeUrl(this.state.widgetUrl);
+        }
+        return this._templatedUrl(url);
+    }
+
+    _getPopoutUrl() {
+        if (this.props.app.type === 'jitsi') {
+            return this._templatedUrl(
+                WidgetUtils.getLocalJitsiWrapperUrl({forLocalRender: false}),
+            );
+        } else {
+            // use app.url, not state.widgetUrl, because we want the one without
+            // the wURL params for the popped-out version.
+            return this._templatedUrl(this._getSafeUrl(this.props.app.url));
+        }
+    }
+
+    _getSafeUrl(u) {
+        const parsedWidgetUrl = url.parse(u, true);
         if (ENABLE_REACT_PERF) {
             parsedWidgetUrl.search = null;
             parsedWidgetUrl.query.react_perf = true;
         }
         let safeWidgetUrl = '';
-        if (ALLOWED_APP_URL_SCHEMES.indexOf(parsedWidgetUrl.protocol) !== -1) {
+        if (ALLOWED_APP_URL_SCHEMES.includes(parsedWidgetUrl.protocol)) {
             safeWidgetUrl = url.format(parsedWidgetUrl);
         }
         return safeWidgetUrl;
@@ -545,55 +639,22 @@ export default class AppTile extends React.Component {
 
     _onPopoutWidgetClick() {
         // Using Object.assign workaround as the following opens in a new window instead of a new tab.
-        // window.open(this._getSafeUrl(), '_blank', 'noopener=yes');
+        // window.open(this._getPopoutUrl(), '_blank', 'noopener=yes');
         Object.assign(document.createElement('a'),
-            { target: '_blank', href: this._getSafeUrl(), rel: 'noopener'}).click();
+            { target: '_blank', href: this._getPopoutUrl(), rel: 'noreferrer noopener'}).click();
     }
 
     _onReloadWidgetClick() {
         // Reload iframe in this way to avoid cross-origin restrictions
-        this.refs.appFrame.src = this.refs.appFrame.src;
+        this._appFrame.current.src = this._appFrame.current.src;
     }
 
-    _getMenuOptions(ev) {
-        // TODO: This block of code gets copy/pasted a lot. We should make that happen less.
-        const menuOptions = {};
-        const buttonRect = ev.target.getBoundingClientRect();
-        // The window X and Y offsets are to adjust position when zoomed in to page
-        const buttonLeft = buttonRect.left + window.pageXOffset;
-        const buttonTop = buttonRect.top + window.pageYOffset;
-        // Align the right edge of the menu to the left edge of the button
-        menuOptions.right = window.innerWidth - buttonLeft;
-        // Align the menu vertically on whichever side of the button has more
-        // space available.
-        if (buttonTop < window.innerHeight / 2) {
-            menuOptions.top = buttonTop;
-        } else {
-            menuOptions.bottom = window.innerHeight - buttonTop;
-        }
-        return menuOptions;
-    }
+    _onContextMenuClick = () => {
+        this.setState({ menuDisplayed: true });
+    };
 
-    _onContextMenuClick = (ev) => {
-        const WidgetContextMenu = sdk.getComponent('views.context_menus.WidgetContextMenu');
-        const menuOptions = {
-            ...this._getMenuOptions(ev),
-
-            // A revoke handler is always required
-            onRevokeClicked: this._onRevokeClicked,
-        };
-
-        const canUserModify = this._canUserModify();
-        const showEditButton = Boolean(this._scalarClient && canUserModify);
-        const showDeleteButton = (this.props.showDelete === undefined || this.props.showDelete) && canUserModify;
-        const showPictureSnapshotButton = this._hasCapability('m.capability.screenshot') && this.props.show;
-
-        if (showEditButton) menuOptions.onEditClicked = this._onEditClick;
-        if (showDeleteButton) menuOptions.onDeleteClicked = this._onDeleteClick;
-        if (showPictureSnapshotButton) menuOptions.onSnapshotClicked = this._onSnapshotClick;
-        if (this.props.showReload) menuOptions.onReloadClicked = this._onReloadWidgetClick;
-
-        createMenu(WidgetContextMenu, menuOptions);
+    _closeContextMenu = () => {
+        this.setState({ menuDisplayed: false });
     };
 
     render() {
@@ -601,7 +662,7 @@ export default class AppTile extends React.Component {
 
         // Don't render widget if it is in the process of being deleted
         if (this.state.deleting) {
-            return <div></div>;
+            return <div />;
         }
 
         // Note that there is advice saying allow-scripts shouldn't be used with allow-same-origin
@@ -656,8 +717,8 @@ export default class AppTile extends React.Component {
                             { this.state.loading && loadingElement }
                             <iframe
                                 allow={iframeFeatures}
-                                ref="appFrame"
-                                src={this._getSafeUrl()}
+                                ref={this._appFrame}
+                                src={this._getRenderedUrl()}
                                 allowFullScreen={true}
                                 sandbox={sandboxFlags}
                                 onLoad={this._onLoaded} />
@@ -697,10 +758,34 @@ export default class AppTile extends React.Component {
             mx_AppTileMenuBar_expanded: this.props.show,
         });
 
-        return (
-            <div className={appTileClass} id={this.props.id}>
+        let contextMenu;
+        if (this.state.menuDisplayed) {
+            const elementRect = this._contextMenuButton.current.getBoundingClientRect();
+
+            const canUserModify = this._canUserModify();
+            const showEditButton = Boolean(this._scalarClient && canUserModify);
+            const showDeleteButton = (this.props.showDelete === undefined || this.props.showDelete) && canUserModify;
+            const showPictureSnapshotButton = this._hasCapability('m.capability.screenshot') && this.props.show;
+
+            const WidgetContextMenu = sdk.getComponent('views.context_menus.WidgetContextMenu');
+            contextMenu = (
+                <ContextMenu {...aboveLeftOf(elementRect, null)} onFinished={this._closeContextMenu}>
+                    <WidgetContextMenu
+                        onRevokeClicked={this._onRevokeClicked}
+                        onEditClicked={showEditButton ? this._onEditClick : undefined}
+                        onDeleteClicked={showDeleteButton ? this._onDeleteClick : undefined}
+                        onSnapshotClicked={showPictureSnapshotButton ? this._onSnapshotClick : undefined}
+                        onReloadClicked={this.props.showReload ? this._onReloadWidgetClick : undefined}
+                        onFinished={this._closeContextMenu}
+                    />
+                </ContextMenu>
+            );
+        }
+
+        return <React.Fragment>
+            <div className={appTileClass} id={this.props.app.id}>
                 { this.props.showMenubar &&
-                <div ref="menu_bar" className={menuBarClasses} onClick={this.onClickMenuBar}>
+                <div ref={this._menu_bar} className={menuBarClasses} onClick={this.onClickMenuBar}>
                     <span className="mx_AppTileMenuBarTitle" style={{pointerEvents: (this.props.handleMinimisePointerEvents ? 'all' : false)}}>
                         { /* Minimise widget */ }
                         { showMinimiseButton && <AccessibleButton
@@ -725,28 +810,28 @@ export default class AppTile extends React.Component {
                             onClick={this._onPopoutWidgetClick}
                         /> }
                         { /* Context menu */ }
-                        { <AccessibleButton
+                        { <ContextMenuButton
                             className="mx_AppTileMenuBar_iconButton mx_AppTileMenuBar_iconButton_menu"
-                            title={_t('More options')}
+                            label={_t('More options')}
+                            isExpanded={this.state.menuDisplayed}
+                            inputRef={this._contextMenuButton}
                             onClick={this._onContextMenuClick}
                         /> }
                     </span>
                 </div> }
                 { appTileBody }
             </div>
-        );
+
+            { contextMenu }
+        </React.Fragment>;
     }
 }
 
-AppTile.displayName ='AppTile';
+AppTile.displayName = 'AppTile';
 
 AppTile.propTypes = {
-    id: PropTypes.string.isRequired,
-    eventId: PropTypes.string, // required for room widgets
-    url: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
+    app: PropTypes.object.isRequired,
     room: PropTypes.object.isRequired,
-    type: PropTypes.string.isRequired,
     // Specifying 'fullWidth' as true will render the app tile to fill the width of the app drawer continer.
     // This should be set to true when there is only one widget in the app drawer, otherwise it should be false.
     fullWidth: PropTypes.bool,
@@ -793,7 +878,6 @@ AppTile.propTypes = {
 };
 
 AppTile.defaultProps = {
-    url: "",
     waitForIframeLoad: true,
     showMenubar: true,
     showTitle: true,

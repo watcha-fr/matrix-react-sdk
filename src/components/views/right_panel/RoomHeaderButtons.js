@@ -3,6 +3,7 @@ Copyright 2015, 2016 OpenMarket Ltd
 Copyright 2017 Vector Creations Ltd
 Copyright 2017 New Vector Ltd
 Copyright 2018 New Vector Ltd
+Copyright 2019, 2020 The Matrix.org Foundation C.I.C.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,22 +21,23 @@ limitations under the License.
 import React from 'react';
 import { _t } from '../../../languageHandler';
 import HeaderButton from './HeaderButton';
-import HeaderButtons from './HeaderButtons';
-import RightPanel from '../../structures/RightPanel';
+import HeaderButtons, {HEADER_KIND_ROOM} from './HeaderButtons';
+import {RIGHT_PANEL_PHASES} from "../../../stores/RightPanelStorePhases";
 
 const MEMBER_PHASES = [
-    RightPanel.Phase.RoomMemberList,
-    RightPanel.Phase.RoomMemberInfo,
-    RightPanel.Phase.Room3pidMemberInfo,
+    RIGHT_PANEL_PHASES.RoomMemberList,
+    RIGHT_PANEL_PHASES.RoomMemberInfo,
+    RIGHT_PANEL_PHASES.EncryptionPanel,
+    RIGHT_PANEL_PHASES.Room3pidMemberInfo,
 ];
 
 export default class RoomHeaderButtons extends HeaderButtons {
     constructor(props) {
         /* change for watcha
-        super(props, RightPanel.Phase.RoomMemberList);
+        super(props, HEADER_KIND_ROOM);
         */
         let rhsPhase = window.localStorage.getItem("watcha_rhs_phase");
-        let initialPhase = rhsPhase || RightPanel.Phase.RoomMemberList
+        let initialPhase = rhsPhase || HEADER_KIND_ROOM;
         super(props, initialPhase);
         /* end of change */
         this._onMembersClicked = this._onMembersClicked.bind(this);
@@ -47,36 +49,47 @@ export default class RoomHeaderButtons extends HeaderButtons {
         super.onAction(payload);
         if (payload.action === "view_user") {
             if (payload.member) {
-                this.setPhase(RightPanel.Phase.RoomMemberInfo, {member: payload.member});
+                this.setPhase(RIGHT_PANEL_PHASES.RoomMemberInfo, {member: payload.member});
             } else {
-                this.setPhase(RightPanel.Phase.RoomMemberList);
+                this.setPhase(RIGHT_PANEL_PHASES.RoomMemberList);
             }
+            /* TODO watcha op300: this code has been removed upstream, it seems... what to do ?
         } else if (payload.action === "view_room" && !this.props.collapsedRhs) {
             /* change for watcha
             this.setPhase(RightPanel.Phase.RoomMemberList);
-            */
+            *-/
             let rhsPhase = window.localStorage.getItem("watcha_rhs_phase");
             this.setPhase(rhsPhase || RightPanel.Phase.RoomMemberList);
-            /* end of change */
+            /* end of change *-/
+          end TODO watcha */
         } else if (payload.action === "view_3pid_invite") {
             if (payload.event) {
-                this.setPhase(RightPanel.Phase.Room3pidMemberInfo, {event: payload.event});
+                this.setPhase(RIGHT_PANEL_PHASES.Room3pidMemberInfo, {event: payload.event});
             } else {
-                this.setPhase(RightPanel.Phase.RoomMemberList);
+                this.setPhase(RIGHT_PANEL_PHASES.RoomMemberList);
             }
         }
     }
 
     _onMembersClicked() {
-        this.togglePhase(RightPanel.Phase.RoomMemberList, MEMBER_PHASES);
+        if (this.state.phase === RIGHT_PANEL_PHASES.RoomMemberInfo) {
+            // send the active phase to trigger a toggle
+            // XXX: we should pass refireParams here but then it won't collapse as we desire it to
+            this.setPhase(RIGHT_PANEL_PHASES.RoomMemberInfo);
+        } else {
+            // This toggles for us, if needed
+            this.setPhase(RIGHT_PANEL_PHASES.RoomMemberList);
+        }
     }
 
     _onFilesClicked() {
-        this.togglePhase(RightPanel.Phase.FilePanel);
+        // This toggles for us, if needed
+        this.setPhase(RIGHT_PANEL_PHASES.FilePanel);
     }
 
     _onNotificationsClicked() {
-        this.togglePhase(RightPanel.Phase.NotificationPanel);
+        // This toggles for us, if needed
+        this.setPhase(RIGHT_PANEL_PHASES.NotificationPanel);
     }
 
     renderButtons() {
@@ -89,14 +102,14 @@ export default class RoomHeaderButtons extends HeaderButtons {
             />,
             <HeaderButton key="filesButton" name="filesButton"
                 title={_t('Files')}
-                isHighlighted={this.isPhase(RightPanel.Phase.FilePanel)}
+                isHighlighted={this.isPhase(RIGHT_PANEL_PHASES.FilePanel)}
                 onClick={this._onFilesClicked}
                 analytics={['Right Panel', 'File List Button', 'click']}
             />,
             /* deletion for watcha
             <HeaderButton key="notifsButton" name="notifsButton"
                 title={_t('Notifications')}
-                isHighlighted={this.isPhase(RightPanel.Phase.NotificationPanel)}
+                isHighlighted={this.isPhase(RIGHT_PANEL_PHASES.NotificationPanel)}
                 onClick={this._onNotificationsClicked}
                 analytics={['Right Panel', 'Notification List Button', 'click']}
             />,

@@ -19,7 +19,7 @@
 import React from 'react';
 import MFileBody from './MFileBody';
 
-import MatrixClientPeg from '../../../MatrixClientPeg';
+import {MatrixClientPeg} from '../../../MatrixClientPeg';
 import { decryptFile } from '../../../utils/DecryptFile';
 import { _t } from '../../../languageHandler';
 
@@ -80,7 +80,7 @@ export default class MAudioBody extends React.Component {
 
         if (this.state.error !== null) {
             return (
-                <span className="mx_MAudioBody" ref="body">
+                <span className="mx_MAudioBody">
                     <img src={require("../../../../res/img/warning.svg")} width="16" height="16" />
                     { _t("Error decrypting audio") }
                 </span>

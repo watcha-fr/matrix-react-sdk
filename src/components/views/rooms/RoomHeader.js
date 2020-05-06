@@ -1,5 +1,6 @@
 /*
 Copyright 2015, 2016 OpenMarket Ltd
+Copyright 2019 The Matrix.org Foundation C.I.C.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,13 +15,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
+import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 import classNames from 'classnames';
-import sdk from '../../../index';
+import * as sdk from '../../../index';
 import { _t } from '../../../languageHandler';
-import MatrixClientPeg from '../../../MatrixClientPeg';
+import {MatrixClientPeg} from '../../../MatrixClientPeg';
 import Modal from "../../../Modal";
 import RateLimitedFunc from '../../../ratelimitedfunc';
 import { linkifyElement } from '../../../HtmlUtils';
@@ -29,19 +30,20 @@ import ManageIntegsButton from '../elements/ManageIntegsButton';
 import {CancelButton} from './SimpleRoomHeader';
 import SettingsStore from "../../../settings/SettingsStore";
 import RoomHeaderButtons from '../right_panel/RoomHeaderButtons';
+import DMRoomMap from '../../../utils/DMRoomMap';
 import E2EIcon from './E2EIcon';
 /* insertion for watcha */
 const dis = require("../../../dispatcher");
 /* end of insertion */
+import InviteOnlyIcon from './InviteOnlyIcon';
 
-module.exports = createReactClass({
+export default createReactClass({
     displayName: 'RoomHeader',
 
     propTypes: {
         room: PropTypes.object,
         oobData: PropTypes.object,
         inRoom: PropTypes.bool,
-        collapsedRhs: PropTypes.bool,
         onSettingsClick: PropTypes.func,
         onPinnedClick: PropTypes.func,
         onSearchClick: PropTypes.func,
@@ -58,6 +60,10 @@ module.exports = createReactClass({
         };
     },
 
+    UNSAFE_componentWillMount: function() {
+        this._topic = createRef();
+    },
+
     componentDidMount: function() {
         const cli = MatrixClientPeg.get();
         cli.on("RoomState.events", this._onRoomStateEvents);
@@ -72,8 +78,8 @@ module.exports = createReactClass({
     },
 
     componentDidUpdate: function() {
-        if (this.refs.topic) {
-            linkifyElement(this.refs.topic);
+        if (this._topic.current) {
+            linkifyElement(this._topic.current);
         }
     },
 
@@ -167,6 +173,17 @@ module.exports = createReactClass({
             <E2EIcon status={this.props.e2eStatus} /> :
             undefined;
 
+        const dmUserId = DMRoomMap.shared().getUserIdForRoomId(this.props.room.roomId);
+        const joinRules = this.props.room && this.props.room.currentState.getStateEvents("m.room.join_rules", "");
+        const joinRule = joinRules && joinRules.getContent().join_rule;
+        let privateIcon;
+        // Don't show an invite-only icon for DMs. Users know they're invite-only.
+        if (!dmUserId && SettingsStore.isFeatureEnabled("feature_cross_signing")) {
+            if (joinRule == "invite") {
+                privateIcon = <InviteOnlyIcon />;
+            }
+        }
+
         if (this.props.onCancelClick) {
             cancelButton = <CancelButton onClick={this.props.onCancelClick} />;
         }
@@ -215,7 +232,7 @@ module.exports = createReactClass({
             }
         }
         const topicElement =
-            <div className="mx_RoomHeader_topic" ref="topic" title={topic} dir="auto">{ topic }</div>;
+            <div className="mx_RoomHeader_topic" ref={this._topic} title={topic} dir="auto">{ topic }</div>;
         const avatarSize = 28;
         let roomAvatar;
         if (this.props.room) {
@@ -359,14 +376,14 @@ module.exports = createReactClass({
 
         return (
             <div className="mx_RoomHeader light-panel">
-                <div className="mx_RoomHeader_wrapper">
-                    <div className="mx_RoomHeader_avatar">{ roomAvatar }</div>
-                    { e2eIcon }
+                <div className="mx_RoomHeader_wrapper" aria-owns="mx_RightPanel">
+                    <div className="mx_RoomHeader_avatar">{ roomAvatar }{ e2eIcon }</div>
+                    { privateIcon }
                     { name }
                     { topicElement }
                     { cancelButton }
                     { rightRow }
-                    <RoomHeaderButtons collapsedRhs={this.props.collapsedRhs} />
+                    <RoomHeaderButtons />
                 </div>
             </div>
         );

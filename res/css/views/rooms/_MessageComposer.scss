@@ -76,6 +76,8 @@ limitations under the License.
     left: 60px;
     margin-right: 0; // Counteract the E2EIcon class
     margin-left: 3px; // Counteract the E2EIcon class
+    width: 15px;
+    height: 15px;
 }
 
 .mx_MessageComposer_noperm_error {
@@ -107,6 +109,8 @@ limitations under the License.
     /* added for watcha*/
     justify-content: space-around;
     /*end of add for watcha*/
+    /* TODO watcha op300: the line above had been changed upstream to the line below, should we keep it ? */
+    // justify-content: flex-start;
     align-items: flex-start;
     font-size: 14px;
     margin-right: 6px;

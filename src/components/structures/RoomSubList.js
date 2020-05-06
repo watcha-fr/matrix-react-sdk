@@ -18,36 +18,33 @@ limitations under the License.
 */
 
 import React, {createRef} from 'react';
-import createReactClass from 'create-react-class';
 import classNames from 'classnames';
-import sdk from '../../index';
+import * as sdk from '../../index';
 import dis from '../../dispatcher';
-import Unread from '../../Unread';
+import * as Unread from '../../Unread';
 import * as RoomNotifs from '../../RoomNotifs';
 import * as FormattingUtils from '../../utils/FormattingUtils';
 import IndicatorScrollbar from './IndicatorScrollbar';
-import {Key, KeyCode} from '../../Keyboard';
+import {Key} from '../../Keyboard';
 import { Group } from 'matrix-js-sdk';
 import PropTypes from 'prop-types';
 import RoomTile from "../views/rooms/RoomTile";
 import LazyRenderList from "../views/elements/LazyRenderList";
 import {_t} from "../../languageHandler";
+import {RovingTabIndexWrapper} from "../../accessibility/RovingTabIndex";
 
 // turn this on for drop & drag console debugging galore
 const debug = false;
 
-const RoomSubList = createReactClass({
-    displayName: 'RoomSubList',
+export default class RoomSubList extends React.PureComponent {
+    static displayName = 'RoomSubList';
+    static debug = debug;
 
-    debug: debug,
-
-    propTypes: {
+    static propTypes = {
         list: PropTypes.arrayOf(PropTypes.object).isRequired,
         label: PropTypes.string.isRequired,
         tagName: PropTypes.string,
         addRoomLabel: PropTypes.string,
-
-        order: PropTypes.string.isRequired,
 
         // passed through to RoomTile and used to highlight room with `!` regardless of notifications count
         isInvite: PropTypes.bool,
@@ -59,10 +56,26 @@ const RoomSubList = createReactClass({
         incomingCall: PropTypes.object,
         extraTiles: PropTypes.arrayOf(PropTypes.node), // extra elements added beneath tiles
         forceExpand: PropTypes.bool,
-    },
+    };
 
-    getInitialState: function() {
+    static defaultProps = {
+        onHeaderClick: function() {
+        }, // NOP
+        extraTiles: [],
+        isInvite: false,
+    };
+
+    static getDerivedStateFromProps(props, state) {
         return {
+            listLength: props.list.length,
+            scrollTop: props.list.length === state.listLength ? state.scrollTop : 0,
+        };
+    }
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
             hidden: this.props.startAsHidden || false,
             // some values to get LazyRenderList starting
             scrollerHeight: 800,
@@ -71,62 +84,57 @@ const RoomSubList = createReactClass({
             // we have to store the length of the list here so we can see if it's changed or not...
             listLength: null,
         };
-    },
 
-    getDefaultProps: function() {
-        return {
-            onHeaderClick: function() {
-            }, // NOP
-            extraTiles: [],
-            isInvite: false,
-        };
-    },
-
-    componentDidMount: function() {
+        this._header = createRef();
+        this._subList = createRef();
+        this._scroller = createRef();
         this._headerButton = createRef();
+    }
+
+    componentDidMount() {
         this.dispatcherRef = dis.register(this.onAction);
-    },
+    }
 
-    statics: {
-        getDerivedStateFromProps: function(props, state) {
-            return {
-                listLength: props.list.length,
-                scrollTop: props.list.length === state.listLength ? state.scrollTop : 0,
-            };
-        },
-    },
-
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         dis.unregister(this.dispatcherRef);
-    },
+    }
 
     // The header is collapsible if it is hidden or not stuck
     // The dataset elements are added in the RoomList _initAndPositionStickyHeaders method
-    isCollapsibleOnClick: function() {
-        const stuck = this.refs.header.dataset.stuck;
+    isCollapsibleOnClick() {
+        const stuck = this._header.current.dataset.stuck;
         if (!this.props.forceExpand && (this.state.hidden || stuck === undefined || stuck === "none")) {
             return true;
         } else {
             return false;
         }
-    },
+    }
 
-    onAction: function(payload) {
-        // XXX: Previously RoomList would forceUpdate whenever on_room_read is dispatched,
-        // but this is no longer true, so we must do it here (and can apply the small
-        // optimisation of checking that we care about the room being read).
-        //
-        // Ultimately we need to transition to a state pushing flow where something
-        // explicitly notifies the components concerned that the notif count for a room
-        // has change (e.g. a Flux store).
-        if (payload.action === 'on_room_read' &&
-            this.props.list.some((r) => r.roomId === payload.roomId)
-        ) {
-            this.forceUpdate();
+    onAction = (payload) => {
+        switch (payload.action) {
+            case 'on_room_read':
+                // XXX: Previously RoomList would forceUpdate whenever on_room_read is dispatched,
+                // but this is no longer true, so we must do it here (and can apply the small
+                // optimisation of checking that we care about the room being read).
+                //
+                // Ultimately we need to transition to a state pushing flow where something
+                // explicitly notifies the components concerned that the notif count for a room
+                // has change (e.g. a Flux store).
+                if (this.props.list.some((r) => r.roomId === payload.roomId)) {
+                    this.forceUpdate();
+                }
+                break;
+
+            case 'view_room':
+                if (this.state.hidden && !this.props.forceExpand &&
+                    this.props.list.some((r) => r.roomId === payload.room_id)
+                ) {
+                    this.toggle();
+                }
         }
-    },
+    };
 
-    onClick: function(ev) {
+    toggle = () => {
         if (this.isCollapsibleOnClick()) {
             // The header isCollapsible, so the click is to be interpreted as collapse and truncation logic
             const isHidden = !this.state.hidden;
@@ -135,16 +143,16 @@ const RoomSubList = createReactClass({
             });
         } else {
             // The header is stuck, so the click is to be interpreted as a scroll to the header
-            this.props.onHeaderClick(this.state.hidden, this.refs.header.dataset.originalPosition);
+            this.props.onHeaderClick(this.state.hidden, this._header.current.dataset.originalPosition);
         }
-    },
+    };
 
-    onHeaderKeyDown: function(ev) {
+    onClick = (ev) => {
+        this.toggle();
+    };
+
+    onHeaderKeyDown = (ev) => {
         switch (ev.key) {
-            case Key.TAB:
-                // Prevent LeftPanel handling Tab if focus is on the sublist header itself
-                ev.stopPropagation();
-                break;
             case Key.ARROW_LEFT:
                 // On ARROW_LEFT collapse the room sublist
                 if (!this.state.hidden && !this.props.forceExpand) {
@@ -159,7 +167,7 @@ const RoomSubList = createReactClass({
                     this.onClick();
                 } else if (!this.props.forceExpand) {
                     // sublist is expanded, go to first room
-                    const element = this.refs.subList && this.refs.subList.querySelector(".mx_RoomTile");
+                    const element = this._subList.current && this._subList.current.querySelector(".mx_RoomTile");
                     if (element) {
                         element.focus();
                     }
@@ -167,9 +175,9 @@ const RoomSubList = createReactClass({
                 break;
             }
         }
-    },
+    };
 
-    onKeyDown: function(ev) {
+    onKeyDown = (ev) => {
         switch (ev.key) {
             // On ARROW_LEFT go to the sublist header
             case Key.ARROW_LEFT:
@@ -180,24 +188,24 @@ const RoomSubList = createReactClass({
             case Key.ARROW_RIGHT:
                 ev.stopPropagation();
         }
-    },
+    };
 
-    onRoomTileClick(roomId, ev) {
+    onRoomTileClick = (roomId, ev) => {
         dis.dispatch({
             action: 'view_room',
             room_id: roomId,
-            clear_search: (ev && (ev.keyCode === KeyCode.ENTER || ev.keyCode === KeyCode.SPACE)),
+            clear_search: (ev && (ev.key === Key.ENTER || ev.key === Key.SPACE)),
         });
-    },
+    };
 
-    _updateSubListCount: function() {
+    _updateSubListCount = () => {
         // Force an update by setting the state to the current state
         // Doing it this way rather than using forceUpdate(), so that the shouldComponentUpdate()
         // method is honoured
         this.setState(this.state);
-    },
+    };
 
-    makeRoomTile: function(room) {
+    makeRoomTile = (room) => {
         return <RoomTile
             room={room}
             roomSubList={this}
@@ -212,9 +220,9 @@ const RoomSubList = createReactClass({
             incomingCall={null}
             onClick={this.onRoomTileClick}
         />;
-    },
+    };
 
-    _onNotifBadgeClick: function(e) {
+    _onNotifBadgeClick = (e) => {
         // prevent the roomsublist collapsing
         e.preventDefault();
         e.stopPropagation();
@@ -225,9 +233,9 @@ const RoomSubList = createReactClass({
                 room_id: room.roomId,
             });
         }
-    },
+    };
 
-    _onInviteBadgeClick: function(e) {
+    _onInviteBadgeClick = (e) => {
         // prevent the roomsublist collapsing
         e.preventDefault();
         e.stopPropagation();
@@ -247,14 +255,14 @@ const RoomSubList = createReactClass({
                 });
             }
         }
-    },
+    };
 
-    onAddRoom: function(e) {
+    onAddRoom = (e) => {
         e.stopPropagation();
         if (this.props.onAddRoom) this.props.onAddRoom();
-    },
+    };
 
-    _getHeaderJsx: function(isCollapsed) {
+    _getHeaderJsx(isCollapsed) {
         const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
         const AccessibleTooltipButton = sdk.getComponent('elements.AccessibleTooltipButton');
         const subListNotifications = !this.props.isInvite ?
@@ -262,33 +270,6 @@ const RoomSubList = createReactClass({
             {count: 0, highlight: true};
         const subListNotifCount = subListNotifications.count;
         const subListNotifHighlight = subListNotifications.highlight;
-
-        let badge;
-        if (!this.props.collapsed) {
-            const badgeClasses = classNames({
-                'mx_RoomSubList_badge': true,
-                'mx_RoomSubList_badgeHighlight': subListNotifHighlight,
-            });
-            // Wrap the contents in a div and apply styles to the child div so that the browser default outline works
-            if (subListNotifCount > 0) {
-                badge = (
-                    <AccessibleButton className={badgeClasses} onClick={this._onNotifBadgeClick} aria-label={_t("Jump to first unread room.")}>
-                        <div>
-                            { FormattingUtils.formatCount(subListNotifCount) }
-                        </div>
-                    </AccessibleButton>
-                );
-            } else if (this.props.isInvite && this.props.list.length) {
-                // no notifications but highlight anyway because this is an invite badge
-                badge = (
-                    <AccessibleButton className={badgeClasses} onClick={this._onInviteBadgeClick} aria-label={_t("Jump to first invite.")}>
-                        <div>
-                            { this.props.list.length }
-                        </div>
-                    </AccessibleButton>
-                );
-            }
-        }
 
         // When collapsed, allow a long hover on the header to show user
         // the full tag name and room count
@@ -305,17 +286,6 @@ const RoomSubList = createReactClass({
                 <IncomingCallBox className="mx_RoomSubList_incomingCall" incomingCall={this.props.incomingCall} />;
         }
 
-        let addRoomButton;
-        if (this.props.onAddRoom) {
-            addRoomButton = (
-                <AccessibleTooltipButton
-                    onClick={this.onAddRoom}
-                    className="mx_RoomSubList_addRoom"
-                    title={this.props.addRoomLabel || _t("Add room")}
-                />
-            );
-        }
-
         const len = this.props.list.length + this.props.extraTiles.length;
         let chevron;
         if (len) {
@@ -327,55 +297,111 @@ const RoomSubList = createReactClass({
             chevron = (<div className={chevronClasses} />);
         }
 
-        return (
-            <div className="mx_RoomSubList_labelContainer" title={title} ref="header" onKeyDown={this.onHeaderKeyDown}>
-                <AccessibleButton
-                    onClick={this.onClick}
-                    className="mx_RoomSubList_label"
-                    tabIndex={0}
-                    aria-expanded={!isCollapsed}
-                    inputRef={this._headerButton}
-                    role="treeitem"
-                    aria-level="1"
-                >
-                    { chevron }
-                    <span>{this.props.label}</span>
-                    { incomingCall }
-                </AccessibleButton>
-                { badge }
-                { addRoomButton }
-            </div>
-        );
-    },
+        return <RovingTabIndexWrapper inputRef={this._headerButton}>
+            {({onFocus, isActive, ref}) => {
+                const tabIndex = isActive ? 0 : -1;
 
-    checkOverflow: function() {
-        if (this.refs.scroller) {
-            this.refs.scroller.checkOverflow();
+                let badge;
+                if (!this.props.collapsed) {
+                    const badgeClasses = classNames({
+                        'mx_RoomSubList_badge': true,
+                        'mx_RoomSubList_badgeHighlight': subListNotifHighlight,
+                    });
+                    // Wrap the contents in a div and apply styles to the child div so that the browser default outline works
+                    if (subListNotifCount > 0) {
+                        badge = (
+                            <AccessibleButton
+                                tabIndex={tabIndex}
+                                className={badgeClasses}
+                                onClick={this._onNotifBadgeClick}
+                                aria-label={_t("Jump to first unread room.")}
+                            >
+                                <div>
+                                    { FormattingUtils.formatCount(subListNotifCount) }
+                                </div>
+                            </AccessibleButton>
+                        );
+                    } else if (this.props.isInvite && this.props.list.length) {
+                        // no notifications but highlight anyway because this is an invite badge
+                        badge = (
+                            <AccessibleButton
+                                tabIndex={tabIndex}
+                                className={badgeClasses}
+                                onClick={this._onInviteBadgeClick}
+                                aria-label={_t("Jump to first invite.")}
+                            >
+                                <div>
+                                    { this.props.list.length }
+                                </div>
+                            </AccessibleButton>
+                        );
+                    }
+                }
+
+                let addRoomButton;
+                if (this.props.onAddRoom) {
+                    addRoomButton = (
+                        <AccessibleTooltipButton
+                            tabIndex={tabIndex}
+                            onClick={this.onAddRoom}
+                            className="mx_RoomSubList_addRoom"
+                            title={this.props.addRoomLabel || _t("Add room")}
+                        />
+                    );
+                }
+
+                return (
+                    <div className="mx_RoomSubList_labelContainer" title={title} ref={this._header} onKeyDown={this.onHeaderKeyDown}>
+                        <AccessibleButton
+                            onFocus={onFocus}
+                            tabIndex={tabIndex}
+                            inputRef={ref}
+                            onClick={this.onClick}
+                            className="mx_RoomSubList_label"
+                            aria-expanded={!isCollapsed}
+                            role="treeitem"
+                            aria-level="1"
+                        >
+                            { chevron }
+                            <span>{this.props.label}</span>
+                            { incomingCall }
+                        </AccessibleButton>
+                        { badge }
+                        { addRoomButton }
+                    </div>
+                );
+            } }
+        </RovingTabIndexWrapper>;
+    }
+
+    checkOverflow = () => {
+        if (this._scroller.current) {
+            this._scroller.current.checkOverflow();
         }
-    },
+    };
 
-    setHeight: function(height) {
-        if (this.refs.subList) {
-            this.refs.subList.style.height = `${height}px`;
+    setHeight = (height) => {
+        if (this._subList.current) {
+            this._subList.current.style.height = `${height}px`;
         }
         this._updateLazyRenderHeight(height);
-    },
+    };
 
-    _updateLazyRenderHeight: function(height) {
+    _updateLazyRenderHeight(height) {
         this.setState({scrollerHeight: height});
-    },
+    }
 
-    _onScroll: function() {
-        this.setState({scrollTop: this.refs.scroller.getScrollTop()});
-    },
+    _onScroll = () => {
+        this.setState({scrollTop: this._scroller.current.getScrollTop()});
+    };
 
     _canUseLazyListRendering() {
         // for now disable lazy rendering as they are already rendered tiles
         // not rooms like props.list we pass to LazyRenderList
         return !this.props.extraTiles || !this.props.extraTiles.length;
-    },
+    }
 
-    render: function() {
+    render() {
         const len = this.props.list.length + this.props.extraTiles.length;
         const isCollapsed = this.state.hidden && !this.props.forceExpand;
 
@@ -391,7 +417,7 @@ const RoomSubList = createReactClass({
                 // no body
             } else if (this._canUseLazyListRendering()) {
                 content = (
-                    <IndicatorScrollbar ref="scroller" className="mx_RoomSubList_scroll" onScroll={this._onScroll}>
+                    <IndicatorScrollbar ref={this._scroller} className="mx_RoomSubList_scroll" onScroll={this._onScroll}>
                         <LazyRenderList
                             scrollTop={this.state.scrollTop }
                             height={ this.state.scrollerHeight }
@@ -404,7 +430,7 @@ const RoomSubList = createReactClass({
                 const roomTiles = this.props.list.map(r => this.makeRoomTile(r));
                 const tiles = roomTiles.concat(this.props.extraTiles);
                 content = (
-                    <IndicatorScrollbar ref="scroller" className="mx_RoomSubList_scroll" onScroll={this._onScroll}>
+                    <IndicatorScrollbar ref={this._scroller} className="mx_RoomSubList_scroll" onScroll={this._onScroll}>
                         { tiles }
                     </IndicatorScrollbar>
                 );
@@ -418,7 +444,7 @@ const RoomSubList = createReactClass({
 
         return (
             <div
-                ref="subList"
+                ref={this._subList}
                 className={subListClasses}
                 role="group"
                 aria-label={this.props.label}
@@ -428,7 +454,5 @@ const RoomSubList = createReactClass({
                 { content }
             </div>
         );
-    },
-});
-
-module.exports = RoomSubList;
+    }
+}

@@ -53,10 +53,10 @@ limitations under the License.
  * }
  */
 
-import MatrixClientPeg from './MatrixClientPeg';
+import {MatrixClientPeg} from './MatrixClientPeg';
 import PlatformPeg from './PlatformPeg';
 import Modal from './Modal';
-import sdk from './index';
+import * as sdk from './index';
 import { _t } from './languageHandler';
 import Matrix from 'matrix-js-sdk';
 import dis from './dispatcher';
@@ -64,8 +64,8 @@ import SdkConfig from './SdkConfig';
 import { showUnknownDeviceDialogForCalls } from './cryptodevices';
 import WidgetUtils from './utils/WidgetUtils';
 import WidgetEchoStore from './stores/WidgetEchoStore';
-import {IntegrationManagers} from "./integrations/IntegrationManagers";
 import SettingsStore, { SettingLevel } from './settings/SettingsStore';
+import {generateHumanReadableId} from "./utils/NamingUtils";
 
 global.mxCalls = {
     //room_id: MatrixCall
@@ -139,11 +139,11 @@ function _setCallListeners(call) {
             Modal.createTrackedDialog('Call Failed', '', QuestionDialog, {
                 title: _t('Call Failed'),
                 description: _t(
-                    "There are unknown devices in this room: "+
+                    "There are unknown sessions in this room: "+
                     "if you proceed without verifying them, it will be "+
                     "possible for someone to eavesdrop on your call.",
                 ),
-                button: _t('Review Devices'),
+                button: _t('Review Sessions'),
                 onFinished: function(confirmed) {
                     if (confirmed) {
                         const room = MatrixClientPeg.get().getRoom(call.roomId);
@@ -302,7 +302,7 @@ function _onAction(payload) {
     switch (payload.action) {
         case 'place_call':
             {
-                if (module.exports.getAnyActiveCall()) {
+                if (callHandler.getAnyActiveCall()) {
                     const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
                     Modal.createTrackedDialog('Call Handler', 'Existing Call', ErrorDialog, {
                         title: _t('Existing Call'),
@@ -355,7 +355,7 @@ function _onAction(payload) {
             break;
         case 'incoming_call':
             {
-                if (module.exports.getAnyActiveCall()) {
+                if (callHandler.getAnyActiveCall()) {
                     // ignore multiple incoming calls. in future, we may want a line-1/line-2 setup.
                     // we avoid rejecting with "busy" in case the user wants to answer it on a different device.
                     // in future we could signal a "local busy" as a warning to the caller.
@@ -395,32 +395,6 @@ function _onAction(payload) {
 }
 
 async function _startCallApp(roomId, type) {
-    // check for a working integration manager. Technically we could put
-    // the state event in anyway, but the resulting widget would then not
-    // work for us. Better that the user knows before everyone else in the
-    // room sees it.
-    const managers = IntegrationManagers.sharedInstance();
-    let haveScalar = false;
-    if (managers.hasManager()) {
-        try {
-            const scalarClient = managers.getPrimaryManager().getScalarClient();
-            await scalarClient.connect();
-            haveScalar = scalarClient.hasCredentials();
-        } catch (e) {
-            // ignore
-        }
-    }
-
-    if (!haveScalar) {
-        const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
-
-        Modal.createTrackedDialog('Could not connect to the integration server', '', ErrorDialog, {
-            title: _t('Could not connect to the integration server'),
-            description: _t('A conference call could not be started because the integrations server is not available'),
-        });
-        return;
-    }
-
     dis.dispatch({
         action: 'appsDrawer',
         show: true,
@@ -456,6 +430,7 @@ async function _startCallApp(roomId, type) {
         return;
     }
 
+    /* TODO watcha op300: below the earlier code, with our modifs - now replaced by code below - to test and remove if not needed 
     // This inherits its poor naming from the field of the same name that goes into
     // the event. It's just a random string to make the Jitsi URLs unique.
     const widgetSessionId = Math.random().toString(36).substring(2);
@@ -488,8 +463,24 @@ async function _startCallApp(roomId, type) {
         const apiUrl = IntegrationManagers.sharedInstance().getPrimaryManager().apiUrl;
         widgetUrl = apiUrl + '/widgets/jitsi.html?' + queryString;
     }
+    TODO watcha op300 - above is the old code, below the new one */
+    const confId = `JitsiConference${generateHumanReadableId()}`;
+    const jitsiDomain = SdkConfig.get()['jitsi']['preferredDomain'];
 
-    const widgetData = { widgetSessionId };
+    let widgetUrl = WidgetUtils.getLocalJitsiWrapperUrl();
+
+    // TODO: Remove URL hacks when the mobile clients eventually support v2 widgets
+    const parsedUrl = new URL(widgetUrl);
+    parsedUrl.search = ''; // set to empty string to make the URL class use searchParams instead
+    parsedUrl.searchParams.set('confId', confId);
+    widgetUrl = parsedUrl.toString();
+    /* end TODO watcha op300 - above is the new code */
+
+    const widgetData = {
+        conferenceId: confId,
+        isAudioOnly: type === 'voice',
+        domain: jitsiDomain,
+    };
 
     const widgetId = (
         'jitsi_' +
@@ -532,7 +523,7 @@ if (!global.mxCallHandler) {
 
 const callHandler = {
     getCallForRoom: function(roomId) {
-        let call = module.exports.getCall(roomId);
+        let call = callHandler.getCall(roomId);
         if (call) return call;
 
         if (ConferenceHandler) {
@@ -592,4 +583,4 @@ if (global.mxCallHandler === undefined) {
     global.mxCallHandler = callHandler;
 }
 
-module.exports = global.mxCallHandler;
+export default global.mxCallHandler;

@@ -1,6 +1,7 @@
 /*
 Copyright 2017 Vector Creations Ltd
 Copyright 2017, 2018 New Vector Ltd
+Copyright 2019 The Matrix.org Foundation C.I.C.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,8 +17,8 @@ limitations under the License.
 */
 import dis from '../dispatcher';
 import {Store} from 'flux/utils';
-import MatrixClientPeg from '../MatrixClientPeg';
-import sdk from '../index';
+import {MatrixClientPeg} from '../MatrixClientPeg';
+import * as sdk from '../index';
 import Modal from '../Modal';
 import { _t } from '../languageHandler';
 import { getCachedRoomIDForAlias, storeRoomAliasInCache } from '../RoomAliasCache';
@@ -45,6 +46,7 @@ const INITIAL_STATE = {
     forwardingEvent: null,
 
     quotingEvent: null,
+    matrixClientIsReady: false,
 };
 
 /**
@@ -58,9 +60,26 @@ class RoomViewStore extends Store {
 
         // Initialise state
         this._state = INITIAL_STATE;
+        if (MatrixClientPeg.get()) {
+            this._state.matrixClientIsReady = MatrixClientPeg.get().isInitialSyncComplete();
+        }
     }
 
     _setState(newState) {
+        // If values haven't changed, there's nothing to do.
+        // This only tries a shallow comparison, so unchanged objects will slip
+        // through, but that's probably okay for now.
+        let stateChanged = false;
+        for (const key of Object.keys(newState)) {
+            if (this._state[key] !== newState[key]) {
+                stateChanged = true;
+                break;
+            }
+        }
+        if (!stateChanged) {
+            return;
+        }
+
         this._state = Object.assign(this._state, newState);
         this.__emitChange();
     }
@@ -135,6 +154,11 @@ class RoomViewStore extends Store {
                 }, /*className=*/null, /*isPriority=*/false, /*isStatic=*/true);
                 break;
             }
+            case 'sync_state':
+                this._setState({
+                    matrixClientIsReady: MatrixClientPeg.get().isInitialSyncComplete(),
+                });
+                break;
         }
     }
 
@@ -349,7 +373,7 @@ class RoomViewStore extends Store {
     }
 
     shouldPeek() {
-        return this._state.shouldPeek;
+        return this._state.shouldPeek && this._state.matrixClientIsReady;
     }
 }
 
@@ -357,4 +381,4 @@ let singletonRoomViewStore = null;
 if (!singletonRoomViewStore) {
     singletonRoomViewStore = new RoomViewStore();
 }
-module.exports = singletonRoomViewStore;
+export default singletonRoomViewStore;

@@ -22,6 +22,8 @@ limitations under the License.
     // This flex container can now be lower than his children. This prevents the stretching of mx_RoomView_body that induced an unwanted loading of the timeline.
     min-height: 0;
     /* end of insertion */
+    // TODO watchs op300: this was added upstream: is it conflicting with our insertion ?
+    height: 100%;
 }
 
 // move hit area 5px to the right so it doesn't overlap with the timeline scrollbar

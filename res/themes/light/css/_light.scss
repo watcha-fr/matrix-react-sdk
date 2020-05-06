@@ -5,9 +5,12 @@
    Arial empirically gets it right, hence prioritising Arial here. */
 /* We fall through to Twemoji for emoji rather than falling through
    to native Emoji fonts (if any) to ensure cross-browser consistency */
-$font-family: Nunito, Twemoji, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', Arial, Helvetica, Sans-Serif;
+/* Noto Color Emoji contains digits, in fixed-width, therefore causing
+   digits in flowed text to stand out.
+   TODO: Consider putting all emoji fonts to the end rather than the front. */
+$font-family: Nunito, Twemoji, 'Apple Color Emoji', 'Segoe UI Emoji', Arial, Helvetica, Sans-Serif, 'Noto Color Emoji';
 
-$monospace-font-family: Inconsolata, Twemoji, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', Courier, monospace;
+$monospace-font-family: Inconsolata, Twemoji, 'Apple Color Emoji', 'Segoe UI Emoji', Courier, monospace, 'Noto Color Emoji';
 
 // unified palette
 // try to use these colors when possible
@@ -27,6 +30,7 @@ $header-panel-bg-color: #f3f8fd;
 // typical text (dark-on-white in light skin)
 $primary-fg-color: #2e2f32;
 $primary-bg-color: #ffffff;
+$muted-fg-color: #61708b; // Commonly used in headings and relevant alt text
 
 // used for dialog box text
 $light-fg-color: #747474;
@@ -232,6 +236,7 @@ $copy-button-url: "$(res)/img/icon_copy_message.svg";
 
 // e2e
 $e2e-verified-color: #76cfa5; // N.B. *NOT* the same as $accent-color
+$e2e-unknown-color: #e8bf37;
 $e2e-unverified-color: #e8bf37;
 $e2e-warning-color: #ba6363;
 
@@ -294,6 +299,8 @@ $reaction-row-button-hover-border-color: $focus-bg-color;
 $reaction-row-button-selected-bg-color: #e9fff9;
 $reaction-row-button-selected-border-color: $accent-color;
 
+$kbd-border-color: $reaction-row-button-border-color;
+
 $tooltip-timeline-bg-color: $tagpanel-bg-color;
 $tooltip-timeline-fg-color: #ffffff;
 
@@ -301,6 +308,8 @@ $interactive-tooltip-bg-color: #27303a;
 $interactive-tooltip-fg-color: #ffffff;
 
 $breadcrumb-placeholder-bg-color: #e8eef5;
+
+$user-tile-hover-bg-color: $header-panel-bg-color;
 
 // ***** Mixins! *****
 
@@ -365,4 +374,13 @@ $breadcrumb-placeholder-bg-color: #e8eef5;
 @define-mixin mx_Dialog_link {
     color: $accent-color;
     text-decoration: none;
+}
+
+// diff highlight colors
+.hljs-addition {
+    background: #dfd;
+}
+
+.hljs-deletion {
+    background: #fdd;
 }

@@ -19,8 +19,8 @@ limitations under the License.
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import MatrixClientPeg from '../../MatrixClientPeg';
-import sdk from '../../index';
+import {MatrixClientPeg} from '../../MatrixClientPeg';
+import * as sdk from '../../index';
 import dis from '../../dispatcher';
 import { getHostingLink } from '../../utils/HostingLink';
 import { sanitizedHtmlNode } from '../../HtmlUtils';
@@ -38,6 +38,8 @@ import { showGroupAddRoomDialog } from '../../GroupAddressPicker';
 import {makeGroupPermalink, makeUserPermalink} from "../../utils/permalinks/Permalinks";
 import {Group} from "matrix-js-sdk";
 import {allSettled, sleep} from "../../utils/promise";
+import RightPanelStore from "../../stores/RightPanelStore";
+import AutoHideScrollbar from "./AutoHideScrollbar";
 
 const LONG_DESC_PLACEHOLDER = _td(
 `<h1>HTML for your community's page</h1>
@@ -422,6 +424,7 @@ export default createReactClass({
             membershipBusy: false,
             publicityBusy: false,
             inviterProfile: null,
+            showRightPanel: RightPanelStore.getSharedInstance().isOpenForGroup,
         };
     },
 
@@ -434,12 +437,18 @@ export default createReactClass({
         this._initGroupStore(this.props.groupId, true);
 
         this._dispatcherRef = dis.register(this._onAction);
+        this._rightPanelStoreToken = RightPanelStore.getSharedInstance().addListener(this._onRightPanelStoreUpdate);
     },
 
     componentWillUnmount: function() {
         this._unmounted = true;
         this._matrixClient.removeListener("Group.myMembership", this._onGroupMyMembership);
         dis.unregister(this._dispatcherRef);
+
+        // Remove RightPanelStore listener
+        if (this._rightPanelStoreToken) {
+            this._rightPanelStoreToken.remove();
+        }
     },
 
     componentWillReceiveProps: function(newProps) {
@@ -451,6 +460,12 @@ export default createReactClass({
                 this._initGroupStore(newProps.groupId);
             });
         }
+    },
+
+    _onRightPanelStoreUpdate: function() {
+        this.setState({
+            showRightPanel: RightPanelStore.getSharedInstance().isOpenForGroup,
+        });
     },
 
     _onGroupMyMembership: function(group) {
@@ -480,7 +495,7 @@ export default createReactClass({
                         group_id: groupId,
                     },
                 });
-                dis.dispatch({action: 'require_registration'});
+                dis.dispatch({action: 'require_registration', screen_after: {screen: `group/${groupId}`}});
                 willDoOnboarding = true;
             }
             if (stateKey === GroupStore.STATE_KEY.Summary) {
@@ -542,10 +557,6 @@ export default createReactClass({
         });
     },
 
-    _onShowRhsClick: function(ev) {
-        dis.dispatch({ action: 'show_right_panel' });
-    },
-
     _onEditClick: function() {
         this.setState({
             editing: true,
@@ -556,10 +567,6 @@ export default createReactClass({
                         GROUP_JOINPOLICY_OPEN :
                         GROUP_JOINPOLICY_INVITE,
             },
-        });
-        dis.dispatch({
-            action: 'panel_disable',
-            sideDisabled: true,
         });
     },
 
@@ -725,7 +732,7 @@ export default createReactClass({
 
     _onJoinClick: async function() {
         if (this._matrixClient.isGuest()) {
-            dis.dispatch({action: 'require_registration'});
+            dis.dispatch({action: 'require_registration', screen_after: {screen: `group/${this.props.groupId}`}});
             return;
         }
 
@@ -820,10 +827,10 @@ export default createReactClass({
                 {_t(
                     "Want more than a community? <a>Get your own server</a>", {},
                     {
-                        a: sub => <a href={hostingSignupLink} target="_blank" rel="noopener">{sub}</a>,
+                        a: sub => <a href={hostingSignupLink} target="_blank" rel="noreferrer noopener">{sub}</a>,
                     },
                 )}
-                <a href={hostingSignupLink} target="_blank" rel="noopener">
+                <a href={hostingSignupLink} target="_blank" rel="noreferrer noopener">
                     <img src={require("../../../res/img/external-link.svg")} width="11" height="10" alt='' />
                 </a>
             </div>;
@@ -1172,7 +1179,6 @@ export default createReactClass({
     render: function() {
         const GroupAvatar = sdk.getComponent("avatars.GroupAvatar");
         const Spinner = sdk.getComponent("elements.Spinner");
-        const GeminiScrollbarWrapper = sdk.getComponent("elements.GeminiScrollbarWrapper");
 
         if (this.state.summaryLoading && this.state.error === null || this.state.saving) {
             return <Spinner />;
@@ -1214,25 +1220,25 @@ export default createReactClass({
 
                 const EditableText = sdk.getComponent("elements.EditableText");
 
-                nameNode = <EditableText ref="nameEditor"
-                     className="mx_GroupView_editable"
-                     placeholderClassName="mx_GroupView_placeholder"
-                     placeholder={_t('Community Name')}
-                     blurToCancel={false}
-                     initialValue={this.state.profileForm.name}
-                     onValueChanged={this._onNameChange}
-                     tabIndex="0"
-                     dir="auto" />;
+                nameNode = <EditableText
+                    className="mx_GroupView_editable"
+                    placeholderClassName="mx_GroupView_placeholder"
+                    placeholder={_t('Community Name')}
+                    blurToCancel={false}
+                    initialValue={this.state.profileForm.name}
+                    onValueChanged={this._onNameChange}
+                    tabIndex="0"
+                    dir="auto" />;
 
-                shortDescNode = <EditableText ref="descriptionEditor"
-                     className="mx_GroupView_editable"
-                     placeholderClassName="mx_GroupView_placeholder"
-                     placeholder={_t("Description")}
-                     blurToCancel={false}
-                     initialValue={this.state.profileForm.short_description}
-                     onValueChanged={this._onShortDescChange}
-                     tabIndex="0"
-                     dir="auto" />;
+                shortDescNode = <EditableText
+                    className="mx_GroupView_editable"
+                    placeholderClassName="mx_GroupView_placeholder"
+                    placeholder={_t("Description")}
+                    blurToCancel={false}
+                    initialValue={this.state.profileForm.short_description}
+                    onValueChanged={this._onShortDescChange}
+                    tabIndex="0"
+                    dir="auto" />;
             } else {
                 const onGroupHeaderItemClick = this.state.isUserMember ? this._onEditClick : null;
                 const groupAvatarUrl = summary.profile ? summary.profile.avatar_url : null;
@@ -1298,7 +1304,7 @@ export default createReactClass({
                 );
             }
 
-            const rightPanel = !this.props.collapsedRhs ? <RightPanel groupId={this.props.groupId} /> : undefined;
+            const rightPanel = this.state.showRightPanel ? <RightPanel groupId={this.props.groupId} /> : undefined;
 
             const headerClasses = {
                 "mx_GroupView_header": true,
@@ -1326,13 +1332,13 @@ export default createReactClass({
                         <div className="mx_GroupView_header_rightCol">
                             { rightButtons }
                         </div>
-                        <GroupHeaderButtons collapsedRhs={this.props.collapsedRhs} />
+                        <GroupHeaderButtons />
                     </div>
-                    <MainSplit collapsedRhs={this.props.collapsedRhs} panel={rightPanel}>
-                        <GeminiScrollbarWrapper className="mx_GroupView_body">
+                    <MainSplit panel={rightPanel}>
+                        <AutoHideScrollbar className="mx_GroupView_body">
                             { this._getMembershipSection() }
                             { this._getGroupSection() }
-                        </GeminiScrollbarWrapper>
+                        </AutoHideScrollbar>
                     </MainSplit>
                 </main>
             );

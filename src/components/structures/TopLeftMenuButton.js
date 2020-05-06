@@ -17,22 +17,20 @@ limitations under the License.
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as ContextualMenu from './ContextualMenu';
-import {TopLeftMenu} from '../views/context_menus/TopLeftMenu';
-import AccessibleButton from '../views/elements/AccessibleButton';
+import TopLeftMenu from '../views/context_menus/TopLeftMenu';
 import BaseAvatar from '../views/avatars/BaseAvatar';
 /* insertion for watcha*/
 import HomePage from '../views/watcha/HomePage'
 /*end of insertion*/
-import MatrixClientPeg from '../../MatrixClientPeg';
-import Avatar from '../../Avatar';
+import {MatrixClientPeg} from '../../MatrixClientPeg';
+import * as Avatar from '../../Avatar';
 import { _t } from '../../languageHandler';
 import dis from "../../dispatcher";
 /* insertion for watcha*/
 import LogoutDialog from "../views/dialogs/LogoutDialog";
 import Modal from "../../Modal";
 /*end of insertion*/
-import {focusCapturedRef} from "../../utils/Accessibility";
+import {ContextMenu, ContextMenuButton} from "./ContextMenu";
 
 const AVATAR_SIZE = 28;
 
@@ -47,11 +45,8 @@ export default class TopLeftMenuButton extends React.Component {
         super();
         this.state = {
             menuDisplayed: false,
-            menuFunctions: null, // should be { close: fn }
             profileInfo: null,
         };
-
-        this.onToggleMenu = this.onToggleMenu.bind(this);
     }
 
     async _getProfileInfo() {
@@ -119,7 +114,21 @@ export default class TopLeftMenuButton extends React.Component {
 
     /*end of insertion*/
 
+    openMenu = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.setState({ menuDisplayed: true });
+    };
+
+    closeMenu = () => {
+        this.setState({
+            menuDisplayed: false,
+        });
+    };
+
     render() {
+        const cli = MatrixClientPeg.get().getUserId();
+
         const name = this._getDisplayName();
         /*insertion for watcha*/
         /* TODO: this is not clean (li's inside a div??) */
@@ -138,17 +147,32 @@ export default class TopLeftMenuButton extends React.Component {
             chevronElement = <span className="mx_TopLeftMenuButton_chevron" />;
         }
 
-        return (
-            <AccessibleButton
+        let contextMenu;
+        if (this.state.menuDisplayed) {
+            const elementRect = this._buttonRef.getBoundingClientRect();
+
+            contextMenu = (
+                <ContextMenu
+                    chevronFace="none"
+                    left={elementRect.left}
+                    top={elementRect.top + elementRect.height}
+                    onFinished={this.closeMenu}
+                >
+                    <TopLeftMenu displayName={name} userId={cli} onFinished={this.closeMenu} />
+                </ContextMenu>
+            );
+        }
+
+        return <React.Fragment>
+            <ContextMenuButton
                 className="mx_TopLeftMenuButton"
                 /* changed for watcha
-                onClick={this.onToggleMenu}
+                onClick={this.openMenu}
                 */
                 onClick={e => {}}
                 inputRef={(r) => this._buttonRef = r}
-                aria-label={_t("Your profile")}
-                aria-haspopup={true}
-                aria-expanded={this.state.menuDisplayed}
+                label={_t("Your profile")}
+                isExpanded={this.state.menuDisplayed}
             >
             {/* insertion for watcha */}
             <span className="HomePageButton" onClick={this.onUserBoxContainerClick}>
@@ -162,44 +186,19 @@ export default class TopLeftMenuButton extends React.Component {
                     resizeMethod="crop"
                 />
                 { nameElement }
-            {/* insertion for watcha */}
-            </span>
-             <div className="TopLeftMenuButonsContainer">
-                {settingsItem}
-                {signInOutItem}
-            </div>
-            {/* end of insertion */}
-            {/* deletion for watcha  
-            { chevronElement }
-            */}
-            </AccessibleButton>
-        );
-    }
+                {/* insertion for watcha */}
+                </span>
+                 <div className="TopLeftMenuButonsContainer">
+                    {settingsItem}
+                    {signInOutItem}
+                </div>
+                {/* end of insertion */}
+                {/* deletion for watcha  
+                { chevronElement }
+                */}
+            </ContextMenuButton>
 
-    onToggleMenu(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (this.state.menuDisplayed && this.state.menuFunctions) {
-            this.state.menuFunctions.close();
-            return;
-        }
-
-        const elementRect = e.currentTarget.getBoundingClientRect();
-        const x = elementRect.left;
-        const y = elementRect.top + elementRect.height;
-
-        const menuFunctions = ContextualMenu.createMenu(TopLeftMenu, {
-            chevronFace: "none",
-            left: x,
-            top: y,
-            userId: MatrixClientPeg.get().getUserId(),
-            displayName: this._getDisplayName(),
-            containerRef: focusCapturedRef, // Focus the TopLeftMenu on first render
-            onFinished: () => {
-                this.setState({ menuDisplayed: false, menuFunctions: null });
-            },
-        });
-        this.setState({ menuDisplayed: true, menuFunctions });
+            { contextMenu }
+        </React.Fragment>;
     }
 }

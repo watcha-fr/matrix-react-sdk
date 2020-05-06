@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { EventStatus } from 'matrix-js-sdk';
-import MatrixClientPeg from '../MatrixClientPeg';
+import {MatrixClientPeg} from '../MatrixClientPeg';
 import shouldHideEvent from "../shouldHideEvent";
 /**
  * Returns whether an event should allow actions like reply, reactions, edit, etc.
@@ -46,7 +46,7 @@ export function isContentActionable(mxEvent) {
 }
 
 export function canEditContent(mxEvent) {
-    if (mxEvent.status === EventStatus.CANCELLED || mxEvent.getType() !== "m.room.message") {
+    if (mxEvent.status === EventStatus.CANCELLED || mxEvent.getType() !== "m.room.message" || mxEvent.isRedacted()) {
         return false;
     }
     const content = mxEvent.getOriginalContent();
