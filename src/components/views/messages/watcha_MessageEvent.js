@@ -1,5 +1,5 @@
 import MessageEvent from "./MessageEvent";
-import sdk from "../../../index";
+import * as sdk from "../../../index";
 import { _t } from "../../../languageHandler";
 
 class watcha_MImageBody extends MessageEvent {

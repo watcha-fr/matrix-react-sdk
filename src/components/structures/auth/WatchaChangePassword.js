@@ -1,9 +1,9 @@
 import React from "react";
 import createReactClass from "create-react-class";
-import WatchaWebPwChanged from "./WatchaWebPwChanged";
-import WatchaMobileOnboarding from "./WatchaMobileOnboarding";
+import * as WatchaWebPwChanged from "./WatchaWebPwChanged";
+import * as WatchaMobileOnboarding from "./WatchaMobileOnboarding";
 
-module.exports = createReactClass({
+const WatchaChangePassword =  createReactClass({
     displayName: "WatchaChangePassword",
 
     getInitialState() {
@@ -443,3 +443,5 @@ module.exports = createReactClass({
         );
     },
 });
+
+export default WatchaChangePassword;

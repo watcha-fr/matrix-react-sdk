@@ -10,8 +10,7 @@ New code for the Admin button
 
 import PropTypes from "prop-types";
 import { Component } from "react";
-import { MatrixClient } from "matrix-js-sdk";
-
+import { MatrixClientPeg } from "../../MatrixClientPeg";
 import { _t, getCurrentLanguage } from "../../languageHandler";
 import OutlineIconButton from "../views/elements/watcha_OutlineIconButton";
 import IconButton from "../views/elements/watcha_IconButton";
@@ -21,10 +20,6 @@ class AdminAccess extends Component {
         super(props);
         this.state = { isServerAdmin: false };
     }
-
-    static contextTypes = {
-        matrixClient: PropTypes.instanceOf(MatrixClient)
-    };
 
     openAdmin = ev => {
         // The token will be retrieved in watcha-admin.git/src/App.js
@@ -37,7 +32,7 @@ class AdminAccess extends Component {
         const value =
             getCurrentLanguage() +
             "|" +
-            this.context.matrixClient.getAccessToken();
+            MatrixClientPeg.get().getAccessToken();
         localStorage.setItem("watcha-" + key, value);
         window.open("/admin?key=" + key, "_blank");
     };

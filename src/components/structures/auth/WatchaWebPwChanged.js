@@ -4,7 +4,7 @@ import { _t } from "../../../languageHandler";
 import sdk from "../../../index";
 import dis from "../../../dispatcher";
 
-module.exports = createReactClass({
+const WatchaWebPwChanged = createReactClass({
     displayName: "WatchaWebPwChanged",
 
     getInitialState() {
@@ -79,3 +79,5 @@ module.exports = createReactClass({
         );
     },
 });
+
+export default WatchaWebPwChanged;

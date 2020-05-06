@@ -109,7 +109,7 @@ export default createReactClass({
 
     componentDidMount: function() {
         // insertion for watcha
-        this.context.matrixClient
+        MatrixClientPeg.get()
             .getProfileInfo(this.props.member.userId)
             .then(({ email }) => email && this.setState({ email }));
         // end of insertion
@@ -1123,7 +1123,7 @@ export default createReactClass({
                 room.getMembersWithMembership("invite").length ===
             2;
         const isMe =
-            this.props.member.userId === this.context.matrixClient.getUserId();
+            this.props.member.userId === MatrixClientPeg.get().getUserId();
         /* end of insertion */
 
         if (this.props.member.roomId) { // is in room

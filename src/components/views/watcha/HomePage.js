@@ -26,7 +26,7 @@ import { _t } from '../../../languageHandler';
 import sanitizeHtml from 'sanitize-html';
 import NotificationPanel from '../../structures/NotificationPanel';
 
-module.exports = createReactClass({
+const HomePage = createReactClass({
     displayName: 'HomePage',
 
     propTypes: {
@@ -129,5 +129,5 @@ module.exports = createReactClass({
 		}
 	}
 });
-/*<!--<div className="mx_HomePage_body" dangerouslySetInnerHTML={{ __html: this.state.page }}>
-</div>-->*/
+
+export default HomePage;

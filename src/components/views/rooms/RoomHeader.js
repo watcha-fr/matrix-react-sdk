@@ -33,7 +33,7 @@ import RoomHeaderButtons from '../right_panel/RoomHeaderButtons';
 import DMRoomMap from '../../../utils/DMRoomMap';
 import E2EIcon from './E2EIcon';
 /* insertion for watcha */
-const dis = require("../../../dispatcher");
+import dis from '../../../dispatcher';
 /* end of insertion */
 import InviteOnlyIcon from './InviteOnlyIcon';
 

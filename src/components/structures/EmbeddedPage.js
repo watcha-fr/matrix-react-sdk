@@ -26,7 +26,7 @@ import sanitizeHtml from 'sanitize-html';
 import dis from '../../dispatcher';
 import {MatrixClientPeg} from '../../MatrixClientPeg';
 import classnames from 'classnames';
-import HomePage from '../views/watcha/HomePage'
+import * as HomePage from '../views/watcha/HomePage'
 import MatrixClientContext from "../../contexts/MatrixClientContext";
 import AutoHideScrollbar from "./AutoHideScrollbar";
 

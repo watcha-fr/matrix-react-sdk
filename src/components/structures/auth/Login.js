@@ -26,7 +26,7 @@ import SdkConfig from '../../../SdkConfig';
 import { messageForResourceLimitError } from '../../../utils/ErrorUtils';
 import AutoDiscoveryUtils, {ValidatedServerConfig} from "../../../utils/AutoDiscoveryUtils";
 /*insertion for watcha*/
-import WatchaChangePassword from '../../structures/auth/WatchaChangePassword';
+import * as WatchaChangePassword from '../../structures/auth/WatchaChangePassword';
 /* end of insertion*/
 import classNames from "classnames";
 import AuthPage from "../../views/auth/AuthPage";

@@ -16,10 +16,10 @@ import GeminiScrollbar from "react-gemini-scrollbar";
 import { useTable, useSortBy, useFilters, useRowSelect } from "react-table";
 
 import dis from "../../dispatcher";
-import MatrixClientPeg from "../../MatrixClientPeg";
+import { MatrixClientPeg } from "../../MatrixClientPeg";
 import Modal from "../../Modal";
 import OutlineIconButton from "../views/elements/watcha_OutlineIconButton";
-import sdk from "../../index";
+import * as sdk from "../../index";
 import { _t } from "../../languageHandler";
 import { formatFullDate, formatFileExplorerDate } from "../../DateUtils";
 import {

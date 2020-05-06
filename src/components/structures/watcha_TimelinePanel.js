@@ -27,8 +27,8 @@ with some adaptations. Should be cleaned up later :)
 import Matrix from "matrix-js-sdk";
 const EventTimeline = Matrix.EventTimeline;
 
-import MatrixClientPeg from "../../MatrixClientPeg";
-import sdk from "../../index";
+import { MatrixClientPeg } from "../../MatrixClientPeg";
+import * as sdk from "../../index";
 import SettingsStore from "../../settings/SettingsStore";
 import TimelinePanel from "./TimelinePanel";
 import { _t } from "../../languageHandler";

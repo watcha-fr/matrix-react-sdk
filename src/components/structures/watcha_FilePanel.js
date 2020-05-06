@@ -20,8 +20,8 @@ Copied by Watcha from ./FilePanel.js, only to extract the render() function.
 Easier than finding a way to call it... this should be moved to watcha_FileExplorer very soon.
 
 */
-import sdk from '../../index';
-import MatrixClientPeg from '../../MatrixClientPeg';
+import * as sdk from '../../index';
+import { MatrixClientPeg } from '../../MatrixClientPeg';
 import { _t } from '../../languageHandler';
 import FilePanel from './FilePanel';
 

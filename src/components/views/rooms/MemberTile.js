@@ -24,10 +24,6 @@ import dis from "../../../dispatcher";
 import { _t } from '../../../languageHandler';
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
 
-// insertion for watcha
-import MatrixClientPeg from '../../../MatrixClientPeg'
-// end of insertion
-
 export default createReactClass({
     displayName: 'MemberTile',
 
@@ -46,7 +42,7 @@ export default createReactClass({
         return {
             statusMessage: this.getStatusMessage(),
             // insertion for watcha
-            email: undefined
+            email: undefined,
             // end of insertion
             isRoomEncrypted: false,
             e2eStatus: null,

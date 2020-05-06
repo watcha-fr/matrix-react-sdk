@@ -100,9 +100,7 @@ export default class RightPanel extends React.Component {
             }
             return RIGHT_PANEL_PHASES.RoomMemberInfo;
         } else {
-            // TODO watcha op300 - verify that it works: maybe it should be after the "if (!RIGHT..." below ?
             // added for watcha
-            return RightPanel.Phase.RoomMemberList;
             let rhsPhase = window.localStorage.getItem("watcha_rhs_phase");
             if (rhsPhase) {
                 return rhsPhase;

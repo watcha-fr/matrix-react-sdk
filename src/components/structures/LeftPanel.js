@@ -27,6 +27,7 @@ import SettingsStore from '../../settings/SettingsStore';
 import {_t} from "../../languageHandler";
 import Analytics from "../../Analytics";
 /* insertion for watcha */
+import {MatrixClientPeg} from '../../MatrixClientPeg';
 import AdminAccess from './watcha_AdminAccess';
 /* end of insertion */
 
@@ -50,7 +51,7 @@ const LeftPanel = createReactClass({
     /* insertion for watcha */
     componentDidMount: function() {
         const self = this;
-        this.context.matrixClient
+        MatrixClientPeg.get()
             .isWatchaAdmin()
             .then(response => {
                 self.setState({ isServerAdmin: response.is_admin }, () => {
