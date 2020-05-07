@@ -8,27 +8,60 @@ New code for the new File explorer view.
 
 */
 
+import React, { useMemo, useRef, useEffect, useState } from "react";
+import { throttle } from 'lodash';
+import { useFilters, useRowSelect, useSortBy, useTable } from "react-table";
 import * as Mime from "mime";
 import filesize from "filesize";
-import matchSorter from "match-sorter";
-import React, { useMemo, useRef, useEffect, useState } from "react";
 import GeminiScrollbar from "react-gemini-scrollbar";
-import { useTable, useSortBy, useFilters, useRowSelect } from "react-table";
+import matchSorter from "match-sorter";
 
+import { _t } from "../../languageHandler";
+import { formatFullDate, formatFileExplorerDate } from "../../DateUtils";
+import { getUserNameColorClass } from "../../utils/FormattingUtils";
 import dis from "../../dispatcher";
 import MatrixClientPeg from "../../MatrixClientPeg";
 import Modal from "../../Modal";
-import OutlineIconButton from "../views/elements/watcha_OutlineIconButton";
 import sdk from "../../index";
-import { _t } from "../../languageHandler";
-import { formatFullDate, formatFileExplorerDate } from "../../DateUtils";
+
 import {
     formatMimeType,
-    getIconFromMimeType
+    getIconFromMimeType,
 } from "../../watcha_mimeTypeUtils";
-import { getUserNameColorClass } from "../../utils/FormattingUtils";
+import OutlineIconButton from "../views/elements/watcha_OutlineIconButton";
 
 function FileExplorer({ events, showTwelveHour }) {
+    const [senderDisplayNames, setSenderDisplayNames] = useState({});
+
+    const updateSenderDisplayNamesThrottled = useMemo(
+        () => throttle(updateSenderDisplayNames, 5000),
+        []
+    );
+
+    function updateSenderDisplayNames() {
+        const client = MatrixClientPeg.get();
+        for (const mxEvent of events) {
+            const roomId = mxEvent.getRoomId();
+            const room = client.getRoom(roomId);
+            const userId = mxEvent.getSender();
+            const member = room.getMember(userId);
+            if (member && member.name !== senderDisplayNames[userId]) {
+                senderDisplayNames[userId] = member.name;
+            } else if (senderDisplayNames[userId] === undefined) {
+                senderDisplayNames[userId] = null;
+                client.getProfileInfo(userId).then(({ displayname }) => {
+                    senderDisplayNames[userId] = displayname;
+                    setSenderDisplayNames({ ...senderDisplayNames });
+                });
+            }
+        }
+        setSenderDisplayNames({ ...senderDisplayNames });
+    }
+
+    useMemo(() => {
+        updateSenderDisplayNamesThrottled();
+    }, [events]);
+
     const columns = useMemo(
         () => [
             {
@@ -57,19 +90,24 @@ function FileExplorer({ events, showTwelveHour }) {
             },
             {
                 Header: _t("By"),
-                accessor: "sender",
+                accessor: "senderDisplayName",
                 sortType: compareLowerCase,
-                Cell: ({ cell: { value } }) => {
+                Cell: ({ cell: { row } }) => {
                     // common but buggy way (returns either the userId or the displayname in an unpredictable way):
                     // <SenderProfile mxEvent={row.original.mxEvent} />
-                    return <Sender userId={value} />;
+                    return (
+                        <SenderDisplayName
+                            mxEvent={row.original.mxEvent}
+                            {...{ senderDisplayNames }}
+                        />
+                    );
                 }
             }
         ],
         []
     );
 
-    const data = useMemo(() => getData(events), [events]);
+    const data = useMemo(() => getData(events, senderDisplayNames), [events, senderDisplayNames]);
 
     const defaultColumn = useMemo(
         () => ({
@@ -363,15 +401,13 @@ function LightDate({ timestamp, showTwelveHour }) {
     return <span title={title}>{formattedDate}</span>;
 }
 
-function Sender({ userId }) {
-    const [displayname, setDisplayname] = useState();
-    MatrixClientPeg.get()
-        .getProfileInfo(userId)
-        .then(({ displayname }) => setDisplayname(displayname));
+function SenderDisplayName({ mxEvent, senderDisplayNames }) {
+    const userId = mxEvent.getSender();
+    const displayName = senderDisplayNames[userId];
     const className = getUserNameColorClass(userId);
     return (
-        <span title={displayname} {...{ className }}>
-            {displayname}
+        <span title={displayName} {...{ className }}>
+            {displayName}
         </span>
     );
 }
@@ -527,37 +563,35 @@ function compareLowerCase(rowA, rowB, columnId) {
     return a === b ? 0 : a < b || b === "" ? -1 : 1;
 }
 
-function getData(events) {
+function getData(events, senderDisplayNames) {
     const data = [];
     for (let i = 0; i < events.length; i++) {
         const mxEvent = events[i];
         if (!shouldHideEvent(mxEvent)) {
-            const row = getEventData(mxEvent);
+            const row = getEventData(mxEvent, senderDisplayNames);
             data.push(row);
         }
     }
     return data;
 }
 
-function getEventData(mxEvent) {
+function getEventData(mxEvent, senderDisplayNames) {
     const content = mxEvent.getContent();
-
     const filename = content.body;
     const mimeType = Mime.getType(filename);
     const type = mimeType ? formatMimeType({ mimeType, filename }) : "";
     const size = content.info.size;
     const timestamp = mxEvent.getTs();
-    const sender = mxEvent.getSender();
-    const key = mxEvent.getId();
+    const userId = mxEvent.getSender();
+    const senderDisplayName = senderDisplayNames[userId] || "";
 
     return {
         filename,
         type,
         size,
-        sender,
         timestamp,
-        key,
-        mxEvent
+        senderDisplayName,
+        mxEvent,
     };
 }
 
@@ -565,8 +599,7 @@ function shouldHideEvent(mxEvent) {
     if (
         mxEvent.isRedacted() ||
         // ignored = no show (only happens if the ignore happens after an event was received)
-        (mxEvent.sender &&
-            MatrixClientPeg.get().isUserIgnored(mxEvent.sender.userId))
+        MatrixClientPeg.get().isUserIgnored(mxEvent.getSender())
     ) {
         return true;
     }
