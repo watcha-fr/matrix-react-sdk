@@ -100,7 +100,7 @@ export default class FromWidgetPostMessageApi {
             console.warn('Add FromWidgetPostMessageApi - Endpoint already registered');
             return;
         } else {
-            console.warn(`Adding fromWidget messaging endpoint for ${widgetId}`, endpoint);
+            console.log(`Adding fromWidget messaging endpoint for ${widgetId}`, endpoint);
             this.widgetMessagingEndpoints.push(endpoint);
         }
     }
@@ -165,7 +165,7 @@ export default class FromWidgetPostMessageApi {
         const action = event.data.action;
         const widgetId = event.data.widgetId;
         if (action === 'content_loaded') {
-            console.warn('Widget reported content loaded for', widgetId);
+            console.log('Widget reported content loaded for', widgetId);
             dis.dispatch({
                 action: 'widget_content_loaded',
                 widgetId: widgetId,

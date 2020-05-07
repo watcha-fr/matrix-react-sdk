@@ -225,7 +225,8 @@ export default createReactClass({
         return {serverConfig: props};
     },
 
-    componentWillMount: function() {
+    // TODO: [REACT-WARNING] Move this to constructor
+    UNSAFE_componentWillMount: function() {
         SdkConfig.put(this.props.config);
 
         // Used by _viewRoom before getting state from sync
@@ -265,9 +266,7 @@ export default createReactClass({
 
         this._accountPassword = null;
         this._accountPasswordTimer = null;
-    },
 
-    componentDidMount: function() {
         this.dispatcherRef = dis.register(this.onAction);
         this._themeWatcher = new ThemeWatcher();
         this._themeWatcher.start();
@@ -366,7 +365,8 @@ export default createReactClass({
         if (this._accountPasswordTimer !== null) clearTimeout(this._accountPasswordTimer);
     },
 
-    componentWillUpdate: function(props, state) {
+    // TODO: [REACT-WARNING] Replace with appropriate lifecycle stage
+    UNSAFE_componentWillUpdate: function(props, state) {
         if (this.shouldTrackPageChange(this.state, state)) {
             this.startPageChangeTimer();
         }
@@ -387,7 +387,7 @@ export default createReactClass({
         // Tor doesn't support performance
         if (!performance || !performance.mark) return null;
 
-        // This shouldn't happen because componentWillUpdate and componentDidUpdate
+        // This shouldn't happen because UNSAFE_componentWillUpdate and componentDidUpdate
         // are used.
         if (this._pageChanging) {
             console.warn('MatrixChat.startPageChangeTimer: timer already started');
@@ -621,7 +621,6 @@ export default createReactClass({
                 this._createRoom();
                 /*end of insertion for watcha*/
             }
-
             break;
             case 'view_my_groups':
                 this._setPage(PageTypes.MyGroups);
@@ -675,6 +674,7 @@ export default createReactClass({
                     collapseLhs: true,
                 });
                 break;
+            case 'focus_room_filter': // for CtrlOrCmd+K to work by expanding the left panel first
             case 'show_left_panel':
                 this.setState({
                     collapseLhs: false,
@@ -760,8 +760,7 @@ export default createReactClass({
                 this.setState({usernameForLoginPage: payload.username});
                 dis.dispatch({action: 'start_login', screenAfterLogin: "view_home_page"});
                 break;
-            /* end of insertion */
-            
+            /* end of insertion */            
         }
     },
 
@@ -940,6 +939,7 @@ export default createReactClass({
             this._viewHome();
         }
     },
+
     _viewWelcome() {
         this.setStateForNewView({
             view: VIEWS.WELCOME,
@@ -1531,7 +1531,7 @@ export default createReactClass({
         });
 
         cli.on("crypto.verification.request", request => {
-            const isFlagOn = SettingsStore.isFeatureEnabled("feature_cross_signing");
+            const isFlagOn = SettingsStore.getValue("feature_cross_signing");
 
             if (!isFlagOn && !request.channel.deviceId) {
                 request.cancel({code: "m.invalid_message", reason: "This client has cross-signing disabled"});
@@ -1546,7 +1546,7 @@ export default createReactClass({
             } else if (request.pending) {
                 ToastStore.sharedInstance().addOrReplaceToast({
                     key: 'verifreq_' + request.channel.transactionId,
-                    title: _t("Verification Request"),
+                    title: request.isSelfVerification ? _t("Self-verification request") : _t("Verification Request"),
                     icon: "verification",
                     props: {request},
                     component: sdk.getComponent("toasts.VerificationRequestToast"),
@@ -1581,7 +1581,7 @@ export default createReactClass({
             // changing colour. More advanced behaviour will come once
             // we implement more settings.
             cli.setGlobalErrorOnUnknownDevices(
-                !SettingsStore.isFeatureEnabled("feature_cross_signing"),
+                !SettingsStore.getValue("feature_cross_signing"),
             );
         }
     },
@@ -1927,28 +1927,29 @@ export default createReactClass({
         const cli = MatrixClientPeg.get();
         // We're checking `isCryptoAvailable` here instead of `isCryptoEnabled`
         // because the client hasn't been started yet.
-        if (!isCryptoAvailable()) {
+        const cryptoAvailable = isCryptoAvailable();
+        if (!cryptoAvailable) {
             this._onLoggedIn();
+        }
+
+        this.setState({ pendingInitialSync: true });
+        await this.firstSyncPromise.promise;
+
+        if (!cryptoAvailable) {
+            this.setState({ pendingInitialSync: false });
+            return setLoggedInPromise;
         }
 
         // Test for the master cross-signing key in SSSS as a quick proxy for
         // whether cross-signing has been set up on the account.
-        let masterKeyInStorage = false;
-        try {
-            masterKeyInStorage = !!await cli.getAccountDataFromServer("m.cross_signing.master");
-        } catch (e) {
-            if (e.errcode !== "M_NOT_FOUND") {
-                console.warn("Secret storage account data check failed", e);
-            }
-        }
-
+        const masterKeyInStorage = !!cli.getAccountData("m.cross_signing.master");
         if (masterKeyInStorage) {
             // Auto-enable cross-signing for the new session when key found in
             // secret storage.
-            SettingsStore.setFeatureEnabled("feature_cross_signing", true);
+            SettingsStore.setValue("feature_cross_signing", null, SettingLevel.DEVICE, true);
             this.setStateForNewView({ view: VIEWS.COMPLETE_SECURITY });
         } else if (
-            SettingsStore.isFeatureEnabled("feature_cross_signing") &&
+            SettingsStore.getValue("feature_cross_signing") &&
             await cli.doesServerSupportUnstableFeature("org.matrix.e2e_cross_signing")
         ) {
             // This will only work if the feature is set to 'enable' in the config,
@@ -1958,6 +1959,7 @@ export default createReactClass({
         } else {
             this._onLoggedIn();
         }
+        this.setState({ pendingInitialSync: false });
 
         return setLoggedInPromise;
     },
@@ -2045,10 +2047,10 @@ export default createReactClass({
                     </div>
                 );
             }
-        /*removed for watcha
+        /* removed for watcha
         } else if (this.state.view === VIEWS.WELCOME) {
             const Welcome = sdk.getComponent('auth.Welcome');
-            view = <Welcome />;
+            view = <Welcome {...this.getServerProperties()} />;
         */
         } else if (this.state.view === VIEWS.REGISTER) {
             const Registration = sdk.getComponent('structures.auth.Registration');
@@ -2081,6 +2083,7 @@ export default createReactClass({
             const Login = sdk.getComponent('structures.auth.Login');
             view = (
                 <Login
+                    isSyncing={this.state.pendingInitialSync}
                     onLoggedIn={this.onUserCompletedLoginFlow}
                     onRegisterClick={this.onRegisterClick}
                     fallbackHsUrl={this.getFallbackHsUrl()}

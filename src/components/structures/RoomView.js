@@ -49,12 +49,12 @@ import RoomViewStore from '../../stores/RoomViewStore';
 import RoomScrollStateStore from '../../stores/RoomScrollStateStore';
 import WidgetEchoStore from '../../stores/WidgetEchoStore';
 import SettingsStore, {SettingLevel} from "../../settings/SettingsStore";
-import WidgetUtils from '../../utils/WidgetUtils';
 import AccessibleButton from "../views/elements/AccessibleButton";
 import RightPanelStore from "../../stores/RightPanelStore";
 import {haveTileForEvent} from "../views/rooms/EventTile";
 import RoomContext from "../../contexts/RoomContext";
 import MatrixClientContext from "../../contexts/MatrixClientContext";
+import { shieldStatusForRoom } from '../../utils/ShieldUtils';
 
 const DEBUG = false;
 let debuglog = function() {};
@@ -167,7 +167,8 @@ export default createReactClass({
         };
     },
 
-    componentWillMount: function() {
+    // TODO: [REACT-WARNING] Replace component with real class, use constructor for refs
+    UNSAFE_componentWillMount: function() {
         this.dispatcherRef = dis.register(this.onAction);
         this.context.on("Room", this.onRoom);
         this.context.on("Room.timeline", this.onRoomTimeline);
@@ -180,6 +181,7 @@ export default createReactClass({
         this.context.on("crypto.keyBackupStatus", this.onKeyBackupStatus);
         this.context.on("deviceVerificationChanged", this.onDeviceVerificationChanged);
         this.context.on("userTrustStatusChanged", this.onUserVerificationChanged);
+        this.context.on("crossSigning.keysChanged", this.onCrossSigningKeysChanged);
         // Start listening for RoomViewStore updates
         this._roomStoreToken = RoomViewStore.addListener(this._onRoomViewStoreUpdate);
         this._rightPanelStoreToken = RightPanelStore.getSharedInstance().addListener(this._onRightPanelStoreUpdate);
@@ -234,6 +236,11 @@ export default createReactClass({
             showingPinned: SettingsStore.getValue("PinnedEvents.isOpen", roomId),
             showReadReceipts: SettingsStore.getValue("showReadReceipts", roomId),
         };
+
+        if (!initial && this.state.shouldPeek && !newState.shouldPeek) {
+            // Stop peeking because we have joined this room now
+            this.context.stopPeeking();
+        }
 
         // Temporary logging to diagnose https://github.com/vector-im/riot-web/issues/4307
         console.log(
@@ -398,13 +405,9 @@ export default createReactClass({
         const hideWidgetDrawer = localStorage.getItem(
             room.roomId + "_hide_widget_drawer");
 
-        if (hideWidgetDrawer === "true") {
-            return false;
-        }
-
-        const widgets = WidgetEchoStore.getEchoedRoomWidgets(room.roomId, WidgetUtils.getRoomWidgets(room));
-
-        return widgets.length > 0 || WidgetEchoStore.roomHasPendingWidgets(room.roomId, WidgetUtils.getRoomWidgets(room));
+        // This is confusing, but it means to say that we default to the tray being
+        // hidden unless the user clicked to open it.
+        return hideWidgetDrawer === "false";
     },
 
     componentDidMount: function() {
@@ -466,6 +469,10 @@ export default createReactClass({
             RoomScrollStateStore.setScrollState(this.state.roomId, this._getScrollState());
         }
 
+        if (this.state.shouldPeek) {
+            this.context.stopPeeking();
+        }
+
         // stop tracking room changes to format permalinks
         this._stopAllPermalinkCreators();
 
@@ -493,6 +500,7 @@ export default createReactClass({
             this.context.removeListener("crypto.keyBackupStatus", this.onKeyBackupStatus);
             this.context.removeListener("deviceVerificationChanged", this.onDeviceVerificationChanged);
             this.context.removeListener("userTrustStatusChanged", this.onUserVerificationChanged);
+            this.context.removeListener("crossSigning.keysChanged", this.onCrossSigningKeysChanged);
         }
 
         window.removeEventListener('beforeunload', this.onPageUnload);
@@ -794,6 +802,13 @@ export default createReactClass({
         this._updateE2EStatus(room);
     },
 
+    onCrossSigningKeysChanged: function() {
+        const room = this.state.room;
+        if (room) {
+            this._updateE2EStatus(room);
+        }
+    },
+
     _updateE2EStatus: async function(room) {
         if (!this.context.isRoomEncrypted(room.roomId)) {
             return;
@@ -807,7 +822,7 @@ export default createReactClass({
             });
             return;
         }
-        if (!SettingsStore.isFeatureEnabled("feature_cross_signing")) {
+        if (!SettingsStore.getValue("feature_cross_signing")) {
             room.hasUnverifiedDevices().then((hasUnverifiedDevices) => {
                 this.setState({
                     e2eStatus: hasUnverifiedDevices ? "warning" : "verified",
@@ -817,40 +832,9 @@ export default createReactClass({
             return;
         }
 
-        // Duplication between here and _updateE2eStatus in RoomTile
         /* At this point, the user has encryption on and cross-signing on */
-        const e2eMembers = await room.getEncryptionTargetMembers();
-        const verified = [];
-        const unverified = [];
-        e2eMembers.map(({userId}) => userId)
-            .filter((userId) => userId !== this.context.getUserId())
-            .forEach((userId) => {
-                (this.context.checkUserTrust(userId).isCrossSigningVerified() ?
-                verified : unverified).push(userId);
-            });
-
-        debuglog("e2e verified", verified, "unverified", unverified);
-
-        /* Check all verified user devices. */
-        /* Don't alarm if no other users are verified  */
-        const targets = (verified.length > 0) ? [...verified, this.context.getUserId()] : verified;
-        for (const userId of targets) {
-            const devices = await this.context.getStoredDevicesForUser(userId);
-            const anyDeviceNotVerified = devices.some(({deviceId}) => {
-                return !this.context.checkDeviceTrust(userId, deviceId).isVerified();
-            });
-            if (anyDeviceNotVerified) {
-                this.setState({
-                    e2eStatus: "warning",
-                });
-                debuglog("e2e status set to warning as not all users trust all of their sessions." +
-                         " Aborted on user", userId);
-                return;
-            }
-        }
-
         this.setState({
-            e2eStatus: unverified.length === 0 ? "verified" : "normal",
+            e2eStatus: await shieldStatusForRoom(this.context, room),
         });
     },
 
@@ -1223,7 +1207,7 @@ export default createReactClass({
             });
         }, function(error) {
             const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
-            console.error("Search failed: " + error);
+            console.error("Search failed", error);
             Modal.createTrackedDialog('Search failed', '', ErrorDialog, {
                 title: _t("Search failed"),
                 description: ((error && error.message) ? error.message : _t("Server may be unavailable, overloaded, or search timed out :(")),

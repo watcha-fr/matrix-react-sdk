@@ -63,7 +63,7 @@ export default createReactClass({
             }
         }
 
-        if (SettingsStore.isFeatureEnabled("feature_cross_signing")) {
+        if (SettingsStore.getValue("feature_cross_signing")) {
             const { roomId } = this.props.member;
             if (roomId) {
                 const isRoomEncrypted = cli.isRoomEncrypted(roomId);
@@ -128,15 +128,15 @@ export default createReactClass({
         const cli = MatrixClientPeg.get();
         const { userId } = this.props.member;
         const isMe = userId === cli.getUserId();
-        const userVerified = cli.checkUserTrust(userId).isCrossSigningVerified();
-        if (!userVerified) {
+        const userTrust = cli.checkUserTrust(userId);
+        if (!userTrust.isCrossSigningVerified()) {
             this.setState({
-                e2eStatus: "normal",
+                e2eStatus: userTrust.wasCrossSigningVerified() ? "warning" : "normal",
             });
             return;
         }
 
-        const devices = await cli.getStoredDevicesForUser(userId);
+        const devices = cli.getStoredDevicesForUser(userId);
         const anyDeviceUnverified = devices.some(device => {
             const { deviceId } = device;
             // For your own devices, we use the stricter check of cross-signing

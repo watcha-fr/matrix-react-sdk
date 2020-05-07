@@ -87,7 +87,7 @@ export default createReactClass({
         };
     },
 
-    componentWillMount: function() {
+    componentDidMount: function() {
         this._sessionStore = sessionStore;
         this._sessionStoreToken = this._sessionStore.addListener(
             this._setStateFromSessionStore,
@@ -244,7 +244,7 @@ export default createReactClass({
         if (!this.state.cachedPassword) {
             currentPassword = (
                 <div className={rowClassName}>
-                    <Field id="mx_ChangePassword_oldPassword"
+                    <Field
                         type="password"
                         label={_t('Current password')}
                         value={this.state.oldPassword}
@@ -263,7 +263,6 @@ export default createReactClass({
                         { currentPassword }
                         <div className={rowClassName}>
                             <Field
-                                id="mx_ChangePassword_newPassword"
                                 type="password"
                                 label={passwordLabel}
                                 value={this.state.newPassword}
@@ -274,7 +273,6 @@ export default createReactClass({
                         </div>
                         <div className={rowClassName}>
                             <Field
-                                id="mx_ChangePassword_newPasswordConfirm"
                                 type="password"
                                 label={_t("Confirm password")}
                                 value={this.state.newPasswordConfirm}

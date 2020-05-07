@@ -65,7 +65,8 @@ const LeftPanel = createReactClass({
     },
     /* end of insertion */
 
-    componentWillMount: function() {
+    // TODO: [REACT-WARNING] Move this to constructor
+    UNSAFE_componentWillMount: function() {
         this.focusedElement = null;
 
         this._breadcrumbsWatcherRef = SettingsStore.watchSetting(

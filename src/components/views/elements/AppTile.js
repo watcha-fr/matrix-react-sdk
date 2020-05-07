@@ -136,22 +136,21 @@ export default class AppTile extends React.Component {
      * If url can not be parsed, it is returned unmodified.
      */
     _addWurlParams(urlString) {
-        const u = url.parse(urlString);
-        if (!u) {
-            console.error("_addWurlParams", "Invalid URL", urlString);
-            return url;
+        try {
+            const parsed = new URL(urlString);
+
+            // TODO: Replace these with proper widget params
+            // See https://github.com/matrix-org/matrix-doc/pull/1958/files#r405714833
+            parsed.searchParams.set('widgetId', this.props.app.id);
+            parsed.searchParams.set('parentUrl', window.location.href.split('#', 2)[0]);
+
+            // Replace the encoded dollar signs back to dollar signs. They have no special meaning
+            // in HTTP, but URL parsers encode them anyways.
+            return parsed.toString().replace(/%24/g, '$');
+        } catch (e) {
+            console.error("Failed to add widget URL params:", e);
+            return urlString;
         }
-
-        const params = qs.parse(u.query);
-        // Append widget ID to query parameters
-        params.widgetId = this.props.app.id;
-        // Append current / parent URL, minus the hash because that will change when
-        // we view a different room (ie. may change for persistent widgets)
-        params.parentUrl = window.location.href.split('#', 2)[0];
-        u.search = undefined;
-        u.query = params;
-
-        return u.format();
     }
 
     isMixedContent() {
@@ -166,21 +165,19 @@ export default class AppTile extends React.Component {
         return false;
     }
 
-    componentWillMount() {
+    componentDidMount() {
         // Only fetch IM token on mount if we're showing and have permission to load
         if (this.props.show && this.state.hasPermissionToLoad) {
             this.setScalarToken();
         }
-    }
 
-    componentDidMount() {
         // Widget action listeners
         this.dispatcherRef = dis.register(this._onAction);
     }
 
     componentWillUnmount() {
         // Widget action listeners
-        dis.unregister(this.dispatcherRef);
+        if (this.dispatcherRef) dis.unregister(this.dispatcherRef);
 
         // if it's not remaining on screen, get rid of the PersistedElement container
         if (!ActiveWidgetStore.getWidgetPersistence(this.props.app.id)) {
@@ -264,14 +261,17 @@ export default class AppTile extends React.Component {
         });
     }
 
-    componentWillReceiveProps(nextProps) {
+    // TODO: [REACT-WARNING] Replace with appropriate lifecycle event
+    UNSAFE_componentWillReceiveProps(nextProps) { // eslint-disable-line camelcase
         if (nextProps.app.url !== this.props.app.url) {
             this._getNewState(nextProps);
             // Fetch IM token for new URL if we're showing and have permission to load
             if (this.props.show && this.state.hasPermissionToLoad) {
                 this.setScalarToken();
             }
-        } else if (nextProps.show && !this.props.show) {
+        }
+
+        if (nextProps.show && !this.props.show) {
             // We assume that persisted widgets are loaded and don't need a spinner.
             if (this.props.waitForIframeLoad && !PersistedElement.isMounted(this._persistKey)) {
                 this.setState({
@@ -282,7 +282,9 @@ export default class AppTile extends React.Component {
             if (this.state.hasPermissionToLoad) {
                 this.setScalarToken();
             }
-        } else if (nextProps.widgetPageTitle !== this.props.widgetPageTitle) {
+        }
+
+        if (nextProps.widgetPageTitle !== this.props.widgetPageTitle) {
             this.setState({
                 widgetPageTitle: nextProps.widgetPageTitle,
             });
@@ -321,7 +323,7 @@ export default class AppTile extends React.Component {
     }
 
     _onSnapshotClick() {
-        console.warn("Requesting widget snapshot");
+        console.log("Requesting widget snapshot");
         ActiveWidgetStore.getWidgetMessaging(this.props.app.id).getScreenshot()
             .catch((err) => {
                 console.error("Failed to get screenshot", err);
@@ -332,6 +334,28 @@ export default class AppTile extends React.Component {
                     file: screenshot,
                 }, true);
             });
+    }
+
+    /**
+     * Ends all widget interaction, such as cancelling calls and disabling webcams.
+     * @private
+     */
+    _endWidgetActions() {
+        // HACK: This is a really dirty way to ensure that Jitsi cleans up
+        // its hold on the webcam. Without this, the widget holds a media
+        // stream open, even after death. See https://github.com/vector-im/riot-web/issues/7351
+        if (this._appFrame.current) {
+            // In practice we could just do `+= ''` to trick the browser
+            // into thinking the URL changed, however I can foresee this
+            // being optimized out by a browser. Instead, we'll just point
+            // the iframe at a page that is reasonably safe to use in the
+            // event the iframe doesn't wink away.
+            // This is relative to where the Riot instance is located.
+            this._appFrame.current.src = 'about:blank';
+        }
+
+        // Delete the widget from the persisted store for good measure.
+        PersistedElement.destroyElement(this._persistKey);
     }
 
     /* If user has permission to modify widgets, delete the widget,
@@ -355,18 +379,7 @@ export default class AppTile extends React.Component {
                     }
                     this.setState({deleting: true});
 
-                    // HACK: This is a really dirty way to ensure that Jitsi cleans up
-                    // its hold on the webcam. Without this, the widget holds a media
-                    // stream open, even after death. See https://github.com/vector-im/riot-web/issues/7351
-                    if (this._appFrame.current) {
-                        // In practice we could just do `+= ''` to trick the browser
-                        // into thinking the URL changed, however I can foresee this
-                        // being optimized out by a browser. Instead, we'll just point
-                        // the iframe at a page that is reasonably safe to use in the
-                        // event the iframe doesn't wink away.
-                        // This is relative to where the Riot instance is located.
-                        this._appFrame.current.src = 'about:blank';
-                    }
+                    this._endWidgetActions();
 
                     WidgetUtils.setRoomWidget(
                         this.props.room.roomId,
@@ -425,7 +438,7 @@ export default class AppTile extends React.Component {
                 }, this.props.whitelistCapabilities);
 
                 if (requestedWhitelistCapabilies.length > 0 ) {
-                    console.warn(`Widget ${this.props.app.id} allowing requested, whitelisted properties: ` +
+                    console.log(`Widget ${this.props.app.id} allowing requested, whitelisted properties: ` +
                         requestedWhitelistCapabilies,
                     );
                 }
@@ -531,6 +544,10 @@ export default class AppTile extends React.Component {
         if (this.props.userWidget) {
             this._onMinimiseClick();
         } else {
+            if (this.props.show) {
+                // if we were being shown, end the widget as we're about to be minimized.
+                this._endWidgetActions();
+            }
             dis.dispatch({
                 action: 'appsDrawer',
                 show: !this.props.show,

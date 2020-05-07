@@ -102,13 +102,11 @@ export default class EventIndex extends EventEmitter {
             const timeline = room.getLiveTimeline();
             const token = timeline.getPaginationToken("b");
 
-            console.log("EventIndex: Got token for indexer",
-                        room.roomId, token);
-
             const backCheckpoint = {
                 roomId: room.roomId,
                 token: token,
                 direction: "b",
+                fullCrawl: true,
             };
 
             const forwardCheckpoint = {
@@ -160,7 +158,6 @@ export default class EventIndex extends EventEmitter {
         if (prevState === "SYNCING" && state === "SYNCING") {
             // A sync was done, presumably we queued up some live events,
             // commit them now.
-            console.log("EventIndex: Committing events");
             await indexManager.commitLiveEvents();
             return;
         }
@@ -274,6 +271,7 @@ export default class EventIndex extends EventEmitter {
         const validEventType = isUsefulType && !ev.isRedacted() && !ev.isDecryptionFailure();
 
         let validMsgType = true;
+        let hasContentValue = true;
 
         if (ev.getType() === "m.room.message" && !ev.isRedacted()) {
             // Expand this if there are more invalid msgtypes.
@@ -281,9 +279,15 @@ export default class EventIndex extends EventEmitter {
 
             if (!msgtype) validMsgType = false;
             else validMsgType = !msgtype.startsWith("m.key.verification");
+
+            if (!ev.getContent().body) hasContentValue = false;
+        } else if (ev.getType() === "m.room.topic" && !ev.isRedacted()) {
+            if (!ev.getContent().topic) hasContentValue = false;
+        } else if (ev.getType() === "m.room.name" && !ev.isRedacted()) {
+            if (!ev.getContent().name) hasContentValue = false;
         }
 
-        return validEventType && validMsgType;
+        return validEventType && validMsgType && hasContentValue;
     }
 
     /**
@@ -328,8 +332,6 @@ export default class EventIndex extends EventEmitter {
     async crawlerFunc() {
         let cancelled = false;
 
-        console.log("EventIndex: Started crawler function");
-
         const client = MatrixClientPeg.get();
         const indexManager = PlatformPeg.get().getEventIndexingManager();
 
@@ -358,8 +360,6 @@ export default class EventIndex extends EventEmitter {
 
             await sleep(sleepTime);
 
-            console.log("EventIndex: Running the crawler loop.");
-
             if (cancelled) {
                 break;
             }
@@ -378,11 +378,9 @@ export default class EventIndex extends EventEmitter {
 
             idle = false;
 
-            console.log("EventIndex: crawling using checkpoint", checkpoint);
-
             // We have a checkpoint, let us fetch some messages, again, very
             // conservatively to not bother our homeserver too much.
-            const eventMapper = client.getEventMapper();
+            const eventMapper = client.getEventMapper({preventReEmit: true});
             // TODO we need to ensure to use member lazy loading with this
             // request so we get the correct profiles.
             let res;
@@ -500,12 +498,6 @@ export default class EventIndex extends EventEmitter {
                 direction: checkpoint.direction,
             };
 
-            console.log(
-                "EventIndex: Crawled room",
-                client.getRoom(checkpoint.roomId).name,
-                "and fetched", events.length, "events.",
-            );
-
             try {
                 for (let i = 0; i < redactionEvents.length; i++) {
                     const ev = redactionEvents[i];
@@ -523,6 +515,10 @@ export default class EventIndex extends EventEmitter {
                                 "added, stopping the crawl", checkpoint);
                     await indexManager.removeCrawlerCheckpoint(newCheckpoint);
                 } else {
+                    if (eventsAlreadyAdded === true) {
+                        console.log("EventIndex: Checkpoint had already all events",
+                                    "added, but continuing due to a full crawl", checkpoint);
+                    }
                     this.crawlerCheckpoints.push(newCheckpoint);
                 }
             } catch (e) {
@@ -534,8 +530,6 @@ export default class EventIndex extends EventEmitter {
         }
 
         this._crawler = null;
-
-        console.log("EventIndex: Stopping crawler function");
     }
 
     /**

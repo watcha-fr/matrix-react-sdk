@@ -16,11 +16,16 @@ limitations under the License.
 */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 import * as sdk from '../../../index';
 
 export default createReactClass({
     displayName: 'AuthHeader',
+
+    propTypes: {
+        disableLanguageSelector: PropTypes.bool,
+    },
 
     render: function() {
         const AuthHeaderLogo = sdk.getComponent('auth.AuthHeaderLogo');
@@ -30,7 +35,7 @@ export default createReactClass({
             <div className="mx_AuthHeader">
                 <AuthHeaderLogo />
                 {/*removed for watcha
-                <LanguageSelector />
+                <LanguageSelector disabled={this.props.disableLanguageSelector} />
                 */}
             </div>
         );

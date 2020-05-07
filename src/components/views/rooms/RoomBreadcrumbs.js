@@ -49,7 +49,8 @@ export default class RoomBreadcrumbs extends React.Component {
         this._scroller = createRef();
     }
 
-    componentWillMount() {
+    // TODO: [REACT-WARNING] Move this to constructor
+    UNSAFE_componentWillMount() { // eslint-disable-line camelcase
         this._dispatcherRef = dis.register(this.onAction);
 
         const storedRooms = SettingsStore.getValue("breadcrumb_rooms");
@@ -363,7 +364,7 @@ export default class RoomBreadcrumbs extends React.Component {
             }
 
             let dmIndicator;
-            if (this._isDmRoom(r.room) && !SettingsStore.isFeatureEnabled("feature_cross_signing")) {
+            if (this._isDmRoom(r.room) && !SettingsStore.getValue("feature_cross_signing")) {
                 dmIndicator = <img
                     src={require("../../../../res/img/icon_person.svg")}
                     className="mx_RoomBreadcrumbs_dmIndicator"

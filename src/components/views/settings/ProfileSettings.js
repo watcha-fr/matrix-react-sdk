@@ -194,7 +194,7 @@ export default class ProfileSettings extends React.Component {
                             {/* end of change */}
                             {hostingSignup}
                         </p>
-                        <Field id="profileDisplayName" label={_t("Display Name")}
+                        <Field label={_t("Display Name")}
                                type="text" value={this.state.displayName} autoComplete="off"
                                onChange={this._onDisplayNameChanged} />
                     </div>

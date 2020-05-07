@@ -112,7 +112,7 @@ limitations under the License.
     /* TODO watcha op300: the line above had been changed upstream to the line below, should we keep it ? */
     /* justify-content: flex-start; */
     align-items: flex-start;
-    font-size: 14px;
+    font-size: $font-14px;
     margin-right: 6px;
 }
 
@@ -168,7 +168,7 @@ limitations under the License.
     box-shadow: none;
     color: $primary-fg-color;
     background-color: $primary-bg-color;
-    font-size: 14px;
+    font-size: $font-14px;
     max-height: 120px;
     overflow: auto;
     /* needed for FF */
@@ -249,7 +249,7 @@ limitations under the License.
 
     flex-direction: row;
     align-items: center;
-    font-size: 10px;
+    font-size: $font-10px;
     color: $greyed-fg-color;
 }
 

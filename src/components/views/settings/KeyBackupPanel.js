@@ -38,7 +38,7 @@ export default class KeyBackupPanel extends React.PureComponent {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this._checkKeyBackupStatus();
 
         MatrixClientPeg.get().on('crypto.keyBackupStatus', this._onKeyBackupStatus);
@@ -326,7 +326,7 @@ export default class KeyBackupPanel extends React.PureComponent {
                     </AccessibleButton>
                 </div>
             );
-            if (this.state.backupKeyStored && !SettingsStore.isFeatureEnabled("feature_cross_signing")) {
+            if (this.state.backupKeyStored && !SettingsStore.getValue("feature_cross_signing")) {
                 buttonRow = <p>⚠️ {_t(
                     "Backup key stored in secret storage, but this feature is not " +
                     "enabled on this session. Please enable cross-signing in Labs to " +
