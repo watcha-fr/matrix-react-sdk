@@ -53,7 +53,7 @@ class WatchaTimelinePanel extends TimelinePanel {
     }
 
     componentWillMount() {
-        super.componentWillMount();
+        super.UNSAFE_componentWillMount();
         // Cache hidden events setting on mount since Settings is expensive to
         // query, and we check this in a hot code path.
         this._showHiddenEventsInTimeline = SettingsStore.getValue(

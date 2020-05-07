@@ -106,6 +106,7 @@ export default createReactClass({
         cli.on("accountData", this.onAccountData);
 
         this._checkIgnoreState();
+    },
 
     componentDidMount: function() {
         // insertion for watcha
