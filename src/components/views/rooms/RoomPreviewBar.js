@@ -483,10 +483,11 @@ export default createReactClass({
                 break;
             }
             case MessageCase.ViewingRoom: {
-                /* insertion for watcha TODO this should redirect to homepage*/
-                title= _t("You have left this room");
-                /*end of insertion for watcha*/
-                    /*removed for watcha
+                // insertion for watcha
+                // TODO this should redirect to homepage
+                title = _t("You have left this room");
+                // end of insertion for watcha
+                /* removed for watcha
                 if (this.props.canPreview) {
                     title = _t("You're previewing %(roomName)s. Want to join it?",
                         {roomName: this._roomName()});
@@ -496,7 +497,7 @@ export default createReactClass({
                 }
                 primaryActionLabel = _t("Join the discussion");
                 primaryActionHandler = this.props.onJoinClick;
-            */
+                */
                 break;
             }
             case MessageCase.RoomNotFound: {

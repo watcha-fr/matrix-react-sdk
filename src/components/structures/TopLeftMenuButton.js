@@ -19,18 +19,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import TopLeftMenu from '../views/context_menus/TopLeftMenu';
 import BaseAvatar from '../views/avatars/BaseAvatar';
-/* insertion for watcha*/
-import HomePage from '../views/watcha/HomePage'
-/*end of insertion*/
 import {MatrixClientPeg} from '../../MatrixClientPeg';
 import * as Avatar from '../../Avatar';
 import { _t } from '../../languageHandler';
 import dis from "../../dispatcher";
+import {ContextMenu, ContextMenuButton} from "./ContextMenu";
+
 /* insertion for watcha*/
 import LogoutDialog from "../views/dialogs/LogoutDialog";
 import Modal from "../../Modal";
 /*end of insertion*/
-import {ContextMenu, ContextMenuButton} from "./ContextMenu";
 
 const AVATAR_SIZE = 28;
 
@@ -96,23 +94,23 @@ export default class TopLeftMenuButton extends React.Component {
             return MatrixClientPeg.get().getUserId();
         }
     }
-    /*insertion for watcha*/
+
+    // insertion for watcha
     openSettings() {
-        dis.dispatch({action: 'view_user_settings'});
+        dis.dispatch({ action: "view_user_settings" });
         this.closeMenu();
     }
 
     signOut() {
-        Modal.createTrackedDialog('Logout E2E Export', '', LogoutDialog);
+        Modal.createTrackedDialog("Logout E2E Export", "", LogoutDialog);
         this.closeMenu();
     }
 
     onUserBoxContainerClick(ev) {
-    ev.stopPropagation();
-    dis.dispatch({action: "view_home_page"});
+        ev.stopPropagation();
+        dis.dispatch({ action: "view_home_page" });
     }
-
-    /*end of insertion*/
+    // end of insertion
 
     openMenu = (e) => {
         e.preventDefault();
@@ -166,17 +164,16 @@ export default class TopLeftMenuButton extends React.Component {
         return <React.Fragment>
             <ContextMenuButton
                 className="mx_TopLeftMenuButton"
-                /* changed for watcha
+                /* deletion for watcha
                 onClick={this.openMenu}
                 */
-                onClick={e => {}}
                 inputRef={(r) => this._buttonRef = r}
                 label={_t("Your profile")}
                 isExpanded={this.state.menuDisplayed}
             >
-            {/* insertion for watcha */}
-            <span className="HomePageButton" onClick={this.onUserBoxContainerClick}>
-            {/* end of insertion */}
+                {/* insertion for watcha */}
+                <span className="HomePageButton" onClick={this.onUserBoxContainerClick}>
+                {/* end of insertion */}
                 <BaseAvatar
                     idName={MatrixClientPeg.get().getUserId()}
                     name={name}
@@ -186,16 +183,16 @@ export default class TopLeftMenuButton extends React.Component {
                     resizeMethod="crop"
                 />
                 { nameElement }
+                {/* deletion for watcha  
+                { chevronElement }
+                */}
                 {/* insertion for watcha */}
                 </span>
-                 <div className="TopLeftMenuButonsContainer">
+                <div className="TopLeftMenuButonsContainer">
                     {settingsItem}
                     {signInOutItem}
                 </div>
                 {/* end of insertion */}
-                {/* deletion for watcha  
-                { chevronElement }
-                */}
             </ContextMenuButton>
 
             { contextMenu }

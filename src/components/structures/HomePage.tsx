@@ -31,7 +31,8 @@ const HomePage = () => {
     const config = SdkConfig.get();
     const pageUrl = getHomePageUrl(config);
 
-    if (pageUrl) {
+    // change for watcha
+    if (true) {
         const EmbeddedPage = sdk.getComponent('structures.EmbeddedPage');
         return <EmbeddedPage className="mx_HomePage" url={pageUrl} scrollbar={true} />;
     }

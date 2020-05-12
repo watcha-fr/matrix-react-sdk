@@ -26,9 +26,12 @@ import sanitizeHtml from 'sanitize-html';
 import dis from '../../dispatcher';
 import {MatrixClientPeg} from '../../MatrixClientPeg';
 import classnames from 'classnames';
-import * as HomePage from '../views/watcha/HomePage'
 import MatrixClientContext from "../../contexts/MatrixClientContext";
 import AutoHideScrollbar from "./AutoHideScrollbar";
+
+// insertion for watcha
+import HomePage from './watcha_HomePage'
+// end insertion for watcha
 
 export default class EmbeddedPage extends React.PureComponent {
     static propTypes = {
@@ -126,16 +129,16 @@ export default class EmbeddedPage extends React.PureComponent {
         >
         </div>;
 
-        /*insertion for watcha*/
-        /* TODO watcha op340: this was added from by us, but isn't working after the merge... disabling temporarly
-        if (this.props.className==="mx_HomePage"){
-          return(
-            <HomePage/>
-                      )
+        // insertion for watcha
+        if (this.props.className === "mx_HomePage") {
+            return (
+                <AutoHideScrollbar>
+                    <HomePage />
+                </AutoHideScrollbar>
+            );
         }
-        */
-
-        /*end of insertion for watcha*/
+        // end insertion for watcha
+        
         if (this.props.scrollbar) {
             return <AutoHideScrollbar className={classes}>
                 {content}

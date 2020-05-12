@@ -14,20 +14,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-.mx_Banner{
-    text-decoration:none;
+
+// TODO: rewrite this file from scratch (in conflict with res/css/structures/_HomePage.scss)
+
+.mx_Banner {
+    text-decoration: none;
 }
 
 .mx_RoomView_messageListWrapper {
     max-width: 960px;
     margin: auto;
-
     min-height: 100%;
-
     display: flex;
-
     flex-direction: column;
-
     justify-content: flex-end;
 }
 
@@ -44,26 +43,16 @@ limitations under the License.
 .mx_HomePage {
     max-width: 960px;
     width: 100%;
-    height: 100%;
     margin-left: auto;
     margin-right: auto;
 }
 
 .mx_HomePage iframe {
     display: block;
-	width: 100%;
-	height: 100%;
-	border: 0px;
+    width: 100%;
+    height: 100%;
+    border: 0px;
 }
-
-.mx_HomePage_body {
-//  margin-left: 63px;
-}
-
-
-/* we deliberately inline style here to avoid flash-of-CSS problems, and to avoid
- * voodoo where we have to set display: none by default
- */
 
 .mx_HomePage_header h1 {
     margin-left: 0px;
@@ -136,7 +125,6 @@ limitations under the License.
     width: 64px;
 }
 
-
 .mx_HomePage_room .mx_HomePage_icon {
     border-radius: 50%;
     width: 64px;
@@ -166,11 +154,9 @@ limitations under the License.
 }
 
 .mx_HomePage_container {
-    display: block ! important;
+    display: block !important;
     margin: 20px;
-    height: 60%
-	
-    
+    height: 60%;
 }
 
 .mx_HomePage_container h1,
@@ -182,25 +168,22 @@ limitations under the License.
 
 /* For notifications */
 .mx_RoomView_messageListWrapper {
-	min-height: unset;
-	justify-content: unset;
+    min-height: unset;
+    justify-content: unset;
 }
 
 .mx_HomePage_notificationContainer {
-	height: 100%;
+    height: 100%;
 }
 
 .mx_HomePage_notificationTitle {
-	margin-top: 48px;
-	margin-bottom: -32px;
+    margin-top: 48px;
+    margin-bottom: -32px;
 }
 .mx_NotificationPanel {
     order: 2;
-
     flex: 1 1 0;
-
     width: 100%;
-
     overflow-y: auto;
 }
 
@@ -246,7 +229,7 @@ limitations under the License.
 
 .mx_NotificationPanel .mx_EventTile_roomName a,
 .mx_NotificationPanel .mx_EventTile_senderDetails a {
-    text-decoration: none ! important;
+    text-decoration: none !important;
 }
 
 .mx_NotificationPanel .mx_EventTile .mx_MessageTimestamp {
@@ -274,4 +257,3 @@ limitations under the License.
 .mx_NotificationPanel .mx_EventTile_content {
     margin-right: 0px;
 }
-
