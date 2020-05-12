@@ -283,7 +283,7 @@ export default class PasswordLogin extends React.Component {
                     { mail_link: mail },
                     { a: sub => <a href={"mailto:" + sub}>{sub}</a> }
                    )}
-            /* end added for watcha */
+            {/* end added for watcha */}
             {/* removed for watcha
             forgotPasswordJsx = <span>
                 {_t('Not sure of your password? <a>Set a new one</a>', {}, {
