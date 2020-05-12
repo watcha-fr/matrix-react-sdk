@@ -16,23 +16,24 @@ limitations under the License.
 */
 
 .mx_AuthBody {
-    /* TODO watcha op342: these 3 lines were added upstream, should we comment them like we commented the rest ? */
+    /* removed for watcha
     width: 500px;
+    */
     font-size: $font-12px;
     color: $authpage-secondary-color;
+    background-color: $authpage-body-bg-color;
+    border-radius: 0 4px 4px 0;
     /* removed for watcha
-    //width: 500px;
-    //background-color: $authpage-body-bg-color;
-    //border-radius: 0 4px 4px 0;
-    //padding: 25px 60px;
-    end removed for watcha */
+    padding: 25px 60px;
+    */
     box-sizing: border-box;
 
     h2 {
-        //modified for watcha $font-24px; -> 18px;
+        // modified for watcha $font-24px; -> 18px;
         font-size: 18px;
-        //removed for watcha
-        //font-weight: 600;
+        /* removed for watcha
+        font-weight: 600;
+        */
         margin-top: 8px;
         color: $authpage-primary-color;
     }
