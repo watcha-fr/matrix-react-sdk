@@ -127,11 +127,11 @@ export default class TabbedView extends React.Component<IProps, IState> {
         /*change labels from const to let for watcha*/
         let labels = this.props.tabs.map(tab => this._renderTabLabel(tab));
         const panel = this._renderTabPanel(this.props.tabs[this._getActiveTabIndex()]);
-        /*insertion for watcha */
+        // insertion for watcha
         if (this.props.invisibleTab) {
-            labels="";
+            labels=[];
         }
-        /*end of insertion for watcha*/
+        // end insertion for watcha
 
         return (
             <div className="mx_TabbedView">
