@@ -62,21 +62,6 @@ export default class HeaderButtons extends React.Component {
         });
     }
 
-    /* TODO watcha op300: this function has been removed upstream, thus our modification also... where should our modif go ?
-    togglePhase(phase, validPhases = [phase]) {
-        if (validPhases.includes(this.state.phase)) {
-            dis.dispatch({
-                action: 'hide_right_panel',
-            });
-        } else {
-            /* insertion for watcha *-/
-            window.localStorage.setItem("watcha_rhs_phase", phase)
-            /* end of insertion *-/
-            this.setPhase(phase);
-        }
-    }
-    end TODO watcha */
-
     isPhase(phases: string | string[]) {
         if (Array.isArray(phases)) {
             return phases.includes(this.state.phase);

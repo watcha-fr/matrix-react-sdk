@@ -33,13 +33,7 @@ const MEMBER_PHASES = [
 
 export default class RoomHeaderButtons extends HeaderButtons {
     constructor(props) {
-        /* change for watcha
         super(props, HEADER_KIND_ROOM);
-        */
-        let rhsPhase = null; // TODO watcha op340 disabled temporarly because is it crashing: window.localStorage.getItem("watcha_rhs_phase");
-        let initialPhase = rhsPhase || HEADER_KIND_ROOM;
-        super(props, initialPhase);
-        /* end of change */
         this._onMembersClicked = this._onMembersClicked.bind(this);
         this._onFilesClicked = this._onFilesClicked.bind(this);
         this._onNotificationsClicked = this._onNotificationsClicked.bind(this);
@@ -53,15 +47,6 @@ export default class RoomHeaderButtons extends HeaderButtons {
             } else {
                 this.setPhase(RIGHT_PANEL_PHASES.RoomMemberList);
             }
-            /* TODO watcha op300: this code has been removed upstream, it seems... what to do ?
-        } else if (payload.action === "view_room" && !this.props.collapsedRhs) {
-            /* change for watcha
-            this.setPhase(RightPanel.Phase.RoomMemberList);
-            *-/
-            let rhsPhase = window.localStorage.getItem("watcha_rhs_phase");
-            this.setPhase(rhsPhase || RightPanel.Phase.RoomMemberList);
-            /* end of change *-/
-          end TODO watcha */
         } else if (payload.action === "view_3pid_invite") {
             if (payload.event) {
                 this.setPhase(RIGHT_PANEL_PHASES.Room3pidMemberInfo, {event: payload.event});
