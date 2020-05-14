@@ -127,14 +127,14 @@ export default createReactClass({
         });
     },
 
-    /* insertion for watcha */
-    onInviteButtonClick: function() {
-            dis.dispatch({
-                action: 'view_invite',
-                roomId: this.props.roomId,
-            });
+    // insertion for watcha
+    onInviteButtonClick: function () {
+        dis.dispatch({
+            action: "view_invite",
+            roomId: this.props.roomId,
+        });
     },
-    /* end of insertion for watcha */
+    // end insertion for watcha
 
     _hasUnreadPins: function() {
         const currentPinEvent = this.props.room.currentState.getStateEvents("m.room.pinned_events", '');

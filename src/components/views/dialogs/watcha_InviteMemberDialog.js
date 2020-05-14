@@ -20,24 +20,36 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 
 import { _t } from "../../../languageHandler";
+import { inviteMultipleToRoom } from "../../../RoomInvite";
 import { Key } from "../../../Keyboard";
+import { KIND_DM } from "../../../components/views/dialogs/InviteDialog";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
 import * as Avatar from "../../../Avatar";
 import * as Email from "../../../email";
 import * as sdk from "../../../index";
 import AutoHideScrollbar from "../../structures/AutoHideScrollbar";
 import BaseAvatar from "../avatars/BaseAvatar";
+import createRoom, { canEncryptToAllUsers } from "../../../createRoom";
+import dis from "../../../dispatcher";
+import DMRoomMap from "../../../utils/DMRoomMap";
 import EntityTile from "../rooms/EntityTile";
+import SettingsStore from "../../../settings/SettingsStore";
 import withValidation from "../elements/Validation";
 
 const AVATAR_SIZE = 36;
 
 class InviteMemberDialog extends Component {
+    static defaultProps = {
+        kind: KIND_DM,
+    };
+
     static propTypes = {
-        button: PropTypes.string,
+        // Takes an array of user IDs/emails to invite.
         onFinished: PropTypes.func.isRequired,
+        // The kind of invite being performed. Assumed to be KIND_DM if not provided.
+        kind: PropTypes.string,
+        // The room ID this dialog is for. Only required for KIND_INVITE.
         roomId: PropTypes.string,
-        title: PropTypes.node.isRequired,
     };
 
     constructor(props) {
@@ -55,7 +67,8 @@ class InviteMemberDialog extends Component {
             serverSupportsUserDirectory: true,
             // The query being searched for
             query: "",
-            onOk: false,
+            pendingSubmission: false,
+            errorText: null,
         };
     }
 
@@ -63,16 +76,7 @@ class InviteMemberDialog extends Component {
         this._doUserDirectorySearch(this.state.query);
     }
 
-    onCancel = () => {
-        this.props.onFinished(false);
-    };
-
-    onFinished = () =>
-        this.props.onFinished(true, this.state.selectedList.slice());
-
-    onOk = () => this.setState({ onOk: true });
-
-    onResume = () => this.setState({ onOk: false });
+    onOk = () => this.setState({ pendingSubmission: true });
 
     onSearch = value => this._doUserDirectorySearch(value);
 
@@ -247,6 +251,41 @@ class InviteMemberDialog extends Component {
             });
     };
 
+    // copied from src/components/views/dialogs/InviteDialog.js
+    _inviteUsers = () => {
+        this.setState({ busy: true });
+        const targetIds = this.state.selectedList.map(user => user.address);
+
+        const room = MatrixClientPeg.get().getRoom(this.props.roomId);
+        if (!room) {
+            console.error("Failed to find the room to invite users to");
+            this.setState({
+                busy: false,
+                errorText: _t(
+                    "Something went wrong trying to invite the users."
+                ),
+            });
+            return;
+        }
+
+        inviteMultipleToRoom(this.props.roomId, targetIds)
+            .then(result => {
+                if (!this._shouldAbortAfterInviteError(result)) {
+                    // handles setting error message too
+                    this.props.onFinished();
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                this.setState({
+                    busy: false,
+                    errorText: _t(
+                        "We couldn't invite those users. Please check the users you want to invite and try again."
+                    ),
+                });
+            });
+    };
+
     _processResults = (results, query) => {
         const suggestedList = [];
         const client = MatrixClientPeg.get();
@@ -266,6 +305,7 @@ class InviteMemberDialog extends Component {
                 membership = this.getMembership(roomMembers, userId);
             }
 
+            // watcha TODO: as the upstream interface has changed, it should be simplified by removing useless fields
             if (this.state.selectedList.every(user => user.address != userId)) {
                 suggestedList.push({
                     address: userId,
@@ -282,6 +322,109 @@ class InviteMemberDialog extends Component {
         this.setState({ suggestedList: this.sortedUserList(suggestedList) });
     };
 
+    // copied from src/components/views/dialogs/InviteDialog.js
+    _shouldAbortAfterInviteError(result) {
+        const failedUsers = Object.keys(result.states).filter(
+            a => result.states[a] === "error"
+        );
+        if (failedUsers.length > 0) {
+            console.log("Failed to invite users: ", result);
+            this.setState({
+                busy: false,
+                errorText: _t(
+                    "Failed to invite the following users to chat: %(csvUsers)s",
+                    {
+                        csvUsers: failedUsers.join(", "),
+                    }
+                ),
+            });
+            return true; // abort
+        }
+        return false;
+    }
+
+    // copied from src/components/views/dialogs/InviteDialog.js
+    _startDm = async () => {
+        this.setState({ busy: true });
+        const targetIds = this.state.selectedList.map(user => user.address);
+
+        // Check if there is already a DM with these people and reuse it if possible.
+        const existingRoom = DMRoomMap.shared().getDMRoomForIdentifiers(
+            targetIds
+        );
+        if (existingRoom) {
+            dis.dispatch({
+                action: "view_room",
+                room_id: existingRoom.roomId,
+                should_peek: false,
+                joining: false,
+            });
+            this.props.onFinished();
+            return;
+        }
+
+        const createRoomOptions = { inlineErrors: true };
+
+        if (SettingsStore.getValue("feature_cross_signing")) {
+            // Check whether all users have uploaded device keys before.
+            // If so, enable encryption in the new room.
+            // watcha TODO: check why is it a problem
+            const has3PidMembers = this.state.selectedList.some(
+                user => user.addressType === "email"
+            );
+            if (!has3PidMembers) {
+                const client = MatrixClientPeg.get();
+                const allHaveDeviceKeys = await canEncryptToAllUsers(
+                    client,
+                    targetIds
+                );
+                if (allHaveDeviceKeys) {
+                    createRoomOptions.encryption = true;
+                }
+            }
+        }
+
+        // Check if it's a traditional DM and create the room if required.
+        // TODO: [Canonical DMs] Remove this check and instead just create the multi-person DM
+        let createRoomPromise = Promise.resolve();
+        const isSelf =
+            targetIds.length === 1 &&
+            targetIds[0] === MatrixClientPeg.get().getUserId();
+        if (targetIds.length === 1 && !isSelf) {
+            createRoomOptions.dmUserId = targetIds[0];
+            createRoomPromise = createRoom(createRoomOptions);
+        } else if (isSelf) {
+            createRoomPromise = createRoom(createRoomOptions);
+        } else {
+            // Create a boring room and try to invite the targets manually.
+            createRoomPromise = createRoom(createRoomOptions)
+                .then(roomId => {
+                    return inviteMultipleToRoom(roomId, targetIds);
+                })
+                .then(result => {
+                    if (this._shouldAbortAfterInviteError(result)) {
+                        return true; // abort
+                    }
+                });
+        }
+
+        // the createRoom call will show the room for us, so we don't need to worry about that.
+        createRoomPromise
+            .then(abort => {
+                if (abort === true) return; // only abort on true booleans, not roomIds or something
+                this.props.onFinished();
+            })
+            .catch(err => {
+                console.error(err);
+                this.setState({
+                    busy: false,
+                    errorText: _t(
+                        "We couldn't create your DM. Please check the users you want to invite and try again."
+                    ),
+                });
+            });
+    };
+
     addEmailAddressToSelectedList = emailAddress => {
         let knownUser;
         const userId = convertEmailToUserId(emailAddress);
@@ -296,6 +439,7 @@ class InviteMemberDialog extends Component {
         if (!knownUser) {
             const newUser = {
                 address: emailAddress,
+                addressType: "email",
                 displayName: emailAddress,
             };
             this.setState(({ selectedList }) => ({
@@ -346,6 +490,8 @@ class InviteMemberDialog extends Component {
         });
     };
 
+    resume = () => this.setState({ pendingSubmission: false });
+
     sortedUserList = list => {
         return list.slice().sort((a, b) => {
             const nameA = a.displayName.toLowerCase();
@@ -369,18 +515,30 @@ class InviteMemberDialog extends Component {
         const suggestedTiles = this.getSuggestedTiles();
         const selectedTiles = this.getSelectedTiles();
 
+        let title;
         let roomMembers;
-        if (this.props.roomId) {
-            const client = MatrixClientPeg.get();
-            const room = client.getRoom(this.props.roomId);
+        let invite;
+
+        if (this.props.kind === KIND_DM) {
+            title = _t("Start a private conversation");
+            invite = this._startDm;
+        } else {
+            // KIND_INVITE
+            const room = MatrixClientPeg.get().getRoom(this.props.roomId);
+            title = _t(
+                "Invite in the <strong>%(roomName)s</strong> room",
+                { roomName: room.name },
+                { strong: label => <strong>{label}</strong> }
+            );
             roomMembers = Object.values(room.currentState.members);
+            invite = this._inviteUsers;
         }
 
         return (
             <BaseDialog
                 className="watcha_InviteMemberDialog"
-                title={this.props.title}
                 onFinished={this.props.onFinished}
+                {...{ title }}
             >
                 <div className="mx_Dialog_content">
                     <div className="watcha_InviteMemberDialog_sourceContainer">
@@ -411,18 +569,19 @@ class InviteMemberDialog extends Component {
                     </div>
                     <Section header={_t("Invitation list")}>
                         <SelectedList
-                            onOk={this.state.onOk}
-                            onFinished={this.onFinished}
-                            onResume={this.onResume}
+                            pendingSubmission={this.state.pendingSubmission}
+                            resume={this.resume}
+                            {...{ invite }}
                         >
                             {selectedTiles}
                         </SelectedList>
                     </Section>
                 </div>
+                <div className="error">{this.state.errorText}</div>
                 <DialogButtons
-                    primaryButton={this.props.button}
+                    primaryButton={_t("OK")}
                     onPrimaryButtonClick={this.onOk}
-                    onCancel={this.onCancel}
+                    onCancel={this.props.onFinished}
                 />
             </BaseDialog>
         );
@@ -442,7 +601,7 @@ class EmailInvitation extends Component {
             emailAddress: "",
             isValid: false,
             emailLooksValid: false,
-            onSubmit: false,
+            pendingSubmission: false,
         };
     }
 
@@ -450,19 +609,19 @@ class EmailInvitation extends Component {
         this.setState({ emailAddress: event.target.value });
     };
 
+    onClick = () => {
+        this.setState({ pendingSubmission: true }, async () => {
+            await this.submit();
+            this.setState({ pendingSubmission: false });
+        });
+    };
+
     onKeyDown = event => {
         if (event.key === Key.ENTER) {
-            this.onOk();
+            this.onClick();
             event.preventDefault();
             event.stopPropagation();
         }
-    };
-
-    onOk = () => {
-        this.setState({ onSubmit: true }, async () => {
-            await this._onOk();
-            this.setState({ onSubmit: false });
-        });
     };
 
     onValidate = async fieldState => {
@@ -475,29 +634,6 @@ class EmailInvitation extends Component {
         return result;
     };
 
-    _onOk = async () => {
-        const activeElement = document.activeElement;
-        if (activeElement) {
-            activeElement.blur();
-        }
-
-        const field = this._fieldRef;
-        await field.validate({ allowEmpty: false });
-
-        // Validation and state updates are async, so we need to wait for them to complete
-        // first. Queue a `setState` callback and wait for it to resolve.
-        await new Promise(resolve => this.setState({}, resolve));
-
-        if (this.state.isValid) {
-            this.props.addEmailAddressToSelectedList(this.state.emailAddress);
-            this.setState({ emailAddress: "" });
-        }
-        field.focus();
-        if (!this.state.isValid) {
-            field.validate({ allowEmpty: false, focused: true });
-        }
-    };
-
     _validationRules = withValidation({
         rules: [
             {
@@ -507,7 +643,9 @@ class EmailInvitation extends Component {
             {
                 key: "isValidOnSubmit",
                 test: async ({ value }) =>
-                    !value || !this.state.onSubmit || Email.looksValid(value),
+                    !value ||
+                    !this.state.pendingSubmission ||
+                    Email.looksValid(value),
                 invalid: () => _t("Please enter a valid email address."),
             },
             {
@@ -555,6 +693,29 @@ class EmailInvitation extends Component {
         ],
     });
 
+    submit = async () => {
+        const activeElement = document.activeElement;
+        if (activeElement) {
+            activeElement.blur();
+        }
+
+        const field = this._fieldRef;
+        await field.validate({ allowEmpty: false });
+
+        // Validation and state updates are async, so we need to wait for them to complete
+        // first. Queue a `setState` callback and wait for it to resolve.
+        await new Promise(resolve => this.setState({}, resolve));
+
+        if (this.state.isValid) {
+            this.props.addEmailAddressToSelectedList(this.state.emailAddress);
+            this.setState({ emailAddress: "" });
+        }
+        field.focus();
+        if (!this.state.isValid) {
+            field.validate({ allowEmpty: false, focused: true });
+        }
+    };
+
     render() {
         const Field = sdk.getComponent("views.elements.Field");
 
@@ -586,7 +747,7 @@ class EmailInvitation extends Component {
                         title={_t(
                             "Add an email address to the invitation list."
                         )}
-                        onClick={this.onOk}
+                        onClick={this.onClick}
                     >
                         <span />
                     </div>
@@ -652,9 +813,9 @@ SuggestedList.propTypes = {
 
 class SelectedList extends Component {
     static propTypes = {
-        onOk: PropTypes.bool.isRequired,
-        onFinished: PropTypes.func.isRequired,
-        onResume: PropTypes.func.isRequired,
+        pendingSubmission: PropTypes.bool.isRequired,
+        invite: PropTypes.func.isRequired,
+        resume: PropTypes.func.isRequired,
         children: PropTypes.node,
     };
 
@@ -668,13 +829,16 @@ class SelectedList extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.onOk !== this.props.onOk && this.props.onOk) {
+        if (
+            prevProps.pendingSubmission !== this.props.pendingSubmission &&
+            this.props.pendingSubmission
+        ) {
             this.validate({ focused: true }).then(valid => {
                 if (valid) {
-                    this.props.onFinished();
+                    this.props.invite();
                 } else {
                     this.div.focus();
-                    this.props.onResume();
+                    this.props.resume();
                 }
             });
         }

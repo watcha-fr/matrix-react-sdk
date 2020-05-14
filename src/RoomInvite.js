@@ -38,58 +38,25 @@ export function inviteMultipleToRoom(roomId, addrs) {
     return inviter.invite(addrs).then(states => Promise.resolve({states, inviter}));
 }
 
-/* insertion for watcha */
-export function showStartChatInviteDialog() {
-    const InviteMemberDialog = sdk.getComponent(
-        "dialogs.watcha_InviteMemberDialog"
-    );
-    Modal.createTrackedDialog("Start a private conversation", "", InviteMemberDialog, {
-        title: _t("Start a private conversation"),
-        button: _t("OK"),
-        onFinished: _onStartDmFinished
-    });
-}
-
-export function showRoomInviteDialog(roomId) {
-    const room = MatrixClientPeg.get().getRoom(roomId);
-    const InviteMemberDialog = sdk.getComponent(
-        "dialogs.watcha_InviteMemberDialog"
-    );
-    Modal.createTrackedDialog("Invite in the room", "", InviteMemberDialog, {
-        title: _t(
-            "Invite in the <strong>%(roomName)s</strong> room",
-            { roomName: room.name },
-            { strong: label => <strong>{label}</strong> }
-        ),
-        button: _t("OK"),
-        roomId: roomId,
-        onFinished: (shouldInvite, addrs) => {
-            _onRoomInviteFinished(roomId, shouldInvite, addrs);
-        }
-    });
-}
-/* end of insertion */
-
-
-/* removed for watcha
 export function showStartChatInviteDialog() {
     // This dialog handles the room creation internally - we don't need to worry about it.
-    const InviteDialog = sdk.getComponent("dialogs.InviteDialog");
+    // change for watcha
+    const InviteDialog = sdk.getComponent("dialogs.watcha_InviteMemberDialog");
     Modal.createTrackedDialog(
         'Start DM', '', InviteDialog, {kind: KIND_DM},
-        /*className=* /null, /*isPriority=* /false, /*isStatic=* /true, // comments edited for watcha, to make it easy to comment out
+        /*className=*/null, /*isPriority=*/false, /*isStatic=*/true,
     );
 }
 
 export function showRoomInviteDialog(roomId) {
     // This dialog handles the room creation internally - we don't need to worry about it.
-    const InviteDialog = sdk.getComponent("dialogs.InviteDialog");
+    // change for watcha
+    const InviteDialog = sdk.getComponent("dialogs.watcha_InviteMemberDialog");
     Modal.createTrackedDialog(
         'Invite Users', '', InviteDialog, {kind: KIND_INVITE, roomId},
-        /*className=* /null, /*isPriority=* /false, /*isStatic=* /true, // comments edited for watcha, to make it easy to comment out
+        /*className=*/null, /*isPriority=*/false, /*isStatic=*/true,
     );
 }
-*/
 
 /**
  * Checks if the given MatrixEvent is a valid 3rd party user invite.
