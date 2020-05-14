@@ -5,7 +5,6 @@ import createReactClass from 'create-react-class';
 export default class WatchaMobileOnboarding extends React.Component {
   constructor(props) {
     super(props);
-    this.convertUserId;
     this.state = {passwordLength: true,
             passwordMatch: true,
             credUser: this.props.user,

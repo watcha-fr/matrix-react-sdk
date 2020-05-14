@@ -3,115 +3,97 @@ import createReactClass from "create-react-class";
 import WatchaWebPwChanged from "./WatchaWebPwChanged";
 import WatchaMobileOnboarding from "./WatchaMobileOnboarding";
 
+
+function getOS() {
+    const userAgent = window.navigator.userAgent;
+    const platform = window.navigator.platform;
+    const macosPlatforms = ["Macintosh", "MacIntel", "MacPPC", "Mac68K"];
+    const windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"];
+    const iosPlatforms = ["iPhone", "iPad", "iPod"];
+    
+    if (macosPlatforms.indexOf(platform) !== -1) {
+        return "Mac OS";
+    } else if (iosPlatforms.indexOf(platform) !== -1) {
+        return "iOS";
+    } else if (windowsPlatforms.indexOf(platform) !== -1) {
+        return "Windows";
+    } else if (/Android/.test(userAgent)) {
+        return "Android";
+    } else if (/Linux/.test(platform)) {
+        return "Linux";
+    }
+    // should not occur, of course...
+    return "Unsupported platform";
+}
+
+// from https://stackoverflow.com/questions/30106476/using-javascripts-atob-to-decode-base64-doesnt-properly-decode-utf-8-strings
+function b64EncodeUnicode(str) {
+    return btoa(encodeURIComponent(str).replace(
+        /%([0-9A-F]{2})/g,
+        function toSolidBytes(match, p1) {
+            return String.fromCharCode('0x' + p1);
+        }));
+}
+
+function b64DecodeUnicode(str) {
+    // there doesn't seem to be an easier way without an external library...
+    return decodeURIComponent(
+        atob(str)
+            .split("")
+            .map(function (c) {
+                return (
+                    "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+                );
+            })
+            .join("")
+    );
+}
+
+
 module.exports = createReactClass({
     displayName: "WatchaChangePassword",
 
     getInitialState() {
         return {
-            passwordLength: true,
-            passwordMatch: true,
+            loading: true,
             password: "",
-            connected: false,
-            success: false,
-            email: "",
+            confirm: "",
+            displayName: "",
+            initialDisplayName: ""
         };
     },
+
     componentDidMount() {
-        this.setState({ os: this.getOS() });
-        this.getUrlParameters();
+        this.fetchInitialParameters();
     },
 
-    onPasswordChange(evt) {
-        this.setState({ password: evt.target.value });
-    },
-
-    onDisplaynameChange(evt) {
-        this.setState({ displayName: evt.target.value });
-    },
-
-    onConfirmChange(evt) {
-        this.setState({ confirm: evt.target.value });
-    },
-
-    convertUserId(user) {
-        let simplifiedUserId = user;
-        if (user[0] === "@") {
-            simplifiedUserId = user.replace("@", "");
-            simplifiedUserId = simplifiedUserId.split(":");
-            simplifiedUserId = simplifiedUserId[0];
-        }
-        return simplifiedUserId;
-    },
-
-    async getUrlParameters() {
-        const arr = this.props.onboardingUrl.split("t=");
-        const encodedString = arr[1];
-        const CredsString = this.b64DecodeUnicode(encodedString); //there is probably a better way to parse an url parameter bud i did not find any?
-        const jsonCred = await JSON.parse(CredsString);
-        const user = jsonCred["user"];
-        const password = jsonCred["pw"];
-        const email = jsonCred["email"];
-        const credentialsWithoutPassword = {
-            user: this.convertUserId(user),
-            server: window.location.host,
-            email: email,
-        };
+    async fetchInitialParameters() {
+        const jsonParameters = await JSON.parse(
+            b64DecodeUnicode(this.props.onboardingUrl.split("t=")[1])
+        );
+        // BUG: jsonParameters["user"] is different for partners vs. collaborators:
+        // When the user was created in the admin (collaborator)
+        // it has the identity server ("@<user_id>:<identity_server>" format),
+        // but not when it was invited as an external user !!!
+        const userWithIdentityServer = jsonParameters["user"];
+        const user = userWithIdentityServer.replace("@", "").split(":")[0];
+        const email = jsonParameters["email"];
         this.setState({
             loading: true,
-            credUser: user,
-            user: this.convertUserId(user),
-            credPassword: password,
-            credServer: window.location.hostname,
+            // because of the bug above, we can't set the field here,
+            //userWithIdentityServer,
+            user,
             email,
-            credentialsWithoutPassword,
-        });
-        this.getAccessToken();
-    },
-
-    connect(password) {
-        this.changePassword();
-    },
-
-    getOS() {
-        const userAgent = window.navigator.userAgent;
-        const platform = window.navigator.platform;
-        const macosPlatforms = ["Macintosh", "MacIntel", "MacPPC", "Mac68K"];
-        const windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"];
-        const iosPlatforms = ["iPhone", "iPad", "iPod"];
-
-        if (macosPlatforms.indexOf(platform) !== -1) {
-            return "Mac OS";
-        } else if (iosPlatforms.indexOf(platform) !== -1) {
-            return "iOS";
-        } else if (windowsPlatforms.indexOf(platform) !== -1) {
-            return "Windows";
-        } else if (/Android/.test(userAgent)) {
-            return "Android";
-        } else if (/Linux/.test(platform)) {
-            return "Linux";
-        }
-        // should not occur, of course...
-        return "Unsupported platform";
-    },
-
-    noPasswordToken() {
-        this.getIdentityToken(
-            btoa(
-                JSON.stringify(this.state.credentialsWithoutPassword).replace(
-                    /%([0-9A-F]{2})/g,
-                    function toSolidBytes(match, p1) {
-                        return String.fromCharCode("0x" + p1);
-                    }
-                )
+            initialPassword: jsonParameters["pw"],
+            identityToken: b64EncodeUnicode(
+                JSON.stringify({
+                    user,
+                    email,
+                    server: window.location.host,
+                })
             )
-        );
-    },
+        });
 
-    getIdentityToken(string) {
-        this.setState({ identityToken: string });
-    },
-
-    async getAccessToken() {
         try {
             // get config.json and synapse URL.
             const configRequest = await fetch("/config.json");
@@ -120,177 +102,186 @@ module.exports = createReactClass({
             // see riot-web.git/src/vector/index.js
             const coreUrl =
                 configData["default_server_config"]["m.homeserver"]["base_url"];
-            const server =
-                configData["default_server_config"]["m.homeserver"][
-                    "server_name"
-                ];
-            this.setState({ coreUrl });
-            this.setState({ server });
-            if (!this.state.coreUrl) {
+            if (!coreUrl) {
                 this.setState({
                     error:
-                        "Impossible de trouver le serveur core. Pour obtenir de l'aide contactez nous à contact@watcha.fr ",
+                        "Impossible de trouver le serveur core. Pour obtenir de l'aide contactez nous à contact@watcha.fr",
                 });
             } else {
-                const loginRequest = await fetch(
-                    this.state.coreUrl + "/_matrix/client/r0/login",
-                    {
-                        method: "POST",
-                        body: JSON.stringify({
-                            initial_device_display_name: "Web setup account",
-                            user: this.state.credUser,
-                            password: this.state.credPassword,
-                            type: "m.login.password",
-                        }),
-                        headers: {
-                            "Content-Type": "application/json",
-                            Accept: "application/json",
-                        },
+                this.setState({ coreUrl });
+                
+                // ... we set userWithIdentityServer here, it shouldn't be needed.
+                const server = configData["default_server_config"]["m.homeserver"][
+                    "server_name"
+                ];
+                const userWithIdentityServer = "@" + this.state.user + ":" + server;
+                this.setState({ userWithIdentityServer });
+                
+                const loginRequest = await this.fetchCore(
+                    "POST", "/_matrix/client/r0/login", {
+                        initial_device_display_name: "Web setup account",
+                        user: this.state.user,
+                        password: this.state.initialPassword,
+                        type: "m.login.password",
                     }
                 );
                 const loginData = JSON.parse(await loginRequest.text());
 
                 if (!loginData["access_token"]) {
-                    this.noPasswordToken();
                     this.setState({ passwordAlreadyChanged: true });
                 } else {
-                    this.noPasswordToken();
                     this.setState({ accessToken: loginData["access_token"] });
+
+                    const getDisplayNameRequest = await this.fetchCore(
+                        "GET", this.displayNameUri()
+                    );
+                    const text = await getDisplayNameRequest.text();
+                    const profileData = JSON.parse(text);
+                    const initialDisplayName = profileData["displayname"];
+                    if ((initialDisplayName !== this.state.user) &&
+                        // paranoid: sometimes the display name seems to have only spaces
+                        initialDisplayName && initialDisplayName.trim()) {
+                        this.setState({ initialDisplayName: initialDisplayName });
+                    }
                 }
             }
         } catch (e) {
             this.setState({
                 error:
-                    "Une erreur imprévue s'est produite. Pour obtenir de l'aide envoyer ce message à contact@watcha.fr :" +
+                    "Une erreur imprévue s'est produite. Pour obtenir de l'aide envoyer ce message à contact@watcha.fr : " +
                     e,
             });
         }
         this.setState({ loading: false });
+    },        
+
+    displayNameUri() {
+        return "/_matrix/client/r0/profile/" +
+            encodeURIComponent(this.state.userWithIdentityServer) + 
+            "/displayname";
     },
 
-    b64DecodeUnicode(str) {
-        return decodeURIComponent(
-            atob(str)
-                .split("")
-                .map(function (c) {
-                    return (
-                        "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
-                    );
-                })
-                .join("")
-        );
-    },
-    async changePassword() {
+    async validateForm() {
         this.setState({ loading: true });
         try {
-            // XHR POST to change password
-            const changePasswordRequest = await fetch(
-                this.state.coreUrl + "/_matrix/client/r0/account/password",
-                {
-                    method: "POST",
-                    body: JSON.stringify({
-                        auth: {
-                            type: "m.login.password",
-                            user: this.state.credUser,
-                            password: this.state.credPassword,
-                        },
-                        new_password: this.state.password,
-                    }),
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                        Authorization: "Bearer " + this.state.accessToken,
-                    },
-                }
-            );
-
-            if (
-                changePasswordRequest.status !== 200 &&
-                this.state.accessToken
-            ) {
-                this.setState({
-                    error:
-                        "Impossible de définir le nouveau mot de passe. Pour obtenir de l'aide contacter nous à contact@watcha.fr",
-                });
-            } else {
-                this.setState({ successChange: true });
+            const error = await this.doValidateForm();
+            if (error) {
+                this.setState({ error: error })
             }
         } catch (e) {
             this.setState({
                 error:
-                    "Impossible de définir le nouveau mot de passe. Pour obtenir de l'aide contacter nous à contact@watcha.fr",
-            });
+                "Impossible de définir le nom. Pour obtenir de l'aide contacter nous à contact@watcha.fr: " + e
+            })
         }
         this.setState({ loading: false });
     },
 
-    async changeDisplayname() {
-        this.setState({ loading: true });
-        try {
-            // XHR POST to change password
-            const changeDisplayNameRequest = await fetch(
-                this.state.coreUrl +
-                    "/_matrix/client/r0/profile/%40" +
-                    encodeURIComponent(this.state.user) +
-                    "%3A" +
-                    this.state.server +
-                    "/displayname",
-                {
-                    method: "PUT",
-                    body: JSON.stringify({
-                        displayname: this.state.displayName,
-                    }),
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                        Authorization: "Bearer " + this.state.accessToken,
-                    },
+    async fetchCore(method, uri, body=null) {
+        return fetch(
+            this.state.coreUrl + uri,
+            {
+                method: method,
+                body: body ? JSON.stringify(body) : null,
+                headers: (this.state.accessToken) ? {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: "Bearer " + this.state.accessToken,
+                } : {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                }
+            }
+        )
+    },
+    
+    async doValidateForm() {
+        if (!this.state.accessToken) {
+            return;
+        }
+
+        if (this.state.password.length == 0) {
+            // first error if the user hasn't entered anything - nicer 
+            if (!this.state.initialDisplayName && 
+                !this.state.displayName) {                
+                return "Entrez votre nom complet et un mot de passe";
+            }
+            return "Entrez un mot de passe";
+        }
+            
+        if (this.state.password !== this.state.confirm) {
+            return "Les mots de passe ne correspondent pas.";
+        }
+
+        if (this.state.password.length < 8) {
+            return "Le mot de passe est trop court.";            
+        }
+
+        if (!this.state.initialDisplayName) {
+            if (!this.state.displayName) {
+                return "Entrez votre nom complet";
+            }
+            if (!this.state.displayName.trim().includes(' ')) {
+                return "Le nom complet doit inclure un prénom et un nom."
+            }
+            if (this.state.displayName.trim().length < 5) {
+                return "Le nom est trop court. Entrez au moins 5 caractères.";
+            }
+            
+            const changeDisplayNameRequest = await this.fetchCore(
+                "PUT", this.displayNameUri(), {
+                    displayname: this.state.displayName,
                 }
             );
-            if (
-                changeDisplayNameRequest.status !== 200 &&
-                this.state.accessToken
-            ) {
-                this.setState({
-                    error:
-                        "Impossible de définir Nom. Pour obtenir de l'aide contacter nous à contact@watcha.fr",
-                });
-            } else {
-                this.setState({ successChangeDisplayName: true });
-                this.onChangePassword();
+                
+            if (changeDisplayNameRequest.status !== 200) {
+                return "Impossible de définir le nom. Pour obtenir de l'aide contacter nous à contact@watcha.fr";
             }
-        } catch (e) {
-            this.setState({
-                error:
-                    "Impossible de définir le Nom. Pour obtenir de l'aide contacter nous à contact@watcha.fr",
-            });
         }
-        this.setState({ loading: false });
+
+        const changePasswordRequest = await this.fetchCore(
+            "POST", "/_matrix/client/r0/account/password", {
+                auth: {
+                    type: "m.login.password",
+                    user: this.state.user,
+                    password: this.state.initialPassword,
+                },
+                new_password: this.state.password,
+            });
+
+        if (changePasswordRequest.status !== 200) {
+            return "Impossible de définir le nouveau mot de passe. Pour obtenir de l'aide contacter nous à contact@watcha.fr";
+        }
+
+        this.setState({ successChange: true });
     },
 
-    onChangePassword() {
-        const PASSWORD_MATCH = this.state.password === this.state.confirm;
-        const PASSWORD_LENGTH = this.state.password.length > 7;
-        this.setState({ passwordMatch: PASSWORD_MATCH });
-        this.setState({ passwordLength: PASSWORD_LENGTH });
-        if (PASSWORD_MATCH && PASSWORD_LENGTH) {
-            this.connect(this.state.password);
-        }
+    onPasswordChange(evt) {
+        this.setState({ password: evt.target.value, error: null });
     },
+
+    onDisplaynameChange(evt) {
+        this.setState({ displayName: evt.target.value, error: null });
+    },
+
+    onConfirmChange(evt) {
+        this.setState({ confirm: evt.target.value, error: null });
+    },
+
     onPasswordBlur() {
-        this.setState({ passwordFocus: false });
+        this.setState({ passwordFocus: false, error: null });
     },
     onChangeBlur() {
-        this.setState({ changeFocus: false });
+        this.setState({ changeFocus: false, error: null });
     },
     onChangeFocus() {
-        this.setState({ changeFocus: true });
+        this.setState({ changeFocus: true, error: null });
     },
     onPasswordFocus() {
-        this.setState({ passwordFocus: true });
+        this.setState({ passwordFocus: true, error: null });
     },
     onDisplaynameFocus() {
-        this.setState({ displaynameFocus: true });
+        this.setState({ displaynameFocus: true, error: null });
     },
 
     render() {
@@ -315,51 +306,69 @@ module.exports = createReactClass({
                 </div>
             );
         }
-        let error;
-        let ModulableHeader = "wt_Change_Password_Header";
-        let passwordPlaceHolder = "Définissez votre mot de passe";
-        let changePlaceHolder = "Confirmez votre mot de passe";
-        if (this.state.passwordFocus && this.state.os === "Android") {
-            ModulableHeader = "wt_Hidden_Header";
-            passwordPlaceHolder = "";
-        }
-        if (this.state.changeFocus && this.state.os === "Android") {
-            ModulableHeader = "wt_Hidden_Header";
-            changePlaceHolder = "";
-        }
-        if (!this.state.passwordLength) {
-            error = (
-                <div className="wt_Error">Le mot de passe est trop court.</div>
-            );
-        } else if (!this.state.passwordMatch) {
-            error = (
-                <div className="wt_Error">
-                    Les mots de passe ne correspondent pas.
-                </div>
-            );
-        }
+        const os = getOS();
         if (this.state.passwordAlreadyChanged || this.state.successChange) {
-            if (this.state.os === "iOS" || this.state.os === "Android") {
+            if (os === "iOS" || os === "Android") {
                 return (
                     <WatchaMobileOnboarding
-                        os={this.state.os}
+                        os={os}
                         identityToken={this.state.identityToken}
                         firstConnection={!this.state.passwordAlreadyChanged}
-                        user={this.state.credUser}
+                        user={this.state.user}
                     />
                 );
             } else {
                 return (
                     <WatchaWebPwChanged
-                        passwordLogin={this.props.PasswordLogin}
-                        identityToken={this.state.identityToken}
                         firstConnection={!this.state.passwordAlreadyChanged}
-                        user={this.convertUserId(this.state.credUser)}
                         email={this.state.email}
                     />
                 );
             }
         }
+
+        const welcomeText = (this.state.initialDisplayName) ? (
+            ", " + this.state.initialDisplayName.replace(/ /g, "\u00a0")
+        ) : "";
+        
+        const fullNameField = (this.state.initialDisplayName) ? null : (
+            <div className="wt_fullNameinputContainer">
+                <div className="wt_PasswordLength">
+                    <div>Entrez votre nom complet&nbsp;:</div>
+                    <div className="wt_ChangePasswordSubtitles">
+                        Vous apparaitrez aux autres utilisateurs
+                        avec ce nom.
+                    </div>
+                </div>
+                <input
+                    autoComplete="off"
+                    onFocus={this.onDisplaynameFocus}
+                    onBlur={this.onDisplaynameBlur}
+                    type="text"
+                    name="wt_Fullname"
+                    placeholder={"Prenom et Nom"}
+                    className="wt_InputText"
+                    onChange={this.onDisplaynameChange}
+                    value={this.state.displayName}
+                />
+             </div>
+        );
+        const error = (this.state.error) ? (
+                <div className="wt_Error">{this.state.error}</div>
+        ) : null;
+
+        let ModulableHeader = "wt_Change_Password_Header";
+        let passwordPlaceHolder = "Définissez votre mot de passe";
+        let changePlaceHolder = "Confirmez votre mot de passe";
+        if (this.state.passwordFocus && os === "Android") {
+            ModulableHeader = "wt_Hidden_Header";
+            passwordPlaceHolder = "";
+        }
+        if (this.state.changeFocus && os === "Android") {
+            ModulableHeader = "wt_Hidden_Header";
+            changePlaceHolder = "";
+        }
+        
         return (
             <div className="wt_Container">
                 <div className="wt_ChangePasswordHeader">
@@ -373,29 +382,11 @@ module.exports = createReactClass({
                             />
                         </div>
                         <div className="wt_welcome_text">
-                            Bienvenue sur Watcha
+                            Bienvenue sur Watcha{welcomeText}
                         </div>
                     </div>
                     <div className="wt_pw_form_container">
-                        <div className="wt_fullNameinputContainer">
-                            <div className="wt_PasswordLength">
-                                <div>Entrez votre nom:</div>
-                                <div className="wt_ChangePasswordSubtitles">
-                                    Vous apparaitrez aux autres utilisateurs
-                                    avec ce nom.
-                                </div>
-                            </div>
-                            <input
-                                autoComplete="off"
-                                onFocus={this.onDisplaynameFocus}
-                                onBlur={this.onDisplaynameBlur}
-                                type="text"
-                                name="wt_Fullname"
-                                placeholder={"Nom"}
-                                className="wt_InputText"
-                                onChange={this.onDisplaynameChange}
-                            />
-                        </div>
+                        {fullNameField}
                         <div className="wt_ChangePasswordText">
                             <div className="wt_PasswordLength">
                                 <div>
@@ -416,11 +407,12 @@ module.exports = createReactClass({
                                 placeholder={passwordPlaceHolder}
                                 className="wt_InputText"
                                 onChange={this.onPasswordChange}
+                                value={this.state.password}
                             />
                         </div>
                         <div className="wt_ConfirmInputContainer">
                             <input
-                                autocomplete="off"
+                                autoComplete="off"
                                 onFocus={this.onChangeFocus}
                                 onBlur={this.onChangeBlur}
                                 type="password"
@@ -428,12 +420,13 @@ module.exports = createReactClass({
                                 placeholder={changePlaceHolder}
                                 className="wt_InputText"
                                 onChange={this.onConfirmChange}
+                                value={this.state.confirm}
                             />
                         </div>
                         <div>{error}</div>
                         <button
                             className="wt_SubmitButton"
-                            onClick={this.changeDisplayname}
+                            onClick={this.validateForm}
                         >
                             Se connecter a Watcha
                         </button>
