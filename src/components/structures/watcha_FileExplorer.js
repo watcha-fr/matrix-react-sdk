@@ -12,21 +12,22 @@ import * as Mime from "mime";
 import filesize from "filesize";
 import matchSorter from "match-sorter";
 import React, { useMemo, useRef, useEffect, useState } from "react";
-import GeminiScrollbar from "react-gemini-scrollbar";
 import { useTable, useSortBy, useFilters, useRowSelect } from "react-table";
 
-import dis from "../../dispatcher";
-import { MatrixClientPeg } from "../../MatrixClientPeg";
-import Modal from "../../Modal";
-import OutlineIconButton from "../views/elements/watcha_OutlineIconButton";
-import * as sdk from "../../index";
 import { _t } from "../../languageHandler";
 import { formatFullDate, formatFileExplorerDate } from "../../DateUtils";
+import { getUserNameColorClass } from "../../utils/FormattingUtils";
+import { MatrixClientPeg } from "../../MatrixClientPeg";
+import * as sdk from "../../index";
+import AutoHideScrollbar from "./AutoHideScrollbar";
+import dis from "../../dispatcher";
+import Modal from "../../Modal";
+
 import {
     formatMimeType,
-    getIconFromMimeType
+    getIconFromMimeType,
 } from "../../watcha_mimeTypeUtils";
-import { getUserNameColorClass } from "../../utils/FormattingUtils";
+import OutlineIconButton from "../views/elements/watcha_OutlineIconButton";
 
 function FileExplorer({ events, showTwelveHour }) {
     const columns = useMemo(
@@ -35,25 +36,25 @@ function FileExplorer({ events, showTwelveHour }) {
                 Header: _t("Name"),
                 accessor: "filename",
                 filter: "fuzzyText",
-                sortType: compareLowerCase
+                sortType: compareLowerCase,
             },
             {
                 Header: _t("Type"),
                 accessor: "type",
-                sortType: compareLowerCase
+                sortType: compareLowerCase,
             },
             {
                 Header: _t("Size"),
                 accessor: "size",
                 // FIXME: Some files like movies recorded in the ios app (named video_xxxxxxx.mp4) don't seem to have a size...
-                Cell: ({ cell: { value } }) => (value ? filesize(value) : "")
+                Cell: ({ cell: { value } }) => (value ? filesize(value) : ""),
             },
             {
                 Header: _t("Added on"),
                 accessor: "timestamp",
                 Cell: ({ cell: { value } }) => (
                     <LightDate timestamp={value} {...{ showTwelveHour }} />
-                )
+                ),
             },
             {
                 Header: _t("By"),
@@ -63,8 +64,8 @@ function FileExplorer({ events, showTwelveHour }) {
                     // common but buggy way (returns either the userId or the displayname in an unpredictable way):
                     // <SenderProfile mxEvent={row.original.mxEvent} />
                     return <Sender userId={value} />;
-                }
-            }
+                },
+            },
         ],
         []
     );
@@ -74,7 +75,7 @@ function FileExplorer({ events, showTwelveHour }) {
     const defaultColumn = useMemo(
         () => ({
             // Let's set up our default Filter UI
-            Filter: DefaultColumnFilter
+            Filter: DefaultColumnFilter,
         }),
         []
     );
@@ -82,14 +83,14 @@ function FileExplorer({ events, showTwelveHour }) {
     const filterTypes = useMemo(
         () => ({
             // Add a new fuzzyTextFilterFn filter type.
-            fuzzyText: fuzzyTextFilterFn
+            fuzzyText: fuzzyTextFilterFn,
         }),
         []
     );
 
     const initialState = useMemo(
         () => ({
-            sortBy: [{ id: "timestamp", desc: true }]
+            sortBy: [{ id: "timestamp", desc: true }],
         }),
         []
     );
@@ -103,7 +104,7 @@ function FileExplorer({ events, showTwelveHour }) {
             filterTypes,
             initialState,
             disableSortRemove: true,
-            autoResetSortBy: false
+            autoResetSortBy: false,
         },
         useFilters,
         useSortBy,
@@ -126,9 +127,9 @@ function FileExplorer({ events, showTwelveHour }) {
                         <IndeterminateCheckbox
                             {...row.getToggleRowSelectedProps()}
                         />
-                    )
+                    ),
                 },
-                ...columns
+                ...columns,
             ]);
         }
     );
@@ -146,19 +147,14 @@ function FileExplorer({ events, showTwelveHour }) {
 function Body({ tableInstance }) {
     const { selectedFlatRows } = tableInstance;
     const table = (
-        <GeminiScrollbar forceGemini={true} autoshow={true} minThumbSize={50}>
+        <AutoHideScrollbar>
             <Table {...{ tableInstance }} />
-        </GeminiScrollbar>
+        </AutoHideScrollbar>
     );
     const detailPanel = (
-        <GeminiScrollbar
-            className="watcha_FileExplorer_DetailPanel_Scrollbar"
-            forceGemini={true}
-            autoshow={true}
-            minThumbSize={50}
-        >
+        <AutoHideScrollbar className="watcha_FileExplorer_DetailPanel_Scrollbar">
             <DetailPanel {...{ selectedFlatRows }} />
-        </GeminiScrollbar>
+        </AutoHideScrollbar>
     );
     return (
         <div className="watcha_FileExplorer_Body">
@@ -179,7 +175,7 @@ function Table({ tableInstance }) {
         getTableBodyProps,
         headerGroups,
         rows,
-        prepareRow
+        prepareRow,
     } = tableInstance;
     // Render the UI for the table
     return (
@@ -191,7 +187,7 @@ function Table({ tableInstance }) {
                             <th
                                 {...column.getHeaderProps(
                                     column.getSortByToggleProps({
-                                        title: undefined
+                                        title: undefined,
                                     })
                                 )}
                             >
@@ -206,9 +202,7 @@ function Table({ tableInstance }) {
                                                     : "watcha_FileExplorer_chevronUp")
                                             }
                                         />
-                                    ) : (
-                                        undefined
-                                    )}
+                                    ) : undefined}
                                 </span>
                             </th>
                         ))}
@@ -240,7 +234,7 @@ function Table({ tableInstance }) {
                             {...row.getRowProps({
                                 className: row.isSelected
                                     ? "watcha_FileExplorer_SelectedRow"
-                                    : undefined
+                                    : undefined,
                             })}
                         >
                             {row.cells.map(cell => {
@@ -249,14 +243,14 @@ function Table({ tableInstance }) {
                                         {...cell.getCellProps({
                                             title: [
                                                 "filename",
-                                                "type"
+                                                "type",
                                             ].includes(cell.column.id)
                                                 ? cell.value
                                                 : undefined,
                                             onClick:
                                                 cell.column.id !== "selection"
                                                     ? selectRow
-                                                    : undefined
+                                                    : undefined,
                                         })}
                                     >
                                         {cell.render("Cell")}
@@ -401,7 +395,7 @@ function ShowMessageButton({ mxEvent }) {
             action: "view_room",
             event_id: mxEvent.getId(),
             room_id: mxEvent.getRoomId(),
-            highlighted: true
+            highlighted: true,
         });
     };
     return (
@@ -419,7 +413,7 @@ function ForwardButton({ mxEvent, selectedEvents }) {
     const onClick = () => {
         dis.dispatch({
             action: "forward_event",
-            event: mxEvent
+            event: mxEvent,
         });
     };
     return (
@@ -475,11 +469,11 @@ function RemoveButton({ mxEvent, selectedEvents }) {
                                 description: _t(
                                     "You cannot delete this message. (%(code)s)",
                                     { code }
-                                )
+                                ),
                             });
                         }
                     }
-                }
+                },
             },
             "mx_Dialog_confirmredact"
         );
@@ -498,7 +492,7 @@ function RemoveButton({ mxEvent, selectedEvents }) {
 
 // Define a default UI for filtering
 function DefaultColumnFilter({
-    column: { filterValue, preFilteredRows, setFilter }
+    column: { filterValue, preFilteredRows, setFilter },
 }) {
     const SearchBox = sdk.getComponent("structures.SearchBox");
     const count = preFilteredRows.length;
@@ -557,7 +551,7 @@ function getEventData(mxEvent) {
         sender,
         timestamp,
         key,
-        mxEvent
+        mxEvent,
     };
 }
 

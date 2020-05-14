@@ -16,19 +16,19 @@ limitations under the License.
 */
 
 import classNames from "classnames";
-import GeminiScrollbar from "react-gemini-scrollbar";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 
-import * as Avatar from "../../../Avatar";
-import * as Email from "../../../email";
-import BaseAvatar from "../avatars/BaseAvatar";
-import EntityTile from "../rooms/EntityTile";
-import { MatrixClientPeg } from "../../../MatrixClientPeg";
-import * as sdk from "../../../index";
-import withValidation from "../elements/Validation";
 import { _t } from "../../../languageHandler";
 import { Key } from "../../../Keyboard";
+import { MatrixClientPeg } from "../../../MatrixClientPeg";
+import * as Avatar from "../../../Avatar";
+import * as Email from "../../../email";
+import * as sdk from "../../../index";
+import AutoHideScrollbar from "../../structures/AutoHideScrollbar";
+import BaseAvatar from "../avatars/BaseAvatar";
+import EntityTile from "../rooms/EntityTile";
+import withValidation from "../elements/Validation";
 
 const AVATAR_SIZE = 36;
 
@@ -37,7 +37,7 @@ class InviteMemberDialog extends Component {
         button: PropTypes.string,
         onFinished: PropTypes.func.isRequired,
         roomId: PropTypes.string,
-        title: PropTypes.node.isRequired
+        title: PropTypes.node.isRequired,
     };
 
     constructor(props) {
@@ -55,7 +55,7 @@ class InviteMemberDialog extends Component {
             serverSupportsUserDirectory: true,
             // The query being searched for
             query: "",
-            onOk: false
+            onOk: false,
         };
     }
 
@@ -107,7 +107,7 @@ class InviteMemberDialog extends Component {
                 className: "watcha_InviteMemberDialog_EntityTile_invite",
                 name: user.displayName,
                 title: _t("Click to remove this invitation."),
-                showPresence: false
+                showPresence: false,
             };
             return user.isKnown ? (
                 <EntityTile
@@ -147,7 +147,7 @@ class InviteMemberDialog extends Component {
             const commonProps = {
                 key: user.address,
                 name: user.displayName,
-                avatarJsx: this.getBaseAvatar(user)
+                avatarJsx: this.getBaseAvatar(user),
             };
             const subtextLabel = {
                 join: _t("Already room member."),
@@ -184,7 +184,7 @@ class InviteMemberDialog extends Component {
     _doLocalSearch = query => {
         this.setState({
             query,
-            searchError: null
+            searchError: null,
         });
         const queryLowercase = query.toLowerCase();
         const results = [];
@@ -203,7 +203,7 @@ class InviteMemberDialog extends Component {
                 results.push({
                     user_id: user.userId,
                     display_name: user.displayName,
-                    avatar_url: user.avatarUrl
+                    avatar_url: user.avatarUrl,
                 });
             });
         this._processResults(results, query);
@@ -214,12 +214,12 @@ class InviteMemberDialog extends Component {
         this.setState({
             busy: true,
             query,
-            searchError: null
+            searchError: null,
         });
         MatrixClientPeg.get()
             .searchUserDirectory({
                 term: query,
-                limit: Number.MAX_SAFE_INTEGER
+                limit: Number.MAX_SAFE_INTEGER,
             })
             .then(resp => {
                 // The query might have changed since we sent the request, so ignore
@@ -234,7 +234,7 @@ class InviteMemberDialog extends Component {
                 this.setState({
                     searchError: err.errcode
                         ? err.message
-                        : _t("Something went wrong!")
+                        : _t("Something went wrong!"),
                 });
                 if (err.errcode === "M_UNRECOGNIZED") {
                     this.setState({ serverSupportsUserDirectory: false });
@@ -256,7 +256,7 @@ class InviteMemberDialog extends Component {
             if (userId === client.credentials.userId) {
                 continue; // remove the actual user from the list of users
             }
-            const email = user.email
+            const email = user.email;
             const displayName = user.display_name || email || userId;
 
             let membership;
@@ -296,10 +296,10 @@ class InviteMemberDialog extends Component {
         if (!knownUser) {
             const newUser = {
                 address: emailAddress,
-                displayName: emailAddress
+                displayName: emailAddress,
             };
             this.setState(({ selectedList }) => ({
-                selectedList: [newUser, ...selectedList]
+                selectedList: [newUser, ...selectedList],
             }));
         } else {
             this.addToSelectedList(knownUser);
@@ -313,7 +313,7 @@ class InviteMemberDialog extends Component {
                     suggestedList.splice(i, 1);
                     return {
                         suggestedList,
-                        selectedList: [user, ...selectedList]
+                        selectedList: [user, ...selectedList],
                     };
                 }
             }
@@ -337,7 +337,7 @@ class InviteMemberDialog extends Component {
                 if (selectedList[i] === user) {
                     suggestedList = this.sortedUserList([
                         ...suggestedList,
-                        user
+                        user,
                     ]);
                     selectedList.splice(i, 1);
                     return { suggestedList, selectedList };
@@ -384,7 +384,10 @@ class InviteMemberDialog extends Component {
             >
                 <div className="mx_Dialog_content">
                     <div className="watcha_InviteMemberDialog_sourceContainer">
-                        <Section header={_t("Invite users")}>
+                        <Section
+                            className="watcha_InviteMemberDialog_Section_suggestedList"
+                            header={_t("Invite users")}
+                        >
                             <SuggestedList
                                 busy={this.state.busy}
                                 onSearch={this.onSearch}
@@ -393,7 +396,10 @@ class InviteMemberDialog extends Component {
                                 {suggestedTiles}
                             </SuggestedList>
                         </Section>
-                        <Section header={_t("Invite by email")}>
+                        <Section
+                            className="watcha_InviteMemberDialog_Section_emailInvitation"
+                            header={_t("Invite by email")}
+                        >
                             <EmailInvitation
                                 {...{ roomMembers }}
                                 selectedList={this.state.selectedList}
@@ -427,7 +433,7 @@ class EmailInvitation extends Component {
     static propTypes = {
         addEmailAddressToSelectedList: PropTypes.func.isRequired,
         selectedList: PropTypes.arrayOf(PropTypes.object).isRequired,
-        roomMembers: PropTypes.arrayOf(PropTypes.object)
+        roomMembers: PropTypes.arrayOf(PropTypes.object),
     };
 
     constructor(props) {
@@ -436,7 +442,7 @@ class EmailInvitation extends Component {
             emailAddress: "",
             isValid: false,
             emailLooksValid: false,
-            onSubmit: false
+            onSubmit: false,
         };
     }
 
@@ -464,7 +470,7 @@ class EmailInvitation extends Component {
         const emailLooksValid = Email.looksValid(this._fieldRef.input.value);
         this.setState({
             isValid: result.valid,
-            emailLooksValid
+            emailLooksValid,
         });
         return result;
     };
@@ -496,13 +502,13 @@ class EmailInvitation extends Component {
         rules: [
             {
                 key: "notNull",
-                test: async ({ value }) => !!value
+                test: async ({ value }) => !!value,
             },
             {
                 key: "isValidOnSubmit",
                 test: async ({ value }) =>
                     !value || !this.state.onSubmit || Email.looksValid(value),
-                invalid: () => _t("Please enter a valid email address.")
+                invalid: () => _t("Please enter a valid email address."),
             },
             {
                 key: "alreadyInInvitations",
@@ -514,7 +520,7 @@ class EmailInvitation extends Component {
                 invalid: () =>
                     _t(
                         "You have already added this email address to the invitation list."
-                    )
+                    ),
             },
             {
                 key: "alreadyRoomMember",
@@ -529,7 +535,7 @@ class EmailInvitation extends Component {
                 invalid: () =>
                     _t(
                         "This email address belongs to a user who is already a room member."
-                    )
+                    ),
             },
             {
                 key: "alreadySentInvitation",
@@ -544,9 +550,9 @@ class EmailInvitation extends Component {
                 invalid: () =>
                     _t(
                         "An invitation has already been sent to this email address."
-                    )
-            }
-        ]
+                    ),
+            },
+        ],
     });
 
     render() {
@@ -574,7 +580,7 @@ class EmailInvitation extends Component {
                             {
                                 watcha_InviteMemberDialog_addEmailAddressButton_valid:
                                     this.state.isValid &&
-                                    this.state.emailLooksValid
+                                    this.state.emailLooksValid,
                             }
                         )}
                         title={_t(
@@ -590,9 +596,14 @@ class EmailInvitation extends Component {
     }
 }
 
-function Section({ header, children }) {
+function Section({ className, header, children }) {
     return (
-        <div className="watcha_InviteMemberDialog_Section">
+        <div
+            className={classNames(
+                "watcha_InviteMemberDialog_Section",
+                className
+            )}
+        >
             <h2>{header}</h2>
             {children}
         </div>
@@ -601,7 +612,7 @@ function Section({ header, children }) {
 
 Section.propTypes = {
     header: PropTypes.string.isRequired,
-    children: PropTypes.node.isRequired
+    children: PropTypes.node.isRequired,
 };
 
 function SuggestedList({ busy, query, onSearch, children }) {
@@ -623,22 +634,20 @@ function SuggestedList({ busy, query, onSearch, children }) {
     return (
         <div className="watcha_InviteMemberDialog_SuggestedList">
             <SearchBox placeholder={_t("Filter users")} onSearch={onSearch} />
-            <GeminiScrollbar forceGemini={true}>
-                {children || hint}
-            </GeminiScrollbar>
+            <AutoHideScrollbar>{children || hint}</AutoHideScrollbar>
         </div>
     );
 }
 
 SuggestedList.defaultProps = {
-    query: ""
+    query: "",
 };
 
 SuggestedList.propTypes = {
     busy: PropTypes.bool,
     query: PropTypes.string,
     onSearch: PropTypes.func.isRequired,
-    children: PropTypes.node
+    children: PropTypes.node,
 };
 
 class SelectedList extends Component {
@@ -646,7 +655,7 @@ class SelectedList extends Component {
         onOk: PropTypes.bool.isRequired,
         onFinished: PropTypes.func.isRequired,
         onResume: PropTypes.func.isRequired,
-        children: PropTypes.node
+        children: PropTypes.node,
     };
 
     constructor() {
@@ -654,7 +663,7 @@ class SelectedList extends Component {
         this.state = {
             valid: false,
             feedback: null,
-            feedbackVisible: false
+            feedbackVisible: false,
         };
     }
 
@@ -684,9 +693,9 @@ class SelectedList extends Component {
                 invalid: () =>
                     _t(
                         "Please add people to the invitation list before validating the form."
-                    )
-            }
-        ]
+                    ),
+            },
+        ],
     });
 
     async validate({ focused, allowEmpty = false }) {
@@ -694,7 +703,7 @@ class SelectedList extends Component {
         const { valid, feedback } = await this._validationRules({
             value,
             focused,
-            allowEmpty
+            allowEmpty,
         });
         if (feedback) {
             this.setState({ feedback, feedbackVisible: true });
@@ -733,7 +742,7 @@ class SelectedList extends Component {
         const divClasses = classNames(
             "watcha_InviteMemberDialog_SelectedList",
             {
-                watcha_InviteMemberDialog_SelectedList_invalid: feedbackVisible
+                watcha_InviteMemberDialog_SelectedList_invalid: feedbackVisible,
             }
         );
 
@@ -753,9 +762,9 @@ class SelectedList extends Component {
                 onBlur={this.onBlur}
                 tabIndex="-1"
             >
-                <GeminiScrollbar forceGemini={true}>
+                <AutoHideScrollbar>
                     {this.props.children || hint}
-                </GeminiScrollbar>
+                </AutoHideScrollbar>
                 {tooltip}
             </div>
         );

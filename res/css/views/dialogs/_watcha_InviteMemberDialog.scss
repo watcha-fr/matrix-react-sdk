@@ -10,6 +10,7 @@ This code is not licensed unless directly agreed with Watcha
     .mx_Dialog_content {
         display: flex;
         justify-content: space-between;
+        max-height: 30em;
         & > * {
             width: 48%;
         }
@@ -29,26 +30,30 @@ This code is not licensed unless directly agreed with Watcha
         text-align: center;
         font-weight: bold;
     }
-    .gm-scrollbar-container {
-        min-height: 10em;
-    }
     .mx_EntityTile:hover::before {
         mask-position: center !important;
     }
 }
 
 .watcha_InviteMemberDialog_sourceContainer {
-    .watcha_InviteMemberDialog_Section {
-        &:not(:first-child) {
-            margin-top: 1em;
-        }
-    }
+    display: flex;
+    flex-direction: column;
+}
+
+.watcha_InviteMemberDialog_Section_suggestedList {
+    min-height: 0;
+    flex-grow: 1;
+}
+
+.watcha_InviteMemberDialog_Section_emailInvitation {
+    margin-top: 1em;
 }
 
 .watcha_InviteMemberDialog_SuggestedList,
 .watcha_InviteMemberDialog_SelectedList {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     padding: 0.5em;
     border: 1px solid $input-darker-fg-color;
     border-radius: 5px;
@@ -56,6 +61,10 @@ This code is not licensed unless directly agreed with Watcha
         margin-top: 2.5em;
         text-align: center;
     }
+}
+
+.watcha_InviteMemberDialog_SuggestedList {
+    flex-grow: 1;
 }
 
 .watcha_InviteMemberDialog_SelectedList {

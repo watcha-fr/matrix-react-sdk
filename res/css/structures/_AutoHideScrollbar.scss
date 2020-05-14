@@ -16,7 +16,7 @@ limitations under the License.
 
 // make any scrollbar grey and thin
 html {
-    //change color for watcha from $scrollbar-thumb-color to #00e5e5. TODO watcha op342: verify that it works
+    // change color for watcha from $scrollbar-thumb-color to #00e5e5
     scrollbar-color: #00e5e5 $scrollbar-track-color;
 }
 // scrollbar-width is not inherited (but -color is, why?!),
@@ -33,13 +33,13 @@ html {
 
 ::-webkit-scrollbar-thumb {
     border-radius: 3px;
-    //change color for watcha from $scrollbar-thumb-color to #00e5e5. TODO watcha op342: verify that it works
+    // change color for watcha from $scrollbar-thumb-color to #00e5e5
     background-color: #00e5e5;
 }
 
 // make auto-hide scrollbars not transparent again on hover
 .mx_AutoHideScrollbar:hover {
-    //change color for watcha from $scrollbar-thumb-color to #00e5e5. TODO watcha op342: verify that it works
+    // change color for watcha from $scrollbar-thumb-color to #00e5e5
     scrollbar-color: #00e5e5 $scrollbar-track-color;
 
     &::-webkit-scrollbar {
@@ -47,7 +47,7 @@ html {
     }
 
     &::-webkit-scrollbar-thumb {
-        //change color for watcha from $scrollbar-thumb-color to #00e5e5. TODO watcha op342: verify that it works
+        // change color for watcha from $scrollbar-thumb-color to #00e5e5
         background-color: #00e5e5;
     }
 }

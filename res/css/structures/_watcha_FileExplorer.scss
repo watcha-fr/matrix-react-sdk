@@ -35,8 +35,7 @@
             max-width: 8em;
         }
         &:first-child {
-            padding: 0;
-            visibility: hidden;
+            display: none;
         }
     }
 
@@ -52,6 +51,12 @@
         &:not(:first-child) {
             border-bottom: 1px solid $panel-divider-color;
         }
+    }
+
+    .mx_AutoHideScrollbar {
+        width: 100%;
+        overflow-x: auto;
+        overflow-x: overlay; // where supported
     }
 }
 
