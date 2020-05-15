@@ -208,7 +208,9 @@ export default createReactClass({
                     { apps }
                     { spinner }
                 </div>
+                {/* deletion for watcha op341
                 { this._canUserModify() && addWidget }
+                */}
             </div>
         );
     },
