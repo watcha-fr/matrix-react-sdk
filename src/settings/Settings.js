@@ -156,7 +156,8 @@ export const SETTINGS = {
         // for this case though as we're converting a feature to a setting for a temporary safety net.
         displayName: _td("Enable cross-signing to verify per-user instead of per-session"),
         supportedLevels: ['device', 'config'], // we shouldn't use LEVELS_FEATURE for non-features, so copy it here.
-        default: true,
+        // change for watcha
+        default: false,
     },
     "feature_bridge_state": {
         isFeature: true,
