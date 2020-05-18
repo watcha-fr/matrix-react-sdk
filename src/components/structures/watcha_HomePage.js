@@ -20,7 +20,6 @@ limitations under the License.
 import React from "react";
 import createReactClass from "create-react-class";
 import PropTypes from "prop-types";
-import GeminiScrollbar from "react-gemini-scrollbar";
 import request from "browser-request";
 import { _t } from "../../languageHandler";
 import sanitizeHtml from "sanitize-html";
