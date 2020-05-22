@@ -164,9 +164,8 @@ export default class TopLeftMenuButton extends React.Component {
         return <React.Fragment>
             <ContextMenuButton
                 className="mx_TopLeftMenuButton"
-                /* deletion for watcha
-                onClick={this.openMenu}
-                */
+                // change for watcha
+                onClick={() => {}}
                 inputRef={(r) => this._buttonRef = r}
                 label={_t("Your profile")}
                 isExpanded={this.state.menuDisplayed}
