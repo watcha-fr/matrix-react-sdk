@@ -1,48 +1,9 @@
 import React from "react";
 import createReactClass from "create-react-class";
-import { _t } from "../../../languageHandler";
-import sdk from "../../../index";
 import dis from "../../../dispatcher";
 
 const WatchaWebPwChanged = createReactClass({
     displayName: "WatchaWebPwChanged",
-
-    getInitialState() {
-        return {
-            passwordLength: true,
-            passwordMatch: true,
-            credUser: this.props.user,
-            password: "",
-            clicked: false,
-        };
-    },
-
-    componentDidMount() {
-        this.convertUserId();
-    },
-
-    convertUserId() {
-        if (this.state.credUser[0] === "@") {
-            let simplifiedUserId = this.state.credUser.replace("@", "");
-            simplifiedUserId = simplifiedUserId.split(":");
-            simplifiedUserId = simplifiedUserId[0];
-            this.setState({ credUser: simplifiedUserId });
-        }
-    },
-
-    copyToClipboard(e) {
-        /* Get the text field */
-        const copyText = document.getElementById("identityToken");
-
-        /* Select the text field */
-        copyText.select();
-
-        /* Copy the text inside the text field */
-        document.execCommand("copy");
-
-        /* Alert the copied text */
-        alert("Copied the text: " + copyText.value);
-    },
 
     onClick() {
         dis.dispatch({
@@ -52,11 +13,9 @@ const WatchaWebPwChanged = createReactClass({
     },
 
     getTitle() {
-        let title = "Votre mot de passe a déjà été défini.";
-        if (this.props.firstConnection) {
-            title = "Votre mot de passe a été défini.";
-        }
-        return title;
+        return (this.props.firstConnection) ?
+            "Votre mot de passe a été défini." :
+            "Votre mot de passe a déjà été défini.";
     },
 
     render() {
@@ -71,7 +30,7 @@ const WatchaWebPwChanged = createReactClass({
                 <div className="wt_web_body_fallback">
                     <h1>Bienvenue sur Watcha</h1>
                     <div className="wt_web_username">{this.getTitle()}</div>
-                    <button class="mx_Login_submit" onClick={this.onClick}>
+                    <button className="mx_Login_submit" onClick={this.onClick}>
                         Cliquez ici pour vous connecter
                     </button>
                 </div>
