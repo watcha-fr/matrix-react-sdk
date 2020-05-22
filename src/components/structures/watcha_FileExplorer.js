@@ -9,11 +9,15 @@ New code for the new File explorer view.
 */
 
 import React, { useMemo, useRef, useEffect, useState } from "react";
-import { throttle } from 'lodash';
+import { throttle } from "lodash";
 import { useFilters, useRowSelect, useSortBy, useTable } from "react-table";
 import * as Mime from "mime";
 import filesize from "filesize";
+import matchSorter from "match-sorter";
 
+import { _t } from "../../languageHandler";
+import { formatFullDate, formatFileExplorerDate } from "../../DateUtils";
+import { getUserNameColorClass } from "../../utils/FormattingUtils";
 import { MatrixClientPeg } from "../../MatrixClientPeg";
 import * as sdk from "../../index";
 import AutoHideScrollbar from "./AutoHideScrollbar";
@@ -97,13 +101,16 @@ function FileExplorer({ events, showTwelveHour }) {
                             {...{ senderDisplayNames }}
                         />
                     );
-                }
-            }
+                },
+            },
         ],
         []
     );
 
-    const data = useMemo(() => getData(events, senderDisplayNames), [events, senderDisplayNames]);
+    const data = useMemo(() => getData(events, senderDisplayNames), [
+        events,
+        senderDisplayNames,
+    ]);
 
     const defaultColumn = useMemo(
         () => ({
