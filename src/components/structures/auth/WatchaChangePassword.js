@@ -1,5 +1,4 @@
-import React from "react";
-import createReactClass from "create-react-class";
+import React, { Component } from "react";
 import * as WatchaWebPwChanged from "./WatchaWebPwChanged";
 import * as WatchaMobileOnboarding from "./WatchaMobileOnboarding";
 
@@ -49,22 +48,23 @@ function b64DecodeUnicode(str) {
     );
 }
 
-const WatchaChangePassword = createReactClass({
-    getInitialState() {
-        return {
+class WatchaChangePassword extends Component {
+    constructor() {
+        super();
+        state = {
             loading: true,
             password: "",
             confirm: "",
             displayName: "",
             initialDisplayName: "",
         };
-    },
+    }
 
     componentDidMount() {
         this.fetchInitialParameters();
-    },
+    }
 
-    async fetchInitialParameters() {
+    fetchInitialParameters = async () => {
         const jsonParameters = await JSON.parse(
             b64DecodeUnicode(this.props.onboardingUrl.split("t=")[1])
         );
@@ -160,17 +160,17 @@ const WatchaChangePassword = createReactClass({
             });
         }
         this.setState({ loading: false });
-    },
+    };
 
-    displayNameUri() {
+    displayNameUri = () => {
         return (
             "/_matrix/client/r0/profile/" +
             encodeURIComponent(this.state.userWithIdentityServer) +
             "/displayname"
         );
-    },
+    };
 
-    async validateForm() {
+    validateForm = async () => {
         this.setState({ loading: true });
         try {
             const error = await this.doValidateForm();
@@ -185,9 +185,9 @@ const WatchaChangePassword = createReactClass({
             });
         }
         this.setState({ loading: false });
-    },
+    };
 
-    async fetchCore(method, uri, body = null) {
+    fetchCore = async (method, uri, body = null) => {
         return fetch(this.state.coreUrl + uri, {
             method: method,
             body: body ? JSON.stringify(body) : null,
@@ -202,9 +202,9 @@ const WatchaChangePassword = createReactClass({
                       Accept: "application/json",
                   },
         });
-    },
+    };
 
-    async doValidateForm() {
+    doValidateForm = async () => {
         if (!this.state.accessToken) {
             return;
         }
@@ -267,35 +267,39 @@ const WatchaChangePassword = createReactClass({
         }
 
         this.setState({ successChange: true });
-    },
+    };
 
-    onPasswordChange(evt) {
+    onPasswordChange = (evt) => {
         this.setState({ password: evt.target.value, error: null });
-    },
+    };
 
-    onDisplaynameChange(evt) {
+    onDisplaynameChange = (evt) => {
         this.setState({ displayName: evt.target.value, error: null });
-    },
+    };
 
-    onConfirmChange(evt) {
+    onConfirmChange = (evt) => {
         this.setState({ confirm: evt.target.value, error: null });
-    },
+    };
 
-    onPasswordBlur() {
+    onPasswordBlur = () => {
         this.setState({ passwordFocus: false, error: null });
-    },
-    onChangeBlur() {
+    };
+
+    onChangeBlur = () => {
         this.setState({ changeFocus: false, error: null });
-    },
-    onChangeFocus() {
+    };
+
+    onChangeFocus = () => {
         this.setState({ changeFocus: true, error: null });
-    },
-    onPasswordFocus() {
+    };
+
+    onPasswordFocus = () => {
         this.setState({ passwordFocus: true, error: null });
-    },
-    onDisplaynameFocus() {
+    };
+
+    onDisplaynameFocus = () => {
         this.setState({ displaynameFocus: true, error: null });
-    },
+    };
 
     render() {
         if (this.state.loading) {
@@ -446,7 +450,7 @@ const WatchaChangePassword = createReactClass({
                 </div>
             </div>
         );
-    },
-});
+    }
+}
 
 export default WatchaChangePassword;
