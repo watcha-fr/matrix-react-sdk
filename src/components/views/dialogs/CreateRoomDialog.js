@@ -203,7 +203,7 @@ export default createReactClass({
             </React.Fragment>;
         }
 
-        {/* changed for watcha */}
+        {/* changed for watcha 'private room' -> 'room' */}
         const title = this.state.isPublic ? _t('Create a public room') : _t('Create a room');
         return (
             <BaseDialog className="mx_CreateRoomDialog" onFinished={this.props.onFinished}
@@ -223,7 +223,7 @@ export default createReactClass({
                             <summary className="mx_CreateRoomDialog_details_summary">{ this.state.detailsOpen ? _t('Hide advanced') : _t('Show advanced') }</summary>
                             <LabelledToggleSwitch label={ _t('Block users on other matrix homeservers from joining this room (This setting cannot be changed later!)')} onChange={this.onNoFederateChange} value={this.state.noFederate} />
                         </details>
-                        */}
+                        end removed for watcha */}
                     </div>
                 </form>
                 <DialogButtons primaryButton={_t('Create Room')}

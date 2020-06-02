@@ -20,7 +20,6 @@ $accent-color: #03b381;
 /*insertion for watcha*/
 $accent-color: #414141;
 /*end of insertion*/
-/* TODO: review this line */
 $accent-bg-color: rgba(3, 179, 129, 0.16);
 $notice-primary-color: #ff4b55;
 $notice-primary-bg-color: rgba(255, 75, 85, 0.16);
@@ -68,8 +67,8 @@ $info-plinth-fg-color: #888;
 $preview-bar-bg-color: #f7f7f7;
 
 // left-panel style muted accent color
-/*change value for watcha*/
-$secondary-accent-color:#414141 ;
+/* change value for watcha #f2f5f8 -> #414141 */
+$secondary-accent-color: #414141;
 $tertiary-accent-color: #d3efe1;
 
 $tagpanel-bg-color: #27303a;
@@ -276,7 +275,8 @@ $progressbar-color: #000;
 $room-warning-bg-color: $yellow-background;
 
 $memberstatus-placeholder-color: $roomtile-name-color;
-/* change for Watcha change the background color for AuthPage to white*/
+
+/* change for Watcha change the background color for AuthPage to white */
 $authpage-bg-color: white;
 $authpage-modal-bg-color: rgba(255, 255, 255, 0.59);
 $authpage-body-bg-color: #ffffff;

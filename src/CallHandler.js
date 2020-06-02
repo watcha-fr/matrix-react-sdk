@@ -430,6 +430,7 @@ async function _startCallApp(roomId, type) {
         return;
     }
 
+    // TODO post op342: review this (can be removed, I believe ?)
     /* TODO watcha op300: below the earlier code, with our modifs - now replaced by code below - to test and remove if not needed 
     // This inherits its poor naming from the field of the same name that goes into
     // the event. It's just a random string to make the Jitsi URLs unique.
@@ -463,7 +464,8 @@ async function _startCallApp(roomId, type) {
         const apiUrl = IntegrationManagers.sharedInstance().getPrimaryManager().apiUrl;
         widgetUrl = apiUrl + '/widgets/jitsi.html?' + queryString;
     }
-    TODO watcha op300 - above is the old code, below the new one */
+    TODO watcha op300 - above is the old code, below the new one 
+    TODO post op342: review this (can be removed, I believe ?)*/
     const confId = `JitsiConference${generateHumanReadableId()}`;
     const jitsiDomain = Jitsi.getInstance().preferredDomain;
 
@@ -474,7 +476,9 @@ async function _startCallApp(roomId, type) {
     parsedUrl.search = ''; // set to empty string to make the URL class use searchParams instead
     parsedUrl.searchParams.set('confId', confId);
     widgetUrl = parsedUrl.toString();
-    /* end TODO watcha op300 - above is the new code */
+    /* end TODO watcha op300 - above is the new code 
+        TODO post op342: review this (can be removed, I believe ?)
+    */
 
     const widgetData = {
         conferenceId: confId,

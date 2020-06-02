@@ -73,17 +73,17 @@ export default class PasswordLogin extends React.Component {
 
     constructor(props) {
         super(props);
-        /* INSERTION FOR WATCHA */
+        /* insertion for watcha */
         const username = this.props.username ? this.props.username : this.props.initialUsername;
-        /* END OF INSERTION FOR WATCHA */
+        /* end of insertion for watcha */
         this.state = {
-            /* REMOVED FOR WATCHA
+            /* removed for watcha
             username: this.props.initialUsername,
             */
-           /* INSERTION FOR WATCHA */
+           /* insertion for watcha */
             busy: true,
             username: username,
-            /* END OF INSERTION */
+            /* end of insertion */
             password: this.props.initialPassword,
             phoneCountry: this.props.initialPhoneCountry,
             phoneNumber: this.props.initialPhoneNumber,

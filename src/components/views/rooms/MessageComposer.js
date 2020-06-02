@@ -16,7 +16,7 @@ limitations under the License.
 */
 import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
-import SdkConfig from '../../../SdkConfig';
+import SdkConfig from '../../../SdkConfig'; // added for watcha
 import { _t } from '../../../languageHandler';
 import CallHandler from '../../../CallHandler';
 import {MatrixClientPeg} from '../../../MatrixClientPeg';

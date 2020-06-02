@@ -49,12 +49,8 @@ export default class MainSplit extends React.Component {
         if (rhsSize !== null) {
             rhsSize = parseInt(rhsSize, 10);
         } else {
-            /*removed for watcha
-            rhsSize = 350;
-            */
-            /*insertion for watcha*/
+            /* change for watcha, 350 -> 250 */
             rhsSize = 250;
-            /*end of insertion for watcha*/
         }
         resizer.forHandleAt(0).resize(rhsSize);
 

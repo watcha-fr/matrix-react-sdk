@@ -29,7 +29,7 @@ import * as sdk from "../../../index";
 import {MatrixClientPeg} from "../../../MatrixClientPeg";
 import dis from "../../../dispatcher";
 import SettingsStore from "../../../settings/SettingsStore";
-import SdkConfig from "../../../SdkConfig"; // added for Watcha for (undocument) E2E enablement setting
+import SdkConfig from "../../../SdkConfig"; // added for Watcha for (undocumented) E2E enablement setting
 
 export default class RoomSettingsDialog extends React.Component {
     static propTypes = {

@@ -322,7 +322,7 @@ export default createReactClass({
 
         if (SettingsStore.getValue("showCookieBar")) {
             this.setState({
-              /*change value for watcha*/
+                /* change value for watcha, true -> false */
                 showCookieBar: false,
             });
         }
@@ -440,11 +440,11 @@ export default createReactClass({
     },
 
     onAction: function(payload) {
-      /*insertion for watcha*/
-      if (payload.action==='view_welcome_page') {
-        payload.action='start_login';
-      }
-      /*end of insertion*/
+        /* insertion for watcha */
+        if (payload.action === 'view_welcome_page') {
+          payload.action = 'start_login';
+        }
+        /* end of insertion */
         // console.log(`MatrixClientPeg.onAction: ${payload.action}`);
         const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
         const QuestionDialog = sdk.getComponent("dialogs.QuestionDialog");

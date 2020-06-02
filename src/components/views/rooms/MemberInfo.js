@@ -106,9 +106,7 @@ export default createReactClass({
         cli.on("accountData", this.onAccountData);
 
         this._checkIgnoreState();
-    },
 
-    componentDidMount: function() {
         // insertion for watcha
         MatrixClientPeg.get()
             .getProfileInfo(this.props.member.userId)
