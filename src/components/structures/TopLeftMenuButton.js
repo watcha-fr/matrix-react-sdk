@@ -141,10 +141,7 @@ export default class TopLeftMenuButton extends React.Component {
         return (
             <AccessibleButton
                 className="mx_TopLeftMenuButton"
-                /* changed for watcha
-                onClick={this.onToggleMenu}
-                */
-                onClick={e => {}}
+                onClick={() => {}} // change for watcha
                 inputRef={(r) => this._buttonRef = r}
                 aria-label={_t("Your profile")}
                 aria-haspopup={true}
