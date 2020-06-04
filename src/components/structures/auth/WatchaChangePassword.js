@@ -1,6 +1,8 @@
-import React, { Component } from "react";
-import * as WatchaWebPwChanged from "./WatchaWebPwChanged";
-import * as WatchaMobileOnboarding from "./WatchaMobileOnboarding";
+import React from "react";
+import createReactClass from "create-react-class";
+import WatchaWebPwChanged from "./WatchaWebPwChanged";
+import WatchaMobileOnboarding from "./WatchaMobileOnboarding";
+
 
 function getOS() {
     const userAgent = window.navigator.userAgent;
@@ -8,12 +10,12 @@ function getOS() {
     const macosPlatforms = ["Macintosh", "MacIntel", "MacPPC", "Mac68K"];
     const windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"];
     const iosPlatforms = ["iPhone", "iPad", "iPod"];
-
-    if (macosPlatforms.includes(platform)) {
+    
+    if (macosPlatforms.indexOf(platform) !== -1) {
         return "Mac OS";
-    } else if (iosPlatforms.includes(platform)) {
+    } else if (iosPlatforms.indexOf(platform) !== -1) {
         return "iOS";
-    } else if (windowsPlatforms.includes(platform)) {
+    } else if (windowsPlatforms.indexOf(platform) !== -1) {
         return "Windows";
     } else if (/Android/.test(userAgent)) {
         return "Android";
@@ -26,14 +28,11 @@ function getOS() {
 
 // from https://stackoverflow.com/questions/30106476/using-javascripts-atob-to-decode-base64-doesnt-properly-decode-utf-8-strings
 function b64EncodeUnicode(str) {
-    return btoa(
-        encodeURIComponent(str).replace(
-            /%([0-9A-F]{2})/g,
-            function toSolidBytes(match, p1) {
-                return String.fromCharCode("0x" + p1);
-            }
-        )
-    );
+    return btoa(encodeURIComponent(str).replace(
+        /%([0-9A-F]{2})/g,
+        function toSolidBytes(match, p1) {
+            return String.fromCharCode('0x' + p1);
+        }));
 }
 
 function b64DecodeUnicode(str) {
@@ -42,29 +41,33 @@ function b64DecodeUnicode(str) {
         atob(str)
             .split("")
             .map(function (c) {
-                return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+                return (
+                    "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+                );
             })
             .join("")
     );
 }
 
-class WatchaChangePassword extends Component {
-    constructor() {
-        super();
-        state = {
+
+export default createReactClass({
+    displayName: "WatchaChangePassword",
+
+    getInitialState() {
+        return {
             loading: true,
             password: "",
             confirm: "",
             displayName: "",
-            initialDisplayName: "",
+            initialDisplayName: ""
         };
-    }
+    },
 
     componentDidMount() {
         this.fetchInitialParameters();
-    }
+    },
 
-    fetchInitialParameters = async () => {
+    async fetchInitialParameters() {
         const jsonParameters = await JSON.parse(
             b64DecodeUnicode(this.props.onboardingUrl.split("t=")[1])
         );
@@ -88,7 +91,7 @@ class WatchaChangePassword extends Component {
                     email,
                     server: window.location.host,
                 })
-            ),
+            )
         });
 
         try {
@@ -106,20 +109,16 @@ class WatchaChangePassword extends Component {
                 });
             } else {
                 this.setState({ coreUrl });
-
+                
                 // ... we set userWithIdentityServer here, it shouldn't be needed.
-                const server =
-                    configData["default_server_config"]["m.homeserver"][
-                        "server_name"
-                    ];
-                const userWithIdentityServer =
-                    "@" + this.state.user + ":" + server;
+                const server = configData["default_server_config"]["m.homeserver"][
+                    "server_name"
+                ];
+                const userWithIdentityServer = "@" + this.state.user + ":" + server;
                 this.setState({ userWithIdentityServer });
-
+                
                 const loginRequest = await this.fetchCore(
-                    "POST",
-                    "/_matrix/client/r0/login",
-                    {
+                    "POST", "/_matrix/client/r0/login", {
                         initial_device_display_name: "Web setup account",
                         user: this.state.user,
                         password: this.state.initialPassword,
@@ -134,21 +133,15 @@ class WatchaChangePassword extends Component {
                     this.setState({ accessToken: loginData["access_token"] });
 
                     const getDisplayNameRequest = await this.fetchCore(
-                        "GET",
-                        this.displayNameUri()
+                        "GET", this.displayNameUri()
                     );
                     const text = await getDisplayNameRequest.text();
                     const profileData = JSON.parse(text);
                     const initialDisplayName = profileData["displayname"];
-                    if (
-                        initialDisplayName !== this.state.user &&
+                    if ((initialDisplayName !== this.state.user) &&
                         // paranoid: sometimes the display name seems to have only spaces
-                        initialDisplayName &&
-                        initialDisplayName.trim()
-                    ) {
-                        this.setState({
-                            initialDisplayName: initialDisplayName,
-                        });
+                        initialDisplayName && initialDisplayName.trim()) {
+                        this.setState({ initialDisplayName: initialDisplayName });
                     }
                 }
             }
@@ -160,146 +153,136 @@ class WatchaChangePassword extends Component {
             });
         }
         this.setState({ loading: false });
-    };
+    },        
 
-    displayNameUri = () => {
-        return (
-            "/_matrix/client/r0/profile/" +
-            encodeURIComponent(this.state.userWithIdentityServer) +
-            "/displayname"
-        );
-    };
+    displayNameUri() {
+        return "/_matrix/client/r0/profile/" +
+            encodeURIComponent(this.state.userWithIdentityServer) + 
+            "/displayname";
+    },
 
-    validateForm = async () => {
+    async validateForm() {
         this.setState({ loading: true });
         try {
             const error = await this.doValidateForm();
             if (error) {
-                this.setState({ error: error });
+                this.setState({ error: error })
             }
         } catch (e) {
             this.setState({
                 error:
-                    "Impossible de définir le nom. Pour obtenir de l'aide contacter nous à contact@watcha.fr: " +
-                    e,
-            });
+                "Impossible de définir le nom. Pour obtenir de l'aide contacter nous à contact@watcha.fr: " + e
+            })
         }
         this.setState({ loading: false });
-    };
+    },
 
-    fetchCore = async (method, uri, body = null) => {
-        return fetch(this.state.coreUrl + uri, {
-            method: method,
-            body: body ? JSON.stringify(body) : null,
-            headers: this.state.accessToken
-                ? {
-                      "Content-Type": "application/json",
-                      Accept: "application/json",
-                      Authorization: "Bearer " + this.state.accessToken,
-                  }
-                : {
-                      "Content-Type": "application/json",
-                      Accept: "application/json",
-                  },
-        });
-    };
-
-    doValidateForm = async () => {
+    async fetchCore(method, uri, body=null) {
+        return fetch(
+            this.state.coreUrl + uri,
+            {
+                method: method,
+                body: body ? JSON.stringify(body) : null,
+                headers: (this.state.accessToken) ? {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: "Bearer " + this.state.accessToken,
+                } : {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                }
+            }
+        )
+    },
+    
+    async doValidateForm() {
         if (!this.state.accessToken) {
             return;
         }
 
         if (this.state.password.length == 0) {
-            // first error if the user hasn't entered anything - nicer
-            if (!this.state.initialDisplayName && !this.state.displayName) {
+            // first error if the user hasn't entered anything - nicer 
+            if (!this.state.initialDisplayName && 
+                !this.state.displayName) {                
                 return "Entrez votre nom complet et un mot de passe";
             }
             return "Entrez un mot de passe";
         }
-
+            
         if (this.state.password !== this.state.confirm) {
             return "Les mots de passe ne correspondent pas.";
         }
 
         if (this.state.password.length < 8) {
-            return "Le mot de passe est trop court.";
+            return "Le mot de passe est trop court.";            
         }
 
         if (!this.state.initialDisplayName) {
             if (!this.state.displayName) {
                 return "Entrez votre nom complet";
             }
-            if (!this.state.displayName.trim().includes(" ")) {
-                return "Le nom complet doit inclure un prénom et un nom.";
+            if (!this.state.displayName.trim().includes(' ')) {
+                return "Le nom complet doit inclure un prénom et un nom."
             }
             if (this.state.displayName.trim().length < 5) {
                 return "Le nom est trop court. Entrez au moins 5 caractères.";
             }
-
+            
             const changeDisplayNameRequest = await this.fetchCore(
-                "PUT",
-                this.displayNameUri(),
-                {
+                "PUT", this.displayNameUri(), {
                     displayname: this.state.displayName,
                 }
             );
-
+                
             if (changeDisplayNameRequest.status !== 200) {
                 return "Impossible de définir le nom. Pour obtenir de l'aide contacter nous à contact@watcha.fr";
             }
         }
 
         const changePasswordRequest = await this.fetchCore(
-            "POST",
-            "/_matrix/client/r0/account/password",
-            {
+            "POST", "/_matrix/client/r0/account/password", {
                 auth: {
                     type: "m.login.password",
                     user: this.state.user,
                     password: this.state.initialPassword,
                 },
                 new_password: this.state.password,
-            }
-        );
+            });
 
         if (changePasswordRequest.status !== 200) {
             return "Impossible de définir le nouveau mot de passe. Pour obtenir de l'aide contacter nous à contact@watcha.fr";
         }
 
         this.setState({ successChange: true });
-    };
+    },
 
-    onPasswordChange = (evt) => {
+    onPasswordChange(evt) {
         this.setState({ password: evt.target.value, error: null });
-    };
+    },
 
-    onDisplaynameChange = (evt) => {
+    onDisplaynameChange(evt) {
         this.setState({ displayName: evt.target.value, error: null });
-    };
+    },
 
-    onConfirmChange = (evt) => {
+    onConfirmChange(evt) {
         this.setState({ confirm: evt.target.value, error: null });
-    };
+    },
 
-    onPasswordBlur = () => {
+    onPasswordBlur() {
         this.setState({ passwordFocus: false, error: null });
-    };
-
-    onChangeBlur = () => {
+    },
+    onChangeBlur() {
         this.setState({ changeFocus: false, error: null });
-    };
-
-    onChangeFocus = () => {
+    },
+    onChangeFocus() {
         this.setState({ changeFocus: true, error: null });
-    };
-
-    onPasswordFocus = () => {
+    },
+    onPasswordFocus() {
         this.setState({ passwordFocus: true, error: null });
-    };
-
-    onDisplaynameFocus = () => {
+    },
+    onDisplaynameFocus() {
         this.setState({ displaynameFocus: true, error: null });
-    };
+    },
 
     render() {
         if (this.state.loading) {
@@ -344,16 +327,17 @@ class WatchaChangePassword extends Component {
             }
         }
 
-        const welcomeText = this.state.initialDisplayName
-            ? ", " + this.state.initialDisplayName.replace(/ /g, "\u00a0")
-            : "";
-
-        const fullNameField = this.state.initialDisplayName ? null : (
+        const welcomeText = (this.state.initialDisplayName) ? (
+            ", " + this.state.initialDisplayName.replace(/ /g, "\u00a0")
+        ) : "";
+        
+        const fullNameField = (this.state.initialDisplayName) ? null : (
             <div className="wt_fullNameinputContainer">
                 <div className="wt_PasswordLength">
                     <div>Entrez votre nom complet&nbsp;:</div>
                     <div className="wt_ChangePasswordSubtitles">
-                        Vous apparaitrez aux autres utilisateurs avec ce nom.
+                        Vous apparaitrez aux autres utilisateurs
+                        avec ce nom.
                     </div>
                 </div>
                 <input
@@ -367,10 +351,10 @@ class WatchaChangePassword extends Component {
                     onChange={this.onDisplaynameChange}
                     value={this.state.displayName}
                 />
-            </div>
+             </div>
         );
-        const error = this.state.error ? (
-            <div className="wt_Error">{this.state.error}</div>
+        const error = (this.state.error) ? (
+                <div className="wt_Error">{this.state.error}</div>
         ) : null;
 
         let ModulableHeader = "wt_Change_Password_Header";
@@ -384,7 +368,7 @@ class WatchaChangePassword extends Component {
             ModulableHeader = "wt_Hidden_Header";
             changePlaceHolder = "";
         }
-
+        
         return (
             <div className="wt_Container">
                 <div className="wt_ChangePasswordHeader">
@@ -450,7 +434,5 @@ class WatchaChangePassword extends Component {
                 </div>
             </div>
         );
-    }
-}
-
-export default WatchaChangePassword;
+    },
+});
