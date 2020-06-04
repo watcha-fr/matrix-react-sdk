@@ -66,6 +66,7 @@ import WidgetEchoStore from './stores/WidgetEchoStore';
 import SettingsStore, { SettingLevel } from './settings/SettingsStore';
 import {generateHumanReadableId} from "./utils/NamingUtils";
 import {Jitsi} from "./widgets/Jitsi";
+import SdkConfig from './SdkConfig'; // added for watcha
 
 global.mxCalls = {
     //room_id: MatrixCall
@@ -430,42 +431,6 @@ async function _startCallApp(roomId, type) {
         return;
     }
 
-    // TODO post op342: review this (can be removed, I believe ?)
-    /* TODO watcha op300: below the earlier code, with our modifs - now replaced by code below - to test and remove if not needed 
-    // This inherits its poor naming from the field of the same name that goes into
-    // the event. It's just a random string to make the Jitsi URLs unique.
-    const widgetSessionId = Math.random().toString(36).substring(2);
-    const confId = room.roomId.replace(/[^A-Za-z0-9]/g, '') + widgetSessionId;
-    // NB. we can't just encodeURICompoent all of these because the $ signs need to be there
-    // (but currently the only thing that needs encoding is the confId)
-    const queryString = [
-        'confId='+encodeURIComponent(confId),
-        'isAudioConf='+(type === 'voice' ? 'true' : 'false'),
-        'displayName=$matrix_display_name',
-        'avatarUrl=$matrix_avatar_url',
-        // start modified for watcha (op230)
-        // Needed by the integration server,
-        // not sure how it could have worked before
-        'domain='+SdkConfig.get().meet_url.replace(/(^\w+:|^)\/\//, ''),
-        'userId=$matrix_user_id',
-        // not working yet - will work when we upgrade matrix-dimension
-        // (but careful! $matrix_user_id can appear only once,
-        // because of poor code in WidgetUtils.js)
-        //'email=$matrix_user_id',
-        // end modified for watcha
-    ].join('&');
-
-    let widgetUrl;
-    if (SdkConfig.get().integrations_jitsi_widget_url) {
-        // Try this config key. This probably isn't ideal as a way of discovering this
-        // URL, but this will at least allow the integration manager to not be hardcoded.
-        widgetUrl = SdkConfig.get().integrations_jitsi_widget_url + '?' + queryString;
-    } else {
-        const apiUrl = IntegrationManagers.sharedInstance().getPrimaryManager().apiUrl;
-        widgetUrl = apiUrl + '/widgets/jitsi.html?' + queryString;
-    }
-    TODO watcha op300 - above is the old code, below the new one 
-    TODO post op342: review this (can be removed, I believe ?)*/
     const confId = `JitsiConference${generateHumanReadableId()}`;
     const jitsiDomain = Jitsi.getInstance().preferredDomain;
 
@@ -476,14 +441,17 @@ async function _startCallApp(roomId, type) {
     parsedUrl.search = ''; // set to empty string to make the URL class use searchParams instead
     parsedUrl.searchParams.set('confId', confId);
     widgetUrl = parsedUrl.toString();
-    /* end TODO watcha op300 - above is the new code 
-        TODO post op342: review this (can be removed, I believe ?)
-    */
 
+    // added for watcha: 
+    const meetUrl = SdkConfig.get().meet_url.replace(/(^\w+:|^)\/\//, '');
+    /* later, maybe
+    'email=$matrix_user_id' ???
+    */
     const widgetData = {
         conferenceId: confId,
         isAudioOnly: type === 'voice',
-        domain: jitsiDomain,
+        // modified for watcha
+        domain: meetUrl ? meetUrl: jitsiDomain,
     };
 
     const widgetId = (
