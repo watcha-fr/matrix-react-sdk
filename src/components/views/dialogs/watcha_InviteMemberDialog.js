@@ -110,7 +110,7 @@ class InviteMemberDialog extends Component {
                 key: user.address,
                 className: "watcha_InviteMemberDialog_EntityTile_invite",
                 name: user.displayName,
-                title: _t("Click to remove this invitation."),
+                title: _t("Click to remove this invitation"),
                 showPresence: false,
             };
             return user.isKnown ? (
@@ -130,7 +130,7 @@ class InviteMemberDialog extends Component {
                         "watcha_InviteMemberDialog_EntityTile_partner"
                     )}
                     subtextLabel={_t(
-                        "An invitation will be sent to this email address."
+                        "An invitation will be sent to this email address"
                     )}
                     avatarJsx={this.getBaseAvatar(
                         user,
@@ -154,8 +154,8 @@ class InviteMemberDialog extends Component {
                 avatarJsx: this.getBaseAvatar(user),
             };
             const subtextLabel = {
-                join: _t("Already room member."),
-                invite: _t("Already invited."),
+                join: _t("Already room member"),
+                invite: _t("Already invited"),
             };
             return subtextLabel.hasOwnProperty(user.membership) ? (
                 <EntityTile
@@ -168,7 +168,7 @@ class InviteMemberDialog extends Component {
             ) : (
                 <EntityTile
                     {...commonProps}
-                    title={_t("Click to add this user to the invitation list.")}
+                    title={_t("Click to add this user to the invitation list")}
                     showPresence={false}
                     onClick={e => this.addToSelectedList(user)}
                     subtextLabel={
@@ -646,7 +646,7 @@ class EmailInvitation extends Component {
                     !value ||
                     !this.state.pendingSubmission ||
                     Email.looksValid(value),
-                invalid: () => _t("Please enter a valid email address."),
+                invalid: () => _t("Please enter a valid email address"),
             },
             {
                 key: "alreadyInInvitations",
@@ -657,7 +657,7 @@ class EmailInvitation extends Component {
                     ),
                 invalid: () =>
                     _t(
-                        "You have already added this email address to the invitation list."
+                        "You have already added this email address to the invitation list"
                     ),
             },
             {
@@ -672,7 +672,7 @@ class EmailInvitation extends Component {
                     ),
                 invalid: () =>
                     _t(
-                        "This email address belongs to a user who is already a room member."
+                        "This email address belongs to a user who is already a room member"
                     ),
             },
             {
@@ -687,7 +687,7 @@ class EmailInvitation extends Component {
                     ),
                 invalid: () =>
                     _t(
-                        "An invitation has already been sent to this email address."
+                        "An invitation has already been sent to this email address"
                     ),
             },
         ],
@@ -745,7 +745,7 @@ class EmailInvitation extends Component {
                             }
                         )}
                         title={_t(
-                            "Add an email address to the invitation list."
+                            "Add an email address to the invitation list"
                         )}
                         onClick={this.onClick}
                     >
@@ -856,7 +856,7 @@ class SelectedList extends Component {
                     Array.isArray(value) && value.length > 0,
                 invalid: () =>
                     _t(
-                        "Please add people to the invitation list before validating the form."
+                        "Please add people to the invitation list before validating the form"
                     ),
             },
         ],

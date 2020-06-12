@@ -337,7 +337,7 @@ export default createReactClass({
                   }
                 : {
                       title: _t(
-                          "You do not have the required privileges to invite users to this room."
+                          "You do not have the required privileges to invite users to this room"
                       ),
                       disabled: true
                   };
