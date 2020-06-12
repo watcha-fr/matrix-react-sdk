@@ -649,7 +649,7 @@ class EmailInvitation extends Component {
                 invalid: () => _t("Please enter a valid email address"),
             },
             {
-                key: "alreadyInInvitations",
+                key: "emailAlreadyInInvitations",
                 test: async ({ value }) =>
                     !value ||
                     !this.props.selectedList.some(
@@ -658,6 +658,18 @@ class EmailInvitation extends Component {
                 invalid: () =>
                     _t(
                         "You have already added this email address to the invitation list"
+                    ),
+            },
+            {
+                key: "userAlreadyInInvitations",
+                test: async ({ value }) =>
+                    !value ||
+                    !this.props.selectedList.some(
+                        user => user.email === value
+                    ),
+                invalid: () =>
+                    _t(
+                        "This email address belongs to a user you have already added to the invitation list"
                     ),
             },
             {
