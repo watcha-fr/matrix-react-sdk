@@ -1012,7 +1012,26 @@ export default createReactClass({
 
         const [shouldCreate, opts] = await modal.finished;
         if (shouldCreate) {
-            createRoom(opts);
+        // change for watcha op332
+        // This code allows to reuse the modal dialog of new room within the administration.
+        // The local storage is used here as a communication interface between Riot and the
+        // administration, to indicate when and how the operation was completed.
+            createRoom(opts).then(roomId => {
+                const name = opts.createOpts.name;
+                const roomProperties = JSON.stringify({ roomId, name });
+                window.localStorage.setItem(
+                    "watcha_create_room",
+                    roomProperties
+                );
+            });
+        } else {
+            // Hack: removing this key before recreating it is necessary
+            // to ensure that a "storage" event is emitted (then captured by
+            // the administration interface) in case it already exists with
+            // the same value
+            window.localStorage.removeItem("watcha_create_room");
+            window.localStorage.setItem("watcha_create_room", null);
+        // end change for watcha
         }
     },
 
