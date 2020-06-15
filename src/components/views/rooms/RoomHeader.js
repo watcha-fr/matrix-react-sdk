@@ -384,7 +384,7 @@ export default createReactClass({
                     { topicElement }
                     { cancelButton }
                     { rightRow }
-                    <RoomHeaderButtons />
+                    <RoomHeaderButtons roomId={this.props.room.roomId} /> {/* change for watcha op292 */}
                 </div>
             </div>
         );

@@ -30,6 +30,7 @@ import SettingsStore from "../../settings/SettingsStore";
 import {RIGHT_PANEL_PHASES, RIGHT_PANEL_PHASES_NO_ARGS} from "../../stores/RightPanelStorePhases";
 import RightPanelStore from "../../stores/RightPanelStore";
 import MatrixClientContext from "../../contexts/MatrixClientContext";
+import SdkConfig from '../../SdkConfig'; // insertion for Watcha
 
 export default class RightPanel extends React.Component {
     static get propTypes() {
@@ -199,13 +200,13 @@ export default class RightPanel extends React.Component {
         const FilePanel = sdk.getComponent('structures.FilePanel');
         */
 
-        /* insertion for Watcha */
+        // insertion for Watcha
         const FilePanel = sdk.getComponent(
             SettingsStore.getValue("fileExplorer")
                 ? "structures.watcha_FilePanel"
                 : "structures.FilePanel"
         );
-        /* end of insertion */
+        // end insertion for Watcha
 
         const GroupMemberList = sdk.getComponent('groups.GroupMemberList');
         const GroupMemberInfo = sdk.getComponent('groups.GroupMemberInfo');
@@ -307,6 +308,17 @@ export default class RightPanel extends React.Component {
                 break;
             case RIGHT_PANEL_PHASES.FilePanel:
                 panel = <FilePanel roomId={this.props.roomId} resizeNotifier={this.props.resizeNotifier} />;
+                // insertion for watcha op292
+                const config = SdkConfig.get();
+                const nextcloudDirectory = config.nextcloud && config.nextcloud[this.props.roomId];
+                if (nextcloudDirectory) {
+                    panel = (
+                        <iframe className="watcha_Nextcloud"
+                            src={`/nextcloud/apps/files/?dir=/${nextcloudDirectory}`}
+                        />
+                    );
+                }
+                // end insertion for watcha
                 break;
         }
 

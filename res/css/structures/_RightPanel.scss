@@ -75,6 +75,14 @@ limitations under the License.
     mask-image: url('$(res)/img/feather-customised/files.svg');
 }
 
+// insertion for watcha op292
+.mx_RightPanel_nextcloudButton::before {
+    mask-image: url('$(res)/img/watcha_nextcloud.svg');
+    mask-position: center;
+    background-color: #0082c9;
+}
+// end insertion for watcha
+
 .mx_RightPanel_notifsButton::before {
     mask-image: url('$(res)/img/feather-customised/notifications.svg');
 }

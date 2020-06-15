@@ -500,20 +500,6 @@ export const SETTINGS = {
         displayName: _td("Show previews/thumbnails for images"),
         default: true,
     },
-    /* insertion for watcha */
-    "fileExplorer": {
-        supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS,
-        displayName: _td("Show a file explorer in the right panel"),
-        default: true,
-    },
-    // watcha op213
-    "showChatEvents": {
-        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
-        displayName: _td("See arrival, departures, and other events in chats"),
-        default: false,
-        controller: new ReloadOnChangeController(),
-    },
-    /* end of insertion */
     "showRightPanelInRoom": {
         supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS,
         default: false,
@@ -557,4 +543,18 @@ export const SETTINGS = {
             MatrixClient.prototype.setCryptoTrustCrossSignedDevices, true,
         ),
     },
+    // insertion for watcha
+    "fileExplorer": {
+        supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS,
+        displayName: _td("Show a file explorer in the right panel"),
+        default: true,
+    },
+    // watcha op213
+    "showChatEvents": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("See arrival, departures, and other events in chats"),
+        default: false,
+        controller: new ReloadOnChangeController(),
+    },
+    // end insertion for watcha
 };

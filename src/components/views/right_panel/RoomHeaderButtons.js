@@ -23,6 +23,7 @@ import { _t } from '../../../languageHandler';
 import HeaderButton from './HeaderButton';
 import HeaderButtons, {HEADER_KIND_ROOM} from './HeaderButtons';
 import {RIGHT_PANEL_PHASES} from "../../../stores/RightPanelStorePhases";
+import SdkConfig from '../../../SdkConfig'; // insertion for watcha op292
 
 const MEMBER_PHASES = [
     RIGHT_PANEL_PHASES.RoomMemberList,
@@ -78,6 +79,11 @@ export default class RoomHeaderButtons extends HeaderButtons {
     }
 
     renderButtons() {
+        // insertion for watcha op292
+        const config = SdkConfig.get();
+        const buttonName = config.nextcloud && config.nextcloud[this.props.roomId] ? "nextcloudButton" : "filesButton";        
+        // end insertion for watcha
+
         return [
             <HeaderButton key="membersButton" name="membersButton"
                 title={_t('Members')}
@@ -85,7 +91,7 @@ export default class RoomHeaderButtons extends HeaderButtons {
                 onClick={this._onMembersClicked}
                 analytics={['Right Panel', 'Member List Button', 'click']}
             />,
-            <HeaderButton key="filesButton" name="filesButton"
+            <HeaderButton key="filesButton" name={buttonName} // change for watcha op292
                 title={_t('Files')}
                 isHighlighted={this.isPhase(RIGHT_PANEL_PHASES.FilePanel)}
                 onClick={this._onFilesClicked}
