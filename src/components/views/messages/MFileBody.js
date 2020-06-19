@@ -27,6 +27,7 @@ import Tinter from '../../../Tinter';
 import request from 'browser-request';
 import Modal from '../../../Modal';
 import AccessibleButton from "../elements/AccessibleButton";
+import SettingsStore from '../../../settings/SettingsStore'; // insertion for watcha op352
 
 
 // A cached tinted copy of require("../../../../res/img/download.svg")
@@ -167,7 +168,13 @@ export default createReactClass({
 
     _getContentUrl: function() {
         const content = this.props.mxEvent.getContent();
-        return MatrixClientPeg.get().mxcUrlToHttp(content.url);
+        // modified for watcha op352: added allowDirectLinks=true
+        return MatrixClientPeg.get().mxcUrlToHttp(
+            content.url,
+            undefined,
+            undefined,
+            undefined,
+            true);
     },
 
     // TODO: [REACT-WARNING] Replace component with real class, use constructor for refs
@@ -366,7 +373,15 @@ export default createReactClass({
                         <div className="mx_MFileBody_download">
                             <a {...downloadProps}>
                                 <img src={tintedDownloadImageURL} width="12" height="14" ref={this._downloadImage} />
-                                { _t("Download %(text)s", { text: text }) }
+                                {/* change for watcha op352 */
+                                    _t(
+                                        SettingsStore.getValue("nextcloud", this.props.mxEvent.getRoomId())
+                                        && !this.props.mxEvent.getContent().url.startsWith("mxc://")
+                                            ? "Show %(text)s in Nextcloud"
+                                            : "Download %(text)s",
+                                        { text: text }
+                                    )
+                                /* end change for watcha */}
                             </a>
                         </div>
                     </span>
