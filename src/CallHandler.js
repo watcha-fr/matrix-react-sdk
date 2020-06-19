@@ -332,6 +332,7 @@ function _onAction(payload) {
                 if (members.length <= 1) {
                     const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
                     Modal.createTrackedDialog('Call Handler', 'Cannot place call with self', ErrorDialog, {
+                        title: _t('Cannot place call'), // added for watcha op257
                         description: _t('You cannot place a call with yourself.'),
                     });
                     return;
