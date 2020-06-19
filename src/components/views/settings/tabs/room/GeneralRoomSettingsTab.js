@@ -63,9 +63,7 @@ export default class GeneralRoomSettingsTab extends React.Component {
 
         return (
             <div className="mx_SettingsTab mx_GeneralRoomSettingsTab">
-                {
-                    <div className="mx_SettingsTab_heading">{/* removed for watcha _t("General")*/}</div>
-               }
+                <div className="mx_SettingsTab_heading">{/* removed for watcha _t("General")*/}</div>
                 <div className='mx_SettingsTab_section mx_GeneralRoomSettingsTab_profileSection'>
                     <RoomProfileSettings roomId={this.props.roomId} />
                 </div>
@@ -84,12 +82,13 @@ export default class GeneralRoomSettingsTab extends React.Component {
                                           canSetRelatedGroups={canChangeGroups}
                                           relatedGroupsEvent={groupsEvent} />
                 </div>
+
                 <span className='mx_SettingsTab_subheading'>{_t("URL Previews")}</span>
                 <div className='mx_SettingsTab_section'>
                     <UrlPreviewSettings room={room} />
                 </div>
+                */}
 
-                    */}
                 <span className='mx_SettingsTab_subheading'>{_t("Leave room")}</span>
                 <div className='mx_SettingsTab_section'>
                     <AccessibleButton kind='danger' onClick={this._onLeaveClick}>

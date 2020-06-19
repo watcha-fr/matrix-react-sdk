@@ -556,5 +556,11 @@ export const SETTINGS = {
         default: false,
         controller: new ReloadOnChangeController(),
     },
+    // watcha op292
+    "nextcloud": {
+        supportedLevels: ["room"],
+        displayName: _td("Using a Nextcloud directory for file management"),
+        default: null,
+    },
     // end insertion for watcha
 };

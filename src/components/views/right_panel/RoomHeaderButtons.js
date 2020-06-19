@@ -23,7 +23,7 @@ import { _t } from '../../../languageHandler';
 import HeaderButton from './HeaderButton';
 import HeaderButtons, {HEADER_KIND_ROOM} from './HeaderButtons';
 import {RIGHT_PANEL_PHASES} from "../../../stores/RightPanelStorePhases";
-import SdkConfig from '../../../SdkConfig'; // insertion for watcha op292
+import SettingsStore from '../../../settings/SettingsStore'; // insertion for watcha op292
 
 const MEMBER_PHASES = [
     RIGHT_PANEL_PHASES.RoomMemberList,
@@ -80,8 +80,8 @@ export default class RoomHeaderButtons extends HeaderButtons {
 
     renderButtons() {
         // insertion for watcha op292
-        const config = SdkConfig.get();
-        const buttonName = config.nextcloud && config.nextcloud[this.props.roomId] ? "nextcloudButton" : "filesButton";        
+        const nextcloudDirectory = SettingsStore.getValue("nextcloud", this.props.roomId);
+        const buttonName = nextcloudDirectory ? "nextcloudButton" : "filesButton";        
         // end insertion for watcha
 
         return [

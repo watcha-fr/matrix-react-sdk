@@ -162,8 +162,8 @@ class UploadButton extends React.Component {
 
     render() {
         // insertion for watcha op292
-        const config = SdkConfig.get();
-        const showUploadButton = !config.nextcloud || !config.nextcloud[this.props.roomId] || null;
+        const nextcloudDirectory = SettingsStore.getValue("nextcloud", this.props.roomId);
+        const showUploadButton = !nextcloudDirectory || null;
         // end insertion for watcha
     
         const uploadInputStyle = {display: 'none'};

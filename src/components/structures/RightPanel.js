@@ -30,7 +30,6 @@ import SettingsStore from "../../settings/SettingsStore";
 import {RIGHT_PANEL_PHASES, RIGHT_PANEL_PHASES_NO_ARGS} from "../../stores/RightPanelStorePhases";
 import RightPanelStore from "../../stores/RightPanelStore";
 import MatrixClientContext from "../../contexts/MatrixClientContext";
-import SdkConfig from '../../SdkConfig'; // insertion for Watcha
 
 export default class RightPanel extends React.Component {
     static get propTypes() {
@@ -309,14 +308,9 @@ export default class RightPanel extends React.Component {
             case RIGHT_PANEL_PHASES.FilePanel:
                 panel = <FilePanel roomId={this.props.roomId} resizeNotifier={this.props.resizeNotifier} />;
                 // insertion for watcha op292
-                const config = SdkConfig.get();
-                const nextcloudDirectory = config.nextcloud && config.nextcloud[this.props.roomId];
+                const nextcloudDirectory = SettingsStore.getValue("nextcloud", this.props.roomId);
                 if (nextcloudDirectory) {
-                    panel = (
-                        <iframe className="watcha_Nextcloud"
-                            src={`/nextcloud/apps/files/?dir=/${nextcloudDirectory}`}
-                        />
-                    );
+                    panel = <iframe className="watcha_Nextcloud" src={nextcloudDirectory} />;
                 }
                 // end insertion for watcha
                 break;

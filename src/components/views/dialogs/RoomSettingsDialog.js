@@ -61,7 +61,7 @@ export default class RoomSettingsDialog extends React.Component {
             "mx_RoomSettingsDialog_settingsIcon",
             <GeneralRoomSettingsTab roomId={this.props.roomId} />,
         ));
-        {/* modified for watcha: conditional with undocumented config */}
+        /* modified for watcha: conditional with undocumented config */
         if (SdkConfig.get().watchaE2E) {
         tabs.push(new Tab(
             _td("Security & Privacy"),
