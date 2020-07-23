@@ -147,11 +147,20 @@ export default createReactClass({
      */
     presentableTextForFile: function(content) {
         let linkText = _t("Attachment");
+
+        // modification for Watcha OP474
         if (content.body && content.body.length > 0) {
             // The content body should be the name of the file including a
             // file extension.
-            linkText = content.body;
+            linkText = [
+                "file_created",
+                "file_restored",
+                "file_deleted",
+            ].includes(content.body)
+                ? content.filename
+                : content.body;
         }
+        // end of modification
 
         if (content.info && content.info.size) {
             // If we know the size of the file then add it as human readable
@@ -373,20 +382,44 @@ export default createReactClass({
                         <div className="mx_MFileBody_download">
                             <a {...downloadProps}>
                                 <img src={tintedDownloadImageURL} width="12" height="14" ref={this._downloadImage} />
-                                {/* change for watcha op352 */
+                                {
+                                    //modification for watcha op352
                                     _t(
-                                        SettingsStore.getValue("nextcloud", this.props.mxEvent.getRoomId())
-                                        && !this.props.mxEvent.getContent().url.startsWith("mxc://")
+                                        SettingsStore.getValue(
+                                            "nextcloud",
+                                            this.props.mxEvent.getRoomId()
+                                        ) && !content.url.startsWith("mxc://")
                                             ? "Show %(text)s in Nextcloud"
                                             : "Download %(text)s",
                                         { text: text }
                                     )
-                                /* end change for watcha */}
+                                    // end of modification
+                                }
                             </a>
                         </div>
                     </span>
                 );
             }
+        // insertion for Watcha OP474
+        } else if (
+            content.msgtype === "m.file" &&
+            content.body === "file_deleted"
+        ) {
+            return (
+                <span className="mx_MFileBody">
+                    <div className="watcha_MFileBody_delete">
+                        <img
+                            src={require("../../../../res/img/icon_context_delete.svg")}
+                            width="12"
+                            height="14"
+                        />
+                        {_t("The file %(text)s has been deleted in Nextcloud", {
+                            text: text,
+                        })}
+                    </div>
+                </span>
+            );
+        // end of insertion
         } else {
             const extra = text ? (': ' + text) : '';
             return <span className="mx_MFileBody">

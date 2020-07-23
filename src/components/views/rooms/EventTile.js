@@ -727,14 +727,26 @@ export default createReactClass({
             if (!this.props.tileShape || this.props.tileShape === 'reply' || this.props.tileShape === 'reply_preview') {
                 if (msgtype === 'm.image') text = _td('%(senderName)s sent an image');
                 else if (msgtype === 'm.video') text = _td('%(senderName)s sent a video');
-                // change for watcha op352
-                else if (msgtype === 'm.file') text = _td(
-                    SettingsStore.getValue("nextcloud", this.props.mxEvent.getRoomId())
-                    && !this.props.mxEvent.getContent().url.startsWith("mxc://")
-                        ? "A file has been added"
-                        : '%(senderName)s uploaded a file'
-                );
-                // end change for watcha
+                // modification for watcha op474
+                else if (msgtype === "m.file") {
+                    if (
+                        SettingsStore.getValue(
+                            "nextcloud",
+                            this.props.mxEvent.getRoomId()
+                        ) &&
+                        !content.url.startsWith("mxc://")
+                    ) {
+                        if (content.body === "file_created")
+                            text = _td("%(senderName)s has added a file");
+                        if (content.body === "file_restored")
+                            text = _td("%(senderName)s has restored a file");
+                        if (content.body === "file_deleted")
+                            text = _td("%(senderName)s has deleted a file");
+                    } else {
+                        text = _td("%(senderName)s uploaded a file");
+                    }
+                }
+                // end of modification
                 sender = <SenderProfile onClick={this.onSenderProfileClick}
                                         mxEvent={this.props.mxEvent}
                                         enableFlair={!text}

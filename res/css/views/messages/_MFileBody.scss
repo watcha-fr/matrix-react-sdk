@@ -18,6 +18,13 @@ limitations under the License.
     color: $accent-color;
 }
 
+// insertion for Watcha OP474
+.watcha_MFileBody_delete {
+    display: flex;
+    align-items: center;
+}
+// end of insertion
+
 .mx_MFileBody_download a {
     color: $accent-color;
     text-decoration: none;

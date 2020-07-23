@@ -529,6 +529,15 @@ export default class MessagePanel extends React.Component {
             continuation = true;
         }
 
+        // insertion for Watcha OP474
+        if (
+            ["file_created", "file_restored", "file_deleted"].includes(
+                mxEv.getContent().body
+            )
+        ) {
+            continuation = false;
+        }
+        // end of insertion
 /*
         // Work out if this is still a continuation, as we are now showing commands
         // and /me messages with their own little avatar. The case of a change of
