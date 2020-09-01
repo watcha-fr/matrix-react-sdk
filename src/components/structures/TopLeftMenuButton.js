@@ -24,11 +24,10 @@ import * as Avatar from '../../Avatar';
 import { _t } from '../../languageHandler';
 import dis from "../../dispatcher";
 import {ContextMenu, ContextMenuButton} from "./ContextMenu";
-
-/* insertion for watcha*/
+// watcha+
 import LogoutDialog from "../views/dialogs/LogoutDialog";
 import Modal from "../../Modal";
-/*end of insertion*/
+// +watcha
 
 const AVATAR_SIZE = 28;
 
@@ -95,22 +94,20 @@ export default class TopLeftMenuButton extends React.Component {
         }
     }
 
-    // insertion for watcha
+    // watcha+
     openSettings() {
         dis.dispatch({ action: "view_user_settings" });
-        this.closeMenu();
     }
 
     signOut() {
         Modal.createTrackedDialog("Logout E2E Export", "", LogoutDialog);
-        this.closeMenu();
     }
 
     onUserBoxContainerClick(ev) {
         ev.stopPropagation();
         dis.dispatch({ action: "view_home_page" });
     }
-    // end of insertion
+    // +watcha
 
     openMenu = (e) => {
         e.preventDefault();
@@ -125,17 +122,26 @@ export default class TopLeftMenuButton extends React.Component {
     };
 
     render() {
+        // watcha+
+        const signInOutItem = (
+            <li
+                className="mx_TopLeftMenu_icon_signout"
+                onClick={this.signOut}
+                tabIndex={0}
+            ></li>
+        );
+        const settingsItem = (
+            <li
+                className="mx_TopLeftMenu_icon_settings"
+                onClick={this.openSettings}
+                tabIndex={0}
+            ></li>
+        );
+        // +watcha
+
         const cli = MatrixClientPeg.get().getUserId();
 
         const name = this._getDisplayName();
-        /*insertion for watcha*/
-        /* TODO: this is not clean (li's inside a div??) */
-        const signInOutItem = <li className="mx_TopLeftMenu_icon_signout" onClick={this.signOut} tabIndex={0}>
-            </li>;
-
-        const settingsItem = <li className="mx_TopLeftMenu_icon_settings" onClick={this.openSettings} tabIndex={0}>
-        </li>;
-        /*end of insertion*/
         let nameElement;
         let chevronElement;
         if (!this.props.collapsed) {
@@ -164,15 +170,15 @@ export default class TopLeftMenuButton extends React.Component {
         return <React.Fragment>
             <ContextMenuButton
                 className="mx_TopLeftMenuButton"
-                // change for watcha: was onClick={this.openMenu}
-                onClick={() => {}}
+                /* watcha!
+                onClick={this.openMenu}
+                !watcha */
+                onClick={() => {}} // watcha+
                 inputRef={(r) => this._buttonRef = r}
                 label={_t("Your profile")}
                 isExpanded={this.state.menuDisplayed}
             >
-                {/* insertion for watcha */}
-                <span className="HomePageButton" onClick={this.onUserBoxContainerClick}>
-                {/* end of insertion */}
+                <span className="HomePageButton" onClick={this.onUserBoxContainerClick}> {/* watcha+ */}
                 <BaseAvatar
                     idName={MatrixClientPeg.get().getUserId()}
                     name={name}
@@ -182,16 +188,16 @@ export default class TopLeftMenuButton extends React.Component {
                     resizeMethod="crop"
                 />
                 { nameElement }
-                {/* deletion for watcha  
+                {/* watcha!  
                 { chevronElement }
-                */}
-                {/* insertion for watcha */}
+                !watcha */}
+                {/* watcha+ */}
                 </span>
                 <div className="TopLeftMenuButonsContainer">
                     {settingsItem}
                     {signInOutItem}
                 </div>
-                {/* end of insertion */}
+                {/* +watcha */}
             </ContextMenuButton>
 
             { contextMenu }

@@ -82,6 +82,7 @@ export default class LogoutDialog extends React.Component {
 
     _onFinished(confirmed) {
         if (confirmed) {
+            this._oidc_logout() // watcha+ op479
             dis.dispatch({action: 'logout'});
         }
         // close dialog
@@ -110,14 +111,70 @@ export default class LogoutDialog extends React.Component {
     }
 
     _onLogoutConfirm() {
+        this._oidc_logout() // watcha+ op479
         dis.dispatch({action: 'logout'});
 
         // close dialog
         this.props.onFinished();
     }
 
+    // watcha+ op479
+    async _oidc_logout() {
+        const mxClient = MatrixClientPeg.get();
+        const ssoLoginUrl = mxClient.getSsoLoginUrl("");
+        fetch(ssoLoginUrl)
+            .then(response => {
+                if (response.ok) {
+                    return Promise.resolve(response.url);
+                } else {
+                    return Promise.reject(
+                        "this homeserver does not handle SSO"
+                    );
+                }
+            })
+            .then(authUrl => {
+                const match = authUrl.match(".+/realms/[^/]+");
+                if (match) {
+                    const realmUrl = match[0];
+                    const oidcConfigUrl =
+                        realmUrl + "/.well-known/openid-configuration";
+                    return fetch(oidcConfigUrl);
+                } else {
+                    return Promise.reject(
+                        "this homeserver is not configured for OpendID"
+                    );
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    return Promise.reject("OpendID configuration not found");
+                }
+            })
+            .then(oidcConfig => {
+                if (oidcConfig.end_session_endpoint) {
+                    const sloUrl = new URL(oidcConfig.end_session_endpoint);
+                    sloUrl.searchParams.set(
+                        "redirect_uri",
+                        window.location.origin
+                    );
+                    window.location.href = sloUrl;
+                } else {
+                    return Promise.reject("end session endpoint not found");
+                }
+            })
+            .catch(error => {
+                console.warn("Single Logout failed:", error);
+            });
+    }
+    // +watcha
+
     render() {
+        /* watcha!
         if (this.state.shouldLoadBackupStatus) {
+        !watcha */
+        if (false) { // watcha+
             const BaseDialog = sdk.getComponent('views.dialogs.BaseDialog');
 
             const description = <div>
@@ -146,27 +203,23 @@ export default class LogoutDialog extends React.Component {
 
                 dialogContent = <div>
                     <div className="mx_Dialog_content" id='mx_Dialog_content'>
-                        { /*removed for watcha
-                        description */}
+                        { description }
                     </div>
-                    {/*change for watcha we change the  onPrimaryButtonClick from saving backup to dismiss the dialog*/}
                     <DialogButtons primaryButton={setupButtonCaption}
                         hasCancel={false}
-                        onPrimaryButtonClick={this.props.onFinished}
+                        onPrimaryButtonClick={this._onSetRecoveryMethodClick}
                         focus={true}
                     >
                         <button onClick={this._onLogoutConfirm}>
                             {_t("I don't want my encrypted messages")}
                         </button>
                     </DialogButtons>
-                    {/*removed for watcha
                     <details>
                         <summary>{_t("Advanced")}</summary>
                         <p><button onClick={this._onExportE2eKeysClicked}>
                             {_t("Manually export keys")}
                         </button></p>
                     </details>
-                    */}
                 </div>;
             }
             // Not quite a standard question dialog as the primary button cancels
