@@ -82,8 +82,10 @@ export default class LogoutDialog extends React.Component {
 
     _onFinished(confirmed) {
         if (confirmed) {
-            this._oidc_logout() // watcha+ op479
+            /* watcha! op479
             dis.dispatch({action: 'logout'});
+            !watcha */
+            this._oidc_logout() // watcha+
         }
         // close dialog
         this.props.onFinished();
@@ -111,8 +113,10 @@ export default class LogoutDialog extends React.Component {
     }
 
     _onLogoutConfirm() {
-        this._oidc_logout() // watcha+ op479
+        /* watcha! op479
         dis.dispatch({action: 'logout'});
+        !watcha */
+        this._oidc_logout() // watcha+
 
         // close dialog
         this.props.onFinished();
@@ -167,6 +171,7 @@ export default class LogoutDialog extends React.Component {
             .catch(error => {
                 console.warn("Single Logout failed:", error);
             });
+        dis.dispatch({action: 'logout'});
     }
     // +watcha
 
