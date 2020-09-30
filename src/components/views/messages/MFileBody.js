@@ -156,6 +156,7 @@ export default createReactClass({
                 "file_created",
                 "file_restored",
                 "file_deleted",
+                "file_moved",
             ].includes(content.body)
                 ? content.filename
                 : content.body;

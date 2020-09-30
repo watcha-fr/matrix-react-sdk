@@ -531,7 +531,7 @@ export default class MessagePanel extends React.Component {
 
         // insertion for Watcha OP474
         if (
-            ["file_created", "file_restored", "file_deleted"].includes(
+            ["file_created", "file_restored", "file_deleted", "file_moved"].includes(
                 mxEv.getContent().body
             )
         ) {

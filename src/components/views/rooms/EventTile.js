@@ -737,11 +737,13 @@ export default createReactClass({
                         !content.url.startsWith("mxc://")
                     ) {
                         if (content.body === "file_created")
-                            text = _td("%(senderName)s has added a file");
+                            text = _td("%(senderName)s added a file");
                         if (content.body === "file_restored")
-                            text = _td("%(senderName)s has restored a file");
+                            text = _td("%(senderName)s restored a file");
                         if (content.body === "file_deleted")
-                            text = _td("%(senderName)s has deleted a file");
+                            text = _td("%(senderName)s deleted a file");
+                        if (content.body === "file_moved")
+                            text = _td("%(senderName)s moved a file");
                     } else {
                         text = _td("%(senderName)s uploaded a file");
                     }
