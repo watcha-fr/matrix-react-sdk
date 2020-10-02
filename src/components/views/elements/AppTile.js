@@ -715,6 +715,11 @@ export default class AppTile extends React.Component {
                 </div>
             );
             if (!this.state.hasPermissionToLoad) {
+                 // watcha+ op400
+                if (this.props.app.id.startsWith("jitsi_")) {
+                    this._grantWidgetPermission()
+                } else {
+                // +watcha
                 const isEncrypted = MatrixClientPeg.get().isRoomEncrypted(this.props.room.roomId);
                 appTileBody = (
                     <div className={appTileBodyClass}>
@@ -727,6 +732,7 @@ export default class AppTile extends React.Component {
                         />
                     </div>
                 );
+                } // watcha+
             } else if (this.state.initialising) {
                 appTileBody = (
                     <div className={appTileBodyClass + (this.state.loading ? 'mx_AppLoading' : '')}>
