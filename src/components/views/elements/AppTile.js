@@ -173,6 +173,12 @@ export default class AppTile extends React.Component {
 
         // Widget action listeners
         this.dispatcherRef = dis.register(this._onAction);
+        // watcha+
+        dis.dispatch({
+            action: "appsDrawer",
+            show: true,
+        });
+        // +watcha
     }
 
     componentWillUnmount() {
@@ -657,6 +663,12 @@ export default class AppTile extends React.Component {
     _onPopoutWidgetClick() {
         // Using Object.assign workaround as the following opens in a new window instead of a new tab.
         // window.open(this._getPopoutUrl(), '_blank', 'noopener=yes');
+        // watcha+
+        dis.dispatch({
+            action: 'appsDrawer',
+            show: false,
+        });
+        // +watcha
         Object.assign(document.createElement('a'),
             { target: '_blank', href: this._getPopoutUrl(), rel: 'noreferrer noopener'}).click();
     }
