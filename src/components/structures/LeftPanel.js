@@ -26,11 +26,7 @@ import * as VectorConferenceHandler from '../../VectorConferenceHandler';
 import SettingsStore from '../../settings/SettingsStore';
 import {_t} from "../../languageHandler";
 import Analytics from "../../Analytics";
-/* insertion for watcha */
-import {MatrixClientPeg} from '../../MatrixClientPeg';
-import AdminAccess from './watcha_AdminAccess';
-/* end of insertion */
-
+import LeftPanelExtension from './watcha_LeftPanelExtension'; // watcha+ op565
 
 const LeftPanel = createReactClass({
     displayName: 'LeftPanel',
@@ -47,23 +43,6 @@ const LeftPanel = createReactClass({
             breadcrumbs: false,
         };
     },
-
-    /* insertion for watcha */
-    componentDidMount: function() {
-        const self = this;
-        MatrixClientPeg.get()
-            .isWatchaAdmin()
-            .then(response => {
-                self.setState({ isServerAdmin: response.is_admin }, () => {
-                    self.forceUpdate();
-                });
-            })
-            .catch(error => {
-                console.error(error);
-                self.setState({ isServerAdmin: false });
-            });
-    },
-    /* end of insertion */
 
     // TODO: [REACT-WARNING] Move this to constructor
     UNSAFE_componentWillMount: function() {
@@ -294,13 +273,6 @@ const LeftPanel = createReactClass({
             breadcrumbs = (<RoomBreadcrumbs collapsed={this.props.collapsed} />);
         }
 
-        {/* insertion for watcha */}
-        let adminAccess;
-        if (this.state.isServerAdmin) {
-            adminAccess = (<AdminAccess collapsed={this.props.collapsed} />);
-        };
-        {/* end of insertion */}
-
         return (
             <div className={containerClasses}>
                 { tagPanelContainer }
@@ -309,9 +281,9 @@ const LeftPanel = createReactClass({
                     { breadcrumbs }
                     <CallPreview ConferenceHandler={VectorConferenceHandler} />
                     <div className="mx_LeftPanel_exploreAndFilterRow" onKeyDown={this._onKeyDown} onFocus={this._onFocus} onBlur={this._onBlur}>
-                        {/* deletion for watcha
+                        {/* watcha!
                         { exploreButton }
-                        */}
+                        !watcha */}
                         { searchBox }
                     </div>
                     <RoomList
@@ -323,9 +295,7 @@ const LeftPanel = createReactClass({
                         collapsed={this.props.collapsed}
                         searchFilter={this.state.searchFilter}
                         ConferenceHandler={VectorConferenceHandler} />
-                    {/* insertion for watcha */}
-                    { adminAccess }
-                    {/* end of insertion */}
+                    <LeftPanelExtension collapsed={this.props.collapsed} /> {/* watcha+ op565 */}
                 </aside>
             </div>
         );
