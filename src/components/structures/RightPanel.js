@@ -308,9 +308,9 @@ export default class RightPanel extends React.Component {
             case RIGHT_PANEL_PHASES.FilePanel:
                 panel = <FilePanel roomId={this.props.roomId} resizeNotifier={this.props.resizeNotifier} />;
                 // watcha+ op292 op413
-                const nextcloudDirectory = SettingsStore.getValue("nextcloud", this.props.roomId);
-                if (nextcloudDirectory) {
-                    panel = <iframe id="watcha_Nextcloud" className="watcha_Nextcloud" src={nextcloudDirectory} />;
+                const nextcloudFolder = SettingsStore.getValue("nextcloud", this.props.roomId);
+                if (nextcloudFolder) {
+                    panel = <iframe id="watcha_Nextcloud" className="watcha_Nextcloud" src={nextcloudFolder} />;
                 }
                 // +watcha
                 break;

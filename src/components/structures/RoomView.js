@@ -871,6 +871,15 @@ export default createReactClass({
     },
 
     onRoomStateEvents: function(ev, state) {
+        // watcha+ op566
+        if (
+            ev.getType() == "im.vector.web.settings" &&
+            ev.getContent().hasOwnProperty("nextcloud")
+        ) {
+            this.forceUpdate();
+        }
+        // +watcha
+
         // ignore if we don't have a room yet
         if (!this.state.room || this.state.room.roomId !== state.roomId) {
             return;

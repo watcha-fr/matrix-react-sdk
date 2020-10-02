@@ -543,24 +543,22 @@ export const SETTINGS = {
             MatrixClient.prototype.setCryptoTrustCrossSignedDevices, true,
         ),
     },
-    // insertion for watcha
+    // watcha+
     "fileExplorer": {
         supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS,
         displayName: _td("Show a file explorer in the right panel"),
         default: true,
     },
-    // watcha op213
-    "showChatEvents": {
+    "showChatEvents": { // op213
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td("See arrival, departures, and other events in chats"),
         default: false,
         controller: new ReloadOnChangeController(),
     },
-    // watcha op292
-    "nextcloud": {
+    "nextcloud": { // op292
         supportedLevels: ["room"],
-        displayName: _td("Using a Nextcloud directory for file management"),
+        displayName: _td("Share a Nextcloud folder along its content with room members and use it as a common storage space"),
         default: null,
     },
-    // end insertion for watcha
+    // +watcha
 };

@@ -20,8 +20,6 @@ import {_t} from "../../../languageHandler";
 import {MatrixClientPeg} from "../../../MatrixClientPeg";
 import Field from "../elements/Field";
 import * as sdk from "../../../index";
-import SettingsStore from '../../../settings/SettingsStore'; // insertion for watcha op292
-import withValidation from '../elements/Validation'; // insertion for watcha op396
 
 // TODO: Merge with ProfileSettings?
 export default class RoomProfileSettings extends React.Component {
@@ -46,16 +44,7 @@ export default class RoomProfileSettings extends React.Component {
         const nameEvent = room.currentState.getStateEvents('m.room.name', '');
         const name = nameEvent && nameEvent.getContent() ? nameEvent.getContent()['name'] : '';
 
-        const nextcloudDirectory = SettingsStore.getValue("nextcloud", this.props.roomId) || ''; // insertion for watcha op396
-
         this.state = {
-            // insertion for watcha op396
-            originalNextcloudDirectory: nextcloudDirectory,
-            nextcloudDirectory,
-            flagInvalid: false,
-            tooltipContent: null,
-            tooltipClassName: null,
-            // end insertion for watcha
             originalDisplayName: name,
             displayName: name,
             originalAvatarUrl: avatarUrl,
@@ -70,7 +59,6 @@ export default class RoomProfileSettings extends React.Component {
         };
 
         this._avatarUpload = createRef();
-        this._submitting = false; // insertion for watcha op396
     }
 
     _uploadAvatar = () => {
@@ -92,32 +80,6 @@ export default class RoomProfileSettings extends React.Component {
         e.preventDefault();
 
         if (!this.state.enableProfileSave) return;
-
-        // insertion for watcha op396
-        this._submitting = true
-        const { nextcloudDirectory, originalNextcloudDirectory } = this.state;
-        const result = await this.validateNc({ value: nextcloudDirectory, focused: true, allowEmpty: false })
-        
-        if (result.valid) {
-            this.setState({
-                flagInvalid: false,
-                tooltipContent: null
-            });
-            if (originalNextcloudDirectory !== nextcloudDirectory) {
-                await SettingsStore.setValue("nextcloud", this.props.roomId, "room", nextcloudDirectory);
-                this.setState({ originalNextcloudDirectory: nextcloudDirectory });
-                this._submitting = false;
-            }
-        } else {
-            this.ncFieldRef.focus();
-            this.setState({
-                flagInvalid: true,
-                tooltipContent: result.feedback,
-            });
-            return;
-        }
-        // end insertion for watcha
-
         this.setState({enableProfileSave: false});
 
         const client = MatrixClientPeg.get();
@@ -147,43 +109,6 @@ export default class RoomProfileSettings extends React.Component {
 
         this.setState(newState);
     };
-
-    // insertion for watcha op396
-    validateNc = withValidation({
-        rules: [
-            {
-                key: "isValid",
-                test: async ({ value }) => (
-                    !value
-                    || value.startsWith(new URL(`nextcloud/apps/files/?dir=/`, window.location.origin))
-                ),
-                invalid: () => _t("Please enter a valid URL for the Nextcloud directory"),
-            },
-        ],
-    })
-
-    _onNextcloudDirectoryChanged = async (e) => {
-        const nextcloudDirectory = e.target.value;
-        this.setState({
-            nextcloudDirectory,
-            enableProfileSave: true,
-        });
-        if (this._submitting) {
-            const result = await this.validateNc({ value: nextcloudDirectory, focused: true, allowEmpty: false })           
-            if (result.valid) {
-                this.setState({
-                    flagInvalid: false,
-                    tooltipContent: null,
-                })
-            } else {
-                this.setState({
-                    flagInvalid: true,
-                    tooltipContent: result.feedback,
-                })
-            }
-        }
-    };
-    // end insertion for watcha
 
     _onDisplayNameChanged = (e) => {
         this.setState({
@@ -236,26 +161,6 @@ export default class RoomProfileSettings extends React.Component {
                         <Field id="profileTopic" label={_t("Room Topic")} disabled={!this.state.canSetTopic}
                                type="text" value={this.state.topic} autoComplete="off"
                                onChange={this._onTopicChanged} element="textarea" />
-                        {/* insertion for watcha op396 */}
-                        {SettingsStore.canSetValue("nextcloud", this.props.roomId, "room") &&
-                            <React.Fragment>
-                                <span className='mx_SettingsTab_subheading'>{SettingsStore.getDisplayName("nextcloud")}</span>
-                                <Field
-                                    ref={ref => {this.ncFieldRef = ref}}
-                                    label={_t("URL of the Nextcloud directory")}
-                                    placeholder={new URL(`nextcloud/apps/files/?dir=/${_t("Folder")}`, window.location.origin).href}
-                                    value={this.state.nextcloudDirectory}
-                                    onChange={this._onNextcloudDirectoryChanged}
-                                    autoComplete="off"
-                                    flagInvalid={this.state.flagInvalid}
-                                    tooltipContent={this.state.tooltipContent}
-                                    tooltipClassName={this.state.tooltipClassName}
-                                    onBlur={() => this.setState({tooltipClassName: "mx_Tooltip_invisible"})}
-                                    onFocus={() => this.setState({tooltipClassName: null})}
-                                />
-                                <p>{_t("nextcloudDisclaimer")}</p>
-                            </React.Fragment>}
-                        {/* end insertion for watcha */}
                     </div>
                     <AvatarSetting
                         avatarUrl={this.state.avatarUrl}

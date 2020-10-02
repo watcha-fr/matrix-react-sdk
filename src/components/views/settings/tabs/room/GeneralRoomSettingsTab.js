@@ -22,6 +22,10 @@ import * as sdk from "../../../../..";
 import AccessibleButton from "../../../elements/AccessibleButton";
 import dis from "../../../../../dispatcher";
 import MatrixClientContext from "../../../../../contexts/MatrixClientContext";
+// watcha+ op566
+import SettingsStore from "../../../../../settings/SettingsStore";
+import NextcloudSettings from "../../../room_settings/watcha_NextcloudSettings";
+// +watcha
 
 export default class GeneralRoomSettingsTab extends React.Component {
     static propTypes = {
@@ -63,19 +67,34 @@ export default class GeneralRoomSettingsTab extends React.Component {
 
         return (
             <div className="mx_SettingsTab mx_GeneralRoomSettingsTab">
-                <div className="mx_SettingsTab_heading">{/* removed for watcha _t("General")*/}</div>
+                <div className="mx_SettingsTab_heading">{_t("General")}</div>
                 <div className='mx_SettingsTab_section mx_GeneralRoomSettingsTab_profileSection'>
                     <RoomProfileSettings roomId={this.props.roomId} />
                 </div>
 
-                {/* removed for watcha
+                {/* watcha+ op566 */}
+                {SettingsStore.canSetValue("nextcloud", this.props.roomId, "room") && (
+                    <React.Fragment>
+                        <div className="mx_SettingsTab_heading">
+                            {_t("Nextcloud share")}
+                        </div>
+                        <div className="mx_SettingsTab_section">
+                            <NextcloudSettings roomId={this.props.roomId} />
+                        </div>
+                    </React.Fragment>
+                )}
+                {/* +watcha */}
+
+                {/* watcha!
                 <div className="mx_SettingsTab_heading">{_t("Room Addresses")}</div>
                 <div className='mx_SettingsTab_section mx_SettingsTab_subsectionText'>
                     <AliasSettings roomId={this.props.roomId}
                                    canSetCanonicalAlias={canSetCanonical} canSetAliases={canSetAliases}
                                    canonicalAliasEvent={canonicalAliasEv} aliasEvents={aliasEvents} />
                 </div>
+                !watcha */}
                 <div className="mx_SettingsTab_heading">{_t("Other")}</div>
+                {/* watcha!
                 <span className='mx_SettingsTab_subheading'>{_t("Flair")}</span>
                 <div className='mx_SettingsTab_section mx_SettingsTab_subsectionText'>
                     <RelatedGroupSettings roomId={room.roomId}
@@ -87,9 +106,9 @@ export default class GeneralRoomSettingsTab extends React.Component {
                 <div className='mx_SettingsTab_section'>
                     <UrlPreviewSettings room={room} />
                 </div>
-                */}
 
                 <span className='mx_SettingsTab_subheading'>{_t("Leave room")}</span>
+                !watcha */}
                 <div className='mx_SettingsTab_section'>
                     <AccessibleButton kind='danger' onClick={this._onLeaveClick}>
                         { _t('Leave room') }

@@ -1,0 +1,32 @@
+.watcha_NextcloudShareDialog {
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+
+    .mx_Dialog_content {
+        flex-grow: 1;
+    }
+    iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        border-bottom: 1px solid black;
+    }
+    .mx_Field {
+        flex-grow: 0 !important;
+    }
+}
+
+.watcha_NextcloudShareDialog_Field_rootSelection {
+    input {
+        color: red !important;
+    }
+}
+
+.watcha_NextcloudShareDialog_Spinner {
+    img {
+        z-index: 0;
+        position: fixed;
+        top: calc(50vh - 16px);
+    }
+}

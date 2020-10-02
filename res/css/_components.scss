@@ -217,9 +217,12 @@
 @import "./structures/_watcha_HomePage.scss";
 @import "./structures/_watcha_LeftPanelExtension.scss";
 @import "./structures/_watcha_FileExplorer.scss";
+@import "./structures/_watcha_HomePage.scss";
 @import "./structures/_watcha_Nextcloud.scss";
 @import "./views/dialogs/_watcha_InviteMemberDialog.scss";
+@import "./views/dialogs/_watcha_NextcloudShareDialog.scss";
 @import "./views/elements/_watcha_IconButton.scss";
 @import "./views/elements/_watcha_OutlineButton.scss";
 @import "./views/elements/_watcha_OutlineIconButton.scss";
-/* end of insertion */
+@import "./views/room_settings/_watcha_NextcloudSettings.scss";
+// +watcha
