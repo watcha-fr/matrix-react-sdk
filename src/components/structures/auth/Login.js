@@ -25,13 +25,11 @@ import Login from '../../../Login';
 import SdkConfig from '../../../SdkConfig';
 import { messageForResourceLimitError } from '../../../utils/ErrorUtils';
 import AutoDiscoveryUtils, {ValidatedServerConfig} from "../../../utils/AutoDiscoveryUtils";
-/*insertion for watcha*/
-import WatchaChangePassword from '../../structures/auth/WatchaChangePassword';
-/* end of insertion*/
 import classNames from "classnames";
 import AuthPage from "../../views/auth/AuthPage";
 import SSOButton from "../../views/elements/SSOButton";
 import PlatformPeg from '../../../PlatformPeg';
+import WatchaChangePassword from '../../structures/auth/WatchaChangePassword'; // watcha+
 
 // For validating phone numbers without country codes
 const PHONE_NUMBER_REGEX = /^[0-9()\-\s]*$/;
@@ -137,11 +135,11 @@ export default createReactClass({
         this._initLoginLogic();
     },
 
-    /* insertion for watcha */
+    // watcha+
     componentDidMount: function () {
         this.onboarding();
     },
-    /* end of insertion */
+    // +watcha
 
     componentWillUnmount: function() {
         this._unmounted = true;
@@ -166,15 +164,17 @@ export default createReactClass({
     isBusy: function() {
         return this.state.busy || this.props.busy;
     },
-    /* insertion for watcha */
-    onboarding: function() {
-        if (document.URL.split('t=')[1]) {
-        this.setState({onboardingUrl: document.URL});
-        this.setState({onboarding: true});
-      }
 
+    // watcha+
+    onboarding: function() {
+        if (document.URL.split("t=")[1]) {
+            this.setState({
+                onboardingUrl: document.URL,
+                onboarding: true,
+            });
+        }
     },
-    /* end of insertion for watcha */
+    // +watcha
 
     onPasswordLogin: async function(username, phoneCountry, phoneNumber, password) {
         if (!this.state.serverIsAlive) {
@@ -604,9 +604,7 @@ export default createReactClass({
 
         return (
             <PasswordLogin
-                /* insertion for watcha */
-                username={this.props.username}
-                /* end of insertion */
+               username={this.props.username} // watcha+
                onSubmit={this.onPasswordLogin}
                onError={this.onPasswordLoginError}
                onEditServerDetailsClick={onEditServerDetailsClick}
@@ -657,10 +655,10 @@ export default createReactClass({
     },
 
     render: function() {
+        const LanguageSelector = sdk.getComponent('views.auth.LanguageSelector'); // watcha+
         const Loader = sdk.getComponent("elements.Spinner");
         const InlineSpinner = sdk.getComponent("elements.InlineSpinner");
         const AuthHeader = sdk.getComponent("auth.AuthHeader");
-        const LanguageSelector = sdk.getComponent('views.auth.LanguageSelector'); // added for watcha
         const AuthBody = sdk.getComponent("auth.AuthBody");
         const loader = this.isBusy() && !this.state.busyLoggingIn ?
             <div className="mx_Login_loader"><Loader /></div> : null;
@@ -677,7 +675,7 @@ export default createReactClass({
         }
 
         let serverDeadSection;
-        /* removed for watcha
+        /* watcha!
         if (!this.state.serverIsAlive) {
             const classes = classNames({
                 "mx_Login_error": true,
@@ -690,9 +688,9 @@ export default createReactClass({
                 </div>
             );
         }
-        */
+        !watcha */
 
-        /*insertion for watcha*/
+        // watcha+
         if (!this.props.username && this.state.onboarding) {
             return (
                 <WatchaChangePassword
@@ -701,7 +699,7 @@ export default createReactClass({
                 />
             );
         }
-        /*end of insertion */
+        // +watcha
 
         let footer;
         if (this.props.isSyncing || this.state.busyLoggingIn) {
@@ -715,13 +713,13 @@ export default createReactClass({
                 </div> }
             </div>;
         } else {
-            {/*remove registration for watcha
+            /* watcha!
             footer = (
                 <a className="mx_AuthBody_changeFlow" onClick={this.onTryRegisterClick} href="#">
                     { _t('Create account') }
                 </a>
             );
-             */}
+            !watcha */
         }
 
         return (
@@ -738,7 +736,7 @@ export default createReactClass({
                     { this.renderLoginComponentForStep() }
                     { footer }
                 </AuthBody>
-                <LanguageSelector /> {/* added for watcha */}
+                <LanguageSelector /> {/* watcha+ */}
             </AuthPage>
         );
     },
