@@ -27,7 +27,7 @@ import Tinter from '../../../Tinter';
 import request from 'browser-request';
 import Modal from '../../../Modal';
 import AccessibleButton from "../elements/AccessibleButton";
-import SettingsStore from '../../../settings/SettingsStore'; // insertion for watcha op352
+import SettingsStore from '../../../settings/SettingsStore'; // watcha+ op352
 
 
 // A cached tinted copy of require("../../../../res/img/download.svg")
@@ -148,10 +148,13 @@ export default createReactClass({
     presentableTextForFile: function(content) {
         let linkText = _t("Attachment");
 
-        // modification for Watcha OP474
         if (content.body && content.body.length > 0) {
             // The content body should be the name of the file including a
             // file extension.
+            /* watcha! op474
+            linkText = content.body;
+            !watcha */
+            // watcha+ op474
             linkText = [
                 "file_created",
                 "file_restored",
@@ -160,8 +163,8 @@ export default createReactClass({
             ].includes(content.body)
                 ? content.filename
                 : content.body;
+            // +watcha
         }
-        // end of modification
 
         if (content.info && content.info.size) {
             // If we know the size of the file then add it as human readable
@@ -178,13 +181,18 @@ export default createReactClass({
 
     _getContentUrl: function() {
         const content = this.props.mxEvent.getContent();
-        // modified for watcha op352: added allowDirectLinks=true
+        /* watcha! op352
+        return MatrixClientPeg.get().mxcUrlToHttp(content.url);
+        !watcha */
+        // watcha+ op352
         return MatrixClientPeg.get().mxcUrlToHttp(
             content.url,
             undefined,
             undefined,
             undefined,
-            true);
+            true
+        );
+        // +watcha
     },
 
     // TODO: [REACT-WARNING] Replace component with real class, use constructor for refs
@@ -377,31 +385,45 @@ export default createReactClass({
                         </div>
                     </span>
                 );
+            // watcha+
+            } else if (
+                SettingsStore.getValue(
+                    "nextcloud",
+                    this.props.mxEvent.getRoomId()
+                ) &&
+                !content.url.startsWith("mxc://")
+            ) {
+                return (
+                    <span className="mx_MFileBody">
+                        <div className="mx_MFileBody_download">
+                            <a onClick={() => {window.open(contentUrl, "nextcloud")}}>
+                                <img
+                                    src={tintedDownloadImageURL}
+                                    width="12"
+                                    height="14"
+                                    ref={this._downloadImage}
+                                />
+                                {_t("Show %(text)s in Nextcloud", {
+                                    text: text,
+                                })}
+                            </a>
+                        </div>
+                    </span>
+                );
+            // +watcha
             } else {
                 return (
                     <span className="mx_MFileBody">
                         <div className="mx_MFileBody_download">
                             <a {...downloadProps}>
                                 <img src={tintedDownloadImageURL} width="12" height="14" ref={this._downloadImage} />
-                                {
-                                    //modification for watcha op352
-                                    _t(
-                                        SettingsStore.getValue(
-                                            "nextcloud",
-                                            this.props.mxEvent.getRoomId()
-                                        ) && !content.url.startsWith("mxc://")
-                                            ? "Show %(text)s in Nextcloud"
-                                            : "Download %(text)s",
-                                        { text: text }
-                                    )
-                                    // end of modification
-                                }
+                                { _t("Download %(text)s", { text: text }) }
                             </a>
                         </div>
                     </span>
                 );
             }
-        // insertion for Watcha OP474
+        // watcha+ op474
         } else if (
             content.msgtype === "m.file" &&
             content.body === "file_deleted"
@@ -420,7 +442,7 @@ export default createReactClass({
                     </div>
                 </span>
             );
-        // end of insertion
+        // +watcha
         } else {
             const extra = text ? (': ' + text) : '';
             return <span className="mx_MFileBody">
