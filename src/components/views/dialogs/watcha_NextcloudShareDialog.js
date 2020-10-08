@@ -7,6 +7,7 @@ import * as sdk from "../../../index";
 import Field from "../elements/Field";
 import SettingsStore from "../../../settings/SettingsStore";
 
+import { refineNextcloudIframe } from "../../../utils/watcha_nextcloudUtils";
 import Spinner from "../elements/watcha_DelayedSpinner";
 
 const NextcloudShareDialog = ({
@@ -26,15 +27,20 @@ const NextcloudShareDialog = ({
     const [isCancel, _setIsCancel] = useState(false);
     const isCancelRef = useRef(false);
 
-    const iframeRef = useRef();
+    const nextcloudIframeRef = useRef();
 
     useEffect(() => {
-        iframeRef.current.contentWindow.addEventListener("click", onClick);
+        nextcloudIframeRef.current.contentWindow.addEventListener(
+            "click",
+            onClick
+        );
     }, []);
 
     const onClick = () => {
         setErrorText(null);
-        setNextcloudFolder(iframeRef.current.contentWindow.location.href);
+        setNextcloudFolder(
+            nextcloudIframeRef.current.contentWindow.location.href
+        );
     };
 
     const onOK = () => {
@@ -103,7 +109,17 @@ const NextcloudShareDialog = ({
                 {...{ onFinished }}
             >
                 <div className="mx_Dialog_content">
-                    <iframe ref={iframeRef} src={targetFolder} />
+                    <iframe
+                        ref={nextcloudIframeRef}
+                        src={targetFolder}
+                        onLoad={() => {
+                            refineNextcloudIframe(nextcloudIframeRef);
+                            refineNextcloudIframe(
+                                nextcloudIframeRef,
+                                "/app/watcha-nextcloud-integration/shareDiablog.css"
+                            );
+                        }}
+                    />
                     <Field
                         className={classNames({
                             watcha_NextcloudShareDialog_Field_rootSelection: !relativePath,
