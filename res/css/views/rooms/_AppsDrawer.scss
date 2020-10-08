@@ -120,6 +120,7 @@ $AppsDrawerBodyHeight: 273px;
     flex-direction: row;
     align-items: center;
     pointer-events: none;
+    color: white; // watcha+
 }
 
 .mx_AppTileMenuBarTitle > :last-child {
@@ -139,18 +140,27 @@ $AppsDrawerBodyHeight: 273px;
     mask-repeat: no-repeat;
     mask-position: 0 center;
     mask-size: auto 12px;
+    /* watcha!
     background-color: $topleftmenu-color;
+    !watcha */
+    background-color: white; // watcha+
     margin: 0 3px;
 }
 
 .mx_AppTileMenuBar_iconButton.mx_AppTileMenuBar_iconButton_minimise {
     mask-image: url('$(res)/img/feather-customised/widget/minimise.svg');
+    /* watcha!
     background-color: $accent-color;
+    !watcha */
+    background-color: white; // watcha+ 
 }
 
 .mx_AppTileMenuBar_iconButton.mx_AppTileMenuBar_iconButton_maximise {
     mask-image: url('$(res)/img/feather-customised/widget/maximise.svg');
+    /* watcha!
     background-color: $accent-color;
+    !watcha */
+    background-color: white; // watcha+
 }
 
 .mx_AppTileMenuBar_iconButton.mx_AppTileMenuBar_iconButton_popout {
