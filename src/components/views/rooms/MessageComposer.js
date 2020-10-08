@@ -16,7 +16,6 @@ limitations under the License.
 */
 import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
-import SdkConfig from '../../../SdkConfig'; // added for watcha
 import { _t } from '../../../languageHandler';
 import CallHandler from '../../../CallHandler';
 import {MatrixClientPeg} from '../../../MatrixClientPeg';
@@ -28,6 +27,7 @@ import { makeRoomPermalink } from '../../../utils/permalinks/Permalinks';
 import ContentMessages from '../../../ContentMessages';
 import E2EIcon from './E2EIcon';
 import SettingsStore from "../../../settings/SettingsStore";
+import SdkConfig from '../../../SdkConfig'; // watcha+
 
 function ComposerAvatar(props) {
     const MemberStatusMessageAvatar = sdk.getComponent('avatars.MemberStatusMessageAvatar');
@@ -41,12 +41,7 @@ ComposerAvatar.propTypes = {
 };
 
 function CallButton(props) {
-    /* insertion for watcha */
-    const config = SdkConfig.get();    
-    if (!config.meet_url) {
-        return null;
-    }
-    /* end of insertion */
+    return null; // watcha+
 
     const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
     const onVoiceCallClick = (ev) => {
@@ -68,12 +63,12 @@ CallButton.propTypes = {
 };
 
 function VideoCallButton(props) {
-    /* insertion for watcha */
-    const config = SdkConfig.get();    
+    // watcha+
+    const config = SdkConfig.get();
     if (!config.meet_url) {
         return null;
     }
-    /* end of insertion */
+    // +watcha
 
     const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
     const onCallClick = (ev) => {
@@ -161,15 +156,14 @@ class UploadButton extends React.Component {
     }
 
     render() {
-        // insertion for watcha op292
+        // watcha+ op292
         const nextcloudDirectory = SettingsStore.getValue("nextcloud", this.props.roomId);
         const showUploadButton = !nextcloudDirectory || null;
-        // end insertion for watcha
-    
+        // +watcha
         const uploadInputStyle = {display: 'none'};
         const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
         return (
-            showUploadButton && // insertion for watcha op292
+            showUploadButton && // watcha+ op292
             <AccessibleButton className="mx_MessageComposer_button mx_MessageComposer_upload"
                 onClick={this.onUploadClick}
                 title={_t('Upload file')}
