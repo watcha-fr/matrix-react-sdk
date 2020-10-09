@@ -204,7 +204,7 @@ export default class RightPanel extends React.Component {
 
         // watcha+
         const FilePanel = sdk.getComponent(
-            SettingsStore.getValue("fileExplorer")
+            SettingsStore.getValue("feature_file_explorer")
                 ? "structures.watcha_FilePanel"
                 : "structures.FilePanel"
         );
@@ -310,20 +310,24 @@ export default class RightPanel extends React.Component {
                 break;
             case RIGHT_PANEL_PHASES.FilePanel:
                 panel = <FilePanel roomId={this.props.roomId} resizeNotifier={this.props.resizeNotifier} />;
-                // watcha+ op292 op413 op567
-                const nextcloudFolder = SettingsStore.getValue("nextcloud", this.props.roomId);
-                if (nextcloudFolder) {
-                    panel = (
-                        <iframe
-                            id="watcha_Nextcloud"
-                            ref={this.nextcloudIframeRef}
-                            className="watcha_Nextcloud"
-                            src={nextcloudFolder}
-                            onLoad={() =>
-                                refineNextcloudIframe(this.nextcloudIframeRef)
-                            }
-                        />
-                    );
+                // watcha+ op292 op413 op567 op575
+                if (SettingsStore.getValue("feature_nextcloud")) {
+                    const nextcloudFolder = SettingsStore.getValue("nextcloudShare", this.props.roomId);
+                    if (nextcloudFolder) {
+                        panel = (
+                            <iframe
+                                id="watcha_Nextcloud"
+                                ref={this.nextcloudIframeRef}
+                                className="watcha_Nextcloud"
+                                src={nextcloudFolder}
+                                onLoad={() =>
+                                    refineNextcloudIframe(
+                                        this.nextcloudIframeRef
+                                    )
+                                }
+                            />
+                        );
+                    }
                 }
                 // +watcha
                 break;

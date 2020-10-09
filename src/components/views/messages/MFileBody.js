@@ -388,7 +388,7 @@ export default createReactClass({
             // watcha+
             } else if (
                 SettingsStore.getValue(
-                    "nextcloud",
+                    "nextcloudShare",
                     this.props.mxEvent.getRoomId()
                 ) &&
                 !content.url.startsWith("mxc://")

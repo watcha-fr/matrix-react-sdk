@@ -72,17 +72,22 @@ export default class GeneralRoomSettingsTab extends React.Component {
                     <RoomProfileSettings roomId={this.props.roomId} />
                 </div>
 
-                {/* watcha+ op566 */}
-                {SettingsStore.canSetValue("nextcloud", this.props.roomId, "room") && (
-                    <React.Fragment>
-                        <div className="mx_SettingsTab_heading">
-                            {_t("Nextcloud share")}
-                        </div>
-                        <div className="mx_SettingsTab_section">
-                            <NextcloudSettings roomId={this.props.roomId} />
-                        </div>
-                    </React.Fragment>
-                )}
+                {/* watcha+ op566 op575 */}
+                {SettingsStore.getValue("feature_nextcloud") &&
+                    SettingsStore.canSetValue(
+                        "nextcloudShare",
+                        this.props.roomId,
+                        "room"
+                    ) && (
+                        <React.Fragment>
+                            <div className="mx_SettingsTab_heading">
+                                {_t("Nextcloud share")}
+                            </div>
+                            <div className="mx_SettingsTab_section">
+                                <NextcloudSettings roomId={this.props.roomId} />
+                            </div>
+                        </React.Fragment>
+                    )}
                 {/* +watcha */}
 
                 {/* watcha!

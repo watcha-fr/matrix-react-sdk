@@ -13,7 +13,7 @@ import Spinner from "../elements/watcha_DelayedSpinner";
 
 const NextcloudSettings = ({ roomId }) => {
     const [nextcloudFolder, setNextcloudFolder] = useState(
-        SettingsStore.getValue("nextcloud", roomId)
+        SettingsStore.getValue("nextcloudShare", roomId)
     );
     const [isBusy, setIsBusy] = useState(false);
     const [errorText, setErrorText] = useState(null);
@@ -57,7 +57,7 @@ const NextcloudSettings = ({ roomId }) => {
     const onUnshare = () => {
         setIsBusy(true);
         setErrorText(null);
-        SettingsStore.setValue("nextcloud", roomId, "room", null)
+        SettingsStore.setValue("nextcloudShare", roomId, "room", null)
             .then(() => {
                 setNextcloudFolder(null);
             })
@@ -70,7 +70,7 @@ const NextcloudSettings = ({ roomId }) => {
             });
     };
 
-    const notice = SettingsStore.getDisplayName("nextcloud");
+    const notice = SettingsStore.getDisplayName("nextcloudShare");
 
     let sharedFolderField;
     let stopSharingButton;

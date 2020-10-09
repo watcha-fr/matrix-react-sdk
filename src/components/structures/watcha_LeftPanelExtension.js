@@ -3,24 +3,27 @@ import classNames from "classnames";
 
 import { _t } from "../../languageHandler";
 import { MatrixClientPeg } from "../../MatrixClientPeg";
+import SettingsStore from "../../settings/SettingsStore";
 
 import IconButton from "../views/elements/watcha_IconButton";
 import OutlineIconButton from "../views/elements/watcha_OutlineIconButton";
 
 export default ({ collapsed }) => {
-    const [isNextcloudReachable, setNextcloudReachable] = useState(false);
+    const [isNextcloudEnabled, setNextcloudEnabled] = useState(false);
     const [isSynapseAdmin, setIsSynapseAdmin] = useState(false);
 
     useEffect(() => {
-        fetch("/nextcloud").then(response => {
-            if (response.status == 200) {
-                setNextcloudReachable(true);
-            } else {
-                console.warn(
-                    `Nextcloud is unreachable (status code: ${response.status})`
-                );
-            }
-        });
+        if (SettingsStore.getValue("feature_nextcloud")) {
+            fetch("/nextcloud").then(response => {
+                if (response.status == 200) {
+                    setNextcloudEnabled(true);
+                } else {
+                    console.warn(
+                        `Nextcloud is unreachable (status code: ${response.status})`
+                    );
+                }
+            });
+        }
 
         MatrixClientPeg.get()
             .isSynapseAdministrator()
@@ -39,7 +42,7 @@ export default ({ collapsed }) => {
     };
 
     let nextcloudAccess;
-    if (isNextcloudReachable) {
+    if (isNextcloudEnabled) {
         nextcloudAccess = collapsed ? (
             <IconButton
                 className="watcha_NextcloudAccess_IconButton"

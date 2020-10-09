@@ -80,7 +80,7 @@ export default class RoomHeaderButtons extends HeaderButtons {
 
     renderButtons() {
         // insertion for watcha op292
-        const nextcloudDirectory = SettingsStore.getValue("nextcloud", this.props.roomId);
+        const nextcloudDirectory = SettingsStore.getValue("nextcloudShare", this.props.roomId);
         const buttonName = nextcloudDirectory ? "nextcloudButton" : "filesButton";        
         // end insertion for watcha
 

@@ -731,7 +731,7 @@ export default createReactClass({
                 else if (msgtype === "m.file") {
                     if (
                         SettingsStore.getValue(
-                            "nextcloud",
+                            "nextcloudShare",
                             this.props.mxEvent.getRoomId()
                         ) &&
                         !content.url.startsWith("mxc://")

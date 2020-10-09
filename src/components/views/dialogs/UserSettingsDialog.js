@@ -66,36 +66,37 @@ export default class UserSettingsDialog extends React.Component {
             "mx_UserSettingsDialog_settingsIcon",
             <GeneralUserSettingsTab closeSettingsFn={this.props.onFinished} />,
         ));
-        /*removed for watcha
+        /* watcha!
         tabs.push(new Tab(
             _td("Flair"),
             "mx_UserSettingsDialog_flairIcon",
             <FlairUserSettingsTab />,
         ));
-        */
+        !watcha */
         tabs.push(new Tab(
             _td("Notifications"),
             "mx_UserSettingsDialog_bellIcon",
             <NotificationUserSettingsTab />,
         ));
-        /*removed for watcha
+        /* watcha!
         tabs.push(new Tab(
             _td("Preferences"),
             "mx_UserSettingsDialog_preferencesIcon",
             <PreferencesUserSettingsTab />,
         ));
-        */
+        !watcha */
         tabs.push(new Tab(
             _td("Voice & Video"),
             "mx_UserSettingsDialog_voiceIcon",
             <VoiceUserSettingsTab />,
         ));
-        /*removed for watcha
+        /* watcha!
         tabs.push(new Tab(
             _td("Security & Privacy"),
             "mx_UserSettingsDialog_securityIcon",
             <SecurityUserSettingsTab closeSettingsFn={this.props.onFinished} />,
         ));
+        !watcha */
         if (SdkConfig.get()['showLabsSettings'] || SettingsStore.getLabsFeatures().length > 0) {
             tabs.push(new Tab(
                 _td("Labs"),
@@ -103,6 +104,7 @@ export default class UserSettingsDialog extends React.Component {
                 <LabsUserSettingsTab />,
             ));
         }
+        /* watcha!
         if (this.state.mjolnirEnabled) {
             tabs.push(new Tab(
                 _td("Ignored users"),
@@ -115,8 +117,7 @@ export default class UserSettingsDialog extends React.Component {
             "mx_UserSettingsDialog_helpIcon",
             <HelpUserSettingsTab closeSettingsFn={this.props.onFinished} />,
         ));
-
-        */
+        !watcha */
 
         return tabs;
     }
@@ -126,10 +127,10 @@ export default class UserSettingsDialog extends React.Component {
 
         return (
             <BaseDialog className='mx_UserSettingsDialog' hasCancel={true}
-                        /* change for watcha
+                        /* watcha!
                         onFinished={this.props.onFinished} title={_t("Settings")}>
-                        */
-                        onFinished={this.props.onFinished}>
+                        !watcha */
+                        onFinished={this.props.onFinished}> {/* watcha+ */}
                 <div className='ms_SettingsDialog_content'>
                     <TabbedView tabs={this._getTabs()} />
                 </div>

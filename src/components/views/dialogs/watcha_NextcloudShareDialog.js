@@ -47,8 +47,8 @@ const NextcloudShareDialog = ({
         setShareDialogIsBusy(true);
         setIsBusy(true);
         setErrorText(null);
-        setPrevNextcloudFolder(SettingsStore.getValue("nextcloud", roomId));
-        SettingsStore.setValue("nextcloud", roomId, "room", nextcloudFolder)
+        setPrevNextcloudFolder(SettingsStore.getValue("nextcloudShare", roomId));
+        SettingsStore.setValue("nextcloudShare", roomId, "room", nextcloudFolder)
             .then(() => {
                 if (!isCancelRef.current) {
                     onFinished(nextcloudFolder);
@@ -70,7 +70,7 @@ const NextcloudShareDialog = ({
             setIsCancel(true);
             setErrorText(_t("Cancelling…"));
             SettingsStore.setValue(
-                "nextcloud",
+                "nextcloudShare",
                 roomId,
                 "room",
                 prevNextcloudFolder

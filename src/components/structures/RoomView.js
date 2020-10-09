@@ -874,7 +874,7 @@ export default createReactClass({
         // watcha+ op566
         if (
             ev.getType() == "im.vector.web.settings" &&
-            ev.getContent().hasOwnProperty("nextcloud")
+            ev.getContent().hasOwnProperty("nextcloudShare")
         ) {
             this.forceUpdate();
         }
