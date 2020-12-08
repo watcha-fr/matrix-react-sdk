@@ -668,6 +668,7 @@ export default class AppTile extends React.Component {
             action: 'appsDrawer',
             show: false,
         });
+        this._endWidgetActions();
         // +watcha
         Object.assign(document.createElement('a'),
             { target: '_blank', href: this._getPopoutUrl(), rel: 'noreferrer noopener'}).click();
