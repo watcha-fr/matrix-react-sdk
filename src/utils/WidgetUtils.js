@@ -453,8 +453,7 @@ export default class WidgetUtils {
             // really just for backwards compatibility and to appease the spec.
             baseUrl = "https://riot.im/app/";
         }
-        // modified for watcha: '?' instead of '#', fix for op387 - not sure how it could have worked without
-        const url = new URL("jitsi.html?" + queryString, baseUrl); // this strips hash fragment from baseUrl
+        const url = new URL("jitsi.html#" + queryString, baseUrl); // this strips hash fragment from baseUrl
         return url.href;
     }
 }

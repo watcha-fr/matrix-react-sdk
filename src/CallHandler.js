@@ -66,7 +66,6 @@ import WidgetEchoStore from './stores/WidgetEchoStore';
 import SettingsStore, { SettingLevel } from './settings/SettingsStore';
 import {generateHumanReadableId} from "./utils/NamingUtils";
 import {Jitsi} from "./widgets/Jitsi";
-import SdkConfig from './SdkConfig'; // added for watcha
 
 global.mxCalls = {
     //room_id: MatrixCall
@@ -332,7 +331,7 @@ function _onAction(payload) {
                 if (members.length <= 1) {
                     const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
                     Modal.createTrackedDialog('Call Handler', 'Cannot place call with self', ErrorDialog, {
-                        title: _t('Cannot place call'), // added for watcha op257
+                        title: _t('Cannot place call'), // watcha+ op257
                         description: _t('You cannot place a call with yourself.'),
                     });
                     return;
@@ -446,16 +445,10 @@ async function _startCallApp(roomId, type) {
     parsedUrl.searchParams.set('confId', confId);
     widgetUrl = parsedUrl.toString();
 
-    // added for watcha:
-    const meetUrl = SdkConfig.get().meet_url.replace(/(^\w+:|^)\/\//, '');
-    /* later, maybe
-    'email=$matrix_user_id' ???
-    */
     const widgetData = {
         conferenceId: confId,
         isAudioOnly: type === 'voice',
-        // modified for watcha
-        domain: meetUrl ? meetUrl: jitsiDomain,
+        domain: jitsiDomain,
     };
 
     const widgetId = (
