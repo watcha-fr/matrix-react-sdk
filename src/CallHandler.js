@@ -336,10 +336,13 @@ function _onAction(payload) {
                         description: _t('You cannot place a call with yourself.'),
                     });
                     return;
+                /* watcha!
+                force jitsi conf til webrtc is fixed
                 } else if (members.length === 2) {
                     console.info("Place %s call in %s", payload.type, payload.room_id);
                     const call = Matrix.createNewMatrixCall(MatrixClientPeg.get(), payload.room_id);
                     placeCall(call);
+                !watcha */
                 } else { // > 2
                     dis.dispatch({
                         action: "place_conference_call",
@@ -443,7 +446,7 @@ async function _startCallApp(roomId, type) {
     parsedUrl.searchParams.set('confId', confId);
     widgetUrl = parsedUrl.toString();
 
-    // added for watcha: 
+    // added for watcha:
     const meetUrl = SdkConfig.get().meet_url.replace(/(^\w+:|^)\/\//, '');
     /* later, maybe
     'email=$matrix_user_id' ???
