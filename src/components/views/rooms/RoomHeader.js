@@ -366,8 +366,8 @@ export default createReactClass({
                 { inviteButton }
                 {/* end of insertion */}
                 { settingsButton }
-                {/* deletion for watcha
                 { pinnedEventsButton }
+                {/* deletion for watcha
                 { shareRoomButton }
                 { manageIntegsButton }
                 { forgetButton }

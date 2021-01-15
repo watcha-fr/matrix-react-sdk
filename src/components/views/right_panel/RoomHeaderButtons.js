@@ -23,7 +23,7 @@ import { _t } from '../../../languageHandler';
 import HeaderButton from './HeaderButton';
 import HeaderButtons, {HEADER_KIND_ROOM} from './HeaderButtons';
 import {RIGHT_PANEL_PHASES} from "../../../stores/RightPanelStorePhases";
-import SettingsStore from '../../../settings/SettingsStore'; // insertion for watcha op292
+import SettingsStore from '../../../settings/SettingsStore'; // watcha+
 
 const MEMBER_PHASES = [
     RIGHT_PANEL_PHASES.RoomMemberList,
@@ -79,11 +79,7 @@ export default class RoomHeaderButtons extends HeaderButtons {
     }
 
     renderButtons() {
-        // insertion for watcha op292
-        const nextcloudDirectory = SettingsStore.getValue("nextcloudShare", this.props.roomId);
-        const buttonName = nextcloudDirectory ? "nextcloudButton" : "filesButton";        
-        // end insertion for watcha
-
+        const showFileButton = !!SettingsStore.getValue("nextcloudShare", this.props.roomId) || null; // watcha+
         return [
             <HeaderButton key="membersButton" name="membersButton"
                 title={_t('Members')}
@@ -91,20 +87,21 @@ export default class RoomHeaderButtons extends HeaderButtons {
                 onClick={this._onMembersClicked}
                 analytics={['Right Panel', 'Member List Button', 'click']}
             />,
-            <HeaderButton key="filesButton" name={buttonName} // change for watcha op292
+            showFileButton && // watcha+
+            <HeaderButton key="filesButton" name="filesButton"
                 title={_t('Files')}
                 isHighlighted={this.isPhase(RIGHT_PANEL_PHASES.FilePanel)}
                 onClick={this._onFilesClicked}
                 analytics={['Right Panel', 'File List Button', 'click']}
             />,
-            /* deletion for watcha
+            /* watcha!
             <HeaderButton key="notifsButton" name="notifsButton"
                 title={_t('Notifications')}
                 isHighlighted={this.isPhase(RIGHT_PANEL_PHASES.NotificationPanel)}
                 onClick={this._onNotificationsClicked}
                 analytics={['Right Panel', 'Notification List Button', 'click']}
             />,
-            */
+            !watcha */
         ];
     }
 }

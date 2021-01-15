@@ -156,14 +156,9 @@ class UploadButton extends React.Component {
     }
 
     render() {
-        // watcha+ op292
-        const nextcloudDirectory = SettingsStore.getValue("nextcloudShare", this.props.roomId);
-        const showUploadButton = !nextcloudDirectory || null;
-        // +watcha
         const uploadInputStyle = {display: 'none'};
         const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
         return (
-            showUploadButton && // watcha+ op292
             <AccessibleButton className="mx_MessageComposer_button mx_MessageComposer_upload"
                 onClick={this.onUploadClick}
                 title={_t('Upload file')}
