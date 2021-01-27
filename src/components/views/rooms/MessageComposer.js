@@ -63,13 +63,6 @@ CallButton.propTypes = {
 };
 
 function VideoCallButton(props) {
-    // watcha+
-    const config = SdkConfig.get();
-    if (!config.meet_url) {
-        return null;
-    }
-    // +watcha
-
     const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
     const onCallClick = (ev) => {
         dis.dispatch({
