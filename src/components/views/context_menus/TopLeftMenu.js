@@ -27,7 +27,10 @@ import {MatrixClientPeg} from '../../../MatrixClientPeg';
 import {MenuItem} from "../../structures/ContextMenu";
 import * as sdk from "../../../index";
 import {getHomePageUrl} from "../../../utils/pages";
-import {Jitsi} from "../../../widgets/Jitsi"; // watcha+
+// watcha+
+import {Jitsi} from "../../../widgets/Jitsi";
+import SettingsStore from "../../../settings/SettingsStore";
+// +watcha
 
 export default class TopLeftMenu extends React.Component {
     static propTypes = {
@@ -46,7 +49,38 @@ export default class TopLeftMenu extends React.Component {
         this.openSettings = this.openSettings.bind(this);
         this.signIn = this.signIn.bind(this);
         this.signOut = this.signOut.bind(this);
+        // watcha+
+        this.state = {
+            isSynapseAdmin: false,
+            nextcloudEnabled: false
+        };
+        // +watcha
     }
+
+    // watcha+
+    componentDidMount() {
+        MatrixClientPeg.get()
+            .isSynapseAdministrator()
+            .then(isAdmin => {
+                this.setState({isSynapseAdmin: isAdmin});
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        if (SettingsStore.getValue("feature_nextcloud")) {
+            fetch("/nextcloud").then(response => {
+                if (response.status == 200) {
+                    this.setState({nextcloudEnabled: false});
+                } else {
+                    console.warn(
+                        `Nextcloud is unreachable (status code: ${response.status})`
+                    );
+                }
+            });
+        }
+    }
+    // +watcha
 
     hasHomePage() {
         return !!getHomePageUrl(SdkConfig.get());
@@ -109,9 +143,33 @@ export default class TopLeftMenu extends React.Component {
         );
 
         // watcha+
+        const adminItem = (
+            <MenuItem
+                className="mx_TopLeftMenu_icon_admin"
+                onClick={this.openAdmin}
+                title={_t("Open the administration console in a new tab")}
+            >
+                {_t("Administration")}
+            </MenuItem>
+        );
+
         const jitsiItem = (
-            <MenuItem className="mx_TopLeftMenu_icon_jitsi" onClick={this.openJitsi}>
+            <MenuItem
+                className="mx_TopLeftMenu_icon_jitsi"
+                onClick={this.openJitsi}
+                title={_t("Open Jitsi in a new tab")}
+            >
                 Jitsi
+            </MenuItem>
+        );
+
+        const nextcloudItem = (
+            <MenuItem
+                className="mx_TopLeftMenu_icon_nextcloud"
+                onClick={this.openNextcloud}
+                title={_t("Open Nextcloud in a new tab")}
+            >
+                Nextcloud
             </MenuItem>
         );
         // +watcha
@@ -130,8 +188,12 @@ export default class TopLeftMenu extends React.Component {
                 {/* watcha!
                 {helpItem}
                 !watcha */}
+                {this.state.isSynapseAdmin && adminItem} {/* watcha+ */}
                 {signInOutItem}
-                {jitsiItem} {/* watcha+ */}
+                {/* watcha+ */}
+                {jitsiItem}
+                {this.state.nextcloudEnabled && nextcloudItem}
+                {/* +watcha */}
             </ul>
         </div>;
     }
@@ -167,9 +229,17 @@ export default class TopLeftMenu extends React.Component {
     }
 
     // watcha+
+    openAdmin() {
+        window.open("/admin", "admin")
+    }
+
     openJitsi() {
         const jitsiDomain = "https://" + Jitsi.getInstance().preferredDomain;
         window.open(jitsiDomain)
+    }
+
+    openNextcloud() {
+        window.open("/nextcloud", "nextcloud")
     }
     // +watcha
 }

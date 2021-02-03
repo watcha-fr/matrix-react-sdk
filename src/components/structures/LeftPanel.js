@@ -26,7 +26,6 @@ import * as VectorConferenceHandler from '../../VectorConferenceHandler';
 import SettingsStore from '../../settings/SettingsStore';
 import {_t} from "../../languageHandler";
 import Analytics from "../../Analytics";
-import LeftPanelExtension from './watcha_LeftPanelExtension'; // watcha+ op565
 
 const LeftPanel = createReactClass({
     displayName: 'LeftPanel',
@@ -295,7 +294,6 @@ const LeftPanel = createReactClass({
                         collapsed={this.props.collapsed}
                         searchFilter={this.state.searchFilter}
                         ConferenceHandler={VectorConferenceHandler} />
-                    <LeftPanelExtension collapsed={this.props.collapsed} /> {/* watcha+ op565 */}
                 </aside>
             </div>
         );

@@ -76,8 +76,16 @@ limitations under the License.
         }
 
         // watcha+
+        .mx_TopLeftMenu_icon_admin::after {
+            mask-image: url('$(res)/img/watcha_admin.svg');
+        }
+
         .mx_TopLeftMenu_icon_jitsi::after {
             mask-image: url('$(res)/img/watcha_jitsi.svg');
+        }
+
+        .mx_TopLeftMenu_icon_nextcloud::after {
+            mask-image: url('$(res)/img/watcha_nextcloud.svg');
         }
         // +watcha
 
