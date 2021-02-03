@@ -27,6 +27,7 @@ import {MatrixClientPeg} from '../../../MatrixClientPeg';
 import {MenuItem} from "../../structures/ContextMenu";
 import * as sdk from "../../../index";
 import {getHomePageUrl} from "../../../utils/pages";
+import {Jitsi} from "../../../widgets/Jitsi"; // watcha+
 
 export default class TopLeftMenu extends React.Component {
     static propTypes = {
@@ -107,6 +108,14 @@ export default class TopLeftMenu extends React.Component {
             </MenuItem>
         );
 
+        // watcha+
+        const jitsiItem = (
+            <MenuItem className="mx_TopLeftMenu_icon_jitsi" onClick={this.openJitsi}>
+                Jitsi
+            </MenuItem>
+        );
+        // +watcha
+
         return <div className="mx_TopLeftMenu" ref={this.props.containerRef} role="menu">
             {/* watcha!
             <div className="mx_TopLeftMenu_section_noIcon" aria-readonly={true} tabIndex={-1}>
@@ -122,6 +131,7 @@ export default class TopLeftMenu extends React.Component {
                 {helpItem}
                 !watcha */}
                 {signInOutItem}
+                {jitsiItem} {/* watcha+ */}
             </ul>
         </div>;
     }
@@ -155,4 +165,11 @@ export default class TopLeftMenu extends React.Component {
     closeMenu() {
         if (this.props.onFinished) this.props.onFinished();
     }
+
+    // watcha+
+    openJitsi() {
+        const jitsiDomain = "https://" + Jitsi.getInstance().preferredDomain;
+        window.open(jitsiDomain)
+    }
+    // +watcha
 }
