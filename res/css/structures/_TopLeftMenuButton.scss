@@ -13,63 +13,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-/* insertion for watcha */
-.TopLeftMenuButonsContainer{
-  display:flex;
-  flex-direction:column;
-  align-items: stretch;
-  justify-content: space-around;
-  height: 80px;
-}
-
- li.mx_TopLeftMenu_icon_settings { mask-image: url('$(res)/img/feather-customised/settings.svg');
-   /*change for watcha*/
-   background-color:#00E5E5;
-   width: 20px;
-   /*change for watcha*/
-   color:#00E5E5;
-   -webkit-mask-repeat: no-repeat;
- }
-
- li.mx_TopLeftMenu_icon_signout {
-   mask-image: url('$(res)/img/feather-customised/sign-out.svg');
-   /*change for watcha*/
-   background-color:#00E5E5;
-   /*change for watcha*/
-   color:#00E5E5;
-   /*insertion for watcha*/
-   margin-left: 3px;
-   -webkit-mask-repeat: no-repeat;
- }
- /*end of insertion*/
 
 .mx_TopLeftMenuButton {
     flex: 0 0 52px;
     border-bottom: 1px solid $panel-divider-color;
-    /*change value for watcha*/
+    /* watcha!
+    color: $topleftmenu-color;
+    background-color: $primary-bg-color;
+    !watcha */
+    // watcha+
     color: white;
-    /*change value for watcha*/
     background-color:#414141;
+    // +watcha
     display: flex;
     align-items: center;
     min-width: 0;
-    /* removed for watcha
     padding: 0 4px;
-    */
-    /*insertion for watcha*/
-    padding: 10px 4px;
-    justify-content: space-around;
-    /*end of insertion*/
     overflow: hidden;
 }
 
 .mx_TopLeftMenuButton .mx_BaseAvatar {
     margin: 0 7px;
-}
-/*insertion for watcha*/
-.HomePageButton{
-  display: flex;
-  width:90%;
 }
 
 .mx_TopLeftMenuButton_name {

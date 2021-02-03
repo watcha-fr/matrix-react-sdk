@@ -108,15 +108,19 @@ export default class TopLeftMenu extends React.Component {
         );
 
         return <div className="mx_TopLeftMenu" ref={this.props.containerRef} role="menu">
+            {/* watcha!
             <div className="mx_TopLeftMenu_section_noIcon" aria-readonly={true} tabIndex={-1}>
                 <div>{this.props.displayName}</div>
                 <div className="mx_TopLeftMenu_greyedText" aria-hidden={true}>{this.props.userId}</div>
                 {hostingSignup}
             </div>
+            !watcha */}
             <ul className="mx_TopLeftMenu_section_withIcon" role="none">
                 {homePageItem}
                 {settingsItem}
+                {/* watcha!
                 {helpItem}
+                !watcha */}
                 {signInOutItem}
             </ul>
         </div>;
