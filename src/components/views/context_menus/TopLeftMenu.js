@@ -71,7 +71,7 @@ export default class TopLeftMenu extends React.Component {
         if (SettingsStore.getValue("feature_nextcloud")) {
             fetch("/nextcloud").then(response => {
                 if (response.status == 200) {
-                    this.setState({nextcloudEnabled: false});
+                    this.setState({nextcloudEnabled: true});
                 } else {
                     console.warn(
                         `Nextcloud is unreachable (status code: ${response.status})`
