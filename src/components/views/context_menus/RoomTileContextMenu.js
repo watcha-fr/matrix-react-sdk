@@ -270,14 +270,12 @@ export default createReactClass({
                     onClick={this._onClickAlertMe}
                     src={require("../../../../res/img/icon-context-mute-off-copy.svg")}
                 />
-                {/*removed for watcha
                 <NotifOption
                     active={this.state.roomNotifState === RoomNotifs.ALL_MESSAGES}
                     label={_t('All messages')}
                     onClick={this._onClickAllNotifs}
                     src={require("../../../../res/img/icon-context-mute-off.svg")}
                 />
-                */}
                 <NotifOption
                     active={this.state.roomNotifState === RoomNotifs.MENTIONS_ONLY}
                     label={_t('Mentions only')}
@@ -307,12 +305,10 @@ export default createReactClass({
     _renderSettingsMenu: function() {
         return (
             <div>
-                {/*removed for watcha
                 <MenuItem className="mx_RoomTileContextMenu_tag_field" onClick={this._onClickSettings}>
                     <img className="mx_RoomTileContextMenu_tag_icon" src={require("../../../../res/img/feather-customised/settings.svg")} width="15" height="15" alt="" />
                     { _t('Settings') }
                 </MenuItem>
-                */}
             </div>
         );
     },
@@ -353,8 +349,6 @@ export default createReactClass({
 
     _renderRoomTagMenu: function() {
         return (
-            <div/>
-            /* changed for watcha (replaced by the <div/> above)
             <div>
                 <RoomTagOption
                     active={this.state.isFavourite}
@@ -370,6 +364,7 @@ export default createReactClass({
                     src={require("../../../../res/img/icon_context_low.svg")}
                     srcSet={require("../../../../res/img/icon_context_low_on.svg")}
                 />
+                {/* watcha!
                 <RoomTagOption
                     active={this.state.isDirectMessage}
                     label={_t('Direct Chat')}
@@ -377,8 +372,8 @@ export default createReactClass({
                     src={require("../../../../res/img/icon_context_person.svg")}
                     srcSet={require("../../../../res/img/icon_context_person_on.svg")}
                 />
+                !watcha */}
             </div>
-            */
         );
     },
 
