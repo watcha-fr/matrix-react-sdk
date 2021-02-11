@@ -22,7 +22,7 @@ const WatchaWebPwChanged = createReactClass({
         return (
             <div className="wt_WebContainerFallback">
                 <img
-                    src="themes/riot/img/logos/watcha-title.svg"
+                    src="img/watcha_logo-notitle.svg"
                     alt="Watcha"
                     className="wt_Logo"
                 />

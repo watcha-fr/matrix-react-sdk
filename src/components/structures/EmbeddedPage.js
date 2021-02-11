@@ -29,10 +29,6 @@ import classnames from 'classnames';
 import MatrixClientContext from "../../contexts/MatrixClientContext";
 import AutoHideScrollbar from "./AutoHideScrollbar";
 
-// insertion for watcha
-import HomePage from './watcha_HomePage'
-// end insertion for watcha
-
 export default class EmbeddedPage extends React.PureComponent {
     static propTypes = {
         // URL to request embedded page content from
@@ -129,16 +125,6 @@ export default class EmbeddedPage extends React.PureComponent {
         >
         </div>;
 
-        // insertion for watcha
-        if (this.props.className === "mx_HomePage") {
-            return (
-                <AutoHideScrollbar>
-                    <HomePage />
-                </AutoHideScrollbar>
-            );
-        }
-        // end insertion for watcha
-        
         if (this.props.scrollbar) {
             return <AutoHideScrollbar className={classes}>
                 {content}

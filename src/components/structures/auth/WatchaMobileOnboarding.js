@@ -96,7 +96,7 @@ export default class WatchaMobileOnboarding extends React.Component {
           <div className="wt_ContainerFallback">
             <div className="wt_BodyFallback">
               <div className="wt_logo_row">
-                  <img src="themes/riot/img/logos/watcha-title.svg" width='300' alt="Watcha" className="wt_Logo" />
+                  <img src="img/watcha_logo-notitle.svg" width='300' alt="Watcha" className="wt_Logo" />
               </div>
               <h1 className="wt_mobile_title">Lancement de l'application Watcha</h1>
               <div className="wt_mobile_pw_state">{ title }</div>

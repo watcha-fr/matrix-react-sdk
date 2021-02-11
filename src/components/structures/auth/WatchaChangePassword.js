@@ -291,7 +291,7 @@ export default createReactClass({
                     <div>
                         <div className="logoRow">
                             <img
-                                src="themes/riot/img/logos/watcha-title.svg"
+                                src="img/watcha_logo-notitle.svg"
                                 width="150"
                                 alt="Watcha"
                                 className="wt_Logo"
@@ -375,7 +375,7 @@ export default createReactClass({
                     <div className={ModulableHeader}>
                         <div className="wt_logo_row">
                             <img
-                                src="themes/riot/img/logos/watcha-title.svg"
+                                src="img/watcha_logo-notitle.svg"
                                 width="150"
                                 alt="Watcha"
                                 className="wt_Logo"

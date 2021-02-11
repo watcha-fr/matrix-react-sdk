@@ -31,14 +31,16 @@ const HomePage = () => {
     const config = SdkConfig.get();
     const pageUrl = getHomePageUrl(config);
 
-    // change for watcha, was if (pageUrl) {
-    if (true) {
+    if (pageUrl) {
         const EmbeddedPage = sdk.getComponent('structures.EmbeddedPage');
         return <EmbeddedPage className="mx_HomePage" url={pageUrl} scrollbar={true} />;
     }
 
     const brandingConfig = config.branding;
+    /* watcha!
     let logoUrl = "themes/riot/img/logos/riot-logo.svg";
+    !watcha */
+    let logoUrl = "watcha-icons/watcha-notitle.svg"; // watcha+
     if (brandingConfig && brandingConfig.authHeaderLogoUrl) {
         logoUrl = brandingConfig.authHeaderLogoUrl;
     }
