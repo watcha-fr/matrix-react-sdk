@@ -203,27 +203,27 @@ export default createReactClass({
             </React.Fragment>;
         }
 
-        {/* changed for watcha 'private room' -> 'room' */}
-        const title = this.state.isPublic ? _t('Create a public room') : _t('Create a room');
+        const title = this.state.isPublic ? _t('Create a public room') : _t('Create a private room');
         return (
             <BaseDialog className="mx_CreateRoomDialog" onFinished={this.props.onFinished}
                 title={title}
             >
                 <form onSubmit={this.onOk} onKeyDown={this._onKeyDown}>
                     <div className="mx_Dialog_content">
-                        {/* changed for watcha: 'Name' -> 'Room name' */}
-                        <Field ref={ref => this._nameFieldRef = ref} label={ _t('Room name') } onChange={this.onNameChange} onValidate={this.onNameValidate} value={this.state.name} className="mx_CreateRoomDialog_name" />
+                        <Field ref={ref => this._nameFieldRef = ref} label={ _t('Name') } onChange={this.onNameChange} onValidate={this.onNameValidate} value={this.state.name} className="mx_CreateRoomDialog_name" />
                         <Field label={ _t('Topic (optional)') } onChange={this.onTopicChange} value={this.state.topic} className="mx_CreateRoomDialog_topic" />
-                        {/*removed for watcha
                         <LabelledToggleSwitch label={ _t("Make this room public")} onChange={this.onPublicChange} value={this.state.isPublic} />
                         { publicPrivateLabel }
+                        {/* watcha!
                         { e2eeSection }
+                        !watcha */}
                         { aliasField }
+                        {/* watcha!
                         <details ref={this.collectDetailsRef} className="mx_CreateRoomDialog_details">
                             <summary className="mx_CreateRoomDialog_details_summary">{ this.state.detailsOpen ? _t('Hide advanced') : _t('Show advanced') }</summary>
                             <LabelledToggleSwitch label={ _t('Block users on other matrix homeservers from joining this room (This setting cannot be changed later!)')} onChange={this.onNoFederateChange} value={this.state.noFederate} />
                         </details>
-                        end removed for watcha */}
+                        !watcha */}
                     </div>
                 </form>
                 <DialogButtons primaryButton={_t('Create Room')}

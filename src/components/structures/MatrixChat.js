@@ -599,15 +599,12 @@ export default createReactClass({
             }
             break;
             case 'view_room_directory': {
-                /* watcha!
                 const RoomDirectory = sdk.getComponent("structures.RoomDirectory");
                 Modal.createTrackedDialog('Room directory', '', RoomDirectory, {},
                     'mx_RoomDirectory_dialogWrapper', false, true);
 
                 // View the welcome or home page if we need something to look at
                 this._viewSomethingBehindModal();
-                !watcha */
-                this._createRoom(); // watcha+
             }
             break;
             case 'view_my_groups':
