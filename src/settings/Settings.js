@@ -526,13 +526,6 @@ export const SETTINGS = {
         ),
     },
     // watcha+
-    "feature_file_explorer": {
-        isFeature: true,
-        supportedLevels: LEVELS_FEATURE,
-        displayName: _td("Manage files with a modern explorer in the right panel"),
-        default: false,
-        controller: new ReloadOnChangeController(),
-    },
     "feature_nextcloud": {
         isFeature: true,
         supportedLevels: LEVELS_FEATURE,

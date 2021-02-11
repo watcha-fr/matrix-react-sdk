@@ -27,10 +27,8 @@ import {MatrixClientPeg} from '../../../MatrixClientPeg';
 import {MenuItem} from "../../structures/ContextMenu";
 import * as sdk from "../../../index";
 import {getHomePageUrl} from "../../../utils/pages";
-// watcha+
-import {Jitsi} from "../../../widgets/Jitsi";
-import SettingsStore from "../../../settings/SettingsStore";
-// +watcha
+import {Jitsi} from "../../../widgets/Jitsi"; // watcha+
+import SettingsStore from "../../../settings/SettingsStore"; // watcha+
 
 export default class TopLeftMenu extends React.Component {
     static propTypes = {
@@ -49,36 +47,21 @@ export default class TopLeftMenu extends React.Component {
         this.openSettings = this.openSettings.bind(this);
         this.signIn = this.signIn.bind(this);
         this.signOut = this.signOut.bind(this);
-        // watcha+
-        this.state = {
-            isSynapseAdmin: false,
-            nextcloudEnabled: false
-        };
-        // +watcha
+        this.state = { isSynapseAdministrator: false }; // watcha+
     }
 
     // watcha+
     componentDidMount() {
         MatrixClientPeg.get()
             .isSynapseAdministrator()
-            .then(isAdmin => {
-                this.setState({isSynapseAdmin: isAdmin});
+            .then(isSynapseAdministrator => {
+                this.setState({ isSynapseAdministrator });
             })
             .catch(error => {
-                console.error(error);
-            });
-
-        if (SettingsStore.getValue("feature_nextcloud")) {
-            fetch("/nextcloud").then(response => {
-                if (response.status == 200) {
-                    this.setState({nextcloudEnabled: true});
-                } else {
-                    console.warn(
-                        `Nextcloud is unreachable (status code: ${response.status})`
-                    );
+                if (error.errcode !== "M_FORBIDDEN") {
+                    console.error(`[watcha] ${error.message} - ${error.errcode}`);
                 }
             });
-        }
     }
     // +watcha
 
@@ -144,7 +127,7 @@ export default class TopLeftMenu extends React.Component {
 
         // watcha+
         let adminItem;
-        if (this.state.isSynapseAdmin) {
+        if (this.state.isSynapseAdministrator) {
             adminItem = (
                 <MenuItem
                     className="mx_TopLeftMenu_icon_admin"
@@ -167,7 +150,7 @@ export default class TopLeftMenu extends React.Component {
         );
 
         let nextcloudItem;
-        if (this.state.nextcloudEnabled) {
+        if (SettingsStore.getValue("feature_nextcloud")) {
             nextcloudItem = (
                 <MenuItem
                     className="mx_TopLeftMenu_icon_nextcloud"

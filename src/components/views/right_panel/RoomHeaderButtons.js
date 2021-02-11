@@ -79,7 +79,7 @@ export default class RoomHeaderButtons extends HeaderButtons {
     }
 
     renderButtons() {
-        const showFileButton = !!SettingsStore.getValue("nextcloudShare", this.props.roomId) || null; // watcha+
+        const showFileButton = !!SettingsStore.getValue("feature_nextcloud") || null; // watcha+
         return [
             <HeaderButton key="membersButton" name="membersButton"
                 title={_t('Members')}

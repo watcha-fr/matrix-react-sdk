@@ -30,7 +30,6 @@ import SettingsStore from "../../settings/SettingsStore";
 import {RIGHT_PANEL_PHASES, RIGHT_PANEL_PHASES_NO_ARGS} from "../../stores/RightPanelStorePhases";
 import RightPanelStore from "../../stores/RightPanelStore";
 import MatrixClientContext from "../../contexts/MatrixClientContext";
-import { refineNextcloudIframe } from "../../utils/watcha_nextcloudUtils"; // watcha+ op567
 
 export default class RightPanel extends React.Component {
     static get propTypes() {
@@ -60,8 +59,6 @@ export default class RightPanel extends React.Component {
         this._delayedUpdate = new RateLimitedFunc(() => {
             this.forceUpdate();
         }, 500);
-
-        this.nextcloudIframeRef = React.createRef(); // watcha+ op567
     }
 
     // Helper function to split out the logic for _getPhaseFromProps() and the constructor
@@ -197,18 +194,8 @@ export default class RightPanel extends React.Component {
         const UserInfo = sdk.getComponent('right_panel.UserInfo');
         const ThirdPartyMemberInfo = sdk.getComponent('rooms.ThirdPartyMemberInfo');
         const NotificationPanel = sdk.getComponent('structures.NotificationPanel');
-
-        /* watcha!
         const FilePanel = sdk.getComponent('structures.FilePanel');
-        !watcha */
-
-        // watcha+
-        const FilePanel = sdk.getComponent(
-            SettingsStore.getValue("feature_file_explorer")
-                ? "structures.watcha_FilePanel"
-                : "structures.FilePanel"
-        );
-        // +watcha
+        const NextcloudPanel = sdk.getComponent('structures.watcha_NextcloudPanel'); // watcha+
 
         const GroupMemberList = sdk.getComponent('groups.GroupMemberList');
         const GroupMemberInfo = sdk.getComponent('groups.GroupMemberInfo');
@@ -309,27 +296,10 @@ export default class RightPanel extends React.Component {
                 panel = <NotificationPanel />;
                 break;
             case RIGHT_PANEL_PHASES.FilePanel:
+                /* watcha!
                 panel = <FilePanel roomId={this.props.roomId} resizeNotifier={this.props.resizeNotifier} />;
-                // watcha+ op292 op413 op567 op575
-                if (SettingsStore.getValue("feature_nextcloud")) {
-                    const nextcloudFolder = SettingsStore.getValue("nextcloudShare", this.props.roomId);
-                    if (nextcloudFolder) {
-                        panel = (
-                            <iframe
-                                id="watcha_Nextcloud"
-                                ref={this.nextcloudIframeRef}
-                                className="watcha_Nextcloud"
-                                src={nextcloudFolder}
-                                onLoad={() =>
-                                    refineNextcloudIframe(
-                                        this.nextcloudIframeRef
-                                    )
-                                }
-                            />
-                        );
-                    }
-                }
-                // +watcha
+                !watcha */
+                panel = <NextcloudPanel roomId={this.props.roomId} />; // watcha+
                 break;
         }
 

@@ -72,7 +72,7 @@ export default class GeneralRoomSettingsTab extends React.Component {
                     <RoomProfileSettings roomId={this.props.roomId} />
                 </div>
 
-                {/* watcha+ op566 op575 */}
+                {/* watcha+ */}
                 {SettingsStore.getValue("feature_nextcloud") &&
                     SettingsStore.canSetValue(
                         "nextcloudShare",
