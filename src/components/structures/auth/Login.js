@@ -29,7 +29,6 @@ import classNames from "classnames";
 import AuthPage from "../../views/auth/AuthPage";
 import SSOButton from "../../views/elements/SSOButton";
 import PlatformPeg from '../../../PlatformPeg';
-import WatchaChangePassword from '../../structures/auth/WatchaChangePassword'; // watcha+
 
 // For validating phone numbers without country codes
 const PHONE_NUMBER_REGEX = /^[0-9()\-\s]*$/;
@@ -85,7 +84,6 @@ export default createReactClass({
         onServerConfigChange: PropTypes.func.isRequired,
 
         serverConfig: PropTypes.instanceOf(ValidatedServerConfig).isRequired,
-        defaultUserName: PropTypes.string, // insertion for watcha
         isSyncing: PropTypes.bool,
     },
 
@@ -99,7 +97,6 @@ export default createReactClass({
 
             // used for preserving form values when changing homeserver
             username: "",
-            username: this.props.defaultUserName || "", // modified by watcha
             phoneCountry: null,
             phoneNumber: "",
 
@@ -135,12 +132,6 @@ export default createReactClass({
         this._initLoginLogic();
     },
 
-    // watcha+
-    componentDidMount: function () {
-        this.onboarding();
-    },
-    // +watcha
-
     componentWillUnmount: function() {
         this._unmounted = true;
     },
@@ -164,17 +155,6 @@ export default createReactClass({
     isBusy: function() {
         return this.state.busy || this.props.busy;
     },
-
-    // watcha+
-    onboarding: function() {
-        if (document.URL.split("t=")[1]) {
-            this.setState({
-                onboardingUrl: document.URL,
-                onboarding: true,
-            });
-        }
-    },
-    // +watcha
 
     onPasswordLogin: async function(username, phoneCountry, phoneNumber, password) {
         if (!this.state.serverIsAlive) {
@@ -604,7 +584,6 @@ export default createReactClass({
 
         return (
             <PasswordLogin
-               username={this.props.username} // watcha+
                onSubmit={this.onPasswordLogin}
                onError={this.onPasswordLoginError}
                onEditServerDetailsClick={onEditServerDetailsClick}
@@ -655,7 +634,6 @@ export default createReactClass({
     },
 
     render: function() {
-        const LanguageSelector = sdk.getComponent('views.auth.LanguageSelector'); // watcha+
         const Loader = sdk.getComponent("elements.Spinner");
         const InlineSpinner = sdk.getComponent("elements.InlineSpinner");
         const AuthHeader = sdk.getComponent("auth.AuthHeader");
@@ -675,7 +653,6 @@ export default createReactClass({
         }
 
         let serverDeadSection;
-        /* watcha!
         if (!this.state.serverIsAlive) {
             const classes = classNames({
                 "mx_Login_error": true,
@@ -688,18 +665,6 @@ export default createReactClass({
                 </div>
             );
         }
-        !watcha */
-
-        // watcha+
-        if (!this.props.username && this.state.onboarding) {
-            return (
-                <WatchaChangePassword
-                    onboardingUrl={this.state.onboardingUrl}
-                    PasswordLogin={this.state.PasswordLogin}
-                />
-            );
-        }
-        // +watcha
 
         let footer;
         if (this.props.isSyncing || this.state.busyLoggingIn) {
@@ -713,13 +678,11 @@ export default createReactClass({
                 </div> }
             </div>;
         } else {
-            /* watcha!
             footer = (
                 <a className="mx_AuthBody_changeFlow" onClick={this.onTryRegisterClick} href="#">
                     { _t('Create account') }
                 </a>
             );
-            !watcha */
         }
 
         return (
@@ -736,7 +699,6 @@ export default createReactClass({
                     { this.renderLoginComponentForStep() }
                     { footer }
                 </AuthBody>
-                <LanguageSelector /> {/* watcha+ */}
             </AuthPage>
         );
     },

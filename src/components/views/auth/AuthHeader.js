@@ -34,9 +34,7 @@ export default createReactClass({
         return (
             <div className="mx_AuthHeader">
                 <AuthHeaderLogo />
-                {/*removed for watcha
                 <LanguageSelector disabled={this.props.disableLanguageSelector} />
-                */}
             </div>
         );
     },

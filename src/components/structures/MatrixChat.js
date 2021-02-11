@@ -193,10 +193,6 @@ export default createReactClass({
             syncError: null, // If the current syncing status is ERROR, the error object, otherwise null.
             resizeNotifier: new ResizeNotifier(),
             showNotifierToolbar: false,
-
-            /* insertion for watcha */
-            usernameForLoginPage: null,
-            /* end of insertion */
         };
         return s;
     },
@@ -322,8 +318,7 @@ export default createReactClass({
 
         if (SettingsStore.getValue("showCookieBar")) {
             this.setState({
-                /* change value for watcha, true -> false */
-                showCookieBar: false,
+                showCookieBar: true,
             });
         }
 
@@ -440,11 +435,6 @@ export default createReactClass({
     },
 
     onAction: function(payload) {
-        /* insertion for watcha */
-        if (payload.action === 'view_welcome_page') {
-          payload.action = 'start_login';
-        }
-        /* end of insertion */
         // console.log(`MatrixClientPeg.onAction: ${payload.action}`);
         const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
         const QuestionDialog = sdk.getComponent("dialogs.QuestionDialog");
@@ -609,17 +599,15 @@ export default createReactClass({
             }
             break;
             case 'view_room_directory': {
-                /*removed for watcha
+                /* watcha!
                 const RoomDirectory = sdk.getComponent("structures.RoomDirectory");
                 Modal.createTrackedDialog('Room directory', '', RoomDirectory, {},
                     'mx_RoomDirectory_dialogWrapper', false, true);
 
                 // View the welcome or home page if we need something to look at
                 this._viewSomethingBehindModal();
-                */
-                /*insertion for watcha*/
-                this._createRoom();
-                /*end of insertion for watcha*/
+                !watcha */
+                this._createRoom(); // watcha+
             }
             break;
             case 'view_my_groups':
@@ -629,11 +617,9 @@ export default createReactClass({
             case 'view_group':
                 this._viewGroup(payload);
                 break;
-            /*removed for watcha
             case 'view_welcome_page':
                 this._viewWelcome();
                 break;
-                */
             case 'view_home_page':
                 this._viewHome();
                 break;
@@ -754,13 +740,7 @@ export default createReactClass({
                 this.setState({
                     showCookieBar: false,
                 });
-                break;
-            /* insertion for watcha */
-            case 'show_login_page_with_autofill_email':
-                this.setState({usernameForLoginPage: payload.username});
-                dis.dispatch({action: 'start_login', screenAfterLogin: "view_home_page"});
-                break;
-            /* end of insertion */            
+                break;         
         }
     },
 
@@ -1012,7 +992,10 @@ export default createReactClass({
 
         const [shouldCreate, opts] = await modal.finished;
         if (shouldCreate) {
-        // change for watcha op332
+            /* watcha!
+            createRoom(opts);
+            !watcha */
+        // watcha+
         // This code allows to reuse the modal dialog of new room within the administration.
         // The local storage is used here as a communication interface between Riot and the
         // administration, to indicate when and how the operation was completed.
@@ -1031,7 +1014,7 @@ export default createReactClass({
             // the same value
             window.localStorage.removeItem("watcha_create_room");
             window.localStorage.setItem("watcha_create_room", null);
-        // end change for watcha
+        // +watcha
         }
     },
 
@@ -1089,7 +1072,7 @@ export default createReactClass({
         const joinRules = roomToLeave.currentState.getStateEvents('m.room.join_rules', '');
         const warnings = [];
         if (joinRules) {
-            /*removed for watcha
+            /* watcha!
             const rule = joinRules.getContent().join_rule;
             if (rule !== "public") {
                 warnings.push((
@@ -1099,7 +1082,7 @@ export default createReactClass({
                     </span>
                 ));
             }
-            */
+            !watcha */
         }
         return warnings;
     },
@@ -2066,11 +2049,9 @@ export default createReactClass({
                     </div>
                 );
             }
-        /* removed for watcha
         } else if (this.state.view === VIEWS.WELCOME) {
             const Welcome = sdk.getComponent('auth.Welcome');
             view = <Welcome {...this.getServerProperties()} />;
-        */
         } else if (this.state.view === VIEWS.REGISTER) {
             const Registration = sdk.getComponent('structures.auth.Registration');
             view = (
@@ -2109,9 +2090,6 @@ export default createReactClass({
                     defaultDeviceDisplayName={this.props.defaultDeviceDisplayName}
                     onForgotPasswordClick={this.onForgotPasswordClick}
                     onServerConfigChange={this.onServerConfigChange}
-                    /* insertion for Watcha */
-                    username={this.state.usernameForLoginPage}
-                    /* end of insertion */
                     {...this.getServerProperties()}
                 />
             );

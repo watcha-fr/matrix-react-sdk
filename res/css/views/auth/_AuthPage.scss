@@ -21,7 +21,7 @@ limitations under the License.
     flex-direction: column;
     background-color: $authpage-bg-color;
 }
-/* removed for watcha
+
 .mx_AuthPage_modal {
     display: flex;
     margin: 100px auto auto;
@@ -29,15 +29,3 @@ limitations under the License.
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.33);
     background-color: $authpage-modal-bg-color;
 }
-*/
-
-// insertion for watcha
-.mx_AuthPage_modal{
-    display: flex;
-    width: 300px;
-    min-height: 450px;
-    padding-top: 50px;
-    padding-bottom: 50px;
-    margin: auto;
-}
-// end insertion for watcha

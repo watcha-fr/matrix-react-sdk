@@ -23,9 +23,7 @@ import * as sdk from '../../../index';
 import { _t } from '../../../languageHandler';
 import SdkConfig from '../../../SdkConfig';
 import {ValidatedServerConfig} from "../../../utils/AutoDiscoveryUtils";
-/* removed for watcha
 import AccessibleButton from "../elements/AccessibleButton";
-*/
 
 /**
  * A pure UI component which displays a username/password form.
@@ -73,17 +71,8 @@ export default class PasswordLogin extends React.Component {
 
     constructor(props) {
         super(props);
-        /* insertion for watcha */
-        const username = this.props.username ? this.props.username : this.props.initialUsername;
-        /* end of insertion for watcha */
         this.state = {
-            /* removed for watcha
             username: this.props.initialUsername,
-            */
-           /* insertion for watcha */
-            busy: true,
-            username: username,
-            /* end of insertion */
             password: this.props.initialPassword,
             phoneCountry: this.props.initialPhoneCountry,
             phoneNumber: this.props.initialPhoneNumber,
@@ -276,15 +265,6 @@ export default class PasswordLogin extends React.Component {
         let forgotPasswordJsx;
 
         if (this.props.onForgotPasswordClick) {
-            /* added for watcha */
-            const mail = SdkConfig.get().recovery_email || "registration@watcha.fr";
-            forgotPasswordJsx = <span>
-                {_t('Forgot your password? Contact us at <a>%(mail_link)s</a>',
-                    { mail_link: mail },
-                    { a: sub => <a href={"mailto:" + sub}>{sub}</a> }
-                   )}
-            {/* end added for watcha */}
-            {/* removed for watcha
             forgotPasswordJsx = <span>
                 {_t('Not sure of your password? <a>Set a new one</a>', {}, {
                     a: sub => (
@@ -298,7 +278,6 @@ export default class PasswordLogin extends React.Component {
                         </AccessibleButton>
                     ),
                 })}
-             end removed for watcha */}
             </span>;
         }
 
@@ -344,8 +323,8 @@ export default class PasswordLogin extends React.Component {
 
         return (
             <div>
-                {/* removed for watcha <SignInToText serverConfig={this.props.serverConfig}
-                    onEditServerDetailsClick={this.props.onEditServerDetailsClick} /> */}
+                <SignInToText serverConfig={this.props.serverConfig}
+                    onEditServerDetailsClick={this.props.onEditServerDetailsClick} />
                 <form onSubmit={this.onSubmitForm}>
                     {loginType}
                     {loginField}
