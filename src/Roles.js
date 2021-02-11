@@ -19,11 +19,9 @@ export function levelRoleMap(usersDefault) {
     return {
         undefined: _t('Default'),
         0: _t('Restricted'),
-        [usersDefault]: _t('Member'), // modified for watcha
-        /* removed for watcha
+        [usersDefault]: _t('Default'),
         50: _t('Moderator'),
-        */
-        100: _t('Room administrator').replace(/ /g, "\u2005"), // modified for watcha op296
+        100: _t('Admin'),
     };
 }
 

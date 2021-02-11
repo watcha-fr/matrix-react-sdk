@@ -156,10 +156,7 @@ export const SETTINGS = {
         // for this case though as we're converting a feature to a setting for a temporary safety net.
         displayName: _td("Enable cross-signing to verify per-user instead of per-session"),
         supportedLevels: ['device', 'config'], // we shouldn't use LEVELS_FEATURE for non-features, so copy it here.
-        /* watcha!
         default: true,
-        !watcha */
-        default: false, // watcha+
     },
     "feature_bridge_state": {
         isFeature: true,
@@ -193,10 +190,7 @@ export const SETTINGS = {
     "showAvatarChanges": {
         supportedLevels: LEVELS_ROOM_SETTINGS_WITH_ROOM,
         displayName: _td('Show avatar changes'),
-        /* watcha!
         default: true,
-        !watcha */
-        default: false, // watcha+
         invertedSettingName: 'hideAvatarChanges',
     },
     "showDisplaynameChanges": {
@@ -229,10 +223,7 @@ export const SETTINGS = {
     "alwaysShowEncryptionIcons": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td('Always show encryption icons'),
-        /* watcha!
         default: true,
-        !watcha */
-        default: false, // watcha+
     },
     "showRoomRecoveryReminder": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
@@ -291,13 +282,6 @@ export const SETTINGS = {
         default: true,
         invertedSettingName: 'TagPanel.disableTagPanel',
     },
-    // watcha+
-    "TagPanel.disableTagPanel": {
-        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
-        displayName: _td('Disable Community Filter Panel'),
-        default: true,
-    },
-    // +watcha
     "theme": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         default: "light",
@@ -437,10 +421,7 @@ export const SETTINGS = {
     "promptBeforeInviteUnknownUsers": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td('Prompt before sending invites to potentially invalid matrix IDs'),
-        /* watcha!
         default: true,
-        !watcha */
-        default: false, // watcha+
     },
     "showDeveloperTools": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
@@ -467,10 +448,7 @@ export const SETTINGS = {
     "breadcrumbs": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td("Show shortcuts to recently viewed rooms above the room list"),
-        /* watcha! 
-        // default: true,
-        !watcha */
-        default: false, // watcha+
+        default: true,
     },
     "showHiddenEventsInTimeline": {
         displayName: _td("Show hidden events in timeline"),
@@ -566,12 +544,6 @@ export const SETTINGS = {
         supportedLevels: ["room"],
         displayName: _td("Share a Nextcloud folder along its content with room members and use it as a common storage space"),
         default: null,
-    },
-    "showChatEvents": {
-        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
-        displayName: _td("See arrival, departures, and other events in chats"),
-        default: false,
-        controller: new ReloadOnChangeController(),
     },
     // +watcha
 };

@@ -29,7 +29,6 @@ import * as sdk from "../../../index";
 import {MatrixClientPeg} from "../../../MatrixClientPeg";
 import dis from "../../../dispatcher";
 import SettingsStore from "../../../settings/SettingsStore";
-import SdkConfig from "../../../SdkConfig"; // added for Watcha for (undocumented) E2E enablement setting
 
 export default class RoomSettingsDialog extends React.Component {
     static propTypes = {
@@ -61,15 +60,13 @@ export default class RoomSettingsDialog extends React.Component {
             "mx_RoomSettingsDialog_settingsIcon",
             <GeneralRoomSettingsTab roomId={this.props.roomId} />,
         ));
-        /* modified for watcha: conditional with undocumented config */
-        if (SdkConfig.get().watchaE2E) {
+        /* watcha!
         tabs.push(new Tab(
             _td("Security & Privacy"),
             "mx_RoomSettingsDialog_securityIcon",
             <SecurityRoomSettingsTab roomId={this.props.roomId} />,
         ));
-        }
-        /* removed for watcha
+        !watcha */
         tabs.push(new Tab(
             _td("Roles & Permissions"),
             "mx_RoomSettingsDialog_rolesIcon",
@@ -89,12 +86,13 @@ export default class RoomSettingsDialog extends React.Component {
             ));
         }
 
+        /* watcha!
         tabs.push(new Tab(
             _td("Advanced"),
             "mx_RoomSettingsDialog_warningIcon",
             <AdvancedRoomSettingsTab roomId={this.props.roomId} closeSettingsFn={this.props.onFinished} />,
         ));
-        */
+        !watcha */
         return tabs;
     }
 
@@ -106,8 +104,7 @@ export default class RoomSettingsDialog extends React.Component {
             <BaseDialog className='mx_RoomSettingsDialog' hasCancel={true}
                         onFinished={this.props.onFinished} title={_t("Room Settings - %(roomName)s", {roomName})}>
                 <div className='ms_SettingsDialog_content'>
-                    {/* modified for watcha: do not show tabs when there's only one */}
-                    <TabbedView invisibleTab={!(SdkConfig.get().watchaE2E)} tabs={this._getTabs()} />
+                    <TabbedView tabs={this._getTabs()} />
                 </div>
             </BaseDialog>
         );

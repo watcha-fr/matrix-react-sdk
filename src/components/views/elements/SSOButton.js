@@ -20,18 +20,13 @@ import PropTypes from 'prop-types';
 import PlatformPeg from "../../../PlatformPeg";
 import AccessibleButton from "./AccessibleButton";
 import {_t} from "../../../languageHandler";
-import SdkConfig from '../../../SdkConfig'; // watcha+ op556
+import SdkConfig from '../../../SdkConfig'; // watcha+
 
 const SSOButton = ({matrixClient, loginType, ...props}) => {
-    // watcha+ op556
-    if (SdkConfig.get()["sso_auto_redirect"]) {
-        PlatformPeg.get().startSingleSignOn(matrixClient, loginType);
-    }
-    // +watcha
-    
     const onClick = () => {
         PlatformPeg.get().startSingleSignOn(matrixClient, loginType);
     };
+    if (SdkConfig.get()["watcha_sso_auto_redirect"]) onClick(); // watcha+
 
     return (
         <AccessibleButton {...props} kind="primary" onClick={onClick}>

@@ -132,18 +132,6 @@ export default createReactClass({
         });
     },
 
-    // insertion for watcha op213
-    onEnableShowChatEventsChange: function(checked) {
-        SettingsStore.setValue(
-            "showChatEvents", null,
-            SettingLevel.ACCOUNT,
-            checked,
-        ).finally(() => {
-            this.forceUpdate();
-        });
-    },
-    // end of insertion
-
     /*
      * Returns the email pusher (pusher of type 'email') for a given
      * email address. Email pushers all have the same app ID, so since
@@ -764,13 +752,11 @@ export default createReactClass({
         }
 
         let masterPushRuleDiv;
-        /* removed for watcha
         if (this.state.masterPushRule) {
             masterPushRuleDiv = <LabelledToggleSwitch value={!this.state.masterPushRule.enabled}
                                                       onChange={this.onEnableNotificationsChange}
                                                       label={_t('Enable notifications for this account')}/>;
         }
-        */
 
         let clearNotificationsButton;
         if (MatrixClientPeg.get().getRooms().some(r => r.getUnreadNotificationCount() > 0)) {
@@ -797,7 +783,6 @@ export default createReactClass({
 
         const emailThreepids = this.state.threepids.filter((tp) => tp.medium === "email");
         let emailNotificationsRows;
-        /* removed for watcha
         if (emailThreepids.length === 0) {
             emailNotificationsRows = <div>
                 { _t('Add an email address to configure email notifications') }
@@ -807,7 +792,6 @@ export default createReactClass({
                 threePid.address, `${_t('Enable email notifications')} (${threePid.address})`,
             ));
         }
-        */
 
         // Build external push rules
         const externalRules = [];
@@ -878,27 +862,19 @@ export default createReactClass({
 
                     { spinner }
 
-                    {/* insertion for watcha op213 */}
-                    <LabelledToggleSwitch value={SettingsStore.getValue("showChatEvents")}
-                                          onChange={this.onEnableShowChatEventsChange}
-                                          label={SettingsStore.getDisplayName("showChatEvents")} />
-                    {/* end of insertion */}
-
                     <LabelledToggleSwitch value={SettingsStore.getValue("notificationsEnabled")}
                                           onChange={this.onEnableDesktopNotificationsChange}
                                           label={_t('Enable desktop notifications for this session')} />
 
-                    {/* removed for watcha
                     <LabelledToggleSwitch value={SettingsStore.getValue("notificationBodyEnabled")}
                                           onChange={this.onEnableDesktopNotificationBodyChange}
                                           label={_t('Show message in desktop notification')} />
-                    */}
+
                     <LabelledToggleSwitch value={SettingsStore.getValue("audioNotificationsEnabled")}
                                           onChange={this.onEnableAudioNotificationsChange}
                                           label={_t('Enable audible notifications for this session')} />
 
                     { emailNotificationsRows }
-                    {/* removed for watcha      
                     <div className="mx_UserNotifSettings_pushRulesTableWrapper">
                         <table className="mx_UserNotifSettings_pushRulesTable">
                             <thead>
@@ -916,7 +892,6 @@ export default createReactClass({
                             </tbody>
                         </table>
                     </div>
-                    */}
 
                     { advancedSettings }
 

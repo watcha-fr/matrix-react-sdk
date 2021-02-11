@@ -143,15 +143,18 @@ export default class TopLeftMenu extends React.Component {
         );
 
         // watcha+
-        const adminItem = (
-            <MenuItem
-                className="mx_TopLeftMenu_icon_admin"
-                onClick={this.openAdmin}
-                title={_t("Open the administration console in a new tab")}
-            >
-                {_t("Administration")}
-            </MenuItem>
-        );
+        let adminItem;
+        if (this.state.isSynapseAdmin) {
+            adminItem = (
+                <MenuItem
+                    className="mx_TopLeftMenu_icon_admin"
+                    onClick={this.openAdmin}
+                    title={_t("Open the administration console in a new tab")}
+                >
+                    {_t("Administration")}
+                </MenuItem>
+            );
+        }
 
         const jitsiItem = (
             <MenuItem
@@ -163,15 +166,18 @@ export default class TopLeftMenu extends React.Component {
             </MenuItem>
         );
 
-        const nextcloudItem = (
-            <MenuItem
-                className="mx_TopLeftMenu_icon_nextcloud"
-                onClick={this.openNextcloud}
-                title={_t("Open Nextcloud in a new tab")}
-            >
-                Nextcloud
-            </MenuItem>
-        );
+        let nextcloudItem;
+        if (this.state.nextcloudEnabled) {
+            nextcloudItem = (
+                <MenuItem
+                    className="mx_TopLeftMenu_icon_nextcloud"
+                    onClick={this.openNextcloud}
+                    title={_t("Open Nextcloud in a new tab")}
+                >
+                    Nextcloud
+                </MenuItem>
+            );
+        }
         // +watcha
 
         return <div className="mx_TopLeftMenu" ref={this.props.containerRef} role="menu">
@@ -188,12 +194,10 @@ export default class TopLeftMenu extends React.Component {
                 {/* watcha!
                 {helpItem}
                 !watcha */}
-                {this.state.isSynapseAdmin && adminItem} {/* watcha+ */}
+                {adminItem} {/* watcha+ */}
                 {signInOutItem}
-                {/* watcha+ */}
-                {jitsiItem}
-                {this.state.nextcloudEnabled && nextcloudItem}
-                {/* +watcha */}
+                {jitsiItem} {/* watcha+ */}
+                {nextcloudItem} {/* watcha+ */}
             </ul>
         </div>;
     }

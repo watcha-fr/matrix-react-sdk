@@ -78,13 +78,11 @@ export default class UserSettingsDialog extends React.Component {
             "mx_UserSettingsDialog_bellIcon",
             <NotificationUserSettingsTab />,
         ));
-        /* watcha!
         tabs.push(new Tab(
             _td("Preferences"),
             "mx_UserSettingsDialog_preferencesIcon",
             <PreferencesUserSettingsTab />,
         ));
-        !watcha */
         tabs.push(new Tab(
             _td("Voice & Video"),
             "mx_UserSettingsDialog_voiceIcon",
@@ -104,7 +102,6 @@ export default class UserSettingsDialog extends React.Component {
                 <LabsUserSettingsTab />,
             ));
         }
-        /* watcha!
         if (this.state.mjolnirEnabled) {
             tabs.push(new Tab(
                 _td("Ignored users"),
@@ -112,6 +109,7 @@ export default class UserSettingsDialog extends React.Component {
                 <MjolnirUserSettingsTab />,
             ));
         }
+        /* watcha!
         tabs.push(new Tab(
             _td("Help & About"),
             "mx_UserSettingsDialog_helpIcon",
@@ -127,10 +125,7 @@ export default class UserSettingsDialog extends React.Component {
 
         return (
             <BaseDialog className='mx_UserSettingsDialog' hasCancel={true}
-                        /* watcha!
                         onFinished={this.props.onFinished} title={_t("Settings")}>
-                        !watcha */
-                        onFinished={this.props.onFinished}> {/* watcha+ */}
                 <div className='ms_SettingsDialog_content'>
                     <TabbedView tabs={this._getTabs()} />
                 </div>

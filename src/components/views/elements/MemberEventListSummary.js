@@ -364,12 +364,6 @@ export default createReactClass({
     },
 
     render: function() {
-        // added for watcha op213
-        if (!SettingsStore.getValue("showChatEvents")) {
-            return null;
-        }
-        // end added for watcha
-
         const eventsToRender = this.props.events;
 
         // Map user IDs to an array of objects:

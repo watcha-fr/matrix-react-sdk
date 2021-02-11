@@ -26,23 +26,18 @@ import PlatformPeg from "../../../../../PlatformPeg";
 
 export default class PreferencesUserSettingsTab extends React.Component {
     static ROOM_LIST_SETTINGS = [
-        /*removed for watcha
         'RoomList.orderAlphabetically',
         'RoomList.orderByImportance',
         'breadcrumbs',
-        */
     ];
 
     static COMPOSER_SETTINGS = [
-      /*removed for watcha
         'MessageComposerInput.autoReplaceEmoji',
         'MessageComposerInput.suggestEmoji',
         'sendTypingNotifications',
-        */
     ];
 
     static TIMELINE_SETTINGS = [
-      /*
         'showTypingNotifications',
         'autoplayGifsAndVideos',
         'urlPreviewsEnabled',
@@ -56,18 +51,15 @@ export default class PreferencesUserSettingsTab extends React.Component {
         'showAvatarChanges',
         'showDisplaynameChanges',
         'showImages',
-        */
     ];
 
     static ADVANCED_SETTINGS = [
-      /* removed for watcha
         'alwaysShowEncryptionIcons',
         'Pill.shouldShowPillAvatar',
         'TagPanel.enableTagPanel',
         'promptBeforeInviteUnknownUsers',
         // Start automatically after startup (electron-only)
         // Autocomplete delay (niche text box)
-        */
     ];
 
     constructor() {

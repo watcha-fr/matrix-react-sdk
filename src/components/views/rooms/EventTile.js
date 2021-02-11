@@ -75,13 +75,6 @@ for (const evType of ALL_RULE_TYPES) {
 export function getHandlerTile(ev) {
     const type = ev.getType();
 
-    // added for watcha op213
-    if (!SettingsStore.getValue("showChatEvents") &&
-        (type !== "m.room.message")) {
-        return undefined;
-    }
-    // end added for watcha
-
     // don't show verification requests we're not involved in,
     // not even when showing hidden events
     if (type === "m.room.message") {

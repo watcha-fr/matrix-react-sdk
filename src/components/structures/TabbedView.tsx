@@ -46,7 +46,6 @@ export class Tab {
 
 interface IProps {
     tabs: Tab[];
-    invisibleTab: false, // added for watcha
 }
 
 interface IState {
@@ -57,7 +56,6 @@ export default class TabbedView extends React.Component<IProps, IState> {
     static propTypes = {
         // The tabs to show
         tabs: PropTypes.arrayOf(PropTypes.instanceOf(Tab)).isRequired,
-        invisibleTab: PropTypes.bool,  // added for watcha
     };
 
     constructor(props: IProps) {
@@ -124,14 +122,8 @@ export default class TabbedView extends React.Component<IProps, IState> {
     }
 
     public render(): React.ReactNode {
-        /*change labels from const to let for watcha*/
-        let labels = this.props.tabs.map(tab => this._renderTabLabel(tab));
+        const labels = this.props.tabs.map(tab => this._renderTabLabel(tab));
         const panel = this._renderTabPanel(this.props.tabs[this._getActiveTabIndex()]);
-        // insertion for watcha
-        if (this.props.invisibleTab) {
-            labels=[];
-        }
-        // end insertion for watcha
 
         return (
             <div className="mx_TabbedView">
