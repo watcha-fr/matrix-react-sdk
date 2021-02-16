@@ -236,13 +236,13 @@ limitations under the License.
     mask-image: url('$(res)/img/feather-customised/share.svg');
 }
 
-/* insertion for watcha */
+// watcha+
 .mx_RoomHeader_inviteButton {
     height: 20px;
     width: 25px;
     mask-image: url("$(res)/img/feather-customised/user-add.svg");
-    mask-size: contain;
     mask-repeat: no-repeat;
+    mask-size: contain;
     &.mx_RoomHeader_button::before {
         width: 25px;
     }
@@ -254,7 +254,7 @@ limitations under the License.
         opacity:0.3;
     }
 }
-/* end of insertion */
+// +watcha
 
 .mx_RoomHeader_manageIntegsButton::before {
     mask-image: url('$(res)/img/feather-customised/grid.svg');

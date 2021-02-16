@@ -18,10 +18,6 @@ limitations under the License.
     display: flex;
     flex-direction: row;
     min-width: 0;
-    /* insertion for watcha */
-    // This flex container can now be lower than his children. This prevents the stretching of mx_RoomView_body that induced an unwanted loading of the timeline.
-    min-height: 0;
-    /* end of insertion */
     height: 100%;
 }
 

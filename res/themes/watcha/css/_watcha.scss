@@ -1,0 +1,85 @@
+$watcha-accent-color: rgb(0, 180, 180);
+$watcha-accent-alpha-color: rgba(0, 180, 180, 0.5);
+$watcha-accent-border: aqua;
+$watcha-dark-color: hsl(0, 0%, 25%);
+
+$accent-color: $watcha-accent-color;
+$roomtile-selected-bg-color: $watcha-accent-color;
+
+$input-valid-border-color: $accent-color;
+$button-bg-color: $accent-color;
+$roomsublist-chevron-color: $accent-color;
+$tab-label-active-bg-color: $accent-color;
+$button-primary-bg-color: $accent-color;
+$button-link-fg-color: $accent-color;
+$togglesw-on-color: $accent-color;
+$reaction-row-button-selected-border-color: $accent-color;
+
+.mx_LeftPanel {
+    background-color: $watcha-dark-color !important;
+}
+
+.mx_RoomList * {
+    color: #ffffff !important;
+}
+
+.mx_RoomTile {
+    border-radius: 4px;
+    &:focus {
+        background-color: unset !important;
+        border: solid 1px $watcha-accent-border;
+    }
+    &:hover {
+        background-color: $watcha-accent-alpha-color;
+    }
+}
+
+.mx_RoomSubList_badge > div {
+    background-color: #ffffff !important;
+    color: black !important;
+}
+
+.mx_RoomSubList_addRoom {
+    background-color: unset !important;
+    border: solid 1px $watcha-accent-border;
+    &::before {
+        background-color: $watcha-accent-border !important;
+    }
+}
+
+// ***** Mixins duplicated from res/themes/light/css/_light.scss *****
+
+@define-mixin mx_DialogButton {
+    /* align images in buttons (eg spinners) */
+    vertical-align: middle;
+    border: 0px;
+    border-radius: 4px;
+    font-family: $font-family;
+    font-size: $font-14px;
+    color: $button-fg-color;
+    background-color: $button-bg-color;
+    width: auto;
+    padding: 7px;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+    cursor: pointer;
+    display: inline-block;
+    outline: none;
+}
+
+@define-mixin mx_DialogButton_danger {
+    background-color: $accent-color;
+}
+
+@define-mixin mx_DialogButton_secondary {
+    // flip colours for the secondary ones
+    font-weight: 600;
+    border: 1px solid $accent-color ! important;
+    color: $accent-color;
+    background-color: $button-secondary-bg-color;
+}
+
+@define-mixin mx_Dialog_link {
+    color: $accent-color;
+    text-decoration: none;
+}

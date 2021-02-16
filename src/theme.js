@@ -130,6 +130,7 @@ export class ThemeWatcher {
 
 export function enumerateThemes() {
     const BUILTIN_THEMES = {
+        "watcha": _t("Watcha theme"), // watcha+
         "light": _t("Light theme"),
         "dark": _t("Dark theme"),
     };

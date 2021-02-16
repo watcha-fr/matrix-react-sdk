@@ -66,8 +66,7 @@ limitations under the License.
 .mx_RoomSubList_label > span {
     flex: 1 1 auto;
     text-transform: uppercase;
-    /* change for watcha*/
-    color: white;
+    color: $roomsublist-label-fg-color;
     font-weight: 700;
     font-size: $font-12px;
     margin-left: 8px;
@@ -89,18 +88,15 @@ limitations under the License.
 }
 
 .mx_RoomSubList_addRoom {
-    // removed for watcha background-color: $roomheader-addroom-bg-color;
+    background-color: $roomheader-addroom-bg-color;
     border-radius: 10px; // 16/2 + 2 padding
     height: 16px;
     flex: 0 0 16px;
     position: relative;
 
     &::before {
-        //change for watcha turn the icon to watcha colo
-        background-color: #00e5e5;
-        //change icon path to use plus icon
-        mask: url('$(res)/img/plus.svg');
-        //enf of changes for watcha
+        background-color: $roomheader-addroom-fg-color;
+        mask: url('$(res)/img/icons-room-add.svg');
         mask-repeat: no-repeat;
         mask-position: center;
         content: '';
@@ -181,16 +177,7 @@ limitations under the License.
         display: block;
         pointer-events: none;
         transition: background-image 0.1s ease-in;
-        /*removed for watcha
         background: linear-gradient(to top, $panel-gradient);
-        */
-        /*insertion for watcha8*/
-        height: 1px;
-        background: linear-gradient(to top, black,black);
-        /*end of insertion*/
-
-
-
     }
 
 

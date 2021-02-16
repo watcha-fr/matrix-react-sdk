@@ -14,14 +14,7 @@ $monospace-font-family: Inconsolata, Twemoji, 'Apple Color Emoji', 'Segoe UI Emo
 
 // unified palette
 // try to use these colors when possible
-/* watcha!
 $accent-color: #03b381;
-!watcha */
-// watcha+
-$watcha-grey-color: #414141;
-$watcha-blue-color: #00b3b3;
-$accent-color: $watcha-grey-color;
-// +watcha+
 $accent-bg-color: rgba(3, 179, 129, 0.16);
 $notice-primary-color: #ff4b55;
 $notice-primary-bg-color: rgba(255, 75, 85, 0.16);
@@ -69,10 +62,7 @@ $info-plinth-fg-color: #888;
 $preview-bar-bg-color: #f7f7f7;
 
 // left-panel style muted accent color
-/* watcha!
 $secondary-accent-color: #f2f5f8;
-!watcha */
-$secondary-accent-color: $watcha-grey-color; // watcha+
 $tertiary-accent-color: #d3efe1;
 
 $tagpanel-bg-color: #27303a;
@@ -186,14 +176,8 @@ $roomtile-name-color: #61708b;
 $roomtile-badge-fg-color: $accent-fg-color;
 $roomtile-selected-color: #212121;
 $roomtile-notified-color: #212121;
-/* watcha!
 $roomtile-selected-bg-color: #fff;
 $roomtile-focused-bg-color: #fff;
-!watcha */
-// watcha+
-$roomtile-selected-bg-color: $watcha-blue-color;
-$roomtile-focused-bg-color: $watcha-blue-color;
-// +watcha
 
 $username-variant1-color: #368bd6;
 $username-variant2-color: #ac3ba8;
