@@ -581,12 +581,15 @@ export default class AppTile extends React.Component {
 
             // TODO: Namespace themes through some standard
             'theme': SettingsStore.getValue("theme"),
+            'matrix_room_name': this.props.room.name, // watcha+
         });
 
         if (vars.conferenceId === undefined) {
             // we'll need to parse the conference ID out of the URL for v1 Jitsi widgets
             const parsedUrl = new URL(this.props.app.url);
             vars.conferenceId = parsedUrl.searchParams.get("confId");
+            vars.domain = parsedUrl.searchParams.get("domain"); // watcha+
+            vars.isAudioOnly = parsedUrl.searchParams.get("isAudioConf"); // watcha+
         }
 
         return uriFromTemplate(u, vars);

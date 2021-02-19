@@ -158,11 +158,9 @@ export default createReactClass({
         const apps = this.state.apps.map((app, index, arr) => {
             const capWhitelist = WidgetUtils.getCapWhitelistForAppTypeInRoomId(app.type, this.props.room.roomId);
             // watcha+
-            // Mobile app does not send a full url
-            // however client app except a full url for working the fakeserver is replaced by client later
+            // workaround for relative url of v1 widgets 
             if (app.url.startsWith("/")) {
-                var jitsiConferenceId = app.url.split(/=|&/)[1];
-                app.url = ("https://fakeserver/app/jitsi.html?confId=" + jitsiConferenceId);
+                app.url = new URL(app.url, window.location.origin).toString();
             }
             // +watcha
 
