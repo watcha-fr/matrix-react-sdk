@@ -83,7 +83,10 @@ export default class LogoutDialog extends React.Component {
 
     _onFinished(confirmed) {
         if (confirmed) {
+            /* watcha!
             dis.dispatch({action: 'logout'});
+            !watcha */
+            this._oidc_logout() // watcha+
         }
         // close dialog
         this.props.onFinished();
@@ -110,14 +113,73 @@ export default class LogoutDialog extends React.Component {
     }
 
     _onLogoutConfirm() {
+        /* watcha!
         dis.dispatch({action: 'logout'});
+        !watcha */
+        this._oidc_logout() // watcha+
 
         // close dialog
         this.props.onFinished();
     }
 
+    // watcha+
+    async _oidc_logout() {
+        const mxClient = MatrixClientPeg.get();
+        const ssoLoginUrl = mxClient.getSsoLoginUrl("");
+        fetch(ssoLoginUrl)
+            .then(response => {
+                if (response.ok) {
+                    return Promise.resolve(response.url);
+                } else {
+                    return Promise.reject(
+                        "this homeserver does not handle SSO"
+                    );
+                }
+            })
+            .then(authUrl => {
+                const match = authUrl.match(".+/realms/[^/]+");
+                if (match) {
+                    const realmUrl = match[0];
+                    const oidcConfigUrl =
+                        realmUrl + "/.well-known/openid-configuration";
+                    return fetch(oidcConfigUrl);
+                } else {
+                    return Promise.reject(
+                        "this homeserver is not configured for OpendID"
+                    );
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    return Promise.reject("OpendID configuration not found");
+                }
+            })
+            .then(oidcConfig => {
+                if (oidcConfig.end_session_endpoint) {
+                    const sloUrl = new URL(oidcConfig.end_session_endpoint);
+                    sloUrl.searchParams.set(
+                        "redirect_uri",
+                        window.location.origin
+                    );
+                    window.location.href = sloUrl;
+                } else {
+                    return Promise.reject("end session endpoint not found");
+                }
+            })
+            .catch(error => {
+                console.warn("Single Logout failed:", error);
+            });
+        dis.dispatch({action: 'logout'});
+    }
+    // +watcha
+
     render() {
+        /* watcha!
         if (this.state.shouldLoadBackupStatus) {
+        !watcha */
+        if (false) { // watcha+
             const BaseDialog = sdk.getComponent('views.dialogs.BaseDialog');
 
             const description = <div>

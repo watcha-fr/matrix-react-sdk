@@ -29,6 +29,7 @@ import { getCachedRoomIDForAlias, storeRoomAliasInCache } from '../RoomAliasCach
 import {ActionPayload} from "../dispatcher/payloads";
 import {retry} from "../utils/promise";
 import CountlyAnalytics from "../CountlyAnalytics";
+import { OpenToTabPayload } from "../dispatcher/payloads/OpenToTabPayload"; // watcha+
 
 const NUM_JOIN_RETRY = 5;
 
@@ -164,9 +165,11 @@ class RoomViewStore extends Store<ActionPayload> {
                 }
                 break;
             case 'open_room_settings': {
+                const tabPayload = payload as OpenToTabPayload; // watcha+
                 const RoomSettingsDialog = sdk.getComponent("dialogs.RoomSettingsDialog");
                 Modal.createTrackedDialog('Room settings', '', RoomSettingsDialog, {
                     roomId: payload.room_id || this.state.roomId,
+                    initialTabId: tabPayload.initialTabId, // watcha+
                 }, /*className=*/null, /*isPriority=*/false, /*isStatic=*/true);
                 break;
             }
@@ -311,6 +314,12 @@ class RoomViewStore extends Store<ActionPayload> {
                     }
                 }
             }
+            // watcha+
+            // https://github.com/vector-im/element-web/issues/5460#issuecomment-340186362
+            if (["You are not invited to this room.", "No known servers"].includes(err.message)) {
+                msg = _t(err.message);
+            }
+            // +watcha
 
             const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
             Modal.createTrackedDialog('Failed to join room', '', ErrorDialog, {

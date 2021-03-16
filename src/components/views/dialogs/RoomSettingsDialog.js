@@ -30,6 +30,7 @@ import {MatrixClientPeg} from "../../../MatrixClientPeg";
 import dis from "../../../dispatcher/dispatcher";
 import SettingsStore from "../../../settings/SettingsStore";
 import {UIFeature} from "../../../settings/UIFeature";
+import NextcloudSettingsTab from "../settings/tabs/room/watcha_NextcloudSettingsTab"; // watcha+
 
 export const ROOM_GENERAL_TAB = "ROOM_GENERAL_TAB";
 export const ROOM_SECURITY_TAB = "ROOM_SECURITY_TAB";
@@ -37,6 +38,7 @@ export const ROOM_ROLES_TAB = "ROOM_ROLES_TAB";
 export const ROOM_NOTIFICATIONS_TAB = "ROOM_NOTIFICATIONS_TAB";
 export const ROOM_BRIDGES_TAB = "ROOM_BRIDGES_TAB";
 export const ROOM_ADVANCED_TAB = "ROOM_ADVANCED_TAB";
+export const ROOM_NEXTCLOUD_TAB = "ROOM_NEXTCLOUD_TAB"; // watcha+
 
 export default class RoomSettingsDialog extends React.Component {
     static propTypes = {
@@ -69,6 +71,21 @@ export default class RoomSettingsDialog extends React.Component {
             "mx_RoomSettingsDialog_settingsIcon",
             <GeneralRoomSettingsTab roomId={this.props.roomId} />,
         ));
+        // watcha+
+        if (
+            SettingsStore.getValue("feature_nextcloud") &&
+            SettingsStore.canSetValue("nextcloudShare", this.props.roomId, "room")
+        ) {
+            tabs.push(
+                new Tab(
+                    ROOM_NEXTCLOUD_TAB,
+                    _td("Document sharing"),
+                    "mx_RoomSettingsDialog_nextcloudIcon",
+                    <NextcloudSettingsTab roomId={this.props.roomId} />
+                )
+            );
+        }
+        // +watcha
         tabs.push(new Tab(
             ROOM_SECURITY_TAB,
             _td("Security & Privacy"),
@@ -117,7 +134,10 @@ export default class RoomSettingsDialog extends React.Component {
             <BaseDialog className='mx_RoomSettingsDialog' hasCancel={true}
                         onFinished={this.props.onFinished} title={_t("Room Settings - %(roomName)s", {roomName})}>
                 <div className='ms_SettingsDialog_content'>
+                    {/* watcha!
                     <TabbedView tabs={this._getTabs()} />
+                    !watcha */}
+                    <TabbedView tabs={this._getTabs()} initialTabId={this.props.initialTabId} /> {/* watcha+ */}
                 </div>
             </BaseDialog>
         );
