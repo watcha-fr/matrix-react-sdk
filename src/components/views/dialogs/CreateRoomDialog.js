@@ -25,6 +25,7 @@ import {MatrixClientPeg} from '../../../MatrixClientPeg';
 import {Key} from "../../../Keyboard";
 import {privateShouldBeEncrypted} from "../../../createRoom";
 import {CommunityPrototypeStore} from "../../../stores/CommunityPrototypeStore";
+import SettingsStore from "../../../settings/SettingsStore"; // watcha+
 
 export default class CreateRoomDialog extends React.Component {
     static propTypes = {
@@ -89,13 +90,17 @@ export default class CreateRoomDialog extends React.Component {
     }
 
     componentDidMount() {
+        /* watcha!
         this._detailsRef.addEventListener("toggle", this.onDetailsToggled);
+        !watcha */
         // move focus to first field when showing dialog
         this._nameFieldRef.focus();
     }
 
     componentWillUnmount() {
+        /* watcha!
         this._detailsRef.removeEventListener("toggle", this.onDetailsToggled);
+        !watcha */
     }
 
     _onKeyDown = event => {
@@ -267,8 +272,11 @@ export default class CreateRoomDialog extends React.Component {
                         <Field label={ _t('Topic (optional)') } onChange={this.onTopicChange} value={this.state.topic} className="mx_CreateRoomDialog_topic" />
                         <LabelledToggleSwitch label={ _t("Make this room public")} onChange={this.onPublicChange} value={this.state.isPublic} />
                         { publicPrivateLabel }
+                        {SettingsStore.getValue("feature_e2ee_ui") && <React.Fragment> {/* watcha+ */}
                         { e2eeSection }
+                        </React.Fragment>} {/* +watcha */}
                         { aliasField }
+                        {/* watcha!
                         <details ref={this.collectDetailsRef} className="mx_CreateRoomDialog_details">
                             <summary className="mx_CreateRoomDialog_details_summary">{ this.state.detailsOpen ? _t('Hide advanced') : _t('Show advanced') }</summary>
                             <LabelledToggleSwitch
@@ -281,6 +289,7 @@ export default class CreateRoomDialog extends React.Component {
                             />
                             <p>{federateLabel}</p>
                         </details>
+                        !watcha */}
                     </div>
                 </form>
                 <DialogButtons primaryButton={_t('Create Room')}

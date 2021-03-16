@@ -493,7 +493,9 @@ export default class EventTile extends React.Component {
             // add to the start so the most recent is on the end (ie. ends up rightmost)
             avatars.unshift(
                 <ReadReceiptMarker key={userId} member={receipt.roomMember}
+                    /* watcha!
                     fallbackUserId={userId}
+                    !watcha */
                     leftOffset={left} hidden={hidden}
                     readReceiptInfo={readReceiptInfo}
                     checkUnmounting={this.props.checkUnmounting}
@@ -501,6 +503,7 @@ export default class EventTile extends React.Component {
                     onClick={this.toggleAllReadAvatars}
                     timestamp={receipt.ts}
                     showTwelveHour={this.props.isTwelveHour}
+                    fallbackUserId={receipt.roomMember ? receipt.roomMember.rawDisplayName : userId} // watcha+
                 />,
             );
         }

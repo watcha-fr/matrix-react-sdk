@@ -480,7 +480,9 @@ export default class MessageContextMenu extends React.Component {
                 { cancelButton }
                 { forwardButton }
                 { pinButton }
+                {/* watcha!
                 { viewSourceButton }
+                !watcha */}
                 { viewClearSourceButton }
                 { unhidePreviewButton }
                 { permalinkButton }

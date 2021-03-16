@@ -365,6 +365,7 @@ export default class SecurityRoomSettingsTab extends React.Component {
             <div className="mx_SettingsTab mx_SecurityRoomSettingsTab">
                 <div className="mx_SettingsTab_heading">{_t("Security & Privacy")}</div>
 
+                {SettingsStore.getValue("feature_e2ee_ui") && <React.Fragment> {/* watcha+ */}
                 <span className='mx_SettingsTab_subheading'>{_t("Encryption")}</span>
                 <div className='mx_SettingsTab_section mx_SecurityRoomSettingsTab_encryptionSection'>
                     <div>
@@ -376,6 +377,7 @@ export default class SecurityRoomSettingsTab extends React.Component {
                     </div>
                     {encryptionSettings}
                 </div>
+                </React.Fragment>} {/* +watcha */}
 
                 <span className='mx_SettingsTab_subheading'>{_t("Who can access this room?")}</span>
                 <div className='mx_SettingsTab_section mx_SettingsTab_subsectionText'>

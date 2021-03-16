@@ -39,10 +39,24 @@ export default class ProfileSettings extends React.Component {
             avatarUrl: avatarUrl,
             avatarFile: null,
             enableProfileSave: false,
+            email: undefined, // watcha+
         };
 
         this._avatarUpload = createRef();
     }
+
+    // watcha+
+    componentDidMount() {
+        MatrixClientPeg.get()
+            .getThreePids()
+            .then(({ threepids }) => {
+                const email = threepids.filter(
+                    threepid => threepid.medium === "email"
+                )[0].address;
+                this.setState({ email });
+            });
+    }
+    // +watcha
 
     _uploadAvatar = () => {
         this._avatarUpload.current.click();
@@ -177,7 +191,10 @@ export default class ProfileSettings extends React.Component {
                             onChange={this._onDisplayNameChanged}
                         />
                         <p>
+                            {/* watcha!
                             {this.state.userId}
+                            !watcha */}
+                            {this.state.email || this.state.userId} {/* watcha+ */}
                             {hostingSignup}
                         </p>
                     </div>
