@@ -1,0 +1,48 @@
+$watcha-accent-color: rgb(0, 180, 180);
+$watcha-accent-alpha-color: rgba(0, 180, 180, 0.5);
+$watcha-accent-border: aqua;
+$watcha-dark-color: hsl(0, 0%, 25%);
+
+$accent-color: $watcha-accent-color;
+$roomtile-selected-bg-color: $watcha-accent-color;
+
+$input-valid-border-color: $accent-color;
+$button-bg-color: $accent-color;
+$roomsublist-chevron-color: $accent-color;
+$tab-label-active-bg-color: $accent-color;
+$button-primary-bg-color: $accent-color;
+$button-link-fg-color: $accent-color;
+$togglesw-on-color: $accent-color;
+$reaction-row-button-selected-border-color: $accent-color;
+
+.mx_LeftPanel {
+    background-color: $watcha-dark-color !important;
+}
+
+.mx_RoomList * {
+    color: #ffffff !important;
+}
+
+.mx_RoomTile {
+    border-radius: 4px;
+    &:focus {
+        background-color: unset !important;
+        border: solid 1px $watcha-accent-border;
+    }
+    &:hover {
+        background-color: $watcha-accent-alpha-color;
+    }
+}
+
+.mx_RoomSubList_badge:not(.mx_RoomSubList_badgeHighlight) > div {
+    background-color: #ffffff !important;
+    color: black !important;
+}
+
+.mx_RoomSubList_addRoom {
+    background-color: unset !important;
+    border: solid 1px $watcha-accent-border;
+    &::before {
+        background-color: $watcha-accent-border !important;
+    }
+}

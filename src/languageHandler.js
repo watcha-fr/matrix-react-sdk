@@ -86,7 +86,10 @@ function safeCounterpartTranslate(text, options) {
         // in the preferred language, so do it here
         translated = counterpart.translate(text, Object.assign({}, options, {locale: 'en'}));
     }
+    /* watcha!
     return translated;
+    !watcha */
+    return translated.replace(/riot(-web)?/gi, "Watcha"); // watcha+
 }
 
 /*

@@ -105,12 +105,14 @@ export default class WidgetContextMenu extends React.Component {
             );
         }
 
+        /* watcha!
         // Push this last so it appears last. It's always present.
         options.push(
             <MenuItem className='mx_WidgetContextMenu_option' onClick={this.onRevokeClicked} key='revoke'>
                 {_t("Remove for me")}
             </MenuItem>,
         );
+        !watcha */
 
         // Put separators between the options
         if (options.length > 1) {

@@ -114,19 +114,49 @@ export default class Resizer {
             distributor.resizeFromContainerOffset(offset);
         };
 
+        // watcha+
+        const nextcloudIframe = document.getElementById("watcha_NextcloudPanel");
+
+        const onIframeMouseMove = (event) => {
+            const offset = sizer.offsetFromEvent(event);
+            const offsetRelativeToIframe = offset - (window.innerWidth - nextcloudIframe.contentWindow.innerWidth);
+            distributor.resizeFromContainerOffset(offsetRelativeToIframe);
+        };
+        // +watcha
+
         const body = document.body;
         const finishResize = () => {
             if (this.classNames.resizing) {
                 this.container.classList.remove(this.classNames.resizing);
             }
             distributor.finish();
+            /* watcha!
             body.removeEventListener("mouseup", finishResize, false);
             document.removeEventListener("mouseleave", finishResize, false);
             body.removeEventListener("mousemove", onMouseMove, false);
+            !watcha */
+
+            // watcha+
+            document.removeEventListener("mouseup", finishResize, false);
+            document.removeEventListener("mouseleave", finishResize, false);
+            document.removeEventListener("mousemove", onMouseMove, false);
+            nextcloudIframe.contentDocument.body.removeEventListener("mouseup", finishResize, false);
+            nextcloudIframe.contentDocument.body.removeEventListener("mousemove", onIframeMouseMove, false);
+            // +watcha
         };
+        /* watcha!
         body.addEventListener("mouseup", finishResize, false);
         document.addEventListener("mouseleave", finishResize, false);
         body.addEventListener("mousemove", onMouseMove, false);
+        !watcha */
+
+        // watcha+
+        document.addEventListener("mouseup", finishResize, false);
+        document.addEventListener("mouseleave", finishResize, false);
+        document.addEventListener("mousemove", onMouseMove, false);
+        nextcloudIframe.contentDocument.body.addEventListener("mouseup", finishResize, false);
+        nextcloudIframe.contentDocument.body.addEventListener("mousemove", onIframeMouseMove, false);
+        // +watcha
     }
 
     _createSizerAndDistributor(resizeHandle) {

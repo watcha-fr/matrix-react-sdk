@@ -556,4 +556,18 @@ export const SETTINGS = {
         displayName: _td("IRC display name width"),
         default: 80,
     },
+    // watcha+
+    "feature_nextcloud": {
+        isFeature: true,
+        supportedLevels: LEVELS_FEATURE,
+        displayName: _td("Enable Nextcloud integration"),
+        default: false,
+        controller: new ReloadOnChangeController(),
+    },
+    "nextcloudShare": {
+        supportedLevels: ["room"],
+        displayName: _td("Share a Nextcloud folder along its content with room members and use it as a common storage space"),
+        default: null,
+    },
+    // +watcha
 };

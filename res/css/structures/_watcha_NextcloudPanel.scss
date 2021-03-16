@@ -1,0 +1,18 @@
+.watcha_NextcloudPanel {
+    height: 100%;
+    border: 0;
+}
+
+.watcha_NextcloudPanel_settingsIcon-noWrap {
+    white-space: nowrap;
+    &::after {
+        display: inline-block;
+        width: 1.2em;
+        height: 1.2em;
+        vertical-align: middle;
+        mask-size: contain;
+        mask-image: url("$(res)/img/feather-customised/settings.svg");
+        background-color: $roomheader-button-color;
+        content: "";
+    }
+}

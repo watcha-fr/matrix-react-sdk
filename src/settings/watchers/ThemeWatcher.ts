@@ -99,7 +99,10 @@ export default class ThemeWatcher {
         // controller that honours the same flag, although probablt better would be to
         // have the theme logic in one place rather than split between however many
         // different places.
+        /* watcha!
         if (ThemeController.isLogin) return 'light';
+        !watcha */
+        if (ThemeController.isLogin) return 'watcha'; // watcha+
 
         // If the user has specifically enabled the system matching option (excluding default),
         // then use that over anything else. We pick the lowest possible level for the setting

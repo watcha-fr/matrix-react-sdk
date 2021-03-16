@@ -49,6 +49,12 @@ limitations under the License.
         padding: 0;
         list-style: none;
 
+        // watcha+
+        .mx_TopLeftMenu_icon_signout {
+            border-bottom: 1px solid black;
+        }
+        // +watcha
+
         .mx_TopLeftMenu_icon_home::after {
             mask-image: url('$(res)/img/feather-customised/home.svg');
         }
@@ -68,6 +74,21 @@ limitations under the License.
         .mx_TopLeftMenu_icon_signout::after {
             mask-image: url('$(res)/img/feather-customised/sign-out.svg');
         }
+
+        // watcha+
+        .mx_TopLeftMenu_icon_admin::after {
+            mask-image: url('$(res)/img/watcha/watcha_admin.svg');
+        }
+
+        .mx_TopLeftMenu_icon_jitsi::after {
+            mask-image: url('$(res)/img/feather-customised/video.svg');
+        }
+
+        .mx_TopLeftMenu_icon_nextcloud::after {
+            mask-image: url('$(res)/img/feather-customised/files.svg');
+            mask-size: contain !important;
+        }
+        // +watcha
 
         .mx_AccessibleButton::after {
             mask-repeat: no-repeat;

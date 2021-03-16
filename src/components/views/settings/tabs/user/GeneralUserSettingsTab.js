@@ -285,7 +285,9 @@ export default class GeneralUserSettingsTab extends React.Component {
                     {passwordChangeText}
                 </p>
                 {passwordChangeForm}
+                {/* watcha!
                 {threepidSection}
+                !watcha */}
             </div>
         );
     }
@@ -389,11 +391,14 @@ export default class GeneralUserSettingsTab extends React.Component {
                 {this._renderProfileSection()}
                 {this._renderAccountSection()}
                 {this._renderLanguageSection()}
+                {/* watcha!
                 <div className="mx_SettingsTab_heading">{discoWarning} {_t("Discovery")}</div>
                 {this._renderDiscoverySection()}
                 {this._renderIntegrationManagerSection() /* Has its own title */}
+                {/* watcha!
                 <div className="mx_SettingsTab_heading">{_t("Deactivate account")}</div>
                 {this._renderManagementSection()}
+                !watcha */}
             </div>
         );
     }

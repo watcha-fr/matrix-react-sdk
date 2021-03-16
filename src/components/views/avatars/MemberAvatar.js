@@ -61,7 +61,10 @@ export default createReactClass({
         if (props.member && props.member.name) {
             return {
                 name: props.member.name,
+                /* watcha!
                 title: props.title || props.member.userId,
+                !watcha */
+                title: props.title, // watcha+
                 imageUrl: props.member.getAvatarUrl(
                     MatrixClientPeg.get().getHomeserverUrl(),
                     Math.floor(props.width * window.devicePixelRatio),

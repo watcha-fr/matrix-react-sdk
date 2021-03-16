@@ -364,6 +364,7 @@ export default createReactClass({
                     src={require("../../../../res/img/icon_context_low.svg")}
                     srcSet={require("../../../../res/img/icon_context_low_on.svg")}
                 />
+                {/* watcha!
                 <RoomTagOption
                     active={this.state.isDirectMessage}
                     label={_t('Direct Chat')}
@@ -371,6 +372,7 @@ export default createReactClass({
                     src={require("../../../../res/img/icon_context_person.svg")}
                     srcSet={require("../../../../res/img/icon_context_person_on.svg")}
                 />
+                !watcha */}
             </div>
         );
     },

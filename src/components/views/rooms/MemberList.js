@@ -466,7 +466,10 @@ export default createReactClass({
 
             const AccessibleButton = sdk.getComponent("elements.AccessibleButton");
             inviteButton =
+                /* watcha!
                 <AccessibleButton className="mx_MemberList_invite" onClick={this.onInviteButtonClick} disabled={!canInvite}>
+                !watcha */
+                <AccessibleButton className="mx_MemberList_invite" onClick={this.onInviteButtonClick} disabled={!canInvite} title={ canInvite ? undefined : _t("You do not have permission to invite users to this room")}> {/* watcha+ */}
                     <span>{ _t('Invite to this room') }</span>
                 </AccessibleButton>;
         }

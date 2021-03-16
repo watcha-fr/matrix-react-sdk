@@ -68,6 +68,7 @@ export default class GeneralRoomSettingsTab extends React.Component {
                     <RoomProfileSettings roomId={this.props.roomId} />
                 </div>
 
+                {/* watcha!
                 <div className="mx_SettingsTab_heading">{_t("Room Addresses")}</div>
                 <div className='mx_SettingsTab_section mx_SettingsTab_subsectionText'>
                     <AliasSettings roomId={this.props.roomId}
@@ -88,6 +89,7 @@ export default class GeneralRoomSettingsTab extends React.Component {
                 </div>
 
                 <span className='mx_SettingsTab_subheading'>{_t("Leave room")}</span>
+                !watcha */}
                 <div className='mx_SettingsTab_section'>
                     <AccessibleButton kind='danger' onClick={this._onLeaveClick}>
                         { _t('Leave room') }

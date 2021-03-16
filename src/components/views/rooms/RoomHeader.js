@@ -308,7 +308,9 @@ export default createReactClass({
                 { settingsButton }
                 { pinnedEventsButton }
                 { shareRoomButton }
+                {/* watcha!
                 { manageIntegsButton }
+                !watcha */}
                 { forgetButton }
                 { searchButton }
             </div>;
