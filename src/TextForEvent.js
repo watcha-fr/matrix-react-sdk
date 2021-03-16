@@ -471,7 +471,10 @@ function textForPinnedEvent(event) {
 }
 
 function textForWidgetEvent(event) {
+    /* watcha!
     const senderName = event.getSender();
+    *watcha */
+    const senderName = event.sender ? event.sender.name : event.getSender(); // watcha+
     const {name: prevName, type: prevType, url: prevUrl} = event.getPrevContent();
     const {name, type, url} = event.getContent() || {};
 

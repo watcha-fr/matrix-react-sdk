@@ -42,6 +42,12 @@ limitations under the License.
     mask-image: url('$(res)/img/feather-customised/warning-triangle.svg');
 }
 
+// watcha+
+.mx_RoomSettingsDialog_nextcloudIcon::before {
+    mask-image: url('$(res)/img/feather-customised/files.svg');
+}
+// +watcha
+
 .mx_RoomSettingsDialog .mx_Dialog_title {
     -ms-text-overflow: ellipsis;
     text-overflow: ellipsis;

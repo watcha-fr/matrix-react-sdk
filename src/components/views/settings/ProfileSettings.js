@@ -46,10 +46,29 @@ export default class ProfileSettings extends React.Component {
             avatarUrl: avatarUrl,
             avatarFile: null,
             enableProfileSave: false,
+            // watcha+
+            email: undefined,
+            // workaround https://github.com/vector-im/element-web/issues/13093
+            // until https://github.com/matrix-org/matrix-react-sdk/pull/5277
+            displayName: user.displayName !== user.userId ? user.displayName : "",
+            // +watcha
         };
 
         this._avatarUpload = createRef();
     }
+
+    // watcha+
+    componentDidMount() {
+        MatrixClientPeg.get()
+            .getThreePids()
+            .then(({ threepids }) => {
+                const email = threepids.filter(
+                    threepid => threepid.medium === "email"
+                )[0].address;
+                this.setState({ email });
+            });
+    }
+    // +watcha
 
     _uploadAvatar = () => {
         this._avatarUpload.current.click();
@@ -150,7 +169,10 @@ export default class ProfileSettings extends React.Component {
                 <div className="mx_ProfileSettings_profile">
                     <div className="mx_ProfileSettings_controls">
                         <p>
+                            {/* watcha!
                             {this.state.userId}
+                            !watcha */}
+                            {this.state.email || this.state.userId} {/* watcha+ */}
                             {hostingSignup}
                         </p>
                         <Field label={_t("Display Name")}

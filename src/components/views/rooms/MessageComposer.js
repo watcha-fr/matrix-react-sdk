@@ -41,6 +41,7 @@ ComposerAvatar.propTypes = {
 };
 
 function CallButton(props) {
+    return null; // watcha+
     const AccessibleButton = sdk.getComponent('elements.AccessibleButton');
     const onVoiceCallClick = (ev) => {
         dis.dispatch({
@@ -308,7 +309,10 @@ export default class MessageComposer extends React.Component {
     }
 
     renderPlaceholderText() {
+        /* watcha!
         if (SettingsStore.getValue("feature_cross_signing")) {
+        watcha! */
+        if (true) { // watcha+
             if (this.state.isQuoting) {
                 if (this.props.e2eStatus) {
                     return _t('Send an encrypted reply…');
@@ -371,7 +375,9 @@ export default class MessageComposer extends React.Component {
                     permalinkCreator={this.props.permalinkCreator} />,
                 <UploadButton key="controls_upload" roomId={this.props.room.roomId} />,
                 <EmojiButton key="emoji_button" addEmoji={this.addEmoji} />,
+                /* watcha!
                 <Stickerpicker key="stickerpicker_controls_button" room={this.props.room} />,
+                !watcha */
             );
 
             if (this.state.showCallButtons) {

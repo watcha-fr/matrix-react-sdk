@@ -74,13 +74,17 @@ export default createReactClass({
     },
 
     componentDidMount() {
+        /* watcha!
         this._detailsRef.addEventListener("toggle", this.onDetailsToggled);
+        !watcha */
         // move focus to first field when showing dialog
         this._nameFieldRef.focus();
     },
 
     componentWillUnmount() {
+        /* watcha!
         this._detailsRef.removeEventListener("toggle", this.onDetailsToggled);
+        !watcha */
     },
 
     _onKeyDown: function(event) {
@@ -216,12 +220,16 @@ export default createReactClass({
                         <Field label={ _t('Topic (optional)') } onChange={this.onTopicChange} value={this.state.topic} className="mx_CreateRoomDialog_topic" />
                         <LabelledToggleSwitch label={ _t("Make this room public")} onChange={this.onPublicChange} value={this.state.isPublic} />
                         { publicPrivateLabel }
+                        {/* watcha!
                         { e2eeSection }
+                        !watcha */}
                         { aliasField }
+                        {/* watcha!
                         <details ref={this.collectDetailsRef} className="mx_CreateRoomDialog_details">
                             <summary className="mx_CreateRoomDialog_details_summary">{ this.state.detailsOpen ? _t('Hide advanced') : _t('Show advanced') }</summary>
                             <LabelledToggleSwitch label={ _t('Block users on other matrix homeservers from joining this room (This setting cannot be changed later!)')} onChange={this.onNoFederateChange} value={this.state.noFederate} />
                         </details>
+                        !watcha */}
                     </div>
                 </form>
                 <DialogButtons primaryButton={_t('Create Room')}

@@ -94,11 +94,22 @@ export default createReactClass({
     getInitialState: function() {
         return {
             busy: false,
+            email: undefined, // watcha+
         };
     },
 
     componentDidMount: function() {
         this._checkInvitedEmail();
+        // watcha+
+        const inviteMember = this._getInviteMember();
+        if (inviteMember) {
+            MatrixClientPeg.get().getProfileInfo(inviteMember.userId).then(({ email }) => {
+                if (email) {
+                    this.setState({ email });
+                }
+            });
+        }
+        // +watcha
     },
 
     componentDidUpdate: function(prevProps, prevState) {
@@ -444,7 +455,10 @@ export default createReactClass({
                     inviterElement = <span>
                         <span className="mx_RoomPreviewBar_inviter">
                             {inviteMember.rawDisplayName}
+                        {/* watcha!
                         </span> ({inviteMember.userId})
+                        !watcha */}
+                        </span> ({this.state.email || inviteMember.userId}) {/* watcha+ */}
                     </span>;
                 } else {
                     inviterElement = (<span className="mx_RoomPreviewBar_inviter">{this.props.inviterName}</span>);

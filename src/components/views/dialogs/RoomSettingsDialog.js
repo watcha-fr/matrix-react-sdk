@@ -29,6 +29,7 @@ import * as sdk from "../../../index";
 import {MatrixClientPeg} from "../../../MatrixClientPeg";
 import dis from "../../../dispatcher/dispatcher";
 import SettingsStore from "../../../settings/SettingsStore";
+import NextcloudSettingsTab from "../settings/tabs/room/watcha_NextcloudSettingsTab"; // watcha+
 
 export default class RoomSettingsDialog extends React.Component {
     static propTypes = {
@@ -60,6 +61,20 @@ export default class RoomSettingsDialog extends React.Component {
             "mx_RoomSettingsDialog_settingsIcon",
             <GeneralRoomSettingsTab roomId={this.props.roomId} />,
         ));
+        // watcha+
+        if (
+            SettingsStore.isFeatureEnabled("feature_nextcloud") &&
+            SettingsStore.canSetValue("nextcloudShare", this.props.roomId, "room")
+        ) {
+            tabs.push(
+                new Tab(
+                    _td("Document sharing"),
+                    "mx_RoomSettingsDialog_nextcloudIcon",
+                    <NextcloudSettingsTab roomId={this.props.roomId} />
+                )
+            );
+        }
+        // +watcha
         tabs.push(new Tab(
             _td("Security & Privacy"),
             "mx_RoomSettingsDialog_securityIcon",

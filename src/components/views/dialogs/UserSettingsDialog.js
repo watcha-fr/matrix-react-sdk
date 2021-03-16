@@ -72,11 +72,13 @@ export default class UserSettingsDialog extends React.Component {
             "mx_UserSettingsDialog_appearanceIcon",
             <AppearanceUserSettingsTab />,
         ));
+        /* watcha!
         tabs.push(new Tab(
             _td("Flair"),
             "mx_UserSettingsDialog_flairIcon",
             <FlairUserSettingsTab />,
         ));
+        !watcha */
         tabs.push(new Tab(
             _td("Notifications"),
             "mx_UserSettingsDialog_bellIcon",
@@ -92,11 +94,13 @@ export default class UserSettingsDialog extends React.Component {
             "mx_UserSettingsDialog_voiceIcon",
             <VoiceUserSettingsTab />,
         ));
+        /* watcha!
         tabs.push(new Tab(
             _td("Security & Privacy"),
             "mx_UserSettingsDialog_securityIcon",
             <SecurityUserSettingsTab closeSettingsFn={this.props.onFinished} />,
         ));
+        !watcha */
         if (SdkConfig.get()['showLabsSettings'] || SettingsStore.getLabsFeatures().length > 0) {
             tabs.push(new Tab(
                 _td("Labs"),

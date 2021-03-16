@@ -479,7 +479,9 @@ export default createReactClass({
                 { cancelButton }
                 { forwardButton }
                 { pinButton }
+                {/* watcha!
                 { viewSourceButton }
+                !watcha */}
                 { viewClearSourceButton }
                 { unhidePreviewButton }
                 { permalinkButton }

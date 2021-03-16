@@ -24,6 +24,7 @@ import ThemeWatcher from "./settings/watchers/ThemeWatcher";
 
 export function enumerateThemes() {
     const BUILTIN_THEMES = {
+        "watcha": "Watcha", // watcha+
         "light": _t("Light theme"),
         "dark": _t("Dark theme"),
     };

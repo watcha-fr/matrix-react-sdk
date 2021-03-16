@@ -192,10 +192,12 @@ export default createReactClass({
     },
 
     _getDisplayName: function() {
+        return this.props.member.rawDisplayName; // watcha+
         return this.props.member.name;
     },
 
     getPowerLabel: function() {
+        return undefined // watcha+
         return _t("%(userName)s (power %(powerLevelNumber)s)", {
             userName: this.props.member.userId,
             powerLevelNumber: this.props.member.powerLevel,

@@ -585,12 +585,15 @@ export default class AppTile extends React.Component {
 
             // TODO: Namespace themes through some standard
             'theme': SettingsStore.getValue("theme"),
+            'matrix_room_name': this.props.room.name, // watcha+
         });
 
         if (vars.conferenceId === undefined) {
             // we'll need to parse the conference ID out of the URL for v1 Jitsi widgets
             const parsedUrl = new URL(this.props.app.url);
             vars.conferenceId = parsedUrl.searchParams.get("confId");
+            vars.domain = parsedUrl.searchParams.get("domain"); // watcha+
+            vars.isAudioOnly = parsedUrl.searchParams.get("isAudioConf"); // watcha+
         }
 
         return uriFromTemplate(u, vars);
@@ -669,6 +672,13 @@ export default class AppTile extends React.Component {
     }
 
     _onPopoutWidgetClick() {
+        // watcha+
+        dis.dispatch({
+            action: 'appsDrawer',
+            show: false,
+        });
+        this._endWidgetActions();
+        // +watcha
         // Using Object.assign workaround as the following opens in a new window instead of a new tab.
         // window.open(this._getPopoutUrl(), '_blank', 'noopener=yes');
         Object.assign(document.createElement('a'),
@@ -717,6 +727,11 @@ export default class AppTile extends React.Component {
                 </div>
             );
             if (!this.state.hasPermissionToLoad) {
+                // watcha+
+                if (this.props.app.id.match(/^(m.)?jitsi_/)) {
+                    this._grantWidgetPermission()
+                } else {
+                // +watcha
                 const isEncrypted = MatrixClientPeg.get().isRoomEncrypted(this.props.room.roomId);
                 appTileBody = (
                     <div className={appTileBodyClass}>
@@ -729,6 +744,7 @@ export default class AppTile extends React.Component {
                         />
                     </div>
                 );
+                } // watcha+
             } else if (this.state.initialising) {
                 appTileBody = (
                     <div className={appTileBodyClass + (this.state.loading ? 'mx_AppLoading' : '')}>
@@ -799,6 +815,7 @@ export default class AppTile extends React.Component {
             const showPictureSnapshotButton = this._hasCapability('m.capability.screenshot') && this.props.show;
 
             const WidgetContextMenu = sdk.getComponent('views.context_menus.WidgetContextMenu');
+            if (showEditButton || showDeleteButton || showPictureSnapshotButton || this.props.showReload) { // watcha+
             contextMenu = (
                 <ContextMenu {...aboveLeftOf(elementRect, null)} onFinished={this._closeContextMenu}>
                     <WidgetContextMenu
@@ -811,6 +828,7 @@ export default class AppTile extends React.Component {
                     />
                 </ContextMenu>
             );
+            } // watcha+
         }
 
         return <React.Fragment>

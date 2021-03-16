@@ -73,6 +73,7 @@ export default createReactClass({
             devicesLoading: true,
             devices: null,
             isIgnoring: false,
+            email: undefined // watcha+
         };
     },
 
@@ -102,6 +103,14 @@ export default createReactClass({
         this._checkIgnoreState();
 
         this._updateStateForNewMember(this.props.member);
+
+        // watcha+
+        cli.getProfileInfo(this.props.member.userId).then(({ email }) => {
+            if (email) {
+                this.setState({ email });
+            }
+        });
+        // +watcha
     },
 
     // TODO: [REACT-WARNING] Replace with appropriate lifecycle event
@@ -1129,6 +1138,8 @@ export default createReactClass({
             />);
         }
 
+        const isMe = this.props.member.userId === this.context.getUserId(); // watcha+
+
         return (
             <div className="mx_MemberInfo" role="tabpanel">
                 <div className="mx_MemberInfo_name">
@@ -1141,20 +1152,27 @@ export default createReactClass({
 
                     <div className="mx_MemberInfo_profile">
                         <div className="mx_MemberInfo_profileField">
+                            {/* watcha!
                             { this.props.member.userId }
+                            !watcha */}
+                            {this.state.email || this.props.member.userId} {/* watcha+ */}
                         </div>
                         { roomMemberDetails }
                     </div>
                 </div>
                 <AutoHideScrollbar className="mx_MemberInfo_scrollContainer">
                     <div className="mx_MemberInfo_container">
+                        { !isMe && <React.Fragment> {/* watcha+ */}
                         { this._renderUserOptions() }
 
                         { adminTools }
+                        </React.Fragment> } {/* watcha+ */}
 
                         { startChat }
 
+                        {/* watcha!
                         { this._renderDevices() }
+                        !watcha */}
 
                         { spinner }
                     </div>

@@ -25,6 +25,7 @@ import HeaderButtons, {HEADER_KIND_ROOM} from './HeaderButtons';
 import {RIGHT_PANEL_PHASES} from "../../../stores/RightPanelStorePhases";
 import {Action} from "../../../dispatcher/actions";
 import {ActionPayload} from "../../../dispatcher/payloads";
+import SettingsStore from '../../../settings/SettingsStore'; // watcha+
 
 const MEMBER_PHASES = [
     RIGHT_PANEL_PHASES.RoomMemberList,
@@ -80,6 +81,7 @@ export default class RoomHeaderButtons extends HeaderButtons {
     }
 
     renderButtons() {
+        const showFileButton = SettingsStore.isFeatureEnabled("feature_nextcloud") || null; // watcha+
         return [
             <HeaderButton key="membersButton" name="membersButton"
                 title={_t('Members')}
@@ -87,6 +89,7 @@ export default class RoomHeaderButtons extends HeaderButtons {
                 onClick={this._onMembersClicked}
                 analytics={['Right Panel', 'Member List Button', 'click']}
             />,
+            showFileButton && // watcha+
             <HeaderButton key="filesButton" name="filesButton"
                 title={_t('Files')}
                 isHighlighted={this.isPhase(RIGHT_PANEL_PHASES.FilePanel)}

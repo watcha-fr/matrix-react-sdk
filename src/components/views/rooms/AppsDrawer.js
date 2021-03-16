@@ -157,6 +157,12 @@ export default createReactClass({
     render: function() {
         const apps = this.state.apps.map((app, index, arr) => {
             const capWhitelist = WidgetUtils.getCapWhitelistForAppTypeInRoomId(app.type, this.props.room.roomId);
+            // watcha+
+            // workaround for relative url of v1 widgets 
+            if (app.url.startsWith("/")) {
+                app.url = new URL(app.url, window.location.origin).toString();
+            }
+            // +watcha
 
             return (<AppTile
                 key={app.id}
@@ -208,7 +214,9 @@ export default createReactClass({
                     { apps }
                     { spinner }
                 </div>
+                {/* watcha!
                 { this._canUserModify() && addWidget }
+                !watcha */}
             </div>
         );
     },

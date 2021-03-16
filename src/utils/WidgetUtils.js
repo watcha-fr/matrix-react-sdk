@@ -455,6 +455,7 @@ export default class WidgetUtils {
             'displayName=$matrix_display_name',
             'avatarUrl=$matrix_avatar_url',
             'userId=$matrix_user_id',
+            'roomName=$matrix_room_name', // watcha+
         ].join('&');
 
         let baseUrl = window.location;

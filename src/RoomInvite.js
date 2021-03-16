@@ -40,7 +40,10 @@ export function inviteMultipleToRoom(roomId, addrs) {
 
 export function showStartChatInviteDialog() {
     // This dialog handles the room creation internally - we don't need to worry about it.
+    /* watcha!
     const InviteDialog = sdk.getComponent("dialogs.InviteDialog");
+    !watcha */
+    const InviteDialog = sdk.getComponent("dialogs.watcha_InviteMemberDialog"); // watcha+
     Modal.createTrackedDialog(
         'Start DM', '', InviteDialog, {kind: KIND_DM},
         /*className=*/null, /*isPriority=*/false, /*isStatic=*/true,
@@ -49,7 +52,10 @@ export function showStartChatInviteDialog() {
 
 export function showRoomInviteDialog(roomId) {
     // This dialog handles the room creation internally - we don't need to worry about it.
+    /* watcha!
     const InviteDialog = sdk.getComponent("dialogs.InviteDialog");
+    !watcha */
+    const InviteDialog = sdk.getComponent("dialogs.watcha_InviteMemberDialog"); // watcha+
     Modal.createTrackedDialog(
         'Invite Users', '', InviteDialog, {kind: KIND_INVITE, roomId},
         /*className=*/null, /*isPriority=*/false, /*isStatic=*/true,

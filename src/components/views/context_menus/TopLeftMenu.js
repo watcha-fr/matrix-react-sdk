@@ -28,6 +28,8 @@ import {MenuItem} from "../../structures/ContextMenu";
 import * as sdk from "../../../index";
 import {getHomePageUrl} from "../../../utils/pages";
 import {Action} from "../../../dispatcher/actions";
+import {Jitsi} from "../../../widgets/Jitsi"; // watcha+
+import SettingsStore from "../../../settings/SettingsStore"; // watcha+
 
 export default class TopLeftMenu extends React.Component {
     static propTypes = {
@@ -46,7 +48,23 @@ export default class TopLeftMenu extends React.Component {
         this.openSettings = this.openSettings.bind(this);
         this.signIn = this.signIn.bind(this);
         this.signOut = this.signOut.bind(this);
+        this.state = { isSynapseAdministrator: false }; // watcha+
     }
+
+    // watcha+
+    componentDidMount() {
+        MatrixClientPeg.get()
+            .isSynapseAdministrator()
+            .then(isSynapseAdministrator => {
+                this.setState({ isSynapseAdministrator });
+            })
+            .catch(error => {
+                if (error.errcode !== "M_FORBIDDEN") {
+                    console.error(`[watcha] ${error.message} - ${error.errcode}`);
+                }
+            });
+    }
+    // +watcha
 
     hasHomePage() {
         return !!getHomePageUrl(SdkConfig.get());
@@ -73,13 +91,17 @@ export default class TopLeftMenu extends React.Component {
         }
 
         let homePageItem = null;
+        /* watcha!
         if (this.hasHomePage()) {
+        !watcha */
             homePageItem = (
                 <MenuItem className="mx_TopLeftMenu_icon_home" onClick={this.viewHomePage}>
                     {_t("Home")}
                 </MenuItem>
             );
+        /* watcha!
         }
+        !watcha */
 
         let signInOutItem;
         if (isGuest) {
@@ -108,17 +130,62 @@ export default class TopLeftMenu extends React.Component {
             </MenuItem>
         );
 
+        // watcha+
+        let adminItem;
+        if (this.state.isSynapseAdministrator) {
+            adminItem = (
+                <MenuItem
+                    className="mx_TopLeftMenu_icon_admin"
+                    onClick={this.openAdmin}
+                    title={_t("Open the administration console in a new tab")}
+                >
+                    {_t("Administration")}
+                </MenuItem>
+            );
+        }
+
+        const jitsiItem = (
+            <MenuItem
+                className="mx_TopLeftMenu_icon_jitsi"
+                onClick={this.openJitsi}
+                title={_t("Open the videoconferencing platform in a new tab")}
+            >
+                {_t("Videoconferencing")}
+            </MenuItem>
+        );
+
+        let nextcloudItem;
+        if (SettingsStore.isFeatureEnabled("feature_nextcloud")) {
+            nextcloudItem = (
+                <MenuItem
+                    className="mx_TopLeftMenu_icon_nextcloud"
+                    onClick={this.openNextcloud}
+                    title={_t("Open my documents in a new tab")}
+                >
+                    {_t("My documents")}
+                </MenuItem>
+            );
+        }
+        // +watcha
+
         return <div className="mx_TopLeftMenu" ref={this.props.containerRef} role="menu">
+            {/* watcha!
             <div className="mx_TopLeftMenu_section_noIcon" aria-readonly={true} tabIndex={-1}>
                 <div>{this.props.displayName}</div>
                 <div className="mx_TopLeftMenu_greyedText" aria-hidden={true}>{this.props.userId}</div>
                 {hostingSignup}
             </div>
+            !watcha */}
             <ul className="mx_TopLeftMenu_section_withIcon" role="none">
                 {homePageItem}
                 {settingsItem}
+                {/* watcha!
                 {helpItem}
+                !watcha */}
+                {adminItem} {/* watcha+ */}
                 {signInOutItem}
+                {nextcloudItem} {/* watcha+ */}
+                {jitsiItem} {/* watcha+ */}
             </ul>
         </div>;
     }
@@ -152,4 +219,22 @@ export default class TopLeftMenu extends React.Component {
     closeMenu() {
         if (this.props.onFinished) this.props.onFinished();
     }
+
+    // watcha+
+    openAdmin = () => {
+        this.closeMenu();
+        window.open("/admin", "admin");
+    }
+
+    openJitsi = () => {
+        this.closeMenu();
+        const jitsiDomain = "https://" + Jitsi.getInstance().preferredDomain;
+        window.open(jitsiDomain);
+    }
+
+    openNextcloud = () => {
+        this.closeMenu();
+        window.open("/nextcloud", "nextcloud");
+    }
+    // +watcha
 }

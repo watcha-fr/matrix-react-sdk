@@ -49,7 +49,10 @@ const AvatarSetting = ({avatarUrl, avatarAltText, avatarName, uploadAvatar, remo
         // insert an empty div to be the host for a css mask containing the upload.svg
         uploadAvatarBtn = <AccessibleButton onClick={uploadAvatar} kind="primary">
             <div>&nbsp;</div>
+            {/* watcha!
             {_t("Upload")}
+            !watcha */}
+            {_t("Browse")} {/* watcha+ */}
         </AccessibleButton>;
     }
 

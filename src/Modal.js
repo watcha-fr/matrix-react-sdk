@@ -226,8 +226,14 @@ class ModalManager {
         };
     }
 
+    /* watcha!
     appendDialogAsync(prom, props, className) {
         const {modal, closeDialog, onFinishedProm} = this._buildModal(prom, props, className, {});
+    !watcha */
+    // watcha+
+    appendDialogAsync(prom, props, className, options = {}) {        
+        const {modal, closeDialog, onFinishedProm} = this._buildModal(prom, props, className, options);
+    // +watcha
 
         this._modals.push(modal);
         this._reRender();
