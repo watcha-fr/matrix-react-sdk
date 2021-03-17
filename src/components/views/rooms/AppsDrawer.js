@@ -211,6 +211,12 @@ export default class AppsDrawer extends React.Component {
         if (!this.props.showApps) return <div />;
 
         const apps = this.state.apps.map((app, index, arr) => {
+            // watcha+
+            // workaround for relative url from legacy Android widgets 
+            if (app.url.startsWith("/")) {
+                app.url = new URL(app.url, window.location.origin).href;
+            }
+            // +watcha
             return (<AppTile
                 key={app.id}
                 app={app}

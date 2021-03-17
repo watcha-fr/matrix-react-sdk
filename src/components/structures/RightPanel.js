@@ -224,6 +224,7 @@ export default class RightPanel extends React.Component {
         const ThirdPartyMemberInfo = sdk.getComponent('rooms.ThirdPartyMemberInfo');
         const NotificationPanel = sdk.getComponent('structures.NotificationPanel');
         const FilePanel = sdk.getComponent('structures.FilePanel');
+        const NextcloudPanel = sdk.getComponent('structures.watcha_NextcloudPanel'); // watcha+
 
         const GroupMemberList = sdk.getComponent('groups.GroupMemberList');
         const GroupRoomList = sdk.getComponent('groups.GroupRoomList');
@@ -296,6 +297,7 @@ export default class RightPanel extends React.Component {
 
             case RightPanelPhases.FilePanel:
                 panel = <FilePanel roomId={roomId} resizeNotifier={this.props.resizeNotifier} onClose={this.onClose} />;
+                panel = <NextcloudPanel roomId={roomId} onClose={this.onClose} />; // watcha+
                 break;
 
             case RightPanelPhases.RoomSummary:

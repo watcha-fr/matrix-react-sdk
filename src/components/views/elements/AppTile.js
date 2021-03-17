@@ -339,6 +339,11 @@ export default class AppTile extends React.Component {
             </div>
         );
         if (!this.state.hasPermissionToLoad) {
+            // watcha+
+            if (this.props.app.id.match(/^(m.)?jitsi_/)) {
+                this._grantWidgetPermission()
+            } else {
+            // +watcha
             // only possible for room widgets, can assert this.props.room here
             const isEncrypted = MatrixClientPeg.get().isRoomEncrypted(this.props.room.roomId);
             appTileBody = (
@@ -352,6 +357,7 @@ export default class AppTile extends React.Component {
                     />
                 </div>
             );
+            } // watcha+
         } else if (this.state.initialising) {
             appTileBody = (
                 <div className={appTileBodyClass + (this.state.loading ? 'mx_AppLoading' : '')} style={appTileBodyStyles}>

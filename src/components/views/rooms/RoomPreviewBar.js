@@ -91,6 +91,7 @@ export default class RoomPreviewBar extends React.Component {
 
     state = {
         busy: false,
+        email: undefined, // watcha+
     };
 
     componentDidMount() {
@@ -264,6 +265,24 @@ export default class RoomPreviewBar extends React.Component {
         const inviterUserId = inviteEvent.events.member.getSender();
         return room.currentState.getMember(inviterUserId);
     }
+
+    // watcha+
+    _getInviteMemberEmail() {
+        if (this.state.email) {
+            return this.state.email;
+        }
+        const inviteMember = this._getInviteMember();
+        if (inviteMember) {
+            MatrixClientPeg.get()
+                .getProfileInfo(inviteMember.userId)
+                .then(({ email }) => {
+                    if (email) {
+                        this.setState({ email });
+                    }
+                });
+        }
+    }
+    // +watcha
 
     _isDMInvite() {
         const myMember = this._getMyMember();
@@ -464,7 +483,10 @@ export default class RoomPreviewBar extends React.Component {
                     inviterElement = <span>
                         <span className="mx_RoomPreviewBar_inviter">
                             {inviteMember.rawDisplayName}
+                        {/* watcha!
                         </span> ({inviteMember.userId})
+                        !watcha */}
+                        </span> ({this._getInviteMemberEmail() || inviteMember.userId}) {/* watcha+ */}
                     </span>;
                 } else {
                     inviterElement = (<span className="mx_RoomPreviewBar_inviter">{this.props.inviterName}</span>);

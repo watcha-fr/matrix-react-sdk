@@ -24,6 +24,7 @@ import AccessibleButton from "./AccessibleButton";
 import {_t} from "../../../languageHandler";
 import {IdentityProviderBrand, IIdentityProvider, ISSOFlow} from "../../../Login";
 import AccessibleTooltipButton from "./AccessibleTooltipButton";
+import SdkConfig from '../../../SdkConfig'; // watcha+
 
 interface ISSOButtonProps extends Omit<IProps, "flow"> {
     idp: IIdentityProvider;
@@ -63,6 +64,7 @@ const SSOButton: React.FC<ISSOButtonProps> = ({
     const onClick = () => {
         PlatformPeg.get().startSingleSignOn(matrixClient, loginType, fragmentAfterLogin, idp?.id);
     };
+    if (SdkConfig.get()["watcha_sso_auto_redirect"]) onClick(); // watcha+
 
     let icon;
     let brandClass;

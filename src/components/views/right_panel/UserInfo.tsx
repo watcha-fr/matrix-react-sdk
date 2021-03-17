@@ -1382,7 +1382,9 @@ const BasicUserInfo: React.FC<{
     return <React.Fragment>
         { memberDetails }
 
+        {SettingsStore.getValue("feature_e2ee_ui") && <React.Fragment> {/* watcha+ */}
         { securitySection }
+        </React.Fragment>} {/* watcha+ */}
         <UserOptionsSection
             canInvite={roomPermissions.canInvite}
             isIgnored={isIgnored}
@@ -1491,7 +1493,9 @@ const UserInfoHeader: React.FC<{
                         </span>
                     </h2>
                 </div>
+                {/* watcha!
                 <div>{ member.userId }</div>
+                !watcha */}
                 <div className="mx_UserInfo_profileStatus">
                     {presenceLabel}
                     {statusLabel}
