@@ -119,6 +119,7 @@ export default class HelpUserSettingsTab extends React.Component {
             <div className='mx_SettingsTab_section'>
                 <span className='mx_SettingsTab_subheading'>{_t("Credits")}</span>
                 <ul>
+                    {/* watcha!
                     <li>
                         The <a href="themes/element/img/backgrounds/lake.jpg" rel="noreferrer noopener" target="_blank">
                         default cover photo</a> is ©&nbsp;
@@ -127,6 +128,7 @@ export default class HelpUserSettingsTab extends React.Component {
                         <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noreferrer noopener" target="_blank">
                         CC-BY-SA 4.0</a>.
                     </li>
+                    !watcha */}
                     <li>
                         The <a href="https://github.com/matrix-org/twemoji-colr" rel="noreferrer noopener"
                                target="_blank"> twemoji-colr</a> font is ©&nbsp;
@@ -208,8 +210,11 @@ export default class HelpUserSettingsTab extends React.Component {
         if (SdkConfig.get().bug_report_endpoint_url) {
             bugReportingSection = (
                 <div className="mx_SettingsTab_section">
+                    {/* watcha!
                     <span className='mx_SettingsTab_subheading'>{_t('Bug reporting')}</span>
+                    !watcha */}
                     <div className='mx_SettingsTab_subsectionText'>
+                        {/* watcha!
                         {
                             _t( "If you've submitted a bug via GitHub, debug logs can help " +
                                 "us track down the problem. Debug logs contain application " +
@@ -232,6 +237,7 @@ export default class HelpUserSettingsTab extends React.Component {
                                            rel="noreferrer noopener" target="_blank">{sub}</a>,
                                 })
                         }
+                        !watcha */}
                     </div>
                 </div>
             );
@@ -242,10 +248,12 @@ export default class HelpUserSettingsTab extends React.Component {
                 <div className="mx_SettingsTab_heading">{_t("Help & About")}</div>
                 { bugReportingSection }
                 <div className='mx_SettingsTab_section'>
+                    {/* watcha!
                     <span className='mx_SettingsTab_subheading'>{_t("FAQ")}</span>
                     <div className='mx_SettingsTab_subsectionText'>
                         {faqText}
                     </div>
+                    !watcha */}
                     <AccessibleButton kind="primary" onClick={KeyboardShortcuts.toggleDialog}>
                         { _t("Keyboard Shortcuts") }
                     </AccessibleButton>

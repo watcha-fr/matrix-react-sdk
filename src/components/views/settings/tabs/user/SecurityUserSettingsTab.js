@@ -381,12 +381,16 @@ export default class SecurityUserSettingsTab extends React.Component {
                 </>;
             }
         }
+        const showE2EEUI = SettingsStore.getValue("feature_e2ee_ui"); // watcha+
 
         return (
             <div className="mx_SettingsTab mx_SecurityUserSettingsTab">
+                {showE2EEUI && <React.Fragment> {/* watcha+ */}
                 {warning}
+                </React.Fragment>} {/* watcha+ */}
                 <div className="mx_SettingsTab_heading">{_t("Where you’re logged in")}</div>
                 <div className="mx_SettingsTab_section">
+                    {showE2EEUI && // watcha+
                     <span>
                         {_t(
                             "Manage the names of and sign out of your sessions below or " +
@@ -398,11 +402,13 @@ export default class SecurityUserSettingsTab extends React.Component {
                             },
                         )}
                     </span>
+                    } {/* watcha+ */}
                     <div className='mx_SettingsTab_subsectionText'>
                         {_t("A session's public name is visible to people you communicate with")}
                         <DevicesPanel />
                     </div>
                 </div>
+                {showE2EEUI && <React.Fragment> {/* watcha+ */}
                 <div className="mx_SettingsTab_heading">{_t("Encryption")}</div>
                 <div className="mx_SettingsTab_section">
                     {secureBackup}
@@ -410,8 +416,11 @@ export default class SecurityUserSettingsTab extends React.Component {
                     {crossSigning}
                     {this._renderCurrentDeviceInfo()}
                 </div>
+                </React.Fragment>} {/* watcha+ */}
                 { privacySection }
+                {showE2EEUI && <React.Fragment> {/* watcha+ */}
                 { advancedSection }
+                </React.Fragment>} {/* watcha+ */}
             </div>
         );
     }

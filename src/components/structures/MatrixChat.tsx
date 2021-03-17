@@ -717,6 +717,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 this.viewGroup(payload);
                 break;
             case 'view_welcome_page':
+                dis.dispatch({action: 'start_login'}); // watcha+
                 this.viewWelcome();
                 break;
             case 'view_home_page':

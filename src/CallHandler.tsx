@@ -720,7 +720,10 @@ export default class CallHandler {
                             description: _t('You cannot place a call with yourself.'),
                         });
                         return;
+                    /* watcha!
                     } else if (members.length === 2) {
+                    !watcha */
+                    } else if (members.length === 2 && SettingsStore.getValue("feature_webrtc")) { // watcha+
                         console.info(`Place ${payload.type} call in ${payload.room_id}`);
 
                         this.placeCall(payload.room_id, payload.type, payload.local_element, payload.remote_element);

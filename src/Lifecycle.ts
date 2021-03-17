@@ -729,6 +729,46 @@ export function logout(): void {
             onLoggedOut();
         },
     );
+
+    // watcha+
+    fetch(client.getSsoLoginUrl(""))
+        .then(response => {
+            if (response.ok) {
+                return Promise.resolve(response.url);
+            } else {
+                return Promise.reject("this homeserver does not handle SSO");
+            }
+        })
+        .then(authUrl => {
+            const match = authUrl.match(".+/realms/[^/]+");
+            if (match) {
+                const realmUrl = match[0];
+                const oidcConfigUrl = realmUrl + "/.well-known/openid-configuration";
+                return fetch(oidcConfigUrl);
+            } else {
+                return Promise.reject("this homeserver is not configured for OpendID");
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return Promise.reject("OpendID configuration not found");
+            }
+        })
+        .then(oidcConfig => {
+            if (oidcConfig.end_session_endpoint) {
+                const sloUrl = new URL(oidcConfig.end_session_endpoint);
+                sloUrl.searchParams.set("redirect_uri", window.location.origin);
+                window.location.href = sloUrl.href;
+            } else {
+                return Promise.reject("end session endpoint not found");
+            }
+        })
+        .catch(error => {
+            console.warn("Single Logout failed:", error);
+        });
+    // +watcha
 }
 
 export function softLogout(): void {
