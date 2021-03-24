@@ -19,6 +19,7 @@ import {MatrixClientPeg} from '../MatrixClientPeg';
 const CALL_BEHAVIOUR_WK_KEY = "io.element.call_behaviour";
 const E2EE_WK_KEY = "io.element.e2ee";
 const E2EE_WK_KEY_DEPRECATED = "im.vector.riot.e2ee";
+const NEXTCLOUD_WK_KEY = "fr.watcha.nextcloud"; // watcha+
 
 /* eslint-disable camelcase */
 export interface ICallBehaviourWellKnown {
@@ -30,6 +31,12 @@ export interface IE2EEWellKnown {
     secure_backup_required?: boolean;
     secure_backup_setup_methods?: SecureBackupSetupMethod[];
 }
+
+// watcha+
+export interface INextcloudWellKnown {
+    base_url?: string;
+}
+// +watcha
 /* eslint-enable camelcase */
 
 export function getCallBehaviourWellKnown(): ICallBehaviourWellKnown {
@@ -76,3 +83,10 @@ export function getSecureBackupSetupMethods(): SecureBackupSetupMethod[] {
     }
     return wellKnown["secure_backup_setup_methods"];
 }
+
+// watcha+
+export function getNextcloudWellKnown(): INextcloudWellKnown {
+    const clientWellKnown = MatrixClientPeg.get().getClientWellKnown();
+    return clientWellKnown?.[NEXTCLOUD_WK_KEY];
+}
+// +watcha

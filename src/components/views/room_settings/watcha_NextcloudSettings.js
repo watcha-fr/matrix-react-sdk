@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, { useRef, useState } from "react";
 
 import { _t } from "../../../languageHandler";
+import { getNextcloudBaseUrl } from "../../../utils/watcha_nextcloudUtils";
 import * as sdk from "../../../index";
 import AccessibleButton from "../elements/AccessibleButton";
 import Field from "../elements/Field";
@@ -19,7 +20,7 @@ const NextcloudSettings = ({ roomId }) => {
     const onShare = () => {
         setErrorText(null);
         const NextcloudShareDialog = sdk.getComponent("dialogs.watcha_NextcloudShareDialog");
-        const targetFolder = nextcloudFolder || new URL("nextcloud/apps/files/?dir=/", window.location.origin).href;
+        const targetFolder = nextcloudFolder || new URL("apps/files/?dir=/", getNextcloudBaseUrl()).href;
         const setShareDialogIsBusy = value => {
             shareDialogIsBusyRef.current = value;
         };
