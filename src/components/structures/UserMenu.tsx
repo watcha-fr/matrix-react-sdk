@@ -56,7 +56,8 @@ import HostSignupAction from "./HostSignupAction";
 import { IHostSignupConfig } from "../views/dialogs/HostSignupDialogTypes";
 import SpaceStore, { UPDATE_SELECTED_SPACE } from "../../stores/SpaceStore";
 import RoomName from "../views/elements/RoomName";
-import {Jitsi} from "../../widgets/Jitsi"; // watcha+
+import { Jitsi } from "../../widgets/Jitsi"; // watcha+
+import { getNextcloudBaseUrl } from "../../utils/watcha_nextcloudUtils"; // watcha+
 
 interface IProps {
     isMinimized: boolean;
@@ -311,14 +312,14 @@ export default class UserMenu extends React.Component<IProps, IState> {
     };
 
     private onNextcloudClick = () => {
-        const nextcloudDomain = "/nextcloud";
-        window.open(nextcloudDomain, "nextcloud");
+        const nextcloudBaseUrl = getNextcloudBaseUrl();        
+        window.open(nextcloudBaseUrl, "nextcloud");
         this.setState({contextMenuPosition: null}); // also close the menu
     };
 
     private onJitsiClick = () => {
-        const jitsiDomain = "https://" + Jitsi.getInstance().preferredDomain;
-        window.open(jitsiDomain);
+        const jitsiBaseUrl = "https://" + Jitsi.getInstance().preferredDomain;
+        window.open(jitsiBaseUrl);
         this.setState({contextMenuPosition: null}); // also close the menu
     };
     // +watcha
