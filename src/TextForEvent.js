@@ -399,6 +399,7 @@ function textForHistoryVisibilityEvent(event) {
 
 // Currently will only display a change if a user's power level is changed
 function textForPowerEvent(event) {
+    const room = MatrixClientPeg.get().getRoom(event.getRoomId()); // watcha+
     const senderName = event.sender ? event.sender.name : event.getSender();
     if (!event.getPrevContent() || !event.getPrevContent().users ||
         !event.getContent() || !event.getContent().users) {
@@ -425,6 +426,7 @@ function textForPowerEvent(event) {
         // Current power level
         const to = event.getContent().users[userId];
         if (to !== from) {
+            userId = room?.getMember(userId)?.rawDisplayName || userId // watcha+
             diff.push(
                 _t('%(userId)s from %(fromPowerLevel)s to %(toPowerLevel)s', {
                     userId,
@@ -449,7 +451,10 @@ function textForPinnedEvent(event) {
 }
 
 function textForWidgetEvent(event) {
+    /* watcha!
     const senderName = event.getSender();
+    *watcha */
+    const senderName = event.sender ? event.sender.name : event.getSender(); // watcha+
     const {name: prevName, type: prevType, url: prevUrl} = event.getPrevContent();
     const {name, type, url} = event.getContent() || {};
 

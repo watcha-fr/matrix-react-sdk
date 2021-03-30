@@ -302,6 +302,7 @@ export default class GeneralUserSettingsTab extends React.Component {
             passwordChangeForm = null;
         }
 
+        if (!this.state.canChangePassword && !threepidSection) return null; // watcha+
         return (
             <div className="mx_SettingsTab_section mx_GeneralUserSettingsTab_accountSection">
                 <span className="mx_SettingsTab_subheading">{_t("Account")}</span>
@@ -400,6 +401,7 @@ export default class GeneralUserSettingsTab extends React.Component {
     }
 
     _renderIntegrationManagerSection() {
+        return null; // watcha+
         if (!SettingsStore.getValue(UIFeature.Widgets)) return null;
 
         const SetIntegrationManager = sdk.getComponent("views.settings.SetIntegrationManager");
