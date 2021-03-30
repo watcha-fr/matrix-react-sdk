@@ -1,0 +1,20 @@
+.watcha_NextcloudPanel {
+    height: 100%;
+    width: 100%;
+    border: solid 1px $secondary-accent-color;
+}
+
+.watcha_NextcloudPanel_settingsIcon-noWrap {
+    cursor: pointer;
+    white-space: nowrap;
+    &::after {
+        display: inline-block;
+        width: 1.2em;
+        height: 1.2em;
+        vertical-align: middle;
+        mask-size: contain;
+        mask-image: url("$(res)/img/element-icons/settings.svg");
+        background-color: $icon-button-color;
+        content: "";
+    }
+}

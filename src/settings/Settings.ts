@@ -756,4 +756,32 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
     },
+    // watcha+
+    "feature_e2ee_ui": {
+        isFeature: true,
+        supportedLevels: LEVELS_FEATURE,
+        displayName: _td("Show E2EE related UI"),
+        default: false,
+        controller: new ReloadOnChangeController(),
+    },
+    "feature_nextcloud": {
+        isFeature: true,
+        supportedLevels: LEVELS_FEATURE,
+        displayName: _td("Enable Nextcloud integration"),
+        default: false,
+        controller: new ReloadOnChangeController(),
+    },
+    "feature_webrtc": {
+        isFeature: true,
+        supportedLevels: LEVELS_FEATURE,
+        displayName: _td("Enable WebRTC for one-to-one calls"),
+        default: false,
+        controller: new ReloadOnChangeController(),
+    },
+    "nextcloudShare": {
+        supportedLevels: [SettingLevel.ROOM],
+        displayName: _td("Share a Nextcloud folder along its content with room members and use it as a common storage space"),
+        default: null,
+    },
+    // +watcha
 };

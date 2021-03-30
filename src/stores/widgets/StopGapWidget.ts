@@ -117,6 +117,7 @@ export class ElementWidget extends Widget {
         // accounts for legacy-light/legacy-dark themes too
         if (theme.includes("light")) {
             theme = "light";
+        } else if (theme === "watcha") { // watcha+
         } else {
             theme = "dark";
         }
