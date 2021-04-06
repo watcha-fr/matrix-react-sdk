@@ -86,6 +86,12 @@ import { Action } from './dispatcher/actions';
 import VoipUserMapper from './VoipUserMapper';
 import { addManagedHybridWidget, isManagedHybridWidgetEnabled } from './widgets/ManagedHybrid';
 import { randomUppercaseString, randomLowercaseString } from "matrix-js-sdk/src/randomstring";
+// watcha+
+import { Container, WidgetLayoutStore } from "./stores/widgets/WidgetLayoutStore";
+import { RightPanelPhases } from "./stores/RightPanelStorePhases";
+import { SetRightPanelPhasePayload } from "./dispatcher/payloads/SetRightPanelPhasePayload";
+import defaultDispatcher from "./dispatcher/dispatcher";
+// +watcha
 
 export const PROTOCOL_PSTN = 'm.protocol.pstn';
 export const PROTOCOL_PSTN_PREFIXED = 'im.vector.protocol.pstn';
@@ -850,6 +856,26 @@ export default class CallHandler {
         return false;
     }
 
+    // watcha+
+    private showJitsiWidget(roomId: string) {
+        const room = MatrixClientPeg.get().getRoom(roomId);
+        const apps = WidgetStore.instance.getApps(roomId).filter(app => app.type == "jitsi");
+        for (const app of apps) {
+            const isPinned = WidgetLayoutStore.instance.isInContainer(room, app, Container.Top);
+            if (isPinned) {
+                return;
+            }
+        }
+        defaultDispatcher.dispatch<SetRightPanelPhasePayload>({
+            action: Action.SetRightPanelPhase,
+            phase: RightPanelPhases.Widget,
+            refireParams: {
+                widgetId: apps[0].id,
+            },
+        });
+    }
+    // +watcha
+
     private async startCallApp(roomId: string, type: string) {
         dis.dispatch({
             action: 'appsDrawer',
@@ -862,10 +888,13 @@ export default class CallHandler {
         const hasJitsi = currentJitsiWidgets.length > 0
             || WidgetEchoStore.roomHasPendingWidgetsOfType(roomId, currentJitsiWidgets, WidgetType.JITSI);
         if (hasJitsi) {
+            /* watcha!
             Modal.createTrackedDialog('Call already in progress', '', ErrorDialog, {
                 title: _t('Call in Progress'),
                 description: _t('A call is currently being placed!'),
             });
+            !watcha */
+            this.showJitsiWidget(roomId); // watcha+
             return;
         }
 
