@@ -15,6 +15,12 @@
     }
 }
 
+.watcha_InviteMemberDialog_Spinner {
+    z-index: 0;
+    position: fixed;
+    top: calc(50vh - 16px);
+}
+
 .watcha_InviteMemberDialog_Section {
     display: flex;
     flex-direction: column;
