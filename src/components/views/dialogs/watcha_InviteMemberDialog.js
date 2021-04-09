@@ -474,6 +474,7 @@ class InviteMemberDialog extends Component {
     render() {
         const BaseDialog = sdk.getComponent("views.dialogs.BaseDialog");
         const DialogButtons = sdk.getComponent("views.elements.DialogButtons");
+        const Spinner = sdk.getComponent("views.elements.Spinner");
 
         const suggestedTiles = this.getSuggestedTiles();
         const selectedTiles = this.getSelectedTiles();
@@ -533,9 +534,11 @@ class InviteMemberDialog extends Component {
                 <div className="error">{this.state.errorText}</div>
                 <DialogButtons
                     primaryButton={_t("OK")}
+                    disabled={this.state.pendingSubmission}
                     onPrimaryButtonClick={this.onOk}
                     onCancel={this.props.onFinished}
                 />
+                {this.state.pendingSubmission && <Spinner imgClassName="watcha_InviteMemberDialog_Spinner" />}
             </BaseDialog>
         );
     }
