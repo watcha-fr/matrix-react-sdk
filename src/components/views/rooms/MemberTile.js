@@ -189,10 +189,12 @@ export default class MemberTile extends React.Component {
     };
 
     _getDisplayName() {
+        return this.props.member.rawDisplayName; // watcha+
         return this.props.member.name;
     }
 
     getPowerLabel() {
+        return undefined // watcha+
         return _t("%(userName)s (power %(powerLevelNumber)s)", {
             userName: this.props.member.userId,
             powerLevelNumber: this.props.member.powerLevel,

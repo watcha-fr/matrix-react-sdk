@@ -1,0 +1,128 @@
+$watcha-accent-color: rgb(0, 180, 180);
+$watcha-accent-alpha-color: rgba(0, 180, 180, 0.5);
+$watcha-accent-border: aqua;
+$watcha-dark-color: hsl(0, 0%, 25%);
+
+$accent-color: $watcha-accent-color;
+$roomtile-selected-bg-color: $watcha-accent-color;
+
+$input-valid-border-color: $accent-color;
+$button-bg-color: $accent-color;
+$presence-online: $accent-color;
+$tab-label-active-bg-color: $accent-color;
+$button-primary-bg-color: $accent-color;
+$button-link-fg-color: $accent-color;
+$togglesw-on-color: $accent-color;
+$slider-selection-color: $accent-color;
+$reaction-row-button-selected-border-color: $accent-color;
+
+$roomlist-bg-color: $watcha-dark-color;
+
+$roomtile-preview-color: $watcha-accent-alpha-color;
+
+.mx_LeftPanel * {
+    color: #ffffff !important;
+    .mx_UserMenu_subUserName {
+        color: #a9b2bc !important;
+    }
+    .mx_NotificationBadge_dot {
+        background-color: #ffffff !important;
+    }
+    .mx_AutoHideScrollbar:hover {
+        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        &::-webkit-scrollbar {
+            background-color: transparent;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    }
+}
+
+.mx_LeftPanel_exploreButton {
+    &::before {
+        background-color: #a9b2bc !important;
+    }
+}
+
+.mx_RoomSearch_icon {
+    background-color: #a9b2bc !important;
+}
+
+.mx_RoomSublist_auxButton {
+    border: solid 1px $watcha-accent-border;
+    &::before {
+        background-color: $watcha-accent-border !important;
+    }
+}
+
+.mx_RoomSublist_menuButton {
+    &::before {
+        background-color: #ffffff !important;
+    }
+}
+
+.mx_RoomSublist_badgeContainer {
+    .mx_NotificationBadge.mx_NotificationBadge_visible:not(.mx_NotificationBadge_highlighted) {
+        background-color: #ffffff !important;
+        .mx_NotificationBadge_count {
+            color: black !important;
+        }
+    }
+}
+
+.mx_RoomSublist_resizeBox {
+    &:hover,
+    &.mx_RoomSublist_hasMenuOpen {
+        .mx_RoomSublist_resizerHandle {
+            background-color: #ffffff !important;
+        }
+    }
+}
+
+.mx_RoomTile:not(.mx_RoomTile_selected):hover {
+    background-color: $watcha-accent-alpha-color !important;
+}
+
+.mx_RoomTile_selected {
+    .mx_DecoratedRoomAvatar_icon_globe::before {
+        background: $watcha-dark-color !important;
+        border: solid 1px $watcha-dark-color;
+    }
+    .mx_RoomTile_messagePreview {
+        color: $watcha-dark-color !important;
+    }
+}
+
+.mx_RoomTile_messagePreview {
+    color: #a9b2bc !important;
+}
+
+.mx_DecoratedRoomAvatar_icon_globe::before {
+    background: $watcha-accent-color !important;
+    border: solid 1px $watcha-accent-color;
+}
+
+.mx_DecoratedRoomAvatar_icon::before {
+    border: solid 1px $watcha-dark-color;
+}
+
+.mx_RoomTile_menuButton,
+.mx_RoomTile_notificationsButton {
+    &::before {
+        background: #ffffff !important;
+    }
+}
+
+.mx_RoomList_explorePrompt_startChat,
+.mx_RoomList_explorePrompt_explore,
+.mx_RoomList_explorePrompt_spaceInvite,
+.mx_RoomList_explorePrompt_spaceExplore {
+    &::before {
+        background-color: #a9b2bc !important;
+    }
+}
+
+.mx_SpacePanel {
+    background-color: hsl(0, 0%, 20%) !important;
+}

@@ -34,6 +34,7 @@ export default class SenderProfile extends React.Component {
     state = {
         userGroups: null,
         relatedGroups: [],
+        displayname: this.props.mxEvent.sender? this.props.mxEvent.sender.name : this.props.mxEvent.getSender(), // watcha+
     };
 
     componentDidMount() {
@@ -48,6 +49,27 @@ export default class SenderProfile extends React.Component {
         });
 
         this.context.on('RoomState.events', this.onRoomStateEvents);
+        // watcha+
+        const {mxEvent} = this.props;
+        const userId = mxEvent.getSender();
+        if (!mxEvent.sender) {
+            const room = this.context.getRoom(mxEvent.getRoomId());
+            const member = room?.getMember(userId);
+            if (member?.rawDisplayName) {
+                this.setState({ displayname: member.rawDisplayName });
+            } else {
+                try {
+                    this.context.getProfileInfo(userId).then(({ displayname }) => {
+                        this.setState({ displayname });
+                    });
+                } catch {
+                    err => {
+                        console.error("Could not retrieve profile data for " + userId + ":", err);
+                    };
+                }
+            }
+        }
+        // +watcha
     }
 
     componentWillUnmount() {
@@ -89,7 +111,10 @@ export default class SenderProfile extends React.Component {
     render() {
         const {mxEvent} = this.props;
         const colorClass = getUserNameColorClass(mxEvent.getSender());
+        /* watcha!
         const name = mxEvent.sender ? mxEvent.sender.name : mxEvent.getSender();
+        !watcha */
+        const name = this.state.displayname // watcha+
         const {msgtype} = mxEvent.getContent();
 
         if (msgtype === 'm.emote') {
