@@ -65,7 +65,7 @@ const SSOButton: React.FC<ISSOButtonProps> = ({
     const onClick = () => {
         PlatformPeg.get().startSingleSignOn(matrixClient, loginType, fragmentAfterLogin, idp?.id);
     };
-    if (SdkConfig.get()["watcha_sso_auto_redirect"]) onClick(); // watcha+
+    if (SdkConfig.get().watcha_sso_auto_redirect && !document.getElementById("nextcloudIframeLogout")) onClick(); // watcha+
 
     let icon;
     let brandClass;
