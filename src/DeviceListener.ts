@@ -33,6 +33,7 @@ import { isSecretStorageBeingAccessed, accessSecretStorage } from "./SecurityMan
 import { isSecureBackupRequired } from './utils/WellKnownUtils';
 import { isLoggedIn } from './components/structures/MatrixChat';
 import { MatrixEvent } from "matrix-js-sdk/src/models/event";
+import SettingsStore from "./settings/SettingsStore"; // watcha+
 
 const KEY_BACKUP_POLL_INTERVAL = 5 * 60 * 1000;
 
@@ -206,6 +207,7 @@ export default class DeviceListener {
     }
 
     async _recheck() {
+        if (!SettingsStore.getValue("showE2EEUI")) return; // watcha+
         const cli = MatrixClientPeg.get();
 
         if (!await cli.doesServerSupportUnstableFeature("org.matrix.e2e_cross_signing")) return;

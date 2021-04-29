@@ -198,9 +198,11 @@ const AppsSection: React.FC<IAppsSectionProps> = ({ room }) => {
     return <Group className="mx_RoomSummaryCard_appsGroup" title={_t("Widgets")}>
         { apps.map(app => <AppRow key={app.id} app={app} room={room} />) }
         { copyLayoutBtn }
+        {/* watcha!
         <AccessibleButton kind="link" onClick={onManageIntegrations}>
             { apps.length > 0 ? _t("Edit widgets, bridges & bots") : _t("Add widgets, bridges & bots") }
         </AccessibleButton>
+        !watcha */}
     </Group>;
 };
 
@@ -245,6 +247,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
                     mx_RoomSummaryCard_e2ee_normal: isRoomEncrypted,
                     mx_RoomSummaryCard_e2ee_warning: isRoomEncrypted && e2eStatus === E2EStatus.Warning,
                     mx_RoomSummaryCard_e2ee_verified: isRoomEncrypted && e2eStatus === E2EStatus.Verified,
+                    mx_RoomSummaryCard_e2ee_hidden: !SettingsStore.getValue("showE2EEUI"), // watcha+
                 })}
             />
         </div>
@@ -256,18 +259,24 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
     </React.Fragment>;
 
     const memberCount = useRoomMemberCount(room);
+    const showFileButton = SettingsStore.getValue("feature_nextcloud") || null; // watcha+
+    const showShareRoomButton = SettingsStore.getValue("showShareRoomButton") || null; // watcha+
 
     return <BaseCard header={header} className="mx_RoomSummaryCard" onClose={onClose}>
         <Group title={_t("About")} className="mx_RoomSummaryCard_aboutGroup">
             <Button className="mx_RoomSummaryCard_icon_people" onClick={onRoomMembersClick}>
                 {_t("%(count)s people", { count: memberCount })}
             </Button>
+            {showFileButton && // watcha+
             <Button className="mx_RoomSummaryCard_icon_files" onClick={onRoomFilesClick}>
                 {_t("Show files")}
             </Button>
+            } {/* watcha+ */}
+            {showShareRoomButton && // watcha+
             <Button className="mx_RoomSummaryCard_icon_share" onClick={onShareRoomClick}>
                 {_t("Share room")}
             </Button>
+            } {/* watcha+ */}
             <Button className="mx_RoomSummaryCard_icon_settings" onClick={onRoomSettingsClick}>
                 {_t("Room settings")}
             </Button>

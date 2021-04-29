@@ -27,6 +27,12 @@ import {replaceableComponent} from "../../../../../utils/replaceableComponent";
 
 @replaceableComponent("views.settings.tabs.user.PreferencesUserSettingsTab")
 export default class PreferencesUserSettingsTab extends React.Component {
+    // watcha+
+    static ROOM_SUMMARY_SETTINGS = [
+        'showShareRoomButton',
+    ];
+    // +watcha
+
     static ROOM_LIST_SETTINGS = [
         'breadcrumbs',
     ];
@@ -62,6 +68,7 @@ export default class PreferencesUserSettingsTab extends React.Component {
     ];
 
     static GENERAL_SETTINGS = [
+        'showE2EEUI', // watcha+
         'TagPanel.enableTagPanel',
         'promptBeforeInviteUnknownUsers',
         // Start automatically after startup (electron-only)
@@ -207,6 +214,13 @@ export default class PreferencesUserSettingsTab extends React.Component {
                     <span className="mx_SettingsTab_subheading">{_t("Room list")}</span>
                     {this._renderGroup(PreferencesUserSettingsTab.ROOM_LIST_SETTINGS)}
                 </div>
+
+                {/* watcha+ */}
+                <div className="mx_SettingsTab_section">
+                    <span className="mx_SettingsTab_subheading">{_t("Room summary")}</span>
+                    {this._renderGroup(PreferencesUserSettingsTab.ROOM_SUMMARY_SETTINGS)}
+                </div>
+                {/* +watcha */}
 
                 <div className="mx_SettingsTab_section">
                     <span className="mx_SettingsTab_subheading">{_t("Composer")}</span>

@@ -87,6 +87,12 @@ limitations under the License.
                     mask-image: url('$(res)/img/e2e/warning.svg');
                 }
             }
+
+            // watcha+
+            .mx_RoomSummaryCard_e2ee_hidden {
+                display: none;
+            }
+            // +watcha
         }
     }
 

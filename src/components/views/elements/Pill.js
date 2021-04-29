@@ -279,6 +279,7 @@ class Pill extends React.Component {
             if (this.state.hover && resource) {
                 tip = <Tooltip label={resource} yOffset={yOffset} />;
             }
+            if (this.state.pillType === Pill.TYPE_USER_MENTION) tip = null; // watcha+
 
             return <MatrixClientContext.Provider value={this._matrixClient}>
                 { this.props.inMessage ?
