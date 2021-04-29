@@ -75,7 +75,10 @@ export default class MemberAvatar extends React.Component<IProps, IState> {
             }
             return {
                 name: props.member.name,
+                /* watcha!
                 title: props.title || props.member.userId,
+                !watcha */
+                title: props.title, // watcha+
                 imageUrl: imageUrl,
             };
         } else if (props.fallbackUserId) {

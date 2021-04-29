@@ -23,6 +23,7 @@ import AccessibleButton from "../../../elements/AccessibleButton";
 import Modal from "../../../../../Modal";
 import {replaceableComponent} from "../../../../../utils/replaceableComponent";
 import {EventType} from "matrix-js-sdk/src/@types/event";
+import SettingsStore from "../../../../../settings/SettingsStore"; // watcha+
 
 const plEventsToLabels = {
     // These will be translated for us later.
@@ -382,6 +383,12 @@ export default class RolesRoomSettingsTab extends React.Component {
         if (client.isRoomEncrypted(this.props.roomId)) {
             delete eventsLevels["m.room.encryption"];
         }
+
+        // watcha+
+        if (!SettingsStore.getValue("showE2EEUI")) {
+            delete eventsLevels["m.room.encryption"];
+        }
+        // +watcha
 
         const eventPowerSelectors = Object.keys(eventsLevels).map((eventType, i) => {
             let label = plEventsToLabels[eventType];

@@ -27,6 +27,7 @@ import {CommunityPrototypeStore} from "../../../stores/CommunityPrototypeStore";
 import {UPDATE_EVENT} from "../../../stores/AsyncStore";
 import { replaceableComponent } from "../../../utils/replaceableComponent";
 import InviteReason from "../elements/InviteReason";
+import { getSupportEmailAddress } from "../../../utils/watcha_config"; // watcha+
 
 const MessageCase = Object.freeze({
     NotLoggedIn: "NotLoggedIn",
@@ -92,6 +93,7 @@ export default class RoomPreviewBar extends React.Component {
 
     state = {
         busy: false,
+        email: undefined, // watcha+
     };
 
     componentDidMount() {
@@ -265,6 +267,24 @@ export default class RoomPreviewBar extends React.Component {
         const inviterUserId = inviteEvent.events.member.getSender();
         return room.currentState.getMember(inviterUserId);
     }
+
+    // watcha+
+    _getInviteMemberEmail() {
+        if (this.state.email) {
+            return this.state.email;
+        }
+        const inviteMember = this._getInviteMember();
+        if (inviteMember) {
+            MatrixClientPeg.get()
+                .getProfileInfo(inviteMember.userId)
+                .then(({ email }) => {
+                    if (email) {
+                        this.setState({ email });
+                    }
+                });
+        }
+    }
+    // +watcha
 
     _isDMInvite() {
         const myMember = this._getMyMember();
@@ -466,7 +486,10 @@ export default class RoomPreviewBar extends React.Component {
                     inviterElement = <span>
                         <span className="mx_RoomPreviewBar_inviter">
                             {inviteMember.rawDisplayName}
+                        {/* watcha!
                         </span> ({inviteMember.userId})
+                        !watcha */}
+                        </span> ({this._getInviteMemberEmail() || inviteMember.userId}) {/* watcha+ */}
                     </span>;
                 } else {
                     inviterElement = (<span className="mx_RoomPreviewBar_inviter">{this.props.inviterName}</span>);
@@ -536,7 +559,10 @@ export default class RoomPreviewBar extends React.Component {
                         "If you think you're seeing this message in error, please " +
                         "<issueLink>submit a bug report</issueLink>.",
                         { errcode: this.props.error.errcode },
+                        /* watcha!
                         { issueLink: label => <a href="https://github.com/vector-im/element-web/issues/new/choose"
+                        !watcha */
+                        { issueLink: label => <a href={`mailto:${getSupportEmailAddress()}`} // watcha+
                             target="_blank" rel="noreferrer noopener">{ label }</a> },
                     ),
                 ];
