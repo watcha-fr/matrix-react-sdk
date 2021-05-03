@@ -23,7 +23,15 @@ $roomtile-preview-color: $watcha-accent-alpha-color;
 
 .mx_SpacePanel *,
 .mx_LeftPanel * {
-    color: #ffffff !important;
+    color: white !important;
+}
+
+.mx_SpacePanel {
+    background-color: hsl(0, 0%, 20%) !important;
+    .mx_NotificationBadge_dot {
+        background-color: white !important;
+        border: solid 1px hsl(0, 0%, 20%);
+    }
 }
 
 .mx_LeftPanel {
@@ -31,7 +39,7 @@ $roomtile-preview-color: $watcha-accent-alpha-color;
         color: $watcha-fg-color-light !important;
     }
     .mx_NotificationBadge_dot {
-        background-color: #ffffff !important;
+        background-color: white !important;
     }
     .mx_AutoHideScrollbar:hover {
         scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
@@ -63,13 +71,13 @@ $roomtile-preview-color: $watcha-accent-alpha-color;
 
 .mx_RoomSublist_menuButton {
     &::before {
-        background-color: #ffffff !important;
+        background-color: white !important;
     }
 }
 
 .mx_RoomSublist_badgeContainer {
     .mx_NotificationBadge.mx_NotificationBadge_visible:not(.mx_NotificationBadge_highlighted) {
-        background-color: #ffffff !important;
+        background-color: white !important;
         .mx_NotificationBadge_count {
             color: black !important;
         }
@@ -80,7 +88,7 @@ $roomtile-preview-color: $watcha-accent-alpha-color;
     &:hover,
     &.mx_RoomSublist_hasMenuOpen {
         .mx_RoomSublist_resizerHandle {
-            background-color: #ffffff !important;
+            background-color: white !important;
         }
     }
 }
@@ -115,7 +123,7 @@ $roomtile-preview-color: $watcha-accent-alpha-color;
 .mx_RoomTile_menuButton,
 .mx_RoomTile_notificationsButton {
     &::before {
-        background: #ffffff !important;
+        background: white !important;
     }
 }
 
@@ -126,10 +134,6 @@ $roomtile-preview-color: $watcha-accent-alpha-color;
     &::before {
         background-color: $watcha-fg-color-light !important;
     }
-}
-
-.mx_SpacePanel {
-    background-color: hsl(0, 0%, 20%) !important;
 }
 
 .mx_UserMenu_dnd::before {
