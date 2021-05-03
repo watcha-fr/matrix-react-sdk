@@ -20,6 +20,7 @@ limitations under the License.
 
     .mx_InviteReason_reason {
         visibility: visible;
+        min-width: 10em; // watcha+ hack to bypass word wrap
     }
 
     .mx_InviteReason_view {
