@@ -52,6 +52,7 @@ import CallHandler from './CallHandler';
 import LifecycleCustomisations from "./customisations/Lifecycle";
 import ErrorDialog from "./components/views/dialogs/ErrorDialog";
 import {_t} from "./languageHandler";
+import {SSO_LANGUAGE_KEY} from "./Login"; // watcha+
 
 const HOMESERVER_URL_KEY = "mx_hs_url";
 const ID_SERVER_URL_KEY = "mx_is_url";
@@ -200,7 +201,9 @@ export function attemptTokenLogin(
         },
     ).then(function(creds) {
         console.log("Logged in with token");
+        const language = localStorage.getItem(SSO_LANGUAGE_KEY); // watcha+
         return clearStorage().then(async () => {
+            if (language) localStorage.setItem(SSO_LANGUAGE_KEY, language); // watcha+
             await persistCredentials(creds);
             // remember that we just logged in
             sessionStorage.setItem("mx_fresh_login", String(true));
