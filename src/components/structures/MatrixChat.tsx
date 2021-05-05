@@ -85,6 +85,7 @@ import RoomListStore from "../../stores/room-list/RoomListStore";
 import {RoomUpdateCause} from "../../stores/room-list/models";
 import defaultDispatcher from "../../dispatcher/dispatcher";
 import SecurityCustomisations from "../../customisations/Security";
+import {SSO_LANGUAGE_KEY} from "../../Login"; // watcha+
 
 /** constants for MatrixChat.state.view */
 export enum Views {
@@ -337,6 +338,15 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                     // remove the loginToken from the URL regardless
                     this.props.onTokenLoginCompleted();
                 }
+
+                // watcha+
+                const language = localStorage.getItem(SSO_LANGUAGE_KEY);
+                if (language) {
+                    localStorage.removeItem(SSO_LANGUAGE_KEY);
+                    SettingsStore.setValue("language", null, SettingLevel.DEVICE, language);
+                    PlatformPeg.get().reload();
+                }
+                // +watcha
 
                 if (loggedIn) {
                     this.tokenLogin = true;
