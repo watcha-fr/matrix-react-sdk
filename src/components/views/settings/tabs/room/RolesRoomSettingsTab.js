@@ -100,7 +100,10 @@ export class BannedUser extends React.Component {
             <li>
                 {unbanButton}
                 <span title={_t("Banned by %(displayName)s", {displayName: this.props.by})}>
+                    {/* watcha!
                     <strong>{ this.props.member.name }</strong> {userId}
+                    !watcha */}
+                    <strong>{ this.props.member.name }</strong> {/* watcha+ */}
                     {this.props.reason ? " " + _t('Reason') + ": " + this.props.reason : ""}
                 </span>
             </li>
@@ -280,13 +283,20 @@ export default class RolesRoomSettingsTab extends React.Component {
             const mutedUsers = [];
 
             Object.keys(userLevels).forEach((user) => {
+                // watcha+
+                const member = room.getMember(user);
+                const displayName = member?.rawDisplayName;
+                // +watcha
                 const canChange = userLevels[user] < currentUserLevel && canChangeLevels;
                 if (userLevels[user] > defaultUserLevel) { // privileged
                     privilegedUsers.push(
                         <PowerSelector
                             value={userLevels[user]}
                             disabled={!canChange}
+                            /* watcha!
                             label={user}
+                            !watcha */
+                            label={displayName || user} // watcha+
                             key={user}
                             powerLevelKey={user} // Will be sent as the second parameter to `onChange`
                             onChange={this._onUserPowerLevelChanged}
@@ -297,7 +307,10 @@ export default class RolesRoomSettingsTab extends React.Component {
                         <PowerSelector
                             value={userLevels[user]}
                             disabled={!canChange}
+                            /* watcha!
                             label={user}
+                            !watcha */
+                            label={displayName || user} // watcha+
                             key={user}
                             powerLevelKey={user} // Will be sent as the second parameter to `onChange`
                             onChange={this._onUserPowerLevelChanged}
