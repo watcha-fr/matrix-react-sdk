@@ -38,6 +38,7 @@ class InviteMemberDialog extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            originalList: [],
             // List of UserAddressType objects representing the set of auto-completion results for the current search query
             suggestedList: [],
             // List of people that will be invited
@@ -290,8 +291,11 @@ class InviteMemberDialog extends Component {
                 });
             }
         }
-
-        this.setState({ suggestedList: this.sortedUserList(suggestedList) });
+        const state = { suggestedList: this.sortedUserList(suggestedList) };
+        if (!this.state.originalList.length) {
+            state.originalList = suggestedList;
+        }
+        this.setState(state);
     };
 
     // come from src/components/views/dialogs/InviteDialog.tsx
@@ -393,10 +397,8 @@ class InviteMemberDialog extends Component {
 
     addEmailAddressToSelectedList = emailAddress => {
         let knownUser;
-        const userId = convertEmailToUserId(emailAddress);
-
-        for (const user of this.state.suggestedList) {
-            if (user.address === userId) {
+        for (const user of this.state.originalList) {
+            if (user.email === emailAddress) {
                 knownUser = user;
                 break;
             }
@@ -516,6 +518,7 @@ class InviteMemberDialog extends Component {
                         >
                             <EmailInvitation
                                 {...{ roomMembers }}
+                                originalList={this.state.originalList}
                                 selectedList={this.state.selectedList}
                                 addEmailAddressToSelectedList={this.addEmailAddressToSelectedList}
                             />
@@ -547,6 +550,7 @@ class InviteMemberDialog extends Component {
 class EmailInvitation extends Component {
     static propTypes = {
         addEmailAddressToSelectedList: PropTypes.func.isRequired,
+        originalList: PropTypes.arrayOf(PropTypes.object).isRequired,
         selectedList: PropTypes.arrayOf(PropTypes.object).isRequired,
         roomMembers: PropTypes.arrayOf(PropTypes.object),
     };
@@ -597,42 +601,51 @@ class EmailInvitation extends Component {
                 test: async ({ value }) => !!value,
             },
             {
-                key: "isValidOnSubmit",
+                key: "validUponSubmission",
                 test: async ({ value }) => !value || !this.state.pendingSubmission || Email.looksValid(value),
                 invalid: () => _t("Please enter a valid email address"),
             },
             {
-                key: "emailAlreadyInInvitations",
+                key: "notMine",
+                test: async ({ value }) => !value || !(await Email.isMine(value)),
+                invalid: () => _t("This email address is bound to your account"),
+            },
+            {
+                key: "emailNotAlreadyInInvitations",
                 test: async ({ value }) => !value || !this.props.selectedList.some(user => user.address === value),
                 invalid: () => _t("You have already added this email address to the invitation list"),
             },
             {
-                key: "userAlreadyInInvitations",
+                key: "userNotAlreadyInInvitations",
                 test: async ({ value }) => !value || !this.props.selectedList.some(user => user.email === value),
                 invalid: () => _t("This email address belongs to a user you have already added to the invitation list"),
             },
             {
-                key: "alreadyRoomMember",
+                key: "notAlreadyRoomMember",
                 test: async ({ value }) =>
                     !value ||
                     !this.props.roomMembers ||
-                    !this.props.roomMembers.some(
-                        user => user.userId === convertEmailToUserId(value) && user.membership === "join"
-                    ),
-                invalid: () => _t("This email address belongs to a user who is already a room member"),
+                    !this.props.roomMembers.some(user => this.hasMembership(user, value, "join")),
+                invalid: () => _t("This email address belongs to a room member"),
             },
             {
-                key: "alreadySentInvitation",
+                key: "notAlreadyInvited",
                 test: async ({ value }) =>
                     !value ||
                     !this.props.roomMembers ||
-                    !this.props.roomMembers.some(
-                        user => user.userId === convertEmailToUserId(value) && user.membership === "invite"
-                    ),
-                invalid: () => _t("An invitation has already been sent to this email address"),
+                    !this.props.roomMembers.some(user => this.hasMembership(user, value, "invite")),
+                invalid: () => _t("This email address belongs to a user already invited in this room"),
             },
         ],
     });
+
+    hasMembership = (user, value, membership) => {
+        for (const candidate of this.props.originalList) {
+            if (candidate.address === user.userId && candidate.email === value && user.membership === membership) {
+                return true;
+            }
+        }
+    };
 
     submit = async () => {
         const activeElement = document.activeElement;
@@ -837,35 +850,6 @@ class SelectedList extends Component {
             </div>
         );
     }
-}
-
-function convertEmailToUserId(email) {
-    // follows the spec defined at https://github.com/watcha-fr/devops/blob/master/doc_email_userId.md
-    // on the server watcha.bar.com (as per mx_hs_url var) :
-    //      - converts foo@bar.com to @foo:watcha.bar.com (email of somebody on the company)
-    //      - converts foo@gmail.com to @foo/gmail.com:watcha.bar.com (email of an external partner)
-
-    const parts = email.split("@");
-    let userId = "@" + parts[0];
-
-    let homeServerDomain = MatrixClientPeg.get().getDomain();
-
-    if (parts.length > 1) {
-        const host = parts[1];
-
-        // remove http:// or https:// at the beginning of the server name
-        homeServerDomain = homeServerDomain.replace(/^https?:[/]{2}/, "");
-
-        // remove port number and the trailing slash if any at the end of the server name (mostly useful for dev environments)
-        homeServerDomain = homeServerDomain.replace(/(:[\d]+)?[/]?$/, "");
-
-        // determine if the email NOT belongs to somebody of the company
-        if (!RegExp(`${host}$`).test(homeServerDomain)) {
-            userId += "/" + host;
-        }
-    }
-    userId += ":" + homeServerDomain;
-    return userId;
 }
 
 export default InviteMemberDialog;
