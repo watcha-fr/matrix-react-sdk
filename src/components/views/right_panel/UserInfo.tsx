@@ -309,6 +309,19 @@ const UserOptionsSection: React.FC<{
     canInvite: boolean;
     isSpace?: boolean;
 }> = ({member, isIgnored, canInvite, isSpace}) => {
+    // watcha+
+    const [showIgnoreButton, setShowIgnoreButton] = useState(SettingsStore.getValue("showIgnoreUserButton"));
+
+    useEffect(() => {
+        const _showIgnoreButtonWatcherRef = SettingsStore.watchSetting("showIgnoreUserButton", null, () => {
+            setShowIgnoreButton(SettingsStore.getValue("showIgnoreUserButton"));
+        });
+        return () => {
+            SettingsStore.unwatchSetting(_showIgnoreButtonWatcherRef);
+        };
+    }, []);
+    // +watcha
+
     const cli = useContext(MatrixClientContext);
 
     let ignoreButton = null;
@@ -339,6 +352,7 @@ const UserOptionsSection: React.FC<{
             cli.setIgnoredUsers(ignoredUsers);
         };
 
+        if (showIgnoreButton) { // watcha+
         ignoreButton = (
             <AccessibleButton
                 onClick={onIgnoreToggle}
@@ -347,6 +361,7 @@ const UserOptionsSection: React.FC<{
                 { isIgnored ? _t("Unignore") : _t("Ignore") }
             </AccessibleButton>
         );
+        } // watcha+
 
         if (member.roomId && !isSpace) {
             const onReadReceiptButton = function() {

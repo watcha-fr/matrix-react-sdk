@@ -31,6 +31,10 @@ export default class PreferencesUserSettingsTab extends React.Component {
     static ROOM_SUMMARY_SETTINGS = [
         'showShareRoomButton',
     ];
+
+    static USER_PROFILE_SETTINGS = [
+        'showIgnoreUserButton',
+    ];
     // +watcha
 
     static ROOM_LIST_SETTINGS = [
@@ -219,6 +223,11 @@ export default class PreferencesUserSettingsTab extends React.Component {
                 <div className="mx_SettingsTab_section">
                     <span className="mx_SettingsTab_subheading">{_t("Room summary")}</span>
                     {this._renderGroup(PreferencesUserSettingsTab.ROOM_SUMMARY_SETTINGS)}
+                </div>
+
+                <div className="mx_SettingsTab_section">
+                    <span className="mx_SettingsTab_subheading">{_t("Users profile")}</span>
+                    {this._renderGroup(PreferencesUserSettingsTab.USER_PROFILE_SETTINGS)}
                 </div>
                 {/* +watcha */}
 
