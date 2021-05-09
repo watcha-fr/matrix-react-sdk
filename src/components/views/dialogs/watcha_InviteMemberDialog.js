@@ -1,11 +1,13 @@
+import { Room } from "matrix-js-sdk/src/models/room";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 
 import { _t } from "../../../languageHandler";
+import { getAddressType } from "../../../UserAddress";
 import { inviteMultipleToRoom } from "../../../RoomInvite";
 import { Key } from "../../../Keyboard";
-import { KIND_DM } from "../../../components/views/dialogs/InviteDialog";
+import { KIND_DM } from "./InviteDialog";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
 import * as Avatar from "../../../Avatar";
 import * as Email from "../../../email";
@@ -13,7 +15,12 @@ import * as sdk from "../../../index";
 import AutoHideScrollbar from "../../structures/AutoHideScrollbar";
 import BaseAvatar from "../avatars/BaseAvatar";
 import CountlyAnalytics from "../../../CountlyAnalytics";
-import createRoom, { canEncryptToAllUsers, findDMForUser, privateShouldBeEncrypted } from "../../../createRoom";
+import createRoom, {
+    canEncryptToAllUsers,
+    findDMForUser,
+    privateShouldBeEncrypted,
+    IInvite3PID,
+} from "../../../createRoom";
 import dis from "../../../dispatcher/dispatcher";
 import DMRoomMap from "../../../utils/DMRoomMap";
 import EntityTile from "../rooms/EntityTile";
@@ -317,15 +324,16 @@ class InviteMemberDialog extends Component {
     // come from src/components/views/dialogs/InviteDialog.tsx
     _startDm = async () => {
         this.setState({ busy: true });
+        const client = MatrixClientPeg.get();
         // const targets = this._convertFilter();
         // const targetIds = targets.map(t => t.userId);
         const targets = this.state.selectedList;
         const targetIds = targets.map(user => user.address);
 
         // Check if there is already a DM with these people and reuse it if possible.
-        let existingRoom;
+        let existingRoom: Room;
         if (targetIds.length === 1) {
-            existingRoom = findDMForUser(MatrixClientPeg.get(), targetIds[0]);
+            existingRoom = findDMForUser(client, targetIds[0]);
         } else {
             existingRoom = DMRoomMap.shared().getDMRoomForIdentifiers(targetIds);
         }
@@ -348,7 +356,6 @@ class InviteMemberDialog extends Component {
             // const has3PidMembers = targets.some(t => t instanceof ThreepidMember);
             const has3PidMembers = targets.some(user => user.addressType === "email");
             if (!has3PidMembers) {
-                const client = MatrixClientPeg.get();
                 const allHaveDeviceKeys = await canEncryptToAllUsers(client, targetIds);
                 if (allHaveDeviceKeys) {
                     createRoomOptions.encryption = true;
@@ -358,41 +365,41 @@ class InviteMemberDialog extends Component {
 
         // Check if it's a traditional DM and create the room if required.
         // TODO: [Canonical DMs] Remove this check and instead just create the multi-person DM
-        let createRoomPromise = Promise.resolve(null);
-        const isSelf = targetIds.length === 1 && targetIds[0] === MatrixClientPeg.get().getUserId();
-        if (targetIds.length === 1 && !isSelf) {
-            createRoomOptions.dmUserId = targetIds[0];
-            createRoomPromise = createRoom(createRoomOptions);
-        } else if (isSelf) {
-            createRoomPromise = createRoom(createRoomOptions);
-        } else {
-            // Create a boring room and try to invite the targets manually.
-            createRoomPromise = createRoom(createRoomOptions)
-                .then(roomId => {
-                    return inviteMultipleToRoom(roomId, targetIds);
-                })
-                .then(result => {
-                    if (this._shouldAbortAfterInviteError(result)) {
-                        return true; // abort
-                    }
-                });
-        }
+        try {
+            const isSelf = targetIds.length === 1 && targetIds[0] === client.getUserId();
+            if (targetIds.length === 1 && !isSelf) {
+                createRoomOptions.dmUserId = targetIds[0];
+            }
 
-        // the createRoom call will show the room for us, so we don't need to worry about that.
-        createRoomPromise
-            .then(abort => {
-                if (abort === true) return; // only abort on true booleans, not roomIds or something
-                this.props.onFinished();
-            })
-            .catch(err => {
-                console.error(err);
-                this.setState({
-                    busy: false,
-                    errorText: _t(
-                        "We couldn't create your DM. Please check the users you want to invite and try again."
-                    ),
-                });
+            if (targetIds.length > 1) {
+                createRoomOptions.createOpts = targetIds.reduce(
+                    (roomOptions, address) => {
+                        const type = getAddressType(address);
+                        if (type === "email") {
+                            const invite: IInvite3PID = {
+                                id_server: client.getIdentityServerUrl(true),
+                                medium: "email",
+                                address,
+                            };
+                            roomOptions.invite_3pid.push(invite);
+                        } else if (type === "mx-user-id") {
+                            roomOptions.invite.push(address);
+                        }
+                        return roomOptions;
+                    },
+                    { invite: [], invite_3pid: [] }
+                );
+            }
+
+            await createRoom(createRoomOptions);
+            this.props.onFinished();
+        } catch (err) {
+            console.error(err);
+            this.setState({
+                busy: false,
+                errorText: _t("We couldn't create your DM."),
             });
+        }
     };
 
     addEmailAddressToSelectedList = emailAddress => {
