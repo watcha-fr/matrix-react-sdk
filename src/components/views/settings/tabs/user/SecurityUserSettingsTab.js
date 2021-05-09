@@ -299,6 +299,8 @@ export default class SecurityUserSettingsTab extends React.Component {
     }
 
     render() {
+        const showE2EEUI = SettingsStore.getValue("showE2EEUI"); // watcha+
+
         const brand = SdkConfig.get().brand;
         const DevicesPanel = sdk.getComponent('views.settings.DevicesPanel');
         const SettingsFlag = sdk.getComponent('views.elements.SettingsFlag');
@@ -378,12 +380,13 @@ export default class SecurityUserSettingsTab extends React.Component {
                     <div className="mx_SettingsTab_section">
                         {ignoreUsersPanel}
                         {invitesPanel}
+                        {showE2EEUI && <React.Fragment> {/* watcha+ */}
                         {e2ePanel}
+                        </React.Fragment>} {/* watcha+ */}
                     </div>
                 </>;
             }
         }
-        const showE2EEUI = SettingsStore.getValue("showE2EEUI"); // watcha+
 
         return (
             <div className="mx_SettingsTab mx_SecurityUserSettingsTab">
@@ -420,9 +423,7 @@ export default class SecurityUserSettingsTab extends React.Component {
                 </div>
                 </React.Fragment>} {/* watcha+ */}
                 { privacySection }
-                {showE2EEUI && <React.Fragment> {/* watcha+ */}
                 { advancedSection }
-                </React.Fragment>} {/* watcha+ */}
             </div>
         );
     }
