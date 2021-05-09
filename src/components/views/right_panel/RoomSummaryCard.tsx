@@ -225,6 +225,29 @@ const onRoomSettingsClick = () => {
 };
 
 const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
+    // watcha+
+    const showFileButton = SettingsStore.getValue("feature_nextcloud") || null;
+
+    const [showE2EEUI, setShowE2EEUI] = useState(SettingsStore.getValue("showE2EEUI") || null);
+
+    const [showShareRoomButton, setShowShareRoomButton] = useState(
+        SettingsStore.getValue("showShareRoomButton") || null
+    );
+
+    useEffect(() => {
+        const _showE2EEUIWatcherRef = SettingsStore.watchSetting("showE2EEUI", null, () => {
+            setShowE2EEUI(SettingsStore.getValue("showE2EEUI") || null);
+        });
+        const _showStickersButtonWatcherRef = SettingsStore.watchSetting("showShareRoomButton", null, () => {
+            setShowShareRoomButton(SettingsStore.getValue("showShareRoomButton") || null);
+        });
+        return () => {
+            SettingsStore.unwatchSetting(_showE2EEUIWatcherRef);
+            SettingsStore.unwatchSetting(_showStickersButtonWatcherRef);
+        };
+    }, []);
+    // +watcha
+
     const cli = useContext(MatrixClientContext);
 
     const onShareRoomClick = () => {
@@ -247,7 +270,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
                     mx_RoomSummaryCard_e2ee_normal: isRoomEncrypted,
                     mx_RoomSummaryCard_e2ee_warning: isRoomEncrypted && e2eStatus === E2EStatus.Warning,
                     mx_RoomSummaryCard_e2ee_verified: isRoomEncrypted && e2eStatus === E2EStatus.Verified,
-                    mx_RoomSummaryCard_e2ee_hidden: !SettingsStore.getValue("showE2EEUI"), // watcha+
+                    mx_RoomSummaryCard_e2ee_hidden: !showE2EEUI, // watcha+
                 })}
             />
         </div>
@@ -259,8 +282,6 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
     </React.Fragment>;
 
     const memberCount = useRoomMemberCount(room);
-    const showFileButton = SettingsStore.getValue("feature_nextcloud") || null; // watcha+
-    const showShareRoomButton = SettingsStore.getValue("showShareRoomButton") || null; // watcha+
 
     return <BaseCard header={header} className="mx_RoomSummaryCard" onClose={onClose}>
         <Group title={_t("About")} className="mx_RoomSummaryCard_aboutGroup">

@@ -1397,10 +1397,23 @@ const BasicUserInfo: React.FC<{
         </div>
     );
 
+    // watcha+
+    const [showE2EEUI, setShowE2EEUI] = useState(SettingsStore.getValue("showE2EEUI") || null);
+
+    useEffect(() => {
+        const _showE2EEUIWatcherRef = SettingsStore.watchSetting("showE2EEUI", null, () => {
+            setShowE2EEUI(SettingsStore.getValue("showE2EEUI") || null);
+        });
+        return () => {
+            SettingsStore.unwatchSetting(_showE2EEUIWatcherRef);
+        };
+    }, []);
+    // +watcha
+
     return <React.Fragment>
         { memberDetails }
 
-        {SettingsStore.getValue("showE2EEUI") && <React.Fragment> {/* watcha+ */}
+        {showE2EEUI && <React.Fragment> {/* watcha+ */}
         { securitySection }
         </React.Fragment>} {/* watcha+ */}
         <UserOptionsSection

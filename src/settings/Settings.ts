@@ -39,7 +39,6 @@ import { OrderedMultiController } from "./controllers/OrderedMultiController";
 import { Layout } from "./Layout";
 import ReducedMotionController from './controllers/ReducedMotionController';
 import IncompatibleController from "./controllers/IncompatibleController";
-import UIFeatureReloadOnChangeController from "./controllers/watcha_UIFeatureReloadOnChangeController"; // watcha+
 
 // These are just a bunch of helper arrays to avoid copy/pasting a bunch of times
 const LEVELS_ROOM_SETTINGS = [
@@ -276,7 +275,7 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td('Show stickers button'),
         default: true,
-        controller: new UIFeatureReloadOnChangeController(UIFeature.watcha_stickersSetting), // watcha+
+        controller: new UIFeatureController(UIFeature.watcha_stickersSetting), // watcha+
     },
     // TODO: Wire up appropriately to UI (FTUE notifications)
     "Notifications.alwaysShowBadgeCounts": {
@@ -801,13 +800,12 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td("Show share room button"),
         default: false,
-        controller: new ReloadOnChangeController(),
     },
     "showE2EEUI": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td("Show end-to-end encryption related UI"),
         default: false,
-        controller: new UIFeatureReloadOnChangeController(UIFeature.watcha_E2EEUISetting),
+        controller: new UIFeatureController(UIFeature.watcha_E2EEUISetting),
     },
     "nextcloudShare": {
         supportedLevels: [SettingLevel.ROOM],
