@@ -801,6 +801,11 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         displayName: _td("Show share room button"),
         default: false,
     },
+    "showIgnoreUserButton": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("Show ignore user button"),
+        default: false,
+    },
     "showE2EEUI": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td("Show end-to-end encryption related UI"),
