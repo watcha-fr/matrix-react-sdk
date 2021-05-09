@@ -181,6 +181,13 @@ export default class MessageComposer extends React.Component {
         this.renderPlaceholderText = this.renderPlaceholderText.bind(this);
         VoiceRecordingStore.instance.on(UPDATE_EVENT, this._onVoiceStoreUpdate);
         this._dispatcherRef = null;
+        // watcha+
+        this._showStickersButtonWatcherRef = SettingsStore.watchSetting(
+            "MessageComposerInput.showStickersButton",
+            null,
+            () => this.forceUpdate()
+        );
+        // +watcha
 
         this.state = {
             tombstone: this._getRoomTombstone(),
@@ -231,6 +238,7 @@ export default class MessageComposer extends React.Component {
         }
         VoiceRecordingStore.instance.off(UPDATE_EVENT, this._onVoiceStoreUpdate);
         dis.unregister(this.dispatcherRef);
+        SettingsStore.unwatchSetting(this._showStickersButtonWatcherRef); // watcha+
     }
 
     _onRoomStateEvents(ev, state) {
