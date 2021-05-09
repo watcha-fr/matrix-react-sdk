@@ -519,6 +519,7 @@ class InviteMemberDialog extends Component {
                             <EmailInvitation
                                 {...{ roomMembers }}
                                 originalList={this.state.originalList}
+                                suggestedList={this.state.suggestedList}
                                 selectedList={this.state.selectedList}
                                 addEmailAddressToSelectedList={this.addEmailAddressToSelectedList}
                             />
@@ -551,6 +552,7 @@ class EmailInvitation extends Component {
     static propTypes = {
         addEmailAddressToSelectedList: PropTypes.func.isRequired,
         originalList: PropTypes.arrayOf(PropTypes.object).isRequired,
+        suggestedList: PropTypes.arrayOf(PropTypes.object).isRequired,
         selectedList: PropTypes.arrayOf(PropTypes.object).isRequired,
         roomMembers: PropTypes.arrayOf(PropTypes.object),
     };
@@ -598,43 +600,62 @@ class EmailInvitation extends Component {
         rules: [
             {
                 key: "notNull",
-                test: async ({ value }) => !!value,
+                test: ({ value }) => !!value,
             },
             {
                 key: "validUponSubmission",
-                test: async ({ value }) => !value || !this.state.pendingSubmission || Email.looksValid(value),
+                skip: () => !this.state.pendingSubmission,
+                test: ({ value }) => Email.looksValid(value),
                 invalid: () => _t("Please enter a valid email address"),
+                final: true,
             },
             {
                 key: "notMine",
-                test: async ({ value }) => !value || !(await Email.isMine(value)),
-                invalid: () => _t("This email address is bound to your account"),
+                test: async ({ value }) => !(await Email.isMine(value)),
+                invalid: () => _t("This email address is already bound to your account"),
+                final: true,
             },
             {
-                key: "emailNotAlreadyInInvitations",
-                test: async ({ value }) => !value || !this.props.selectedList.some(user => user.address === value),
+                key: "notForbiddenDomain",
+                skip: ({ value }) =>
+                    this.props.selectedList.some(user => user.email === value) ||
+                    this.props.suggestedList.some(user => user.email === value),
+                test: ({ value }) => !Email.hasForbiddenDomainForPartner(value),
+                invalid: () =>
+                    _t(
+                        "Users with an email address belonging to this domain <b></b> should not be invited as external partners",
+                        {},
+                        { b: () => <b>{this.state.emailAddress.split("@")[1]}</b> }
+                    ),
+                final: true,
+            },
+            {
+                key: "emailNotInInvitations",
+                test: async ({ value }) => !this.props.selectedList.some(user => user.address === value),
                 invalid: () => _t("You have already added this email address to the invitation list"),
+                final: true,
             },
             {
-                key: "userNotAlreadyInInvitations",
-                test: async ({ value }) => !value || !this.props.selectedList.some(user => user.email === value),
+                key: "userNotInInvitations",
+                test: async ({ value }) => !this.props.selectedList.some(user => user.email === value),
                 invalid: () => _t("This email address belongs to a user you have already added to the invitation list"),
+                final: true,
             },
             {
-                key: "notAlreadyRoomMember",
+                key: "notRoomMember",
+                skip: () => !this.props.roomMembers,
                 test: async ({ value }) =>
-                    !value ||
-                    !this.props.roomMembers ||
                     !this.props.roomMembers.some(user => this.hasMembership(user, value, "join")),
                 invalid: () => _t("This email address belongs to a room member"),
+                final: true,
             },
             {
-                key: "notAlreadyInvited",
+                key: "notInvited",
+                skip: () => !this.props.roomMembers,
                 test: async ({ value }) =>
-                    !value ||
-                    !this.props.roomMembers ||
                     !this.props.roomMembers.some(user => this.hasMembership(user, value, "invite")),
                 invalid: () => _t("This email address belongs to a user already invited in this room"),
+                final: true,
             },
         ],
     });
