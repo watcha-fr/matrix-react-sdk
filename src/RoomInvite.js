@@ -45,7 +45,7 @@ export function showStartChatInviteDialog(initialText) {
     /* watcha!
     const InviteDialog = sdk.getComponent("dialogs.InviteDialog");
     !watcha */
-    const InviteDialog = sdk.getComponent("dialogs.watcha_InviteMemberDialog"); // watcha+
+    const InviteDialog = sdk.getComponent("dialogs.watcha_InviteDialog"); // watcha+
     Modal.createTrackedDialog(
         'Start DM', '', InviteDialog, {kind: KIND_DM, initialText},
         /*className=*/null, /*isPriority=*/false, /*isStatic=*/true,
@@ -54,7 +54,7 @@ export function showStartChatInviteDialog(initialText) {
 
 export function showRoomInviteDialog(roomId, initialText = "") {
     // This dialog handles the room creation internally - we don't need to worry about it.
-    const InviteDialog = sdk.getComponent("dialogs.watcha_InviteMemberDialog"); // watcha+
+    const InviteDialog = sdk.getComponent("dialogs.watcha_InviteDialog"); // watcha+
     Modal.createTrackedDialog(
         "Invite Users", "", InviteDialog, {
             kind: KIND_INVITE,

@@ -1,0 +1,128 @@
+.watcha_InviteDialog {
+    .mx_Dialog_content {
+        margin-bottom: 2em;
+    }
+}
+
+.watcha_InviteDialog_Section {
+    width: 48%;
+    display: flex;
+    flex-direction: column;
+
+    h2 {
+        margin-top: 0;
+        text-align: center;
+        font-weight: bold;
+    }
+}
+
+.watcha_InviteDialog_userLists {
+    display: flex;
+    justify-content: space-between;
+    height: 18em;
+    margin-bottom: 2em;
+}
+
+.watcha_InviteDialog_list {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: hidden;
+    padding: 0.5em;
+    border: 1px solid $input-darker-fg-color;
+    border-radius: 5px;
+
+    .mx_SearchBox {
+        margin: 0 0 0.5em 0;
+        flex-grow: 0;
+    }
+
+    .mx_EntityTile {
+        margin: 0 1em 0.5em 1em;
+
+        &:hover::before {
+            mask-position: center !important;
+        }
+    }
+}
+
+.watcha_InviteDialog_list_hint {
+    height: 100%;
+    display: flex;
+    line-height: 1.5em;
+    text-align: center;
+    color: $input-darker-fg-color;
+    span {
+        margin: auto;
+    }
+}
+
+.watcha_InviteDialog_list_invalid {
+    border-color: $input-invalid-border-color;
+    transition: border-color 0.25s;
+}
+
+.watcha_InviteDialog_EntityTile_roomMember {
+    cursor: initial;
+
+    &.mx_EntityTile:hover {
+        padding-right: initial;
+
+        &::before {
+            display: none;
+        }
+    }
+}
+
+.watcha_InviteDialog_EntityTile_invite {
+    border: 3px solid transparent;
+    border-radius: 5px;
+    animation-name: flash;
+    animation-duration: 1s;
+
+    &.mx_EntityTile:hover::before {
+        right: 0;
+        mask: url("$(res)/img/cancel-small.svg");
+        mask-repeat: no-repeat;
+    }
+}
+
+.watcha_InviteDialog_EntityTile_partner {
+    .mx_BaseAvatar_image {
+        border-radius: 0;
+    }
+}
+
+@keyframes flash {
+    30% {
+        border-color: aqua;
+    }
+}
+
+.watcha_InviteDialog_invitePartnerButton {
+    height: 20px;
+    line-height: 20px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: solid 1px $input-darker-fg-color;
+    border-radius: 5px;
+
+    img {
+        height: 24px;
+        width: 24px;
+        margin-left: 1em;
+    }
+
+    &:hover {
+        border-color: $icon-button-color;
+        background-color: $icon-button-color;
+    }
+}
+
+.watcha_InviteDialog_Spinner {
+    z-index: 0;
+    position: fixed;
+    top: calc(50vh - 16px);
+}
