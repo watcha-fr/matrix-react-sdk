@@ -782,12 +782,9 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
     },
-    "feature_nextcloud": {
-        isFeature: true,
-        supportedLevels: LEVELS_FEATURE,
-        displayName: _td("Enable Nextcloud integration"),
-        default: false,
-        controller: new ReloadOnChangeController(),
+    [UIFeature.watcha_Nextcloud]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: true,
     },
     "feature_webrtc": {
         isFeature: true,
@@ -795,6 +792,11 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         displayName: _td("Enable WebRTC for one-to-one calls"),
         default: false,
         controller: new ReloadOnChangeController(),
+    },
+    "showExploreChatAttachmentsButton": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("Show explore chat attachments button"),
+        default: false,
     },
     "showShareRoomButton": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,

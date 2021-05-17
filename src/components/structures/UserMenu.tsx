@@ -452,7 +452,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
                     </IconizedContextMenuOptionList>
                 )}
                 <IconizedContextMenuOptionList>
-                    {SettingsStore.getValue("feature_nextcloud") &&
+                    {SettingsStore.getValue("UIFeature.watcha_Nextcloud") &&
                         <IconizedContextMenuOption
                             iconClassName="mx_UserMenu_iconNextcloud"
                             label={_t("My documents")}

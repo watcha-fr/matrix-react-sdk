@@ -1416,9 +1416,13 @@ const BasicUserInfo: React.FC<{
     const [showE2EEUI, setShowE2EEUI] = useState(SettingsStore.getValue("showE2EEUI") || null);
 
     useEffect(() => {
-        const _showE2EEUIWatcherRef = SettingsStore.watchSetting("showE2EEUI", null, () => {
-            setShowE2EEUI(SettingsStore.getValue("showE2EEUI") || null);
-        });
+        const _showE2EEUIWatcherRef = SettingsStore.watchSetting(
+            "showE2EEUI",
+            null,
+            (originalSettingName, changedInRoomId, atLevel, newValAtLevel, newValue) => {
+                setShowE2EEUI(newValue || null);
+            }
+        );
         return () => {
             SettingsStore.unwatchSetting(_showE2EEUIWatcherRef);
         };

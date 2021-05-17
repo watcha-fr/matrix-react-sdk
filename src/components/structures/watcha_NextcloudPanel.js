@@ -21,7 +21,7 @@ export default ({ roomId, onClose }) => {
     };
 
     let panel;
-    if (SettingsStore.getValue("feature_nextcloud")) {
+    if (SettingsStore.getValue("UIFeature.watcha_Nextcloud")) {
         const nextcloudFolder = SettingsStore.getValue("nextcloudShare", roomId);
         if (nextcloudFolder) {
             panel = (

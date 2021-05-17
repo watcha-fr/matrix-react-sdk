@@ -58,12 +58,17 @@ interface IAppsSectionProps {
 interface IButtonProps {
     className: string;
     onClick(): void;
+    title?: string; // watcha+
 }
 
+/* watcha!
 const Button: React.FC<IButtonProps> = ({ children, className, onClick }) => {
+!watcha */
+const Button: React.FC<IButtonProps> = ({ children, className, onClick, title }) => { // watcha+
     return <AccessibleButton
         className={classNames("mx_BaseCard_Button mx_RoomSummaryCard_Button", className)}
         onClick={onClick}
+        title={title} // watcha+
     >
         { children }
     </AccessibleButton>;
@@ -220,30 +225,62 @@ const onRoomFilesClick = () => {
     });
 };
 
+// watcha+
+const onRoomNextcloudClick = () => {
+    defaultDispatcher.dispatch<SetRightPanelPhasePayload>({
+        action: Action.SetRightPanelPhase,
+        phase: RightPanelPhases.NextcloudPanel,
+    });
+};
+// +watcha
+
 const onRoomSettingsClick = () => {
     defaultDispatcher.dispatch({ action: "open_room_settings" });
 };
 
 const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
     // watcha+
-    const showFileButton = SettingsStore.getValue("feature_nextcloud") || null;
+    const showSharedFilesButton = SettingsStore.getValue(UIFeature.watcha_Nextcloud) || null;
 
-    const [showE2EEUI, setShowE2EEUI] = useState(SettingsStore.getValue("showE2EEUI") || null);
+    const [showAttachmentsButton, setShowAttachmentsButton] = useState(
+        SettingsStore.getValue("showExploreChatAttachmentsButton") || null
+    );
 
     const [showShareRoomButton, setShowShareRoomButton] = useState(
         SettingsStore.getValue("showShareRoomButton") || null
     );
 
+    const [showE2EEUI, setShowE2EEUI] = useState(SettingsStore.getValue("showE2EEUI"));
+
     useEffect(() => {
-        const _showE2EEUIWatcherRef = SettingsStore.watchSetting("showE2EEUI", null, () => {
-            setShowE2EEUI(SettingsStore.getValue("showE2EEUI") || null);
-        });
-        const _showStickersButtonWatcherRef = SettingsStore.watchSetting("showShareRoomButton", null, () => {
-            setShowShareRoomButton(SettingsStore.getValue("showShareRoomButton") || null);
-        });
+        const _showAttachmentsButtonWatcherRef = SettingsStore.watchSetting(
+            "showExploreChatAttachmentsButton",
+            null,
+            (originalSettingName, changedInRoomId, atLevel, newValAtLevel, newValue) => {
+                setShowAttachmentsButton(newValue || null);
+            }
+        );
+
+        const _showShareRoomButtonWatcherRef = SettingsStore.watchSetting(
+            "showShareRoomButton",
+            null,
+            (originalSettingName, changedInRoomId, atLevel, newValAtLevel, newValue) => {
+                setShowShareRoomButton(newValue || null);
+            }
+        );
+
+        const _showE2EEUIWatcherRef = SettingsStore.watchSetting(
+            "showE2EEUI",
+            null,
+            (originalSettingName, changedInRoomId, atLevel, newValAtLevel, newValue) => {
+                setShowE2EEUI(newValue);
+            }
+        );
+
         return () => {
+            SettingsStore.unwatchSetting(_showAttachmentsButtonWatcherRef);
+            SettingsStore.unwatchSetting(_showShareRoomButtonWatcherRef);
             SettingsStore.unwatchSetting(_showE2EEUIWatcherRef);
-            SettingsStore.unwatchSetting(_showStickersButtonWatcherRef);
         };
     }, []);
     // +watcha
@@ -288,8 +325,21 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
             <Button className="mx_RoomSummaryCard_icon_people" onClick={onRoomMembersClick}>
                 {_t("%(count)s people", { count: memberCount })}
             </Button>
-            {showFileButton && // watcha+
+            {/* watcha+ */}
+            {showSharedFilesButton && (
+                <Button
+                    className="mx_RoomSummaryCard_icon_files"
+                    title={_t("Show shared files")}
+                    onClick={onRoomNextcloudClick}
+                >
+                    {_t("Show shared files")}
+                </Button>
+            )}
+            {/* +watcha */}
+            {/* watcha!
             <Button className="mx_RoomSummaryCard_icon_files" onClick={onRoomFilesClick}>
+            !watcha */}
+            {showAttachmentsButton && <Button className="mx_MessageComposer_upload" onClick={onRoomFilesClick} title={_t("Show files")}> {/* watcha+ */}
                 {_t("Show files")}
             </Button>
             } {/* watcha+ */}

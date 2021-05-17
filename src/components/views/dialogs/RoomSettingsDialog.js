@@ -75,7 +75,7 @@ export default class RoomSettingsDialog extends React.Component {
         ));
         // watcha+
         if (
-            SettingsStore.getValue("feature_nextcloud") &&
+            SettingsStore.getValue("UIFeature.watcha_Nextcloud") &&
             SettingsStore.canSetValue("nextcloudShare", this.props.roomId, "room")
         ) {
             tabs.push(
