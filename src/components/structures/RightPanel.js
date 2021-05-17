@@ -299,7 +299,6 @@ export default class RightPanel extends React.Component {
 
             case RightPanelPhases.FilePanel:
                 panel = <FilePanel roomId={roomId} resizeNotifier={this.props.resizeNotifier} onClose={this.onClose} />;
-                panel = <NextcloudPanel roomId={roomId} onClose={this.onClose} />; // watcha+
                 break;
 
             case RightPanelPhases.RoomSummary:
@@ -309,6 +308,12 @@ export default class RightPanel extends React.Component {
             case RightPanelPhases.Widget:
                 panel = <WidgetCard room={this.props.room} widgetId={this.state.widgetId} onClose={this.onClose} />;
                 break;
+
+            // watcha+
+            case RightPanelPhases.NextcloudPanel:
+                panel = <NextcloudPanel roomId={roomId} onClose={this.onClose} />;
+                break;
+            // +watcha
         }
 
         return (

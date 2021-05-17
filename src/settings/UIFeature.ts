@@ -32,6 +32,9 @@ export enum UIFeature {
     Communities = "UIFeature.communities",
     AdvancedSettings = "UIFeature.advancedSettings",
     RoomHistorySettings = "UIFeature.roomHistorySettings",
-    watcha_stickersSetting = "UIFeature.watcha_stickersSetting", // watcha+
-    watcha_E2EEUISetting = "UIFeature.watcha_E2EEUISetting", // watcha+
+    // watcha+
+    watcha_stickersSetting = "UIFeature.watcha_stickersSetting",
+    watcha_E2EEUISetting = "UIFeature.watcha_E2EEUISetting",
+    watcha_Nextcloud = "UIFeature.watcha_Nextcloud",
+    // +watcha
 }

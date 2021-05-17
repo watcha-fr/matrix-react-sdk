@@ -29,6 +29,7 @@ import {replaceableComponent} from "../../../../../utils/replaceableComponent";
 export default class PreferencesUserSettingsTab extends React.Component {
     // watcha+
     static ROOM_SUMMARY_SETTINGS = [
+        'showExploreChatAttachmentsButton',
         'showShareRoomButton',
     ];
 
