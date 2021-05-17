@@ -27,7 +27,10 @@ interface IRule<T, D = void> {
     skip?(this: T, data: Data, derivedData: D): boolean;
     test(this: T, data: Data, derivedData: D): boolean | Promise<boolean>;
     valid?(this: T, derivedData: D): string;
+    /* watcha!
     invalid?(this: T, derivedData: D): string;
+    !watcha */
+    invalid?(this: T, derivedData: D): string | React.ReactNode; // watcha+
 }
 
 interface IArgs<T, D = void> {

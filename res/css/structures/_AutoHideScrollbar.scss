@@ -33,6 +33,7 @@ html {
 ::-webkit-scrollbar-thumb {
     border-radius: 3px;
     background-color: $scrollbar-thumb-color;
+    min-height: 2em; // watcha+
 }
 
 // make auto-hide scrollbars not transparent again on hover

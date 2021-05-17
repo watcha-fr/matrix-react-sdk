@@ -258,7 +258,8 @@
 @import "./views/voip/_VideoFeed.scss";
 // watcha+
 @import "./structures/_watcha_NextcloudPanel.scss";
-@import "./views/dialogs/_watcha_InviteMemberDialog.scss";
+@import "./views/dialogs/_watcha_InviteDialog.scss";
+@import "./views/dialogs/_watcha_InvitePartnerDialog.scss";
 @import "./views/dialogs/_watcha_NextcloudShareDialog.scss";
 @import "./views/room_settings/_watcha_NextcloudSettings.scss";
 // +watcha
