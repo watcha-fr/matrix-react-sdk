@@ -56,3 +56,9 @@ limitations under the License.
 .mx_UserSettingsDialog_flairIcon::before {
     mask-image: url('$(res)/img/element-icons/settings/flair.svg');
 }
+
+// watcha+
+.mx_UserSettingsDialog_SSOProfileIcon::before {
+    mask-image: url('$(res)/img/watcha/watcha_id-card.svg');
+}
+// +watcha

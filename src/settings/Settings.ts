@@ -786,6 +786,10 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
     },
+    [UIFeature.watcha_SSOProfile]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: true,
+    },
     "feature_webrtc": {
         isFeature: true,
         supportedLevels: LEVELS_FEATURE,
