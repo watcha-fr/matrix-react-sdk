@@ -34,6 +34,7 @@ import SdkConfig from "../../../SdkConfig";
 import MjolnirUserSettingsTab from "../settings/tabs/user/MjolnirUserSettingsTab";
 import {UIFeature} from "../../../settings/UIFeature";
 import {replaceableComponent} from "../../../utils/replaceableComponent";
+import SSOProfileTab from "../settings/tabs/user/SSOProfileTab"; // watcha+
 
 export const USER_GENERAL_TAB = "USER_GENERAL_TAB";
 export const USER_APPEARANCE_TAB = "USER_APPEARANCE_TAB";
@@ -45,6 +46,7 @@ export const USER_SECURITY_TAB = "USER_SECURITY_TAB";
 export const USER_LABS_TAB = "USER_LABS_TAB";
 export const USER_MJOLNIR_TAB = "USER_MJOLNIR_TAB";
 export const USER_HELP_TAB = "USER_HELP_TAB";
+export const USER_SSO_PROFILE_TAB = "USER_SSO_PROFILE_TAB"; // watcha+
 
 @replaceableComponent("views.dialogs.UserSettingsDialog")
 export default class UserSettingsDialog extends React.Component {
@@ -83,6 +85,16 @@ export default class UserSettingsDialog extends React.Component {
             "mx_UserSettingsDialog_settingsIcon",
             <GeneralUserSettingsTab closeSettingsFn={this.props.onFinished} />,
         ));
+        // watcha+
+        if (SettingsStore.getValue(UIFeature.watcha_SSOProfile)) {
+            tabs.push(new Tab(
+                USER_SSO_PROFILE_TAB,
+                _td("SSO profile"),
+                "mx_UserSettingsDialog_SSOProfileIcon",
+                <SSOProfileTab />
+            ));
+        }
+        // +watcha
         tabs.push(new Tab(
             USER_APPEARANCE_TAB,
             _td("Appearance"),

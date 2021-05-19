@@ -36,5 +36,6 @@ export enum UIFeature {
     watcha_stickersSetting = "UIFeature.watcha_stickersSetting",
     watcha_E2EEUISetting = "UIFeature.watcha_E2EEUISetting",
     watcha_Nextcloud = "UIFeature.watcha_Nextcloud",
+    watcha_SSOProfile = "UIFeature.watcha_SSOProfile",
     // +watcha
 }
