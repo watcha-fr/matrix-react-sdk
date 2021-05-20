@@ -313,9 +313,10 @@ const UserOptionsSection: React.FC<{
     const [showIgnoreButton, setShowIgnoreButton] = useState(SettingsStore.getValue("showIgnoreUserButton"));
 
     useEffect(() => {
-        const _showIgnoreButtonWatcherRef = SettingsStore.watchSetting("showIgnoreUserButton", null, () => {
-            setShowIgnoreButton(SettingsStore.getValue("showIgnoreUserButton"));
-        });
+        const _showIgnoreButtonWatcherRef = SettingsStore.watchSetting("showIgnoreUserButton", null,
+        (originalSettingName, changedInRoomId, atLevel, newValAtLevel, newValue) => {
+            setShowIgnoreButton(newValue);
+        })
         return () => {
             SettingsStore.unwatchSetting(_showIgnoreButtonWatcherRef);
         };
@@ -1413,14 +1414,14 @@ const BasicUserInfo: React.FC<{
     );
 
     // watcha+
-    const [showE2EEUI, setShowE2EEUI] = useState(SettingsStore.getValue("showE2EEUI") || null);
+    const [showE2EEUI, setShowE2EEUI] = useState(SettingsStore.getValue("showE2EEUI"));
 
     useEffect(() => {
         const _showE2EEUIWatcherRef = SettingsStore.watchSetting(
             "showE2EEUI",
             null,
             (originalSettingName, changedInRoomId, atLevel, newValAtLevel, newValue) => {
-                setShowE2EEUI(newValue || null);
+                setShowE2EEUI(newValue);
             }
         );
         return () => {

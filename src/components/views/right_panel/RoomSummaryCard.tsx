@@ -240,15 +240,13 @@ const onRoomSettingsClick = () => {
 
 const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
     // watcha+
-    const showSharedFilesButton = SettingsStore.getValue(UIFeature.watcha_Nextcloud) || null;
+    const showSharedFilesButton = SettingsStore.getValue(UIFeature.watcha_Nextcloud);
 
     const [showAttachmentsButton, setShowAttachmentsButton] = useState(
-        SettingsStore.getValue("showExploreChatAttachmentsButton") || null
+        SettingsStore.getValue("showExploreChatAttachmentsButton")
     );
 
-    const [showShareRoomButton, setShowShareRoomButton] = useState(
-        SettingsStore.getValue("showShareRoomButton") || null
-    );
+    const [showShareRoomButton, setShowShareRoomButton] = useState(SettingsStore.getValue("showShareRoomButton"));
 
     const [showE2EEUI, setShowE2EEUI] = useState(SettingsStore.getValue("showE2EEUI"));
 
@@ -257,7 +255,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
             "showExploreChatAttachmentsButton",
             null,
             (originalSettingName, changedInRoomId, atLevel, newValAtLevel, newValue) => {
-                setShowAttachmentsButton(newValue || null);
+                setShowAttachmentsButton(newValue);
             }
         );
 
@@ -265,7 +263,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
             "showShareRoomButton",
             null,
             (originalSettingName, changedInRoomId, atLevel, newValAtLevel, newValue) => {
-                setShowShareRoomButton(newValue || null);
+                setShowShareRoomButton(newValue);
             }
         );
 
