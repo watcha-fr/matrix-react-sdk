@@ -234,7 +234,10 @@ const SpaceLanding = ({ space }) => {
         );
     }
 
+    /* watcha!
     const canAddRooms = myMembership === "join" && space.currentState.maySendStateEvent(EventType.SpaceChild, userId);
+    !watcha */
+    const canAddRooms = myMembership === "join" && space.currentState.maySendStateEvent(EventType.SpaceChild, userId) && !cli.isPartner(); // watcha+
 
     const [refreshToken, forceUpdate] = useStateToggle(false);
 

@@ -165,7 +165,7 @@ const TAG_AESTHETICS: ITagAestheticsMap = {
         addRoomContextMenu: (onFinished: () => void) => {
             if (SpaceStore.instance.activeSpace) {
                 const canAddRooms = SpaceStore.instance.activeSpace.currentState.maySendStateEvent(EventType.SpaceChild,
-                    MatrixClientPeg.get().getUserId());
+                    MatrixClientPeg.get().getUserId()); 
 
                 return <IconizedContextMenuOptionList first>
                     <IconizedContextMenuOption
@@ -611,6 +611,12 @@ export default class RoomList extends React.PureComponent<IProps, IState> {
                 }
             }
         }
+
+        // watcha+
+        if (MatrixClientPeg.get().isPartner()) {
+            explorePrompt = null;
+        }
+        // +watcha
 
         const sublists = this.renderSublists();
         return (

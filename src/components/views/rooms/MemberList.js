@@ -453,7 +453,10 @@ export default class MemberList extends React.Component {
         const room = cli.getRoom(this.props.roomId);
         let inviteButton;
 
+        /* watcha!
         if (room && room.getMyMembership() === 'join') {
+        !watcha */
+        if (room?.getMyMembership() === 'join' && !cli.isPartner()) { // watcha+
             const canInvite = room.canInvite(cli.getUserId());
 
             let inviteButtonText = _t("Invite to this room");
@@ -469,7 +472,7 @@ export default class MemberList extends React.Component {
                 /* watcha!
                 <AccessibleButton className="mx_MemberList_invite" onClick={this.onInviteButtonClick} disabled={!canInvite}>
                 !watcha */
-                <AccessibleButton className="mx_MemberList_invite" onClick={this.onInviteButtonClick} disabled={!canInvite} title={ canInvite ? undefined : _t("You do not have permission to invite users to this room")}> {/* watcha+ */}
+                <AccessibleButton className="mx_MemberList_invite" onClick={this.onInviteButtonClick} disabled={!canInvite} title={ canInvite ? undefined : _t("You do not have permission to invite people to this room.")}> {/* watcha+ */}
                     <span>{ inviteButtonText }</span>
                 </AccessibleButton>;
         }

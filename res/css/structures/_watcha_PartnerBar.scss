@@ -1,0 +1,26 @@
+.watcha_PartnerBar {
+    height: 1.2em;
+    padding: 0.8em;
+    display: flex;
+    align-items: center;
+    background-color: $accent-color;
+
+    span {
+        flex-grow: 1;
+        font-size: 1.2em;
+        text-align: center;
+        user-select: none;
+    }
+
+    img {
+        cursor: pointer;
+    }
+}
+
+.watcha_PartnerBar_hidden {
+    height: 0;
+    padding: 0;
+    transition-property: height padding;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in;
+}

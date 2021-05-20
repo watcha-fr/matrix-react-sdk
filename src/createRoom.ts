@@ -253,6 +253,11 @@ export default function createRoom(opts: IOpts): Promise<string | null> {
             // the error to the user for if/when the UI is available.
             description = _t("The server does not support the room version specified.");
         }
+        // watcha+
+        if (err.errcode === "M_FORBIDDEN") {
+            description = _t("You don't have permission");
+        }
+        // +watcha
         Modal.createTrackedDialog('Failure to create room', '', ErrorDialog, {
             title: _t("Failure to create room"),
             description,

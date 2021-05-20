@@ -31,6 +31,7 @@ import InfoDialog from "../components/views/dialogs/InfoDialog";
 import { showRoomInviteDialog } from "../RoomInvite";
 
 export const shouldShowSpaceSettings = (cli: MatrixClient, space: Room) => {
+    if (cli.isPartner()) return false; // watcha+
     const userId = cli.getUserId();
     return space.getMyMembership() === "join"
         && (space.currentState.maySendStateEvent(EventType.RoomAvatar, userId)

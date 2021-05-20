@@ -59,6 +59,7 @@ import { getKeyBindingsManager, NavigationAction, RoomAction } from '../../KeyBi
 import { IOpts } from "../../createRoom";
 import SpacePanel from "../views/spaces/SpacePanel";
 import {replaceableComponent} from "../../utils/replaceableComponent";
+import PartnerBar from "./watcha_PartnerBar"; // watcha+
 
 // We need to fetch each pinned message individually (if we don't already have it)
 // so each pinned message may trigger a request. Limit the number per room for sanity.
@@ -671,6 +672,8 @@ class LoggedInView extends React.Component<IProps, IState> {
                 >
                     <ToastContainer />
                     <DragDropContext onDragEnd={this._onDragEnd}>
+                        <div className="watcha_MatrixChat"> {/* watcha+ */}
+                        { this._matrixClient.isPartner() && <PartnerBar /> } {/* watcha+ */}
                         <div ref={this._resizeContainer} className={bodyClasses}>
                             { SettingsStore.getValue("feature_spaces") ? <SpacePanel /> : null }
                             <LeftPanel
@@ -680,6 +683,7 @@ class LoggedInView extends React.Component<IProps, IState> {
                             <ResizeHandle />
                             { pageElement }
                         </div>
+                        </div> {/* watcha+ */}
                     </DragDropContext>
                 </div>
                 <CallContainer />

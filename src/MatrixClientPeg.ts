@@ -45,6 +45,7 @@ export interface IMatrixClientCreds {
     guest?: boolean;
     pickleKey?: string;
     freshLogin?: boolean;
+    partner?: boolean; // watcha+
 }
 
 // TODO: Move this to the js-sdk
@@ -310,6 +311,8 @@ class _MatrixClientPeg implements IMatrixClientPeg {
 
         this.matrixClient.setGuest(Boolean(creds.guest));
 
+        this.matrixClient.setPartner(Boolean(creds.partner)); // watcha+
+        
         const notifTimelineSet = new EventTimelineSet(null, {
             timelineSupport: true,
         });

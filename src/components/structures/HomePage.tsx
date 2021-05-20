@@ -117,10 +117,12 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
         </React.Fragment>;
     }
 
+    const client = useContext(MatrixClientContext); // watcha+
 
     return <AutoHideScrollbar className="mx_HomePage mx_HomePage_default">
         <div className="mx_HomePage_default_wrapper">
             { introSection }
+            { !client.isPartner() && // watcha+
             <div className="mx_HomePage_default_buttons">
                 <AccessibleButton onClick={onClickSendDm} className="mx_HomePage_button_sendDm">
                     { _t("Send a Direct Message") }
@@ -132,6 +134,7 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
                     { _t("Create a Group Chat") }
                 </AccessibleButton>
             </div>
+            } {/* watcha+ */}
         </div>
     </AutoHideScrollbar>;
 };

@@ -53,6 +53,7 @@ import { ListNotificationState } from "../../../stores/notifications/ListNotific
 import IconizedContextMenu from "../context_menus/IconizedContextMenu";
 import { getKeyBindingsManager, RoomListAction } from "../../../KeyBindingsManager";
 import {replaceableComponent} from "../../../utils/replaceableComponent";
+import { MatrixClientPeg } from "../../../MatrixClientPeg"; // watcha+
 
 const SHOW_N_BUTTON_HEIGHT = 28; // As defined by CSS
 const RESIZE_HANDLE_HEIGHT = 4; // As defined by CSS
@@ -664,6 +665,7 @@ export default class RoomSublist extends React.Component<IProps, IState> {
                     );
 
                     let addRoomButton = null;
+                    if (!MatrixClientPeg.get().isPartner()) { // watcha+ 
                     if (!!this.props.onAddRoom) {
                         addRoomButton = (
                             <AccessibleTooltipButton
@@ -688,6 +690,7 @@ export default class RoomSublist extends React.Component<IProps, IState> {
                             />
                         );
                     }
+                    } // watcha+  
 
                     const collapseClasses = classNames({
                         'mx_RoomSublist_collapseBtn': true,
