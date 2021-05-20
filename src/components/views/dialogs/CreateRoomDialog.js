@@ -229,7 +229,10 @@ export default class CreateRoomDialog extends React.Component {
         }
 
         let e2eeSection;
+        /* watcha!
         if (!this.state.isPublic) {
+        !watcha */
+        if (!this.state.isPublic && SettingsStore.getValue("showE2EEUI")) { // watcha+
             let microcopy;
             if (privateShouldBeEncrypted()) {
                 if (this.state.canChangeEncryption) {
@@ -271,7 +274,6 @@ export default class CreateRoomDialog extends React.Component {
             const name = CommunityPrototypeStore.instance.getSelectedCommunityName();
             title = _t("Create a room in %(communityName)s", {communityName: name});
         }
-        const showE2EEUI = SettingsStore.getValue("showE2EEUI") || null; // watcha+
         return (
             <BaseDialog className="mx_CreateRoomDialog" onFinished={this.props.onFinished}
                 title={title}
@@ -282,9 +284,7 @@ export default class CreateRoomDialog extends React.Component {
                         <Field label={ _t('Topic (optional)') } onChange={this.onTopicChange} value={this.state.topic} className="mx_CreateRoomDialog_topic" />
                         <LabelledToggleSwitch label={ _t("Make this room public")} onChange={this.onPublicChange} value={this.state.isPublic} />
                         { publicPrivateLabel }
-                        { showE2EEUI && <React.Fragment> {/* watcha+ */}
                         { e2eeSection }
-                        </React.Fragment>} {/* watcha+ */}
                         { aliasField }
                         {/* watcha!
                         <details ref={this.collectDetailsRef} className="mx_CreateRoomDialog_details">

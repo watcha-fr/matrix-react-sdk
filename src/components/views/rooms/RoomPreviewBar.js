@@ -27,6 +27,7 @@ import {CommunityPrototypeStore} from "../../../stores/CommunityPrototypeStore";
 import {UPDATE_EVENT} from "../../../stores/AsyncStore";
 import { replaceableComponent } from "../../../utils/replaceableComponent";
 import InviteReason from "../elements/InviteReason";
+import SettingsStore from "../../../settings/SettingsStore"; // watcha+
 import { getSupportEmailAddress } from "../../../utils/watcha_config"; // watcha+
 
 const MessageCase = Object.freeze({
@@ -95,6 +96,14 @@ export default class RoomPreviewBar extends React.Component {
         busy: false,
         email: undefined, // watcha+
     };
+
+    // watcha+
+    _showIgnoreButtonWatcherRef = SettingsStore.watchSetting(
+        "showIgnoreUserButton",
+        null,
+        () => this.forceUpdate()
+    );
+    // +watcha
 
     componentDidMount() {
         this._checkInvitedEmail();
@@ -524,7 +533,10 @@ export default class RoomPreviewBar extends React.Component {
                 secondaryActionLabel = _t("Reject");
                 secondaryActionHandler = this.props.onRejectClick;
 
+                /* watcha!
                 if (this.props.onRejectAndIgnoreClick) {
+                !watcha */
+                if (this.props.onRejectAndIgnoreClick && SettingsStore.getValue("showIgnoreUserButton")) { // watcha+
                     extraComponents.push(
                         <AccessibleButton kind="secondary" onClick={this.props.onRejectAndIgnoreClick} key="ignore">
                             { _t("Reject & Ignore user") }
