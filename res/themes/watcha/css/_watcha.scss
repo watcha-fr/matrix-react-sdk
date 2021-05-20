@@ -34,6 +34,10 @@ $roomtile-preview-color: $watcha-accent-alpha-color;
     }
 }
 
+.mx_SpaceButton_menuButton::before {
+    background-color: white !important;
+}
+
 .mx_LeftPanel {
     .mx_UserMenu_subUserName {
         color: $watcha-fg-color-light !important;
@@ -69,10 +73,8 @@ $roomtile-preview-color: $watcha-accent-alpha-color;
     }
 }
 
-.mx_RoomSublist_menuButton {
-    &::before {
-        background-color: white !important;
-    }
+.mx_RoomSublist_menuButton::before {
+    background-color: white !important;
 }
 
 .mx_RoomSublist_badgeContainer {
@@ -127,6 +129,7 @@ $roomtile-preview-color: $watcha-accent-alpha-color;
     }
 }
 
+.mx_UserMenu_dnd,
 .mx_RoomList_explorePrompt_startChat,
 .mx_RoomList_explorePrompt_explore,
 .mx_RoomList_explorePrompt_spaceInvite,
@@ -134,8 +137,4 @@ $roomtile-preview-color: $watcha-accent-alpha-color;
     &::before {
         background-color: $watcha-fg-color-light !important;
     }
-}
-
-.mx_UserMenu_dnd::before {
-    background-color: $watcha-fg-color-light !important;
 }
