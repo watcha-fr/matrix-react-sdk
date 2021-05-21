@@ -221,10 +221,16 @@ export class SpaceItem extends React.PureComponent<IItemProps, IItemState> {
                 </IconizedContextMenuOptionList>;
             }
 
+            /* watcha!
             const canAddRooms = this.props.space.currentState.maySendStateEvent(EventType.SpaceChild, userId);
+            !watcha */
+            const canAddRooms = this.props.space.currentState.maySendStateEvent(EventType.SpaceChild, userId) && !this.context.isPartner(); // watcha+
 
             let newRoomSection;
+            /* watcha!
             if (this.props.space.currentState.maySendStateEvent(EventType.SpaceChild, userId)) {
+            !watcha */
+            if (this.props.space.currentState.maySendStateEvent(EventType.SpaceChild, userId) && !this.context.isPartner()) { // watcha+
                 newRoomSection = <IconizedContextMenuOptionList first>
                     <IconizedContextMenuOption
                         iconClassName="mx_SpacePanel_iconPlus"

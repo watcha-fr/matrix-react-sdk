@@ -43,6 +43,7 @@ import {replaceableComponent} from "../../utils/replaceableComponent";
 import {mediaFromMxc} from "../../customisations/Media";
 import SpaceStore, {UPDATE_SELECTED_SPACE} from "../../stores/SpaceStore";
 import { getKeyBindingsManager, RoomListAction } from "../../KeyBindingsManager";
+import { MatrixClientPeg } from "../../MatrixClientPeg"; // watcha+
 
 interface IProps {
     isMinimized: boolean;
@@ -392,6 +393,7 @@ export default class LeftPanel extends React.Component<IProps, IState> {
                     onKeyDown={this.onKeyDown}
                     onSelectRoom={this.selectRoom}
                 />
+                { !MatrixClientPeg.get().isPartner() && // watcha+
                 <AccessibleTooltipButton
                     className={classNames("mx_LeftPanel_exploreButton", {
                         mx_LeftPanel_exploreButton_space: !!this.state.activeSpace,
@@ -399,6 +401,7 @@ export default class LeftPanel extends React.Component<IProps, IState> {
                     onClick={this.onExplore}
                     title={_t("Explore rooms")}
                 />
+                } {/* watcha+ */}
             </div>
         );
     }

@@ -310,6 +310,7 @@ export interface IStoredSession {
     userId: string;
     deviceId: string;
     isGuest: boolean;
+    isPartner: boolean; // watcha+
 }
 
 /**
@@ -349,7 +350,12 @@ export async function getStoredSessionVars(): Promise<IStoredSession> {
         isGuest = localStorage.getItem("matrix-is-guest") === "true";
     }
 
+    const isPartner = localStorage.getItem("watcha_is_partner") === "true"; // watcha+
+
+    /* watcha!
     return {hsUrl, isUrl, hasAccessToken, accessToken, userId, deviceId, isGuest};
+    !watcha */
+    return {hsUrl, isUrl, hasAccessToken, accessToken, userId, deviceId, isGuest, isPartner}; // watcha+
 }
 
 // The pickle key is a string of unspecified length and format.  For AES, we
@@ -405,7 +411,10 @@ export async function restoreFromLocalStorage(opts?: { ignoreGuest?: boolean }):
         return false;
     }
 
+    /* watcha!
     const {hsUrl, isUrl, hasAccessToken, accessToken, userId, deviceId, isGuest} = await getStoredSessionVars();
+    !watcha */
+    const {hsUrl, isUrl, hasAccessToken, accessToken, userId, deviceId, isGuest, isPartner} = await getStoredSessionVars(); // watcha+
 
     if (hasAccessToken && !accessToken) {
         abortLogin();
@@ -443,6 +452,7 @@ export async function restoreFromLocalStorage(opts?: { ignoreGuest?: boolean }):
             guest: isGuest,
             pickleKey: pickleKey,
             freshLogin: freshLogin,
+            partner: isPartner, // watcha+
         }, false);
         return true;
     } else {

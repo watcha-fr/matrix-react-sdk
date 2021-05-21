@@ -35,6 +35,8 @@ import {
     RovingTabIndexProvider,
 } from "../../../accessibility/RovingTabIndex";
 import {Key} from "../../../Keyboard";
+import {useContext} from "react"; // watcha+
+import MatrixClientContext from "../../../contexts/MatrixClientContext"; // watcha+
 
 interface IButtonProps {
     space?: Room;
@@ -119,6 +121,7 @@ const SpacePanel = () => {
     const [menuDisplayed, handle, openMenu, closeMenu] = useContextMenu<void>();
     const [spaces, activeSpace] = useSpaces();
     const [isPanelCollapsed, setPanelCollapsed] = useState(true);
+    const client = useContext(MatrixClientContext); // watcha+
 
     const newClasses = classNames("mx_SpaceButton_new", {
         mx_SpaceButton_newCancel: menuDisplayed,
@@ -217,6 +220,7 @@ const SpacePanel = () => {
                             onExpand={() => setPanelCollapsed(false)}
                         />) }
                     </div>
+                    { !client.isPartner() && // watcha+
                     <SpaceButton
                         className={newClasses}
                         tooltip={menuDisplayed ? _t("Cancel") : _t("Create a space")}
@@ -226,6 +230,7 @@ const SpacePanel = () => {
                         }}
                         isNarrow={isPanelCollapsed}
                     />
+                    } {/* watcha+ */}
                 </AutoHideScrollbar>
                 <AccessibleTooltipButton
                     className={classNames("mx_SpacePanel_toggleCollapse", {expanded: !isPanelCollapsed})}

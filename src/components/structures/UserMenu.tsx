@@ -382,6 +382,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
         /* watcha!
         if (this.hasHomePage) {
         !watcha */
+        if (this.hasHomePage || !MatrixClientPeg.get().isPartner()) { // watcha+
             homeButton = (
                 <IconizedContextMenuOption
                     iconClassName="mx_UserMenu_iconHome"
@@ -389,9 +390,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
                     onClick={this.onHomeClick}
                 />
             );
-        /* watcha!
         }
-        !watcha */
 
         let feedbackButton;
         if (SettingsStore.getValue(UIFeature.Feedback)) {
@@ -451,22 +450,24 @@ export default class UserMenu extends React.Component<IProps, IState> {
                         />
                     </IconizedContextMenuOptionList>
                 )}
-                <IconizedContextMenuOptionList>
-                    {SettingsStore.getValue("UIFeature.watcha_Nextcloud") &&
+                {!MatrixClientPeg.get().isPartner() && (
+                    <IconizedContextMenuOptionList>
+                        {SettingsStore.getValue("UIFeature.watcha_Nextcloud") &&
+                            <IconizedContextMenuOption
+                                iconClassName="mx_UserMenu_iconNextcloud"
+                                label={_t("My documents")}
+                                title={_t("Open my documents in a new tab")}
+                                onClick={this.onNextcloudClick}
+                            />
+                        }
                         <IconizedContextMenuOption
-                            iconClassName="mx_UserMenu_iconNextcloud"
-                            label={_t("My documents")}
-                            title={_t("Open my documents in a new tab")}
-                            onClick={this.onNextcloudClick}
+                            iconClassName="mx_UserMenu_iconJitsi"
+                            label={_t("Videoconferencing")}
+                            title={_t("Open the videoconferencing platform in a new tab")}
+                            onClick={this.onJitsiClick}
                         />
-                    }
-                    <IconizedContextMenuOption
-                        iconClassName="mx_UserMenu_iconJitsi"
-                        label={_t("Videoconferencing")}
-                        title={_t("Open the videoconferencing platform in a new tab")}
-                        onClick={this.onJitsiClick}
-                    />
-                </IconizedContextMenuOptionList>
+                    </IconizedContextMenuOptionList>
+                )}
                 {/* +watcha */}
                 <IconizedContextMenuOptionList red>
                     <IconizedContextMenuOption

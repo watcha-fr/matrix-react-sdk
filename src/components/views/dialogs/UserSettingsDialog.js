@@ -34,6 +34,7 @@ import SdkConfig from "../../../SdkConfig";
 import MjolnirUserSettingsTab from "../settings/tabs/user/MjolnirUserSettingsTab";
 import {UIFeature} from "../../../settings/UIFeature";
 import {replaceableComponent} from "../../../utils/replaceableComponent";
+import {MatrixClientPeg} from '../../../MatrixClientPeg'; // watcha+
 import SSOProfileTab from "../settings/tabs/user/SSOProfileTab"; // watcha+
 
 export const USER_GENERAL_TAB = "USER_GENERAL_TAB";
@@ -86,7 +87,7 @@ export default class UserSettingsDialog extends React.Component {
             <GeneralUserSettingsTab closeSettingsFn={this.props.onFinished} />,
         ));
         // watcha+
-        if (SettingsStore.getValue(UIFeature.watcha_SSOProfile)) {
+        if (SettingsStore.getValue(UIFeature.watcha_SSOProfile) && !MatrixClientPeg.get().isPartner()) {
             tabs.push(new Tab(
                 USER_SSO_PROFILE_TAB,
                 _td("SSO profile"),
