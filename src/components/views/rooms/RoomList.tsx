@@ -165,7 +165,7 @@ const TAG_AESTHETICS: ITagAestheticsMap = {
         addRoomContextMenu: (onFinished: () => void) => {
             if (SpaceStore.instance.activeSpace) {
                 const canAddRooms = SpaceStore.instance.activeSpace.currentState.maySendStateEvent(EventType.SpaceChild,
-                    MatrixClientPeg.get().getUserId()); 
+                    MatrixClientPeg.get().getUserId());
 
                 return <IconizedContextMenuOptionList first>
                     <IconizedContextMenuOption
