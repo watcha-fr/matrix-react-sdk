@@ -76,7 +76,8 @@ export default class RoomSettingsDialog extends React.Component {
         // watcha+
         if (
             SettingsStore.getValue("UIFeature.watcha_Nextcloud") &&
-            SettingsStore.canSetValue("nextcloudShare", this.props.roomId, "room")
+            SettingsStore.canSetValue("nextcloudShare", this.props.roomId, "room") &&
+            !MatrixClientPeg.get().isPartner()
         ) {
             tabs.push(
                 new Tab(
