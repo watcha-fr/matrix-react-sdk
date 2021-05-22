@@ -1343,6 +1343,12 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
      * Called when the session is logged out
      */
     private onLoggedOut() {
+        // watcha+
+        if (SdkConfig.get().sso_immediate_redirect === true) {
+            this.setStateForNewView({view: Views.LOADING});
+            return
+        }
+        // +watcha
         this.viewLogin({
             ready: false,
             collapseLhs: false,
