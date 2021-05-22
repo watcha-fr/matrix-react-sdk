@@ -43,6 +43,25 @@ export class IgnoredUser extends React.Component {
         inProgress: PropTypes.bool.isRequired,
     };
 
+    // watcha+
+    constructor(props) {
+        super(props);
+        this.state = {
+            displayname: null,
+        };
+        const client = MatrixClientPeg.get();
+        const { userId } = this.props;
+        client
+            .getProfileInfo(userId, "displayname")
+            .then(({ displayname }) => {
+                this.setState({ displayname });
+            })
+            .catch(err => {
+                console.error("Could not retrieve profile displayname for " + userId + ":", err);
+            });
+    }
+    // +watcha
+
     _onUnignoreClicked = (e) => {
         this.props.onUnignored(this.props.userId);
     };
@@ -54,7 +73,10 @@ export class IgnoredUser extends React.Component {
                 <AccessibleButton onClick={this._onUnignoreClicked} kind='primary_sm' aria-describedby={id} disabled={this.props.inProgress}>
                     { _t('Unignore') }
                 </AccessibleButton>
+                {/* watcha!
                 <span id={id}>{ this.props.userId }</span>
+                !watcha */}
+                <span id={id}>{this.state.displayname || this.props.userId}</span> {/* watcha+ */}
             </div>
         );
     }

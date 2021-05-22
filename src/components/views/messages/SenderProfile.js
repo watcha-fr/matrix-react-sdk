@@ -58,15 +58,14 @@ export default class SenderProfile extends React.Component {
             if (member?.rawDisplayName) {
                 this.setState({ displayname: member.rawDisplayName });
             } else {
-                try {
-                    this.context.getProfileInfo(userId).then(({ displayname }) => {
+                this.context
+                    .getProfileInfo(userId, "displayname")
+                    .then(({ displayname }) => {
                         this.setState({ displayname });
+                    })
+                    .catch(err => {
+                        console.error("Could not retrieve displayname data for " + userId + ":", err);
                     });
-                } catch {
-                    err => {
-                        console.error("Could not retrieve profile data for " + userId + ":", err);
-                    };
-                }
             }
         }
         // +watcha
