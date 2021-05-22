@@ -123,5 +123,8 @@ limitations under the License.
 }
 
 .mx_FilePanel_empty::before {
+    /* watcha!
     mask-image: url('$(res)/img/element-icons/room/files.svg');
+    !watcha */
+    mask-image: url('$(res)/img/element-icons/room/composer/attach.svg'); // watcha+
 }
