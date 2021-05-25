@@ -223,7 +223,7 @@ export async function sendLoginRequest(
 
     // watcha+
     const locale = data.locale;
-    if (locale != getCurrentLanguage()) {
+    if (locale && locale != getCurrentLanguage()) {
         localStorage.setItem(SSO_LANGUAGE_KEY, locale);
     }
     // +watcha
