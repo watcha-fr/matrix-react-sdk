@@ -185,7 +185,9 @@ export default class MessageComposer extends React.Component {
         this._showStickersButtonWatcherRef = SettingsStore.watchSetting(
             "MessageComposerInput.showStickersButton",
             null,
-            () => this.forceUpdate()
+            () => {
+                this.forceUpdate();
+            }
         );
         // +watcha
 
