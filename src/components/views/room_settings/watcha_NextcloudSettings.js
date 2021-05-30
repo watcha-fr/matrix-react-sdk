@@ -1,9 +1,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { _t } from "../../../languageHandler";
-import { getNextcloudBaseUrl } from "../../../utils/watcha_nextcloudUtils";
 import * as sdk from "../../../index";
 import AccessibleButton from "../elements/AccessibleButton";
 import Field from "../elements/Field";
@@ -11,16 +10,28 @@ import Modal from "../../../Modal";
 import SettingsStore from "../../../settings/SettingsStore";
 
 const NextcloudSettings = ({ roomId }) => {
-    const [nextcloudFolder, setNextcloudFolder] = useState(SettingsStore.getValue("nextcloudShare", roomId));
+    const [nextcloudShare, setNextcloudShare] = useState(SettingsStore.getValue("nextcloudShare", roomId));
     const [isBusy, setIsBusy] = useState(false);
     const [errorText, setErrorText] = useState(null);
 
     const shareDialogIsBusyRef = useRef(false);
 
+    useEffect(() => {
+        const _nextcloudShareWatcherRef = SettingsStore.watchSetting(
+            "nextcloudShare",
+            roomId,
+            (originalSettingName, changedInRoomId, atLevel, newValAtLevel, newValue) => {
+                setNextcloudShare(newValAtLevel);
+            }
+        );
+        return () => {
+            SettingsStore.unwatchSetting(_nextcloudShareWatcherRef);
+        };
+    }, [roomId]);
+
     const onShare = () => {
         setErrorText(null);
         const NextcloudShareDialog = sdk.getComponent("dialogs.watcha_NextcloudShareDialog");
-        const targetFolder = nextcloudFolder || new URL("apps/files/?dir=/", getNextcloudBaseUrl()).href;
         const setShareDialogIsBusy = value => {
             shareDialogIsBusyRef.current = value;
         };
@@ -33,13 +44,13 @@ const NextcloudSettings = ({ roomId }) => {
             "Nextcloud share",
             "",
             NextcloudShareDialog,
-            { roomId, targetFolder, setShareDialogIsBusy },
+            { roomId, onShare, setShareDialogIsBusy },
             /*className=*/ null,
             options
         );
         modal.finished.then(([selectedFolder]) => {
             if (selectedFolder) {
-                setNextcloudFolder(selectedFolder);
+                setNextcloudShare(selectedFolder);
             }
         });
     };
@@ -49,7 +60,7 @@ const NextcloudSettings = ({ roomId }) => {
         setErrorText(null);
         SettingsStore.setValue("nextcloudShare", roomId, "room", null)
             .then(() => {
-                setNextcloudFolder(null);
+                setNextcloudShare(null);
             })
             .catch(error => {
                 console.error(error);
@@ -64,8 +75,8 @@ const NextcloudSettings = ({ roomId }) => {
 
     let sharedFolderField;
     let stopSharingButton;
-    if (nextcloudFolder) {
-        const params = new URL(nextcloudFolder).searchParams;
+    if (nextcloudShare) {
+        const params = new URL(nextcloudShare).searchParams;
         const path = params.get("dir");
         const relativePath = path ? path.replace(/^\//, "") : null;
         sharedFolderField = (
@@ -97,7 +108,7 @@ const NextcloudSettings = ({ roomId }) => {
                 {stopSharingButton}
                 {isBusy && <Spinner />}
                 <AccessibleButton kind="primary" onClick={onShare} disabled={isBusy}>
-                    {_t(nextcloudFolder ? "Change the shared folder" : "Share a folder")}
+                    {_t(nextcloudShare ? "Change the shared folder" : "Share a folder")}
                 </AccessibleButton>
             </div>
         </React.Fragment>

@@ -3,18 +3,21 @@ import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
 
 import { _t } from "../../../languageHandler";
+import { getNextcloudBaseUrl } from "../../../utils/watcha_nextcloudUtils";
 import * as sdk from "../../../index";
 import Field from "../elements/Field";
 import SettingsStore from "../../../settings/SettingsStore";
 
 import { refineNextcloudIframe } from "../../../utils/watcha_nextcloudUtils";
 
-const NextcloudShareDialog = ({ roomId, targetFolder, setShareDialogIsBusy, onFinished }) => {
+const NextcloudShareDialog = ({ roomId, onShare, setShareDialogIsBusy, onFinished }) => {
     const BaseDialog = sdk.getComponent("views.dialogs.BaseDialog");
     const DialogButtons = sdk.getComponent("views.elements.DialogButtons");
 
-    const [nextcloudFolder, setNextcloudFolder] = useState(targetFolder);
-    const [prevNextcloudFolder, setPrevNextcloudFolder] = useState(null);
+    const [nextcloudShare, setNextcloudShare] = useState(
+        SettingsStore.getValue("nextcloudShare", roomId) || new URL("apps/files/?dir=/", getNextcloudBaseUrl()).href
+    );
+    const [prevNextcloudShare, setPrevNextcloudShare] = useState(null);
     const [isBusy, setIsBusy] = useState(false);
     const [errorText, setErrorText] = useState(null);
 
@@ -22,25 +25,36 @@ const NextcloudShareDialog = ({ roomId, targetFolder, setShareDialogIsBusy, onFi
     const isCancelRef = useRef(false);
 
     const nextcloudIframeRef = useRef();
+    const nextcloudShareRef = useRef(nextcloudShare);
 
     useEffect(() => {
         nextcloudIframeRef.current.contentWindow.addEventListener("click", onClick);
-    }, []);
+        const _nextcloudShareWatcherRef = SettingsStore.watchSetting("nextcloudShare", roomId, () => {
+            // HACK: bypass loss of event listener when iframe source is updated manually
+            onFinished()
+                .then(() => onShare())
+                .catch(error => console.error(error));
+        });
+        return () => {
+            nextcloudIframeRef.current.contentWindow.removeEventListener("click", onClick);
+            SettingsStore.unwatchSetting(_nextcloudShareWatcherRef);
+        };
+    }, [roomId, onShare, onFinished]);
 
     const onClick = () => {
         setErrorText(null);
-        setNextcloudFolder(nextcloudIframeRef.current.contentWindow.location.href);
+        setNextcloudShare(nextcloudIframeRef.current.contentWindow.location.href);
     };
 
     const onOK = () => {
         setShareDialogIsBusy(true);
         setIsBusy(true);
         setErrorText(null);
-        setPrevNextcloudFolder(SettingsStore.getValue("nextcloudShare", roomId));
-        SettingsStore.setValue("nextcloudShare", roomId, "room", nextcloudFolder)
+        setPrevNextcloudShare(SettingsStore.getValue("nextcloudShare", roomId));
+        SettingsStore.setValue("nextcloudShare", roomId, "room", nextcloudShare)
             .then(() => {
                 if (!isCancelRef.current) {
-                    onFinished(nextcloudFolder);
+                    onFinished(nextcloudShare);
                     setShareDialogIsBusy(false);
                 }
             })
@@ -58,9 +72,9 @@ const NextcloudShareDialog = ({ roomId, targetFolder, setShareDialogIsBusy, onFi
         if (isBusy) {
             setIsCancel(true);
             setErrorText(_t("Cancelling…"));
-            SettingsStore.setValue("nextcloudShare", roomId, "room", prevNextcloudFolder)
+            SettingsStore.setValue("nextcloudShare", roomId, "room", prevNextcloudShare)
                 .then(() => {
-                    onFinished(prevNextcloudFolder);
+                    onFinished(prevNextcloudShare);
                 })
                 .catch(error => {
                     console.error(error);
@@ -80,7 +94,7 @@ const NextcloudShareDialog = ({ roomId, targetFolder, setShareDialogIsBusy, onFi
         isCancelRef.current = value;
     };
 
-    const params = new URL(nextcloudFolder).searchParams;
+    const params = new URL(nextcloudShare).searchParams;
     const path = params.get("dir");
     const relativePath = path ? path.replace(/^\//, "") : null;
 
@@ -97,7 +111,7 @@ const NextcloudShareDialog = ({ roomId, targetFolder, setShareDialogIsBusy, onFi
                 <div className="mx_Dialog_content">
                     <iframe
                         ref={nextcloudIframeRef}
-                        src={targetFolder}
+                        src={nextcloudShareRef.current}
                         onLoad={() => {
                             refineNextcloudIframe(nextcloudIframeRef);
                             refineNextcloudIframe(nextcloudIframeRef, "/app/watcha_nextcloud/shareDiablog.css");
@@ -129,7 +143,7 @@ const NextcloudShareDialog = ({ roomId, targetFolder, setShareDialogIsBusy, onFi
 
 NextcloudShareDialog.propTypes = {
     roomId: PropTypes.string.isRequired,
-    targetFolder: PropTypes.string.isRequired,
+    onShare: PropTypes.func.isRequired,
     setShareDialogIsBusy: PropTypes.func.isRequired,
     onFinished: PropTypes.func.isRequired,
 };
