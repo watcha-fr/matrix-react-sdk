@@ -18,3 +18,7 @@
         content: "";
     }
 }
+
+.watcha_NextcloudPanel_empty::before {
+    mask-image: url("$(res)/img/element-icons/room/files.svg");
+}

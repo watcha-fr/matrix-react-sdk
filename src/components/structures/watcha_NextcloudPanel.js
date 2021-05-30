@@ -53,7 +53,7 @@ export default ({ roomId, onClose }) => {
             panel = (
                 <div className={"mx_RoomView_messageListWrapper"}>
                     <div className="mx_RoomView_empty">
-                        <div className="mx_RightPanel_empty mx_FilePanel_empty">
+                        <div className="mx_RightPanel_empty watcha_NextcloudPanel_empty">
                             <h2>{_t("No folder shared with this room")}</h2>
                             <p>{hint}</p>
                         </div>
