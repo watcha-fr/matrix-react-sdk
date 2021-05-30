@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { _t } from "../../languageHandler";
 import { RightPanelPhases } from "../../stores/RightPanelStorePhases";
@@ -10,7 +10,22 @@ import SettingsStore from "../../settings/SettingsStore";
 import { refineNextcloudIframe } from "../../utils/watcha_nextcloudUtils";
 
 export default ({ roomId, onClose }) => {
+    const [nextcloudShare, setNextcloudShare] = useState(SettingsStore.getValue("nextcloudShare", roomId));
+
     const nextcloudIframeRef = useRef();
+
+    useEffect(() => {
+        const _nextcloudShareWatcherRef = SettingsStore.watchSetting(
+            "nextcloudShare",
+            roomId,
+            (originalSettingName, changedInRoomId, atLevel, newValAtLevel, newValue) => {
+                setNextcloudShare(newValAtLevel);
+            }
+        );
+        return () => {
+            SettingsStore.unwatchSetting(_nextcloudShareWatcherRef);
+        };
+    }, [roomId]);
 
     const onRoomSettingsClick = () => {
         const payload = {
@@ -22,14 +37,13 @@ export default ({ roomId, onClose }) => {
 
     let panel;
     if (SettingsStore.getValue("UIFeature.watcha_Nextcloud")) {
-        const nextcloudFolder = SettingsStore.getValue("nextcloudShare", roomId);
-        if (nextcloudFolder) {
+        if (nextcloudShare) {
             panel = (
                 <iframe
                     id="watcha_NextcloudPanel"
                     ref={nextcloudIframeRef}
                     className="watcha_NextcloudPanel"
-                    src={nextcloudFolder}
+                    src={nextcloudShare}
                     onLoad={() => {
                         refineNextcloudIframe(nextcloudIframeRef);
                     }}
