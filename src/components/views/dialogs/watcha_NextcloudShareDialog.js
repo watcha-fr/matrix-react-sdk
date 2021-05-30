@@ -4,16 +4,15 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { _t } from "../../../languageHandler";
 import { getNextcloudBaseUrl } from "../../../utils/watcha_nextcloudUtils";
-import * as sdk from "../../../index";
+import BaseDialog from "./BaseDialog";
+import DialogButtons from "../elements/DialogButtons";
 import Field from "../elements/Field";
 import SettingsStore from "../../../settings/SettingsStore";
+import Spinner from "../elements/Spinner";
 
 import { refineNextcloudIframe } from "../../../utils/watcha_nextcloudUtils";
 
 const NextcloudShareDialog = ({ roomId, onShare, setShareDialogIsBusy, onFinished }) => {
-    const BaseDialog = sdk.getComponent("views.dialogs.BaseDialog");
-    const DialogButtons = sdk.getComponent("views.elements.DialogButtons");
-
     const [nextcloudShare, setNextcloudShare] = useState(
         SettingsStore.getValue("nextcloudShare", roomId) || new URL("apps/files/?dir=/", getNextcloudBaseUrl()).href
     );
@@ -97,8 +96,6 @@ const NextcloudShareDialog = ({ roomId, onShare, setShareDialogIsBusy, onFinishe
     const params = new URL(nextcloudShare).searchParams;
     const path = params.get("dir");
     const relativePath = path ? path.replace(/^\//, "") : null;
-
-    const Spinner = sdk.getComponent("elements.Spinner");
 
     return (
         <React.Fragment>

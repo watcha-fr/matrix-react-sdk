@@ -3,11 +3,13 @@ import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
 
 import { _t } from "../../../languageHandler";
-import * as sdk from "../../../index";
 import AccessibleButton from "../elements/AccessibleButton";
 import Field from "../elements/Field";
 import Modal from "../../../Modal";
 import SettingsStore from "../../../settings/SettingsStore";
+import Spinner from "../elements/Spinner";
+
+import NextcloudShareDialog from "../dialogs/watcha_NextcloudShareDialog";
 
 const NextcloudSettings = ({ roomId }) => {
     const [nextcloudShare, setNextcloudShare] = useState(SettingsStore.getValue("nextcloudShare", roomId));
@@ -31,7 +33,6 @@ const NextcloudSettings = ({ roomId }) => {
 
     const onShare = () => {
         setErrorText(null);
-        const NextcloudShareDialog = sdk.getComponent("dialogs.watcha_NextcloudShareDialog");
         const setShareDialogIsBusy = value => {
             shareDialogIsBusyRef.current = value;
         };
@@ -96,8 +97,6 @@ const NextcloudSettings = ({ roomId }) => {
             </AccessibleButton>
         );
     }
-
-    const Spinner = sdk.getComponent("elements.Spinner");
 
     return (
         <React.Fragment>
