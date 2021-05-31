@@ -1,9 +1,9 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
 
 import { _t } from "../../../languageHandler";
 import { getNextcloudBaseUrl } from "../../../utils/watcha_nextcloudUtils";
+import { SettingLevel } from "../../../settings/SettingLevel";
 import BaseDialog from "./BaseDialog";
 import DialogButtons from "../elements/DialogButtons";
 import Field from "../elements/Field";
@@ -11,12 +11,19 @@ import SettingsStore from "../../../settings/SettingsStore";
 
 import { refineNextcloudIframe } from "../../../utils/watcha_nextcloudUtils";
 
-const NextcloudShareDialog = ({ roomId, onShare, setIsBusy, onFinished }) => {
-    const [nextcloudShare, setNextcloudShare] = useState(
+interface IProps {
+    roomId: string;
+    onShare(): void;
+    setIsBusy(value: boolean): void;
+    onFinished(): Promise<void>;
+}
+
+const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onShare, setIsBusy, onFinished }) => {
+    const [nextcloudShare, setNextcloudShare] = useState<string>(
         SettingsStore.getValue("nextcloudShare", roomId) || new URL("apps/files/?dir=/", getNextcloudBaseUrl()).href
     );
 
-    const nextcloudIframeRef = useRef();
+    const nextcloudIframeRef = useRef<HTMLIFrameElement>();
     const nextcloudShareRef = useRef(nextcloudShare);
 
     useEffect(() => {
@@ -40,7 +47,7 @@ const NextcloudShareDialog = ({ roomId, onShare, setIsBusy, onFinished }) => {
     const onOK = () => {
         setIsBusy(true);
         onFinished();
-        SettingsStore.setValue("nextcloudShare", roomId, "room", nextcloudShare)
+        SettingsStore.setValue("nextcloudShare", roomId, SettingLevel.ROOM, nextcloudShare)
             .catch(error => {
                 console.error(error);
             })
@@ -65,8 +72,8 @@ const NextcloudShareDialog = ({ roomId, onShare, setIsBusy, onFinished }) => {
                         ref={nextcloudIframeRef}
                         src={nextcloudShareRef.current}
                         onLoad={() => {
-                            refineNextcloudIframe(nextcloudIframeRef);
-                            refineNextcloudIframe(nextcloudIframeRef, "/app/watcha_nextcloud/shareDiablog.css");
+                            refineNextcloudIframe(nextcloudIframeRef.current);
+                            refineNextcloudIframe(nextcloudIframeRef.current, "/app/watcha_nextcloud/shareDiablog.css");
                         }}
                     />
                     <Field
@@ -88,13 +95,6 @@ const NextcloudShareDialog = ({ roomId, onShare, setIsBusy, onFinished }) => {
             </BaseDialog>
         </React.Fragment>
     );
-};
-
-NextcloudShareDialog.propTypes = {
-    roomId: PropTypes.string.isRequired,
-    onShare: PropTypes.func.isRequired,
-    setIsBusy: PropTypes.func.isRequired,
-    onFinished: PropTypes.func.isRequired,
 };
 
 export default NextcloudShareDialog;

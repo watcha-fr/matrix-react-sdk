@@ -1,8 +1,8 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { _t } from "../../../languageHandler";
+import { SettingLevel } from "../../../settings/SettingLevel";
 import AccessibleButton from "../elements/AccessibleButton";
 import Field from "../elements/Field";
 import Modal from "../../../Modal";
@@ -10,26 +10,16 @@ import SettingsStore from "../../../settings/SettingsStore";
 import Spinner from "../elements/Spinner";
 
 import NextcloudShareDialog from "../dialogs/watcha_NextcloudShareDialog";
+import useSafeState from "../../../hooks/watcha_useSafeState";
 
-function useSafeState(initialState) {
-    const isMounted = useRef();
-    const [state, setState] = useState(initialState);
-    useEffect(() => {
-        isMounted.current = true;
-        return () => (isMounted.current = false);
-    }, []);
-    const _setState = value => {
-        if (isMounted.current) {
-            return setState(value);
-        }
-    };
-    return [state, _setState];
+interface IProps {
+    roomId: string;
 }
 
-const NextcloudSettings = ({ roomId }) => {
-    const [nextcloudShare, setNextcloudShare] = useState(SettingsStore.getValue("nextcloudShare", roomId));
-    const [isBusy, setIsBusy] = useSafeState(false);
-    const [errorText, setErrorText] = useState(null);
+const NextcloudSettings: React.FC<IProps> = ({ roomId }) => {
+    const [nextcloudShare, setNextcloudShare] = useState<string>(SettingsStore.getValue("nextcloudShare", roomId));
+    const [isBusy, setIsBusy] = useSafeState<boolean>(false);
+    const [errorText, setErrorText] = useState<string>(null);
 
     useEffect(() => {
         const _nextcloudShareWatcherRef = SettingsStore.watchSetting(
@@ -56,7 +46,7 @@ const NextcloudSettings = ({ roomId }) => {
     const onUnshare = () => {
         setIsBusy(true);
         setErrorText(null);
-        SettingsStore.setValue("nextcloudShare", roomId, "room", null)
+        SettingsStore.setValue("nextcloudShare", roomId, SettingLevel.ROOM, null)
             .catch(error => {
                 console.error(error);
                 setErrorText(error.message);
@@ -106,10 +96,6 @@ const NextcloudSettings = ({ roomId }) => {
             </div>
         </React.Fragment>
     );
-};
-
-NextcloudSettings.propTypes = {
-    roomId: PropTypes.string.isRequired,
 };
 
 export default NextcloudSettings;
