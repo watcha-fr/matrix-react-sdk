@@ -19,8 +19,10 @@ interface IProps {
 }
 
 const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onShare, setIsBusy, onFinished }) => {
+    const initialShare = useRef<string>(SettingsStore.getValue("nextcloudShare", roomId));
+
     const [nextcloudShare, setNextcloudShare] = useState<string>(
-        SettingsStore.getValue("nextcloudShare", roomId) || new URL("apps/files/?dir=/", getNextcloudBaseUrl()).href
+        initialShare.current || new URL("apps/files/?dir=/", getNextcloudBaseUrl()).href
     );
 
     const nextcloudIframeRef = useRef<HTMLIFrameElement>();
@@ -89,7 +91,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onShare, setIsBusy, on
                 <DialogButtons
                     primaryButton={_t("OK")}
                     onPrimaryButtonClick={onOK}
-                    primaryDisabled={!relativePath}
+                    primaryDisabled={!relativePath || nextcloudShare === initialShare.current}
                     onCancel={onFinished}
                 />
             </BaseDialog>
