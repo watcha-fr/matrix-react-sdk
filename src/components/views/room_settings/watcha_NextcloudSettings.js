@@ -11,12 +11,25 @@ import Spinner from "../elements/Spinner";
 
 import NextcloudShareDialog from "../dialogs/watcha_NextcloudShareDialog";
 
+function useSafeState(initialState) {
+    const isMounted = useRef();
+    const [state, setState] = useState(initialState);
+    useEffect(() => {
+        isMounted.current = true;
+        return () => (isMounted.current = false);
+    }, []);
+    const _setState = value => {
+        if (isMounted.current) {
+            return setState(value);
+        }
+    };
+    return [state, _setState];
+}
+
 const NextcloudSettings = ({ roomId }) => {
     const [nextcloudShare, setNextcloudShare] = useState(SettingsStore.getValue("nextcloudShare", roomId));
-    const [isBusy, setIsBusy] = useState(false);
+    const [isBusy, setIsBusy] = useSafeState(false);
     const [errorText, setErrorText] = useState(null);
-
-    const shareDialogIsBusyRef = useRef(false);
 
     useEffect(() => {
         const _nextcloudShareWatcherRef = SettingsStore.watchSetting(
@@ -33,26 +46,10 @@ const NextcloudSettings = ({ roomId }) => {
 
     const onShare = () => {
         setErrorText(null);
-        const setShareDialogIsBusy = value => {
-            shareDialogIsBusyRef.current = value;
-        };
-        const options = {
-            onBeforeClose: reason => {
-                return reason == "backgroundClick" && shareDialogIsBusyRef.current ? false : true;
-            },
-        };
-        const modal = Modal.appendTrackedDialog(
-            "Nextcloud share",
-            "",
-            NextcloudShareDialog,
-            { roomId, onShare, setShareDialogIsBusy },
-            /*className=*/ null,
-            options
-        );
-        modal.finished.then(([selectedFolder]) => {
-            if (selectedFolder) {
-                setNextcloudShare(selectedFolder);
-            }
+        const modal = Modal.createTrackedDialog("Nextcloud share", "", NextcloudShareDialog, {
+            roomId,
+            onShare,
+            setIsBusy,
         });
     };
 
@@ -60,9 +57,6 @@ const NextcloudSettings = ({ roomId }) => {
         setIsBusy(true);
         setErrorText(null);
         SettingsStore.setValue("nextcloudShare", roomId, "room", null)
-            .then(() => {
-                setNextcloudShare(null);
-            })
             .catch(error => {
                 console.error(error);
                 setErrorText(error.message);
