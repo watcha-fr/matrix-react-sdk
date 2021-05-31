@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { _t } from "../../../languageHandler";
 import { SettingLevel } from "../../../settings/SettingLevel";
 import AccessibleButton from "../elements/AccessibleButton";
+import ErrorDialog from "../dialogs/ErrorDialog";
 import Field from "../elements/Field";
 import Modal from "../../../Modal";
 import SettingsStore from "../../../settings/SettingsStore";
@@ -19,7 +20,6 @@ interface IProps {
 const NextcloudSettings: React.FC<IProps> = ({ roomId }) => {
     const [nextcloudShare, setNextcloudShare] = useState<string>(SettingsStore.getValue("nextcloudShare", roomId));
     const [isBusy, setIsBusy] = useSafeState<boolean>(false);
-    const [errorText, setErrorText] = useState<string>(null);
 
     useEffect(() => {
         const _nextcloudShareWatcherRef = SettingsStore.watchSetting(
@@ -34,22 +34,27 @@ const NextcloudSettings: React.FC<IProps> = ({ roomId }) => {
         };
     }, [roomId]);
 
-    const onShare = () => {
-        setErrorText(null);
-        const modal = Modal.createTrackedDialog("Nextcloud share", "", NextcloudShareDialog, {
-            roomId,
-            onShare,
-            setIsBusy,
-        });
+    const onShare = async (): Promise<void> => {
+        const modal = Modal.createTrackedDialog("Nextcloud share", "", NextcloudShareDialog, { roomId, onShare });
+        const [wantedNextcloudShare] = await modal.finished;
+        if (wantedNextcloudShare) {
+            _updateNextcloudShare(wantedNextcloudShare);
+        }
     };
 
-    const onUnshare = () => {
+    const onUnshare = (): void => {
+        _updateNextcloudShare(null);
+    };
+
+    const _updateNextcloudShare = (wantedNextcloudShare?: string): void => {
         setIsBusy(true);
-        setErrorText(null);
-        SettingsStore.setValue("nextcloudShare", roomId, SettingLevel.ROOM, null)
+        SettingsStore.setValue("nextcloudShare", roomId, SettingLevel.ROOM, wantedNextcloudShare)
             .catch(error => {
                 console.error(error);
-                setErrorText(error.message);
+                Modal.createTrackedDialog("[Watcha] Nextcloud share change failed", "", ErrorDialog, {
+                    title: _t("Error changing Nextcloud share"),
+                    description: _t("An error occurred changing the room's Nextcloud share."),
+                });
             })
             .finally(() => {
                 setIsBusy(false);
@@ -86,7 +91,6 @@ const NextcloudSettings: React.FC<IProps> = ({ roomId }) => {
         <React.Fragment>
             <div className="mx_SettingsTab_section mx_SettingsTab_subsectionText">{notice}</div>
             {sharedFolderField}
-            <div className="error">{errorText}</div>
             <div className="watcha_NextcloudSettings_Buttons">
                 {stopSharingButton}
                 {isBusy && <Spinner />}

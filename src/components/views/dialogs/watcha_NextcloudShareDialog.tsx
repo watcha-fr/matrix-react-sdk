@@ -14,11 +14,10 @@ import { refineNextcloudIframe } from "../../../utils/watcha_nextcloudUtils";
 interface IProps {
     roomId: string;
     onShare(): void;
-    setIsBusy(value: boolean): void;
-    onFinished(): Promise<void>;
+    onFinished(nextcloudShare?: string): Promise<void>;
 }
 
-const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onShare, setIsBusy, onFinished }) => {
+const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onShare, onFinished }) => {
     const initialShare = useRef<string>(SettingsStore.getValue("nextcloudShare", roomId));
 
     const [nextcloudShare, setNextcloudShare] = useState<string>(
@@ -47,15 +46,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onShare, setIsBusy, on
     };
 
     const onOK = () => {
-        setIsBusy(true);
-        onFinished();
-        SettingsStore.setValue("nextcloudShare", roomId, SettingLevel.ROOM, nextcloudShare)
-            .catch(error => {
-                console.error(error);
-            })
-            .finally(() => {
-                setIsBusy(false);
-            });
+        onFinished(nextcloudShare);
     };
 
     const params = new URL(nextcloudShare).searchParams;
