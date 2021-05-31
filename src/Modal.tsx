@@ -304,12 +304,8 @@ export class ModalManager {
         prom: Promise<React.ComponentType>,
         props?: IProps<T>,
         className?: string,
-        options: IOptions<T> = {}, // watcha+
     ): IHandle<T> {
-        /* watcha!
         const {modal, closeDialog, onFinishedProm} = this.buildModal<T>(prom, props, className, {});
-        !watcha */
-        const {modal, closeDialog, onFinishedProm} = this.buildModal<T>(prom, props, className, options); // watcha+
 
         this.modals.push(modal);
         this.reRender();

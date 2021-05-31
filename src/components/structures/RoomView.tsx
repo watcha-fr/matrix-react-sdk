@@ -1005,11 +1005,6 @@ export default class RoomView extends React.Component<IProps, IState> {
     };
 
     private onRoomStateEvents = (ev: MatrixEvent, state) => {
-        // watcha+
-        if (ev.getType() == "im.vector.web.settings" && ev.getContent().hasOwnProperty("nextcloudShare")) {
-            this.forceUpdate();
-        }
-        // +watcha
         // ignore if we don't have a room yet
         if (!this.state.room || this.state.room.roomId !== state.roomId) {
             return;
