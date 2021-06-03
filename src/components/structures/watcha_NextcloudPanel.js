@@ -45,7 +45,7 @@ export default ({ roomId, onClose }) => {
                     className="watcha_NextcloudPanel"
                     src={nextcloudShare}
                     onLoad={() => {
-                        refineNextcloudIframe(nextcloudIframeRef);
+                        refineNextcloudIframe(nextcloudIframeRef.current);
                     }}
                 />
             );
