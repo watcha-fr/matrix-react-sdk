@@ -1,0 +1,72 @@
+.watcha_CalendarSettingsTab_sharedCalendarsList {
+    .watcha_CalendarSettingsTab_SharedCalendar:not(:last-child) {
+        margin-bottom: 0.7em;
+    }
+}
+
+.watcha_CalendarSettingsTab_SharedCalendar {
+    color: $primary-fg-color;
+}
+
+.watcha_CalendarSettingsTab_SharedCalendar,
+.watcha_CalendarSettingsTab_OwnCalendarList_StyledRadioButton .mx_RadioButton_content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    .mx_AccessibleButton {
+        height: min-content;
+        margin-left: 8px; // same as .mx_RadioButton_content
+        white-space: nowrap;
+    }
+}
+
+.watcha_CalendarSettingsTab_SharedCalendar_maskedIcon_container {
+    white-space: nowrap;
+}
+
+.watcha_CalendarSettingsTab_SharedCalendar_maskedIcon {
+    &:first-child {
+        margin-right: 0.1em;
+    }
+    &::before {
+        display: inline-block;
+        width: 1.2em;
+        height: 1.2em;
+        content: "";
+        mask-position: center;
+        mask-repeat: no-repeat;
+        mask-size: contain;
+        background-color: $primary-fg-color;
+    }
+}
+
+.watcha_CalendarSettingsTab_SharedCalendar_calendarIcon::before {
+    mask-image: url("$(res)/img/watcha/watcha_calendar.svg");
+}
+
+.watcha_CalendarSettingsTab_SharedCalendar_tasksIcon::before {
+    mask-image: url("$(res)/img/watcha/watcha_tasks.svg");
+}
+
+.watcha_CalendarSettingsTab_SharedCalendar_ownerDisplayName {
+    margin-left: 8px; // same as .mx_RadioButton_content
+    flex-grow: 1;
+}
+
+.watcha_CalendarSettingsTab_SharedCalendar_ownerDisplayName,
+.watcha_CalendarSettingsTab_OwnCalendarList_displayName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.watcha_CalendarSettingsTab_OwnCalendarList_StyledRadioButton {
+    .mx_RadioButton_content {
+        margin-right: 0;
+        overflow: hidden;
+    }
+    .mx_RadioButton_spacer {
+        display: none;
+    }
+}

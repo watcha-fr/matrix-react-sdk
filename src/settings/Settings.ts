@@ -820,7 +820,7 @@ export const SETTINGS: {[setting: string]: ISetting} = {
     },
     "nextcloudShare": {
         supportedLevels: [SettingLevel.ROOM],
-        displayName: _td("Share a Nextcloud folder along its content with room members and use it as a common storage space"),
+        displayName: _td("Share a Nextcloud folder with room members and use it as a common storage space."),
         default: null,
     },
     // +watcha

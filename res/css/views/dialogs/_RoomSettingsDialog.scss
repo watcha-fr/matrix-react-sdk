@@ -43,8 +43,12 @@ limitations under the License.
 }
 
 // watcha+
-.mx_RoomSettingsDialog_nextcloudIcon::before {
-    mask-image: url('$(res)/img/element-icons/room/files.svg');
+.mx_RoomSettingsDialog_nextcloudDocumentsIcon::before {
+    mask-image: url('$(res)/img/watcha/watcha_documents.svg');
+}
+
+.mx_RoomSettingsDialog_nextcloudCalendarIcon::before {
+    mask-image: url('$(res)/img/watcha/watcha_calendar.svg');
 }
 // +watcha
 

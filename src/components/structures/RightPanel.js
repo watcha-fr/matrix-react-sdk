@@ -35,6 +35,13 @@ import {Action} from "../../dispatcher/actions";
 import RoomSummaryCard from "../views/right_panel/RoomSummaryCard";
 import WidgetCard from "../views/right_panel/WidgetCard";
 import {replaceableComponent} from "../../utils/replaceableComponent";
+// watcha+
+import { _t } from "../../languageHandler";
+import { ROOM_NEXTCLOUD_DOCUMENTS_TAB, ROOM_NEXTCLOUD_CALENDAR_TAB } from "../views/dialogs/RoomSettingsDialog";
+import { StateKeys } from "../../utils/watcha_nextcloudUtils";
+import CalendarPanel from "./watcha_CalendarPanel"
+import DocumentPanel from "./watcha_DocumentPanel"
+// +watcha
 
 @replaceableComponent("structures.RightPanel")
 export default class RightPanel extends React.Component {
@@ -226,7 +233,6 @@ export default class RightPanel extends React.Component {
         const ThirdPartyMemberInfo = sdk.getComponent('rooms.ThirdPartyMemberInfo');
         const NotificationPanel = sdk.getComponent('structures.NotificationPanel');
         const FilePanel = sdk.getComponent('structures.FilePanel');
-        const NextcloudPanel = sdk.getComponent('structures.watcha_NextcloudPanel'); // watcha+
 
         const GroupMemberList = sdk.getComponent('groups.GroupMemberList');
         const GroupRoomList = sdk.getComponent('groups.GroupRoomList');
@@ -310,8 +316,44 @@ export default class RightPanel extends React.Component {
                 break;
 
             // watcha+
-            case RightPanelPhases.NextcloudPanel:
-                panel = <NextcloudPanel roomId={roomId} onClose={this.onClose} />;
+            case RightPanelPhases.NextcloudDocumentPanel:
+                panel = (
+                    <DocumentPanel
+                        roomId={roomId}
+                        initialTabId={ROOM_NEXTCLOUD_DOCUMENTS_TAB}
+                        empty={_t("No documents shared with this room")}
+                        emptyClass="watcha_DocumentPanel_empty"
+                        onClose={this.onClose}
+                    />
+                );
+                break;
+
+            case RightPanelPhases.NextcloudCalendarPanel:
+                panel = (
+                    <CalendarPanel
+                        roomId={roomId}
+                        appName="calendar"
+                        stateKey={StateKeys.VEVENT}
+                        initialTabId={ROOM_NEXTCLOUD_CALENDAR_TAB}
+                        empty={_t("No calendar shared with this room")}
+                        emptyClass="watcha_CalendarPanel_empty"
+                        onClose={this.onClose}
+                    />
+                );
+                break;
+
+            case RightPanelPhases.NextcloudTaskPanel:
+                panel = (
+                    <CalendarPanel
+                        roomId={roomId}
+                        appName="tasks"
+                        stateKey={StateKeys.VTODO}
+                        initialTabId={ROOM_NEXTCLOUD_CALENDAR_TAB}
+                        empty={_t("No to-do lists shared with this room")}
+                        emptyClass="watcha_TaskPanel_empty"
+                        onClose={this.onClose}
+                    />
+                );
                 break;
             // +watcha
         }

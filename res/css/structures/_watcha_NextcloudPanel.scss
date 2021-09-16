@@ -4,6 +4,10 @@
     border: 1px solid $secondary-accent-color;
 }
 
+.watcha_NextcloudPanel-hidden {
+    display: none;
+}
+
 .watcha_NextcloudPanel_settingsIcon-noWrap {
     cursor: pointer;
     white-space: nowrap;
@@ -19,6 +23,14 @@
     }
 }
 
-.watcha_NextcloudPanel_empty::before {
-    mask-image: url("$(res)/img/element-icons/room/files.svg");
+.watcha_DocumentPanel_empty::before {
+    mask-image: url("$(res)/img/watcha/watcha_documents.svg");
+}
+
+.watcha_CalendarPanel_empty::before {
+    mask-image: url("$(res)/img/watcha/watcha_calendar.svg");
+}
+
+.watcha_TaskPanel_empty::before {
+    mask-image: url("$(res)/img/watcha/watcha_tasks.svg");
 }

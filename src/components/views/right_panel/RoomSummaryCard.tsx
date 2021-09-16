@@ -226,10 +226,22 @@ const onRoomFilesClick = () => {
 };
 
 // watcha+
-const onRoomNextcloudClick = () => {
+const onRoomDocumentsClick = () => {
     defaultDispatcher.dispatch<SetRightPanelPhasePayload>({
         action: Action.SetRightPanelPhase,
-        phase: RightPanelPhases.NextcloudPanel,
+        phase: RightPanelPhases.NextcloudDocumentPanel,
+    });
+};
+const onRoomCalendarClick = () => {
+    defaultDispatcher.dispatch<SetRightPanelPhasePayload>({
+        action: Action.SetRightPanelPhase,
+        phase: RightPanelPhases.NextcloudCalendarPanel,
+    });
+};
+const onRoomTasksClick = () => {
+    defaultDispatcher.dispatch<SetRightPanelPhasePayload>({
+        action: Action.SetRightPanelPhase,
+        phase: RightPanelPhases.NextcloudTaskPanel,
     });
 };
 // +watcha
@@ -240,7 +252,7 @@ const onRoomSettingsClick = () => {
 
 const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
     // watcha+
-    const showSharedFilesButton = SettingsStore.getValue(UIFeature.watcha_Nextcloud);
+    const showNextcloudButtons = SettingsStore.getValue(UIFeature.watcha_Nextcloud);
 
     const [showAttachmentsButton, setShowAttachmentsButton] = useState(
         SettingsStore.getValue("showExploreChatAttachmentsButton")
@@ -324,21 +336,37 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
                 {_t("%(count)s people", { count: memberCount })}
             </Button>
             {/* watcha+ */}
-            {showSharedFilesButton && (
-                <Button
-                    className="mx_RoomSummaryCard_icon_files"
-                    title={_t("Show shared files")}
-                    onClick={onRoomNextcloudClick}
-                >
-                    {_t("Show shared files")}
-                </Button>
+            {showNextcloudButtons && (
+                <>
+                    <Button
+                        className="mx_RoomSummaryCard_icon_documents"
+                        title={_t("Show documents shared with the room")}
+                        onClick={onRoomDocumentsClick}
+                    >
+                        {_t("Documents")}
+                    </Button>
+                    <Button
+                        className="mx_RoomSummaryCard_icon_calendar"
+                        title={_t("Show the calendar shared with the room")}
+                        onClick={onRoomCalendarClick}
+                    >
+                        {_t("Calendar")}
+                    </Button>
+                    <Button
+                        className="mx_RoomSummaryCard_icon_tasks"
+                        title={_t("Show the to-do list shared with the room")}
+                        onClick={onRoomTasksClick}
+                    >
+                        {_t("To-do list")}
+                    </Button>
+                </>
             )}
             {/* +watcha */}
             {/* watcha!
             <Button className="mx_RoomSummaryCard_icon_files" onClick={onRoomFilesClick}>
             !watcha */}
-            {showAttachmentsButton && <Button className="mx_MessageComposer_upload" onClick={onRoomFilesClick} title={_t("Show files")}> {/* watcha+ */}
-                {_t("Show files")}
+            {showAttachmentsButton && <Button className="mx_MessageComposer_upload" onClick={onRoomFilesClick} title={_t("Show chat attachments")}> {/* watcha+ */}
+                {_t("Chat attachments")}
             </Button>
             } {/* watcha+ */}
             {showShareRoomButton && // watcha+
