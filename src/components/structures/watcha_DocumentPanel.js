@@ -1,25 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import classNames from "classnames";
 
 import { _t } from "../../languageHandler";
 import { RightPanelPhases } from "../../stores/RightPanelStorePhases";
-import { ROOM_NEXTCLOUD_TAB } from "../views/dialogs/RoomSettingsDialog";
 import BaseCard from "../views/right_panel/BaseCard";
 import defaultDispatcher from "../../dispatcher/dispatcher";
 import SettingsStore from "../../settings/SettingsStore";
+import Spinner from "../views/elements/Spinner";
 
-import { refineNextcloudIframe } from "../../utils/watcha_nextcloudUtils";
-
-export default ({ roomId, onClose }) => {
-    const [nextcloudShare, setNextcloudShare] = useState(SettingsStore.getValue("nextcloudShare", roomId));
-
-    const nextcloudIframeRef = useRef();
+export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
+    const [iframeLoading, setIframeLoading] = useState(true);
+    const [nextcloudSetting, setNextcloudSetting] = useState(SettingsStore.getValue("nextcloudShare", roomId));
 
     useEffect(() => {
         const _nextcloudShareWatcherRef = SettingsStore.watchSetting(
             "nextcloudShare",
             roomId,
             (originalSettingName, changedInRoomId, atLevel, newValAtLevel, newValue) => {
-                setNextcloudShare(newValAtLevel);
+                setIframeLoading(true);
+                setNextcloudSetting(newValAtLevel);
             }
         );
         return () => {
@@ -30,30 +29,34 @@ export default ({ roomId, onClose }) => {
     const onRoomSettingsClick = () => {
         const payload = {
             action: "open_room_settings",
-            initialTabId: ROOM_NEXTCLOUD_TAB,
+            initialTabId,
         };
         defaultDispatcher.dispatch(payload);
     };
 
     let panel;
     if (SettingsStore.getValue("UIFeature.watcha_Nextcloud")) {
-        if (nextcloudShare) {
+        if (nextcloudSetting) {
             panel = (
-                <iframe
-                    id="watcha_NextcloudPanel"
-                    ref={nextcloudIframeRef}
-                    className="watcha_NextcloudPanel"
-                    src={nextcloudShare}
-                    onLoad={() => {
-                        refineNextcloudIframe(nextcloudIframeRef.current);
-                    }}
-                />
+                <>
+                    {iframeLoading && <Spinner />}
+                    <iframe
+                        id="watcha_NextcloudPanel"
+                        className={classNames("watcha_NextcloudPanel", {
+                            "watcha_NextcloudPanel-hidden": iframeLoading,
+                        })}
+                        src={nextcloudSetting}
+                        onLoad={() => {
+                            setIframeLoading(false);
+                        }}
+                    />
+                </>
             );
         } else {
             let hint;
             if (SettingsStore.canSetValue("nextcloudShare", roomId, "room")) {
                 hint = _t(
-                    "You can choose one from room <span>settings </span>",
+                    "You can share a resource from room <span>settings </span>",
                     {},
                     {
                         span: sub => (
@@ -65,10 +68,10 @@ export default ({ roomId, onClose }) => {
                 );
             }
             panel = (
-                <div className={"mx_RoomView_messageListWrapper"}>
+                <div className="mx_RoomView_messageListWrapper">
                     <div className="mx_RoomView_empty">
-                        <div className="mx_RightPanel_empty watcha_NextcloudPanel_empty">
-                            <h2>{_t("No folder shared with this room")}</h2>
+                        <div className={classNames("mx_RightPanel_empty", emptyClass)}>
+                            <h2>{empty}</h2>
                             <p>{hint}</p>
                         </div>
                     </div>

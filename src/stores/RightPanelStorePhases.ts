@@ -24,7 +24,11 @@ export enum RightPanelPhases {
     EncryptionPanel = 'EncryptionPanel',
     RoomSummary = 'RoomSummary',
     Widget = 'Widget',
-    NextcloudPanel = "NextcloudPanel", // watcha+
+    // watcha+
+    NextcloudDocumentPanel = "NextcloudDocumentPanel",
+    NextcloudCalendarPanel = "NextcloudCalendarPanel",
+    NextcloudTaskPanel = "NextcloudTaskPanel",
+    // +watcha
 
     Room3pidMemberInfo = 'Room3pidMemberInfo',
     // Group stuff

@@ -1,23 +1,23 @@
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 
-import { _t } from "../../../languageHandler";
-import { SettingLevel } from "../../../settings/SettingLevel";
-import AccessibleButton from "../elements/AccessibleButton";
-import ErrorDialog from "../dialogs/ErrorDialog";
-import Field from "../elements/Field";
-import Modal from "../../../Modal";
-import SettingsStore from "../../../settings/SettingsStore";
-import Spinner from "../elements/Spinner";
+import { _t } from "../../../../../languageHandler";
+import { SettingLevel } from "../../../../../settings/SettingLevel";
+import AccessibleButton from "../../../elements/AccessibleButton";
+import ErrorDialog from "../../../dialogs/ErrorDialog";
+import Field from "../../../elements/Field";
+import Modal from "../../../../../Modal";
+import SettingsStore from "../../../../../settings/SettingsStore";
+import Spinner from "../../../elements/Spinner";
 
-import NextcloudShareDialog from "../dialogs/watcha_NextcloudShareDialog";
-import useSafeState from "../../../hooks/watcha_useSafeState";
+import NextcloudShareDialog from "../../../dialogs/watcha_NextcloudShareDialog";
+import useSafeState from "../../../../../hooks/watcha_useSafeState";
 
 interface IProps {
     roomId: string;
 }
 
-const NextcloudSettings: React.FC<IProps> = ({ roomId }) => {
+const NextcloudDocumentsSettingsTab: React.FC<IProps> = ({ roomId }) => {
     const [nextcloudShare, setNextcloudShare] = useState<string>(SettingsStore.getValue("nextcloudShare", roomId));
     const [isBusy, setIsBusy] = useSafeState<boolean>(false);
 
@@ -63,8 +63,8 @@ const NextcloudSettings: React.FC<IProps> = ({ roomId }) => {
 
     const notice = SettingsStore.getDisplayName("nextcloudShare");
 
-    let sharedFolderField;
-    let stopSharingButton;
+    let sharedFolderField: React.ReactNode;
+    let stopSharingButton: React.ReactNode;
     if (nextcloudShare) {
         const params = new URL(nextcloudShare).searchParams;
         const path = params.get("dir");
@@ -88,18 +88,21 @@ const NextcloudSettings: React.FC<IProps> = ({ roomId }) => {
     }
 
     return (
-        <React.Fragment>
-            <div className="mx_SettingsTab_section mx_SettingsTab_subsectionText">{notice}</div>
-            {sharedFolderField}
-            <div className="watcha_NextcloudSettings_Buttons">
-                {stopSharingButton}
-                {isBusy && <Spinner />}
-                <AccessibleButton kind="primary" onClick={onShare} disabled={isBusy}>
-                    {_t(nextcloudShare ? "Change the shared folder" : "Share a folder")}
-                </AccessibleButton>
+        <div className="mx_SettingsTab">
+            <div className="mx_SettingsTab_heading">{_t("Document sharing")}</div>
+            <div className="mx_SettingsTab_section">
+                <div className="mx_SettingsTab_subsectionText">{notice}</div>
+                {sharedFolderField}
+                <div className="watcha_DocumentsSettingsTab_Buttons">
+                    {stopSharingButton}
+                    {isBusy && <Spinner />}
+                    <AccessibleButton kind="primary" onClick={onShare} disabled={isBusy}>
+                        {_t(nextcloudShare ? "Change the shared folder" : "Share a folder")}
+                    </AccessibleButton>
+                </div>
             </div>
-        </React.Fragment>
+        </div>
     );
 };
 
-export default NextcloudSettings;
+export default NextcloudDocumentsSettingsTab;

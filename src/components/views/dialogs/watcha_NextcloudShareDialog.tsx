@@ -3,11 +3,11 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { _t } from "../../../languageHandler";
 import { getNextcloudBaseUrl } from "../../../utils/watcha_nextcloudUtils";
-import { SettingLevel } from "../../../settings/SettingLevel";
 import BaseDialog from "./BaseDialog";
 import DialogButtons from "../elements/DialogButtons";
 import Field from "../elements/Field";
 import SettingsStore from "../../../settings/SettingsStore";
+import Spinner from "../elements/Spinner";
 
 import { refineNextcloudIframe } from "../../../utils/watcha_nextcloudUtils";
 
@@ -20,6 +20,7 @@ interface IProps {
 const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onShare, onFinished }) => {
     const initialShare = useRef<string>(SettingsStore.getValue("nextcloudShare", roomId));
 
+    const [iframeLoading, setIframeLoading] = useState(true);
     const [nextcloudShare, setNextcloudShare] = useState<string>(
         initialShare.current || new URL("apps/files/?dir=/", getNextcloudBaseUrl()).href
     );
@@ -61,12 +62,16 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onShare, onFinished })
                 {...{ onFinished }}
             >
                 <div className="mx_Dialog_content">
+                    {iframeLoading && <Spinner />}
                     <iframe
                         ref={nextcloudIframeRef}
                         src={nextcloudShareRef.current}
+                        className={classNames({
+                            "watcha_NextcloudShareDialog_iframe-hidden": iframeLoading,
+                        })}
                         onLoad={() => {
-                            refineNextcloudIframe(nextcloudIframeRef.current);
                             refineNextcloudIframe(nextcloudIframeRef.current, "/app/watcha_nextcloud/shareDiablog.css");
+                            setIframeLoading(false);
                         }}
                     />
                     <Field
