@@ -38,7 +38,7 @@ import {replaceableComponent} from "../../utils/replaceableComponent";
 // watcha+
 import { _t } from "../../languageHandler";
 import { ROOM_NEXTCLOUD_DOCUMENTS_TAB, ROOM_NEXTCLOUD_CALENDAR_TAB } from "../views/dialogs/RoomSettingsDialog";
-import { StateKeys } from "../../utils/watcha_nextcloudUtils";
+import { AppNames, StateKeys } from "../../utils/watcha_nextcloudUtils";
 import CalendarPanel from "./watcha_CalendarPanel"
 import DocumentPanel from "./watcha_DocumentPanel"
 // +watcha
@@ -332,7 +332,7 @@ export default class RightPanel extends React.Component {
                 panel = (
                     <CalendarPanel
                         roomId={roomId}
-                        appName="calendar"
+                        appName={AppNames.Calendar}
                         stateKey={StateKeys.VEVENT}
                         initialTabId={ROOM_NEXTCLOUD_CALENDAR_TAB}
                         empty={_t("No calendar shared with this room")}
@@ -346,7 +346,7 @@ export default class RightPanel extends React.Component {
                 panel = (
                     <CalendarPanel
                         roomId={roomId}
-                        appName="tasks"
+                        appName={AppNames.Tasks}
                         stateKey={StateKeys.VTODO}
                         initialTabId={ROOM_NEXTCLOUD_CALENDAR_TAB}
                         empty={_t("No to-do lists shared with this room")}

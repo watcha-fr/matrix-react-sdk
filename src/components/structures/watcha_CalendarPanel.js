@@ -9,7 +9,7 @@ import MatrixClientContext from "../../contexts/MatrixClientContext";
 import SettingsStore from "../../settings/SettingsStore";
 import Spinner from "../views/elements/Spinner";
 
-import { CALENDAR_EVENT_TYPE, StateKeys, getNextcloudBaseUrl } from "../../utils/watcha_nextcloudUtils";
+import { CALENDAR_EVENT_TYPE, StateKeys, getWidgetUrl } from "../../utils/watcha_nextcloudUtils";
 
 const getCalendarId = (room, stateKey) =>
     room.currentState.getStateEvents(CALENDAR_EVENT_TYPE, stateKey)?.getContent()?.id ||
@@ -71,7 +71,7 @@ export default ({ roomId, appName, stateKey, initialTabId, empty, emptyClass, on
                         className={classNames("watcha_NextcloudPanel", {
                             "watcha_NextcloudPanel-hidden": iframeLoading,
                         })}
-                        src={getNextcloudBaseUrl() + "apps/" + appName}
+                        src={getWidgetUrl(appName)}
                         onLoad={() => {
                             setIframeLoading(false);
                         }}

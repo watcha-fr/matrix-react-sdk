@@ -9,19 +9,65 @@ export enum StateKeys {
     VTODO = "VTODO",
 }
 
-export function getNextcloudBaseUrl(): string {
-    const nextcloudBaseUrl: string =
-        SdkConfig.get().watcha_nextcloud_base_url ||
-        getNextcloudWellKnown()?.base_url ||
-        window.location.origin + "/nextcloud";
-    return nextcloudBaseUrl.endsWith("/") ? nextcloudBaseUrl : nextcloudBaseUrl + "/";
+export enum AppNames {
+    Files = "files",
+    Calendar = "calendar",
+    Tasks = "tasks",
 }
 
-export function refineNextcloudIframe(iframe: HTMLIFrameElement, cssLinkHref: string): void {
-    const cssLink = document.createElement("link");
-    cssLink.href = cssLinkHref;
-    cssLink.rel = "stylesheet";
-    cssLink.type = "text/css";
-    const iframeDoc = iframe.contentDocument;
-    iframeDoc.head.appendChild(cssLink);
+export enum RefineTargets {
+    Widget = "watcha_widget",
+    DocumentSelector = "watcha_doc-selector",
+}
+
+export function getNextcloudBaseUrl() {
+    const url = new URL(
+        SdkConfig.get().watcha_nextcloud_base_url ||
+            getNextcloudWellKnown()?.base_url ||
+            window.location.origin + "/nextcloud"
+    );
+    if (!url.pathname.endsWith("/")) {
+        url.pathname += "/";
+    }
+    return url;
+}
+
+export function getDocumentSelectorUrl(shareUrl: string) {
+    return getDocumentWidgetUrl(shareUrl, [RefineTargets.DocumentSelector]);
+}
+
+export function getDocumentWidgetUrl(shareUrl: string, refineTargets: RefineTargets[] = []) {
+    let path = "/";
+    if (shareUrl) {
+        const url = new URL(shareUrl);
+        path = url.searchParams.get("dir");
+    }
+    const appName = AppNames.Files;
+    const searchParams = new Map([["dir", path]]);
+    return getWidgetUrl(appName, searchParams, refineTargets);
+}
+
+export function getWidgetUrl(
+    appName: AppNames,
+    searchParams = new Map<string, string>(),
+    refineTargets: RefineTargets[] = []
+) {
+    refineTargets = [RefineTargets.Widget, ...refineTargets];
+    return getIframeUrl(appName, searchParams, refineTargets);
+}
+
+function getIframeUrl(
+    appName: AppNames,
+    searchParams = new Map<string, string>(),
+    refineTargets: RefineTargets[] = []
+) {
+    const url = getNextcloudBaseUrl();
+    url.pathname += `apps/${appName}`;
+    for (const [key, value] of searchParams.entries()) {
+        url.searchParams.append(key, value);
+    }
+    for (const target of refineTargets) {
+        url.searchParams.append(target, "");
+    }
+    return url.toString();
 }

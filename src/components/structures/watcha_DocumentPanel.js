@@ -8,6 +8,8 @@ import defaultDispatcher from "../../dispatcher/dispatcher";
 import SettingsStore from "../../settings/SettingsStore";
 import Spinner from "../views/elements/Spinner";
 
+import { getDocumentWidgetUrl } from "../../utils/watcha_nextcloudUtils";
+
 export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
     const [iframeLoading, setIframeLoading] = useState(true);
     const [nextcloudSetting, setNextcloudSetting] = useState(SettingsStore.getValue("nextcloudShare", roomId));
@@ -45,7 +47,7 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
                         className={classNames("watcha_NextcloudPanel", {
                             "watcha_NextcloudPanel-hidden": iframeLoading,
                         })}
-                        src={nextcloudSetting}
+                        src={getDocumentWidgetUrl(nextcloudSetting)}
                         onLoad={() => {
                             setIframeLoading(false);
                         }}
