@@ -325,7 +325,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
     };
 
     private onNextcloudClick = () => {
-        const nextcloudBaseUrl = getNextcloudBaseUrl();        
+        const nextcloudBaseUrl = getNextcloudBaseUrl().toString();        
         window.open(nextcloudBaseUrl, "nextcloud");
         this.setState({contextMenuPosition: null}); // also close the menu
     };

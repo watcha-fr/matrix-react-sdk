@@ -35,10 +35,10 @@ const NextcloudDocumentsSettingsTab: React.FC<IProps> = ({ roomId }) => {
     }, [roomId]);
 
     const onShare = async (): Promise<void> => {
-        const modal = Modal.createTrackedDialog("Nextcloud share", "", NextcloudShareDialog, { roomId, onShare });
-        const [wantedNextcloudShare] = await modal.finished;
-        if (wantedNextcloudShare) {
-            _updateNextcloudShare(wantedNextcloudShare);
+        const modal = Modal.createTrackedDialog("Nextcloud share", "", NextcloudShareDialog, { roomId });
+        const [target] = await modal.finished;
+        if (target) {
+            _updateNextcloudShare(target);
         }
     };
 
@@ -46,9 +46,9 @@ const NextcloudDocumentsSettingsTab: React.FC<IProps> = ({ roomId }) => {
         _updateNextcloudShare(null);
     };
 
-    const _updateNextcloudShare = (wantedNextcloudShare?: string): void => {
+    const _updateNextcloudShare = (target?: string): void => {
         setIsBusy(true);
-        SettingsStore.setValue("nextcloudShare", roomId, SettingLevel.ROOM, wantedNextcloudShare)
+        SettingsStore.setValue("nextcloudShare", roomId, SettingLevel.ROOM, target)
             .catch(error => {
                 console.error(error);
                 Modal.createTrackedDialog("[Watcha] Nextcloud share change failed", "", ErrorDialog, {
