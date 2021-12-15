@@ -21,10 +21,23 @@ import SettingsStore from "./settings/SettingsStore";
 import {ALL_RULE_TYPES, ROOM_RULE_TYPES, SERVER_RULE_TYPES, USER_RULE_TYPES} from "./mjolnir/BanList";
 import {WIDGET_LAYOUT_EVENT_TYPE} from "./stores/widgets/WidgetLayoutStore";
 
+// watcha+
+function getDisplayname(ev, userId = ev.getSender()) {
+    const member = MatrixClientPeg.get().getRoom(ev.getRoomId())?.getMember(userId);
+    return member?.rawDisplayName || member?.displayname || userId;
+}
+// +watcha
+
 function textForMemberEvent(ev) {
     // XXX: SYJS-16 "sender is sometimes null for join messages"
+    /* watcha!
     const senderName = ev.sender ? ev.sender.name : ev.getSender();
     const targetName = ev.target ? ev.target.name : ev.getStateKey();
+    !watcha */
+
+    const senderName = ev.sender ? ev.sender.name : getDisplayname(ev); // watcha+
+    const targetName = ev.target ? ev.target.name : getDisplayname(ev, ev.getStateKey()); // watcha+
+    
     const prevContent = ev.getPrevContent();
     const content = ev.getContent();
 
