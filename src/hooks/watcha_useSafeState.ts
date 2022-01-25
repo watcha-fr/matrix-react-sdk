@@ -6,7 +6,9 @@ export default function useSafeState<T>(initialState) {
     const [state, setState] = useState(initialState);
     useEffect(() => {
         isMounted.current = true;
-        return () => (isMounted.current = false);
+        return () => {
+            isMounted.current = false;
+        };
     }, []);
     const _setState = value => {
         if (isMounted.current) {
