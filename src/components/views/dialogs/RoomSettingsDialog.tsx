@@ -33,6 +33,7 @@ import { replaceableComponent } from "../../../utils/replaceableComponent";
 import BaseDialog from "./BaseDialog";
 // watcha+
 import { CALENDAR_EVENT_TYPE } from "../../../utils/watcha_nextcloudUtils";
+import { SettingLevel } from "../../../settings/SettingLevel";
 import NextcloudCalendarSettingsTab from "../settings/tabs/room/watcha_NextcloudCalendarSettingsTab";
 import NextcloudDocumentsSettingsTab from "../settings/tabs/room/watcha_NextcloudDocumentsSettingsTab";
 // +watcha
@@ -105,7 +106,7 @@ export default class RoomSettingsDialog extends React.Component<IProps, IState> 
         // watcha+
         const showNextcloudFeature = SettingsStore.getValue("UIFeature.watcha_Nextcloud") && !MatrixClientPeg.get().isPartner();
         if (showNextcloudFeature) {
-            const canShareFolder = SettingsStore.canSetValue("nextcloudShare", this.props.roomId, "room");
+            const canShareFolder = SettingsStore.canSetValue("nextcloudShare", this.props.roomId, SettingLevel.ROOM);
             if (canShareFolder) {
                 tabs.push(
                     new Tab(
