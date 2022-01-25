@@ -103,6 +103,7 @@ function safeCounterpartTranslate(text: string, options?: object) {
         // in the preferred language, so do it here
         translated = counterpart.translate(text, Object.assign({}, options, { locale: 'en' }));
     }
+    return translated?.replace(/Element/g, "Watcha"); // watcha+
     return translated;
 }
 

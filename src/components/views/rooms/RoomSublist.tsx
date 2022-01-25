@@ -56,6 +56,7 @@ import ExtraTile from "./ExtraTile";
 import { ListNotificationState } from "../../../stores/notifications/ListNotificationState";
 import { getKeyBindingsManager, RoomListAction } from "../../../KeyBindingsManager";
 import { replaceableComponent } from "../../../utils/replaceableComponent";
+import { MatrixClientPeg } from "../../../MatrixClientPeg"; // watcha+
 
 const SHOW_N_BUTTON_HEIGHT = 28; // As defined by CSS
 const RESIZE_HANDLE_HEIGHT = 4; // As defined by CSS
@@ -653,10 +654,12 @@ export default class RoomSublist extends React.Component<IProps, IState> {
                     );
 
                     let addRoomButton = null;
+                    if (!MatrixClientPeg.get().isPartner()) { // watcha+ 
                     if (this.props.AuxButtonComponent) {
                         const AuxButtonComponent = this.props.AuxButtonComponent;
                         addRoomButton = <AuxButtonComponent tabIndex={tabIndex} />;
                     }
+                    } // watcha+  
 
                     const collapseClasses = classNames({
                         'mx_RoomSublist_collapseBtn': true,

@@ -436,6 +436,7 @@ export default class SecurityRoomSettingsTab extends React.Component<IProps, ISt
             <div className="mx_SettingsTab mx_SecurityRoomSettingsTab">
                 <div className="mx_SettingsTab_heading">{ _t("Security & Privacy") }</div>
 
+                { SettingsStore.getValue("showE2EEUI") && // watcha+
                 <SettingsFieldset legend={_t("Encryption")} description={_t("Once enabled, encryption cannot be disabled.")}>
                     <LabelledToggleSwitch
                         value={isEncrypted}
@@ -445,6 +446,7 @@ export default class SecurityRoomSettingsTab extends React.Component<IProps, ISt
                     />
                     { encryptionSettings }
                 </SettingsFieldset>
+                } {/* watcha+ */}
 
                 { this.renderJoinRule() }
 

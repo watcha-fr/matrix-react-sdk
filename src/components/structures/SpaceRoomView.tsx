@@ -454,7 +454,10 @@ const SpaceLanding = ({ space }: { space: Room }) => {
         );
     }
 
+    /* watcha!
     const canAddRooms = myMembership === "join" && space.currentState.maySendStateEvent(EventType.SpaceChild, userId);
+    !watcha */
+    const canAddRooms = myMembership === "join" && space.currentState.maySendStateEvent(EventType.SpaceChild, userId) && !cli.isPartner(); // watcha+
 
     let addRoomButton;
     if (canAddRooms) {
@@ -753,6 +756,7 @@ const SpaceSetupPrivateInvite = ({ space, onFinished }) => {
             { _t("Make sure the right people have access. You can invite more later.") }
         </div>
 
+        {/* watcha!
         <div className="mx_SpaceRoomView_inviteTeammates_betaDisclaimer">
             { _t("<b>This is an experimental feature.</b> For now, " +
                 "new users receiving an invite will have to open the invite on <link/> to actually join.", {}, {
@@ -762,6 +766,7 @@ const SpaceSetupPrivateInvite = ({ space, onFinished }) => {
                 </a>,
             }) }
         </div>
+        !watcha */}
 
         { error && <div className="mx_SpaceRoomView_errorText">{ error }</div> }
         <form onSubmit={onClick} id="mx_SpaceSetupPrivateInvite">

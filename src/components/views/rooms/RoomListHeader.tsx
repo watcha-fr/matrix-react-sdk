@@ -355,6 +355,7 @@ const RoomListHeader = ({ spacePanelDisabled, onVisibilityChange }: IProps) => {
     return <div className="mx_RoomListHeader">
         { contextMenuButton }
         { pendingRoomJoinSpinner }
+        { !cli.isPartner() && // watcha+
         <ContextMenuTooltipButton
             inputRef={plusMenuHandle}
             onClick={openPlusMenu}
@@ -362,6 +363,7 @@ const RoomListHeader = ({ spacePanelDisabled, onVisibilityChange }: IProps) => {
             className="mx_RoomListHeader_plusButton"
             title={_t("Add")}
         />
+        } {/* watcha+ */}
 
         { contextMenu }
     </div>;
