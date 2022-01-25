@@ -521,7 +521,10 @@ export default class MemberList extends React.Component<IProps, IState> {
         const room = cli.getRoom(this.props.roomId);
         let inviteButton;
 
+        /* watcha!
         if (room?.getMyMembership() === 'join' && shouldShowComponent(UIComponent.InviteUsers)) {
+        !watcha */
+        if (room?.getMyMembership() === 'join' && shouldShowComponent(UIComponent.InviteUsers) && !cli.isPartner()) { // watcha+
             let inviteButtonText = _t("Invite to this room");
             const chat = CommunityPrototypeStore.instance.getSelectedCommunityGeneralChat();
             if (chat && chat.roomId === this.props.roomId) {
@@ -535,6 +538,7 @@ export default class MemberList extends React.Component<IProps, IState> {
                     className="mx_MemberList_invite"
                     onClick={this.onInviteButtonClick}
                     disabled={!this.state.canInvite}
+                    title={this.state.canInvite ? undefined : _t("You do not have permission to invite people to this room.")} // watcha+
                 >
                     <span>{ inviteButtonText }</span>
                 </AccessibleButton>

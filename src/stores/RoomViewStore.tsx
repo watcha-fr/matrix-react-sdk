@@ -344,6 +344,12 @@ class RoomViewStore extends Store<ActionPayload> {
                 }
             }
         }
+        // watcha+
+        // https://github.com/vector-im/element-web/issues/5460#issuecomment-340186362
+        if (["You are not invited to this room.", "No known servers"].includes(err.message)) {
+            msg = _t(err.message);
+        }
+        // +watcha
 
         // FIXME: Using an import will result in test failures
         const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");

@@ -77,6 +77,7 @@ import { TimelineRenderingType } from "../../../contexts/RoomContext";
 import RightPanelStore from '../../../stores/right-panel/RightPanelStore';
 import { IRightPanelCardState } from '../../../stores/right-panel/RightPanelStoreIPanelState';
 import { useUserStatusMessage } from "../../../hooks/useUserStatusMessage";
+import { useSettingValue } from "../../../hooks/useSettings"; // watcha+
 
 export interface IDevice {
     deviceId: string;
@@ -345,6 +346,7 @@ const UserOptionsSection: React.FC<{
     canInvite: boolean;
     isSpace?: boolean;
 }> = ({ member, isIgnored, canInvite, isSpace }) => {
+    const showIgnoreButton = useSettingValue("showIgnoreUserButton"); // watcha+
     const cli = useContext(MatrixClientContext);
 
     let ignoreButton = null;
@@ -375,6 +377,7 @@ const UserOptionsSection: React.FC<{
             cli.setIgnoredUsers(ignoredUsers);
         };
 
+        if (showIgnoreButton) { // watcha+
         ignoreButton = (
             <AccessibleButton
                 onClick={onIgnoreToggle}
@@ -383,6 +386,7 @@ const UserOptionsSection: React.FC<{
                 { isIgnored ? _t("Unignore") : _t("Ignore") }
             </AccessibleButton>
         );
+        } // watcha+
 
         if (member.roomId && !isSpace) {
             const onReadReceiptButton = function() {
@@ -454,7 +458,10 @@ const UserOptionsSection: React.FC<{
     );
 
     let directMessageButton: JSX.Element;
+    /* watcha!
     if (!isMe) {
+    !watcha */
+    if (!isMe && !cli.isPartner()) { // watcha+
         directMessageButton = <MessageButton userId={member.userId} />;
     }
 
@@ -1288,6 +1295,7 @@ const BasicUserInfo: React.FC<{
     devices: IDevice[];
     isRoomEncrypted: boolean;
 }> = ({ room, member, groupId, devices, isRoomEncrypted }) => {
+    const showE2EEUI = useSettingValue("showE2EEUI"); // watcha+
     const cli = useContext(MatrixClientContext);
 
     const powerLevels = useRoomPowerLevels(cli, room);
@@ -1498,7 +1506,9 @@ const BasicUserInfo: React.FC<{
     return <React.Fragment>
         { memberDetails }
 
+        { showE2EEUI && <> {/* watcha+ */}
         { securitySection }
+        </> } {/* watcha+ */}
         <UserOptionsSection
             canInvite={roomPermissions.canInvite}
             isIgnored={isIgnored}
@@ -1604,7 +1614,9 @@ const UserInfoHeader: React.FC<{
                         </span>
                     </h2>
                 </div>
+                {/* watcha!
                 <div>{ member.userId }</div>
+                !watcha */}
                 <div className="mx_UserInfo_profileStatus">
                     { presenceLabel }
                     { statusLabel }

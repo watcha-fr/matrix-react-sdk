@@ -35,6 +35,15 @@ import { ROOM_SECURITY_TAB } from "./components/views/dialogs/RoomSettingsDialog
 import AccessibleButton from './components/views/elements/AccessibleButton';
 import RightPanelStore from './stores/right-panel/RightPanelStore';
 
+// watcha+
+function getDisplayname(event: MatrixEvent, userId = event.getSender()) {
+    const client = MatrixClientPeg.get();
+    const roomId = event.getRoomId();
+    const member = client.getRoom(roomId)?.getMember(userId);
+    return member?.rawDisplayName || userId;
+}
+// +watcha
+
 // These functions are frequently used just to check whether an event has
 // any text to display at all. For this reason they return deferred values
 // to avoid the expense of looking up translations when they're not needed.
@@ -73,8 +82,12 @@ function textForCallInviteEvent(event: MatrixEvent): () => string | null {
 
 function textForMemberEvent(ev: MatrixEvent, allowJSX: boolean, showHiddenEvents?: boolean): () => string | null {
     // XXX: SYJS-16 "sender is sometimes null for join messages"
+    /* watcha!
     const senderName = ev.sender ? ev.sender.name : ev.getSender();
     const targetName = ev.target ? ev.target.name : ev.getStateKey();
+    !watcha */
+    const senderName = ev.sender ? ev.sender.name : getDisplayname(ev); // watcha+
+    const targetName = ev.target ? ev.target.name : getDisplayname(ev, ev.getStateKey()); // watcha+
     const prevContent = ev.getPrevContent();
     const content = ev.getContent();
     const reason = content.reason;
@@ -442,6 +455,7 @@ function textForHistoryVisibilityEvent(event: MatrixEvent): () => string | null 
 
 // Currently will only display a change if a user's power level is changed
 function textForPowerEvent(event: MatrixEvent): () => string | null {
+    const room = MatrixClientPeg.get().getRoom(event.getRoomId()); // watcha+
     const senderName = event.sender ? event.sender.name : event.getSender();
     if (!event.getPrevContent() || !event.getPrevContent().users ||
         !event.getContent() || !event.getContent().users) {
@@ -474,6 +488,7 @@ function textForPowerEvent(event: MatrixEvent): () => string | null {
             to = currentUserDefault;
         }
         if (from === previousUserDefault && to === currentUserDefault) { return; }
+        userId = room?.getMember(userId)?.rawDisplayName || userId // watcha+
         if (to !== from) {
             diffs.push({ userId, from, to });
         }
@@ -594,7 +609,10 @@ function textForPinnedEvent(event: MatrixEvent, allowJSX: boolean): () => string
 }
 
 function textForWidgetEvent(event: MatrixEvent): () => string | null {
+    /* watcha!
     const senderName = event.getSender();
+    *watcha */
+    const senderName = event.sender ? event.sender.name : event.getSender(); // watcha+
     const { name: prevName, type: prevType, url: prevUrl } = event.getPrevContent();
     const { name, type, url } = event.getContent() || {};
 
