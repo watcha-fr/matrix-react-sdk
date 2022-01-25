@@ -30,6 +30,8 @@ import RoomPublishSetting from "./RoomPublishSetting";
 import { replaceableComponent } from "../../../utils/replaceableComponent";
 import RoomAliasField from "../elements/RoomAliasField";
 import SettingsFieldset from "../settings/SettingsFieldset";
+import { UIFeature } from "../../../settings/UIFeature"; // watcha+
+import SettingsStore from "../../../settings/SettingsStore"; // watcha+
 
 interface IEditableAliasesListProps {
     domain?: string;
@@ -383,9 +385,11 @@ export default class AliasSettings extends React.Component<IProps, IState> {
                 <SettingsFieldset
                     legend={_t("Published Addresses")}
                     description={<>
+                        { SettingsStore.getValue(UIFeature.watcha_federation) && <> {/* watcha+ */}
                         { isSpaceRoom
                             ? _t("Published addresses can be used by anyone on any server to join your space.")
                             : _t("Published addresses can be used by anyone on any server to join your room.") }
+                        </> } {/* watcha+ */}
                         &nbsp;
                         { _t("To publish an address, it needs to be set as a local address first.") }
                     </>}
@@ -411,6 +415,7 @@ export default class AliasSettings extends React.Component<IProps, IState> {
                             return <option value={alias} key={alias} />;
                         }) };
                     </datalist>
+                    { SettingsStore.getValue(UIFeature.watcha_federation) && // watcha+
                     <EditableAliasesList
                         id="roomAltAliases"
                         items={this.state.altAliases}
@@ -425,6 +430,7 @@ export default class AliasSettings extends React.Component<IProps, IState> {
                         noItemsLabel={_t('No other published addresses yet, add one below')}
                         placeholder={_t('New published address (e.g. #alias:server)')}
                     />
+                    } {/* watcha+ */}
                 </SettingsFieldset>
                 <SettingsFieldset legend={_t("Local Addresses")}
                     description={isSpaceRoom

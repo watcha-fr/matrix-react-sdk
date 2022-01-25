@@ -64,6 +64,13 @@ interface IProps {
     permalinkCreator?: RoomPermalinkCreator;
     e2eStatus?: E2EStatus;
 }
+// watcha+
+import { _t } from "../../languageHandler";
+import { ROOM_NEXTCLOUD_DOCUMENTS_TAB, ROOM_NEXTCLOUD_CALENDAR_TAB } from "../views/dialogs/RoomSettingsDialog";
+import { AppNames, StateKeys } from "../../utils/watcha_nextcloudUtils";
+import CalendarPanel from "./watcha_CalendarPanel"
+import DocumentPanel from "./watcha_DocumentPanel"
+// +watcha
 
 interface IState {
     phase: RightPanelPhases;
@@ -379,6 +386,48 @@ export default class RightPanel extends React.Component<IProps, IState> {
             case RightPanelPhases.Widget:
                 panel = <WidgetCard room={this.props.room} widgetId={this.state.widgetId} onClose={this.onClose} />;
                 break;
+
+            // watcha+
+            case RightPanelPhases.NextcloudDocumentPanel:
+                panel = (
+                    <DocumentPanel
+                        roomId={roomId}
+                        initialTabId={ROOM_NEXTCLOUD_DOCUMENTS_TAB}
+                        empty={_t("No document shared with this room")}
+                        emptyClass="watcha_DocumentPanel_empty"
+                        onClose={this.onClose}
+                    />
+                );
+                break;
+
+            case RightPanelPhases.NextcloudCalendarPanel:
+                panel = (
+                    <CalendarPanel
+                        roomId={roomId}
+                        appName={AppNames.Calendar}
+                        stateKey={StateKeys.VEVENT}
+                        initialTabId={ROOM_NEXTCLOUD_CALENDAR_TAB}
+                        empty={_t("No calendar shared with this room")}
+                        emptyClass="watcha_CalendarPanel_empty"
+                        onClose={this.onClose}
+                    />
+                );
+                break;
+
+            case RightPanelPhases.NextcloudTaskPanel:
+                panel = (
+                    <CalendarPanel
+                        roomId={roomId}
+                        appName={AppNames.Tasks}
+                        stateKey={StateKeys.VTODO}
+                        initialTabId={ROOM_NEXTCLOUD_CALENDAR_TAB}
+                        empty={_t("No to-do list shared with this room")}
+                        emptyClass="watcha_TaskPanel_empty"
+                        onClose={this.onClose}
+                    />
+                );
+                break;
+            // +watcha
         }
 
         return (

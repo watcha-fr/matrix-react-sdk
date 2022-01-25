@@ -45,6 +45,11 @@ import { WidgetLayoutStore } from '../../../stores/widgets/WidgetLayoutStore';
 import { POLL_START_EVENT_TYPE } from '../../../polls/consts';
 import EndPollDialog from '../dialogs/EndPollDialog';
 import { isPollEnded } from '../messages/MPollBody';
+// watcha+
+import { ActionPayload } from "../../../dispatcher/payloads";
+import { SettingUpdatedPayload } from "../../../dispatcher/payloads/SettingUpdatedPayload";
+import { UIFeature } from "../../../settings/UIFeature";
+// +watcha
 
 export function canCancel(eventStatus: EventStatus): boolean {
     return eventStatus === EventStatus.QUEUED || eventStatus === EventStatus.NOT_SENT;
@@ -82,6 +87,8 @@ interface IProps extends IPosition {
 interface IState {
     canRedact: boolean;
     canPin: boolean;
+    showShareMessageButton: boolean; // watcha+
+    showViewSourceButton: boolean; // watcha+
 }
 
 @replaceableComponent("views.context_menus.MessageContextMenu")
@@ -89,9 +96,22 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
     static contextType = RoomContext;
     public context!: React.ContextType<typeof RoomContext>;
 
+    // watcha+
+    private dispatcherRef: string;
+
+    constructor(props: IProps) {
+        super(props);
+        this.dispatcherRef = dis.register(this.onAction);
+        SettingsStore.monitorSetting("showShareMessageButton", null);
+        SettingsStore.monitorSetting("showViewSourceButton", null);
+    }
+    // +watcha
+
     state = {
         canRedact: false,
         canPin: false,
+        showShareMessageButton: SettingsStore.getValue("showShareMessageButton"), // watcha+
+        showViewSourceButton: SettingsStore.getValue("showViewSourceButton"), // watcha+
     };
 
     componentDidMount() {
@@ -104,7 +124,33 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
         if (cli) {
             cli.removeListener('RoomMember.powerLevel', this.checkPermissions);
         }
+        dis.unregister(this.dispatcherRef); // watcha+
     }
+
+    // watcha+
+    private onAction = (payload: ActionPayload) => {
+        if (payload.action === Action.SettingUpdated) {
+            const settingUpdatedPayload = payload as SettingUpdatedPayload;
+            switch (settingUpdatedPayload.settingName) {
+                case "showShareMessageButton": {
+                    const showShareMessageButton = SettingsStore.getValue("showShareMessageButton");
+                    if (showShareMessageButton !== this.state.showShareMessageButton) {
+                        this.setState({ showShareMessageButton });
+                    }
+                    break;
+                }
+
+                case "showViewSourceButton": {
+                    const showViewSourceButton = SettingsStore.getValue("showViewSourceButton");
+                    if (showViewSourceButton !== this.state.showViewSourceButton) {
+                        this.setState({ showViewSourceButton });
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    // +watcha
 
     private checkPermissions = (): void => {
         const cli = MatrixClientPeg.get();
@@ -332,13 +378,21 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
             }
         }
 
+        /* watcha!
         const viewSourceButton = (
+        !watcha */
+        // watcha+
+        let viewSourceButton;
+        if (this.state.showViewSourceButton) {
+        viewSourceButton = (
+        // +watcha
             <IconizedContextMenuOption
                 iconClassName="mx_MessageContextMenu_iconSource"
                 label={_t("View source")}
                 onClick={this.onViewSourceClick}
             />
         );
+        } // watcha+
 
         if (this.props.eventTileOps) {
             if (this.props.eventTileOps.isWidgetHidden()) {
@@ -356,7 +410,14 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
         if (this.props.permalinkCreator) {
             permalink = this.props.permalinkCreator.forEvent(this.props.mxEvent.getId());
         }
+        /* watcha!
         const permalinkButton = (
+        !watcha */
+        // watcha+
+        let permalinkButton;
+        if (this.state.showShareMessageButton) {
+        permalinkButton = (
+        // +watcha
             <IconizedContextMenuOption
                 iconClassName="mx_MessageContextMenu_iconPermalink"
                 onClick={this.onPermalinkClick}
@@ -372,6 +433,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
                 }
             />
         );
+        } // watcha+
 
         if (this.canEndPoll(mxEvent)) {
             endPollButton = (
@@ -426,6 +488,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
         }
 
         let reportEventButton: JSX.Element;
+        if (SettingsStore.getValue(UIFeature.watcha_reportEvent)) { // watcha+
         if (mxEvent.getSender() !== me) {
             reportEventButton = (
                 <IconizedContextMenuOption
@@ -435,6 +498,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
                 />
             );
         }
+        } // watcha+
 
         const { timelineRenderingType } = this.context;
         const isThread = (

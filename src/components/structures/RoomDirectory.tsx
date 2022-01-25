@@ -49,6 +49,7 @@ import Spinner from "../views/elements/Spinner";
 import { ActionPayload } from "../../dispatcher/payloads";
 import { getDisplayAliasForAliasSet } from "../../Rooms";
 import { Action } from "../../dispatcher/actions";
+import { UIFeature } from "../../settings/UIFeature"; // watcha+
 
 const MAX_NAME_LENGTH = 80;
 const MAX_TOPIC_LENGTH = 800;
@@ -611,21 +612,14 @@ export default class RoomDirectory extends React.Component<IProps, IState> {
                 onMouseDown={(ev) => this.onRoomClicked(room, ev)}
                 className="mx_RoomDirectory_roomDescription"
             >
-                <div
-                    className="mx_RoomDirectory_name"
-                    onMouseDown={(ev) => this.onRoomClicked(room, ev)}
-                >
+                <div className="mx_RoomDirectory_name">
                     { name }
                 </div>&nbsp;
                 <div
                     className="mx_RoomDirectory_topic"
-                    onMouseDown={(ev) => this.onRoomClicked(room, ev)}
                     dangerouslySetInnerHTML={{ __html: topic }}
                 />
-                <div
-                    className="mx_RoomDirectory_alias"
-                    onMouseDown={(ev) => this.onRoomClicked(room, ev)}
-                >
+                <div className="mx_RoomDirectory_alias">
                     { getDisplayAliasForRoom(room) }
                 </div>
             </div>
@@ -637,7 +631,6 @@ export default class RoomDirectory extends React.Component<IProps, IState> {
             </div>
             <div
                 onMouseDown={(ev) => this.onRoomClicked(room, ev)}
-                // cancel onMouseDown otherwise shift-clicking highlights text
                 className="mx_RoomDirectory_preview"
             >
                 { previewButton }
@@ -786,6 +779,11 @@ export default class RoomDirectory extends React.Component<IProps, IState> {
             if (this.state.selectedCommunityId) {
                 dropdown = null;
             }
+            // watcha+
+            if (!SettingsStore.getValue(UIFeature.watcha_federation)) {
+                dropdown = null;
+            }
+            // +watcha
 
             listHeader = <div className="mx_RoomDirectory_listheader">
                 <DirectorySearchBox

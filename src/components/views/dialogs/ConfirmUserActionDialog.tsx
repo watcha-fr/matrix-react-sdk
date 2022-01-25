@@ -139,7 +139,9 @@ export default class ConfirmUserActionDialog extends React.Component<IProps, ISt
                             { avatar }
                         </div>
                         <div className="mx_ConfirmUserActionDialog_name">{ name }</div>
+                        {/* watcha!
                         <div className="mx_ConfirmUserActionDialog_userId">{ userId }</div>
+                        !watcha */}
                     </div>
 
                     { reasonBox }

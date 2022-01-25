@@ -42,6 +42,7 @@ import LeaveSpaceDialog from "../components/views/dialogs/LeaveSpaceDialog";
 import CreateSpaceFromCommunityDialog from "../components/views/dialogs/CreateSpaceFromCommunityDialog";
 
 export const shouldShowSpaceSettings = (space: Room) => {
+    if (space.client.isPartner()) return false; // watcha+
     const userId = space.client.getUserId();
     return space.getMyMembership() === "join"
         && (space.currentState.maySendStateEvent(EventType.RoomAvatar, userId)

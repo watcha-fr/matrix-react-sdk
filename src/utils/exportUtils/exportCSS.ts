@@ -40,7 +40,8 @@ const getExportCSS = async (usedClasses: Set<string>): Promise<string> => {
     // only include bundle.css and the data-mx-theme=light styling
     const stylesheets = Array.from(document.styleSheets).filter(s => {
         return s.href?.endsWith("bundle.css") ||
-            (s.ownerNode as HTMLStyleElement).dataset.mxTheme.toLowerCase() === "light";
+            (s.ownerNode as HTMLStyleElement).dataset.mxTheme || // watcha+
+            (s.ownerNode as HTMLStyleElement).dataset.mxTheme?.toLowerCase() === "light";
     });
 
     let css = "";

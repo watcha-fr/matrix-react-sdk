@@ -24,12 +24,16 @@ import { MatrixClientPeg } from './MatrixClientPeg';
 import MultiInviter, { CompletionStates } from './utils/MultiInviter';
 import Modal from './Modal';
 import { _t } from './languageHandler';
+/* watcha!
 import InviteDialog, { KIND_DM, KIND_INVITE, Member } from "./components/views/dialogs/InviteDialog";
+!watcha */
 import CommunityPrototypeInviteDialog from "./components/views/dialogs/CommunityPrototypeInviteDialog";
 import { CommunityPrototypeStore } from "./stores/CommunityPrototypeStore";
 import BaseAvatar from "./components/views/avatars/BaseAvatar";
 import { mediaFromMxc } from "./customisations/Media";
 import ErrorDialog from "./components/views/dialogs/ErrorDialog";
+import { KIND_DM, KIND_INVITE, Member } from "./components/views/dialogs/InviteDialog"; // watcha+
+import InviteDialog from "./components/views/dialogs/watcha_InviteDialog"; // watcha+
 
 export interface IInviteResult {
     states: CompletionStates;

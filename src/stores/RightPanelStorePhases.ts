@@ -26,6 +26,11 @@ export enum RightPanelPhases {
     Widget = 'Widget',
     PinnedMessages = "PinnedMessages",
     Timeline = "Timeline",
+    // watcha+
+    NextcloudDocumentPanel = "NextcloudDocumentPanel",
+    NextcloudCalendarPanel = "NextcloudCalendarPanel",
+    NextcloudTaskPanel = "NextcloudTaskPanel",
+    // +watcha
 
     Room3pidMemberInfo = 'Room3pidMemberInfo',
     // Group stuff

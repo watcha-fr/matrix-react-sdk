@@ -179,6 +179,12 @@ limitations under the License.
     flex: 0;
     margin: 0 6px 0 7px;
     position: relative;
+    // watcha+
+    .mx_DecoratedRoomAvatar_icon {
+        bottom: -3px !important;
+        right: -3px !important;
+    }
+    // +watcha
 }
 
 .mx_RoomHeader_avatar .mx_BaseAvatar_image {
