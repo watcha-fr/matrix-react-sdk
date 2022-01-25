@@ -681,6 +681,12 @@ export default class RoomList extends React.PureComponent<IProps, IState> {
             }
         }
 
+        // watcha+
+        if (MatrixClientPeg.get().isPartner()) {
+            explorePrompt = null;
+        }
+        // +watcha
+
         const sublists = this.renderSublists();
         return (
             <RovingTabIndexProvider handleHomeEnd handleUpDown onKeyDown={this.props.onKeyDown}>

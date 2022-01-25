@@ -59,6 +59,8 @@ import { UPDATE_SELECTED_SPACE } from "../../stores/spaces";
 import { replaceableComponent } from "../../utils/replaceableComponent";
 import MatrixClientContext from "../../contexts/MatrixClientContext";
 import { SettingUpdatedPayload } from "../../dispatcher/payloads/SettingUpdatedPayload";
+import { getNextcloudBaseUrl } from "../../utils/watcha_nextcloudUtils"; // watcha+
+import { Jitsi } from "../../widgets/Jitsi"; // watcha+
 
 const CustomStatusSection = () => {
     const cli = useContext(MatrixClientContext);
@@ -125,6 +127,7 @@ interface IState {
     isHighContrast: boolean;
     selectedSpace?: Room;
     dndEnabled: boolean;
+    isSynapseAdministrator: boolean; // watcha+
 }
 
 const toRightOf = (rect: PartialDOMRect) => {
@@ -160,6 +163,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
             isHighContrast: this.isUserOnHighContrastTheme(),
             dndEnabled: this.doNotDisturb,
             selectedSpace: SpaceStore.instance.activeSpaceRoom,
+            isSynapseAdministrator: false // watcha+
         };
 
         OwnProfileStore.instance.on(UPDATE_EVENT, this.onProfileUpdate);
@@ -183,6 +187,18 @@ export default class UserMenu extends React.Component<IProps, IState> {
         this.dispatcherRef = defaultDispatcher.register(this.onAction);
         this.themeWatcherRef = SettingsStore.watchSetting("theme", null, this.onThemeChanged);
         this.tagStoreRef = GroupFilterOrderStore.addListener(this.onTagStoreUpdate);
+        // watcha+
+        MatrixClientPeg.get()
+            .isSynapseAdministrator()
+            .then(isSynapseAdministrator => {
+                this.setState({ isSynapseAdministrator });
+            })
+            .catch(error => {
+                if (error.errcode !== "M_FORBIDDEN") {
+                    console.error(`[watcha] ${error.message} - ${error.errcode}`);
+                }
+            });
+        // +watcha
     }
 
     public componentWillUnmount() {
@@ -301,6 +317,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
         SettingsStore.setValue("use_system_theme", null, SettingLevel.DEVICE, false);
 
         let newTheme = this.state.isDarkTheme ? "light" : "dark";
+        newTheme = this.state.isDarkTheme ? "watcha" : "dark"; // watcha+
         if (this.state.isHighContrast) {
             const hcTheme = findHighContrastTheme(newTheme);
             if (hcTheme) {
@@ -366,6 +383,25 @@ export default class UserMenu extends React.Component<IProps, IState> {
         SettingsStore.setValue("doNotDisturb", null, SettingLevel.DEVICE, !current);
     };
 
+    // watcha+
+    private onAdministrationClick = () => {
+        window.open("/admin", "admin");
+        this.setState({ contextMenuPosition: null }); // also close the menu
+    };
+
+    private onNextcloudClick = () => {
+        const nextcloudBaseUrl = getNextcloudBaseUrl().toString();        
+        window.open(nextcloudBaseUrl, "nextcloud");
+        this.setState({ contextMenuPosition: null }); // also close the menu
+    };
+
+    private onJitsiClick = () => {
+        const jitsiBaseUrl = "https://" + Jitsi.getInstance().preferredDomain;
+        window.open(jitsiBaseUrl);
+        this.setState({ contextMenuPosition: null }); // also close the menu
+    };
+    // +watcha
+
     private renderContextMenu = (): React.ReactNode => {
         if (!this.state.contextMenuPosition) return null;
 
@@ -404,7 +440,10 @@ export default class UserMenu extends React.Component<IProps, IState> {
         }
 
         let homeButton = null;
+        /* watcha!
         if (this.hasHomePage) {
+        !watcha */
+        if (this.hasHomePage || !MatrixClientPeg.get().isPartner()) { // watcha+
             homeButton = (
                 <IconizedContextMenuOption
                     iconClassName="mx_UserMenu_iconHome"
@@ -442,6 +481,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
         }
 
         let primaryOptionList = (
+            <> {/* watcha+ */}
             <IconizedContextMenuOptionList>
                 { homeButton }
                 { dndButton }
@@ -460,6 +500,38 @@ export default class UserMenu extends React.Component<IProps, IState> {
                     label={_t("All settings")}
                     onClick={(e) => this.onSettingsOpen(e, null)}
                 />
+            {/* watcha+ */}
+            </IconizedContextMenuOptionList>
+            {this.state.isSynapseAdministrator && (
+                <IconizedContextMenuOptionList>
+                    <IconizedContextMenuOption
+                        iconClassName="mx_UserMenu_iconAdministration"
+                        label={_t("Administration")}
+                        title={_t("Open the administration console in a new tab")}
+                        onClick={this.onAdministrationClick}
+                    />
+                </IconizedContextMenuOptionList>
+            )}
+            {!MatrixClientPeg.get().isPartner() && (
+                <IconizedContextMenuOptionList>
+                    {SettingsStore.getValue("UIFeature.watcha_Nextcloud") &&
+                        <IconizedContextMenuOption
+                            iconClassName="mx_UserMenu_iconNextcloud"
+                            label={_t("My documents")}
+                            title={_t("Open my documents in a new tab")}
+                            onClick={this.onNextcloudClick}
+                        />
+                    }
+                    <IconizedContextMenuOption
+                        iconClassName="mx_UserMenu_iconJitsi"
+                        label={_t("Videoconferencing")}
+                        title={_t("Open the videoconferencing platform in a new tab")}
+                        onClick={this.onJitsiClick}
+                    />
+                </IconizedContextMenuOptionList>
+            )}
+            <IconizedContextMenuOptionList>
+            {/* +watcha */}
                 { feedbackButton }
                 <IconizedContextMenuOption
                     className="mx_IconizedContextMenu_option_red"
@@ -468,6 +540,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
                     onClick={this.onSignOutClick}
                 />
             </IconizedContextMenuOptionList>
+            </> // watcha+
         );
 
         if (MatrixClientPeg.get().isGuest()) {
@@ -498,9 +571,11 @@ export default class UserMenu extends React.Component<IProps, IState> {
                     <span className="mx_UserMenu_contextMenu_displayName">
                         { OwnProfileStore.instance.displayName }
                     </span>
+                    {/* watcha!
                     <span className="mx_UserMenu_contextMenu_userId">
                         { MatrixClientPeg.get().getUserId() }
                     </span>
+                    !watcha */}
                 </div>
 
                 <RovingAccessibleTooltipButton

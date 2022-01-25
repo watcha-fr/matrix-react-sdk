@@ -34,6 +34,8 @@ import DialogButtons from "../elements/DialogButtons";
 import BaseDialog from "../dialogs/BaseDialog";
 import SpaceStore from "../../../stores/spaces/SpaceStore";
 import JoinRuleDropdown from "../elements/JoinRuleDropdown";
+import { UIFeature } from "../../../settings/UIFeature"; // watcha+
+import SettingsStore from "../../../settings/SettingsStore"; // watcha+
 
 interface IProps {
     defaultPublic?: boolean;
@@ -280,7 +282,10 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
         }
 
         let e2eeSection;
+        /* watcha!
         if (this.state.joinRule !== JoinRule.Public) {
+        !watcha */
+        if (this.state.joinRule !== JoinRule.Public && SettingsStore.getValue("showE2EEUI")) { // watcha+
             let microcopy;
             if (privateShouldBeEncrypted()) {
                 if (this.state.canChangeEncryption) {
@@ -356,6 +361,7 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
                         { publicPrivateLabel }
                         { e2eeSection }
                         { aliasField }
+                        { SettingsStore.getValue(UIFeature.watcha_federation) && // watcha+
                         <details onToggle={this.onDetailsToggled} className="mx_CreateRoomDialog_details">
                             <summary className="mx_CreateRoomDialog_details_summary">
                                 { this.state.detailsOpen ? _t('Hide advanced') : _t('Show advanced') }
@@ -370,6 +376,7 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
                             />
                             <p>{ federateLabel }</p>
                         </details>
+                        } {/* watcha+ */}
                     </div>
                 </form>
                 <DialogButtons primaryButton={_t('Create Room')}
