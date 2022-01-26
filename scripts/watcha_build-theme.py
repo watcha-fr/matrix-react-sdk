@@ -11,6 +11,7 @@ CSS_PATHS = [
     "res/css/structures/_LeftPanel.scss",
     "res/css/structures/_SpacePanel.scss",
     "res/css/views/avatars/_DecoratedRoomAvatar.scss",
+    "res/css/views/rooms/_NotificationBadge.scss",
     "res/css/views/rooms/_RoomList.scss",
     "res/css/views/rooms/_RoomListHeader.scss",
     "res/css/views/rooms/_RoomSublist.scss",
