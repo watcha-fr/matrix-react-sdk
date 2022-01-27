@@ -87,7 +87,7 @@ const translateWithFallback = (text: string, options?: object): { translated?: s
     const translated = counterpart.translate(text, { ...options, fallbackLocale: counterpart.getLocale() });
     if (!translated || /^missing translation:/.test(translated)) {
         const fallbackTranslated = counterpart.translate(text, { ...options, locale: FALLBACK_LOCALE });
-        return { translated: fallbackTranslated.replace(/Element/g, "Watcha"), isFallback: true }; // watcha+
+        return { translated: fallbackTranslated?.replace(/Element/g, "Watcha"), isFallback: true }; // watcha+
         return { translated: fallbackTranslated, isFallback: true };
     }
     return { translated: translated.replace(/Element/g, "Watcha") }; // watcha+
