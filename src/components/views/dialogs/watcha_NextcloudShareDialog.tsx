@@ -62,6 +62,10 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
         onFinished(target);
     };
 
+    const onCancel = () => {
+        onFinished(null);
+    };
+
     const params = new URL(target).searchParams;
     const path = params.get("dir");
     const relativePath = path ? path.replace(/^\//, "") : null;
@@ -98,7 +102,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
                     primaryButton={_t("OK")}
                     onPrimaryButtonClick={onOK}
                     primaryDisabled={!relativePath || target === initUrlRef.current}
-                    onCancel={onFinished}
+                    onCancel={onCancel}
                 />
             </BaseDialog>
         </React.Fragment>
