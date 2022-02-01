@@ -1,0 +1,9 @@
+.watcha_DocumentsSettingsTab_Buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+span + .watcha_DocumentsSettingsTab_Buttons,
+.error + .watcha_DocumentsSettingsTab_Buttons {
+    margin-top: 1em;
+}

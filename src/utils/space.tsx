@@ -43,6 +43,7 @@ import CreateSpaceFromCommunityDialog from "../components/views/dialogs/CreateSp
 import SpacePreferencesDialog, { SpacePreferenceTab } from "../components/views/dialogs/SpacePreferencesDialog";
 
 export const shouldShowSpaceSettings = (space: Room) => {
+    if (space.client.isPartner()) return false; // watcha+
     const userId = space.client.getUserId();
     return space.getMyMembership() === "join"
         && (space.currentState.maySendStateEvent(EventType.RoomAvatar, userId)

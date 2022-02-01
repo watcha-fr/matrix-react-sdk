@@ -22,6 +22,8 @@ import { logger } from "matrix-js-sdk/src/logger";
 
 import { IMatrixClientCreds } from "./MatrixClientPeg";
 import SecurityCustomisations from "./customisations/Security";
+import { getCurrentLanguage } from "./languageHandler"; // watcha+
+export const SSO_LANGUAGE_KEY = "watcha_sso_language"; // watcha+
 
 interface ILoginOptions {
     defaultDeviceDisplayName?: string;
@@ -215,6 +217,13 @@ export async function sendLoginRequest(
     });
 
     const data = await client.login(loginType, loginParams);
+
+    // watcha+
+    const locale = data.locale;
+    if (locale && locale !== getCurrentLanguage()) {
+        localStorage.setItem(SSO_LANGUAGE_KEY, locale);
+    }
+    // +watcha
 
     const wellknown = data.well_known;
     if (wellknown) {

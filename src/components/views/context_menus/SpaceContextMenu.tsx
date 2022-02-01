@@ -126,10 +126,16 @@ const SpaceContextMenu = ({ space, hideHeader, onFinished, ...props }: IProps) =
         );
     }
 
+    /* watcha!
     const canAddRooms = space.currentState.maySendStateEvent(EventType.SpaceChild, userId);
+    !watcha */
+    const canAddRooms = space.currentState.maySendStateEvent(EventType.SpaceChild, userId) && !cli.isPartner(); // watcha+
 
     let newRoomSection: JSX.Element;
+    /* watcha!
     if (space.currentState.maySendStateEvent(EventType.SpaceChild, userId)) {
+    !watcha */
+    if (space.currentState.maySendStateEvent(EventType.SpaceChild, userId) && !cli.isPartner()) { // watcha+
         const onNewRoomClick = (ev: ButtonEvent) => {
             ev.preventDefault();
             ev.stopPropagation();

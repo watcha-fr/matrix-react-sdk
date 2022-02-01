@@ -24,6 +24,7 @@ import React, {
     useLayoutEffect,
     useRef,
     useState,
+    useContext,  // watcha+
 } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import classNames from "classnames";
@@ -69,6 +70,7 @@ import { ActionPayload } from "../../../dispatcher/payloads";
 import { Action } from "../../../dispatcher/actions";
 import { NotificationState } from "../../../stores/notifications/NotificationState";
 import { ALTERNATE_KEY_NAME } from "../../../accessibility/KeyboardShortcuts";
+import MatrixClientContext from "../../../contexts/MatrixClientContext"; // watcha+
 
 const useSpaces = (): [Room[], MetaSpace[], Room[], SpaceKey] => {
     const invites = useEventEmitterState<Room[]>(SpaceStore.instance, UPDATE_INVITED_SPACES, () => {
@@ -264,6 +266,7 @@ const metaSpaceComponentMap: Record<MetaSpace, typeof HomeButton> = {
 const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(({ children, isPanelCollapsed, setPanelCollapsed }) => {
     const [invites, metaSpaces, actualSpaces, activeSpace] = useSpaces();
     const activeSpaces = activeSpace ? [activeSpace] : [];
+    const client = useContext(MatrixClientContext); // watcha+
 
     const metaSpacesSection = metaSpaces.map(key => {
         const Component = metaSpaceComponentMap[key];
@@ -299,7 +302,9 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(({ children, isPanelCo
             </Draggable>
         )) }
         { children }
+        { !client.isPartner() && // watcha+
         <CreateSpaceButton isPanelCollapsed={isPanelCollapsed} setPanelCollapsed={setPanelCollapsed} />
+        } {/* watcha+ */}
     </div>;
 });
 

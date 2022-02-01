@@ -37,6 +37,7 @@ import AccessibleButton from "../elements/AccessibleButton";
 import RoomAvatar from "../avatars/RoomAvatar";
 import SettingsStore from "../../../settings/SettingsStore";
 import { UIFeature } from "../../../settings/UIFeature";
+import { getSupportEmailAddress } from "../../../utils/watcha_config"; // watcha+
 
 const MemberEventHtmlReasonField = "io.element.html_reason";
 
@@ -98,6 +99,7 @@ interface IState {
     accountEmails?: string[];
     invitedEmailMxid?: string;
     threePidFetchError?: MatrixError;
+    inviterEmail?: string; // watcha+
 }
 
 @replaceableComponent("views.rooms.RoomPreviewBar")
@@ -105,13 +107,23 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
     static defaultProps = {
         onJoinClick() {},
     };
+    private readonly showIgnoreButtonWatcherRef: string; // watcha+
 
     constructor(props) {
         super(props);
 
         this.state = {
             busy: false,
+            inviterEmail: null, // watcha+
         };
+
+        // watcha+
+        this.showIgnoreButtonWatcherRef = SettingsStore.watchSetting(
+            "showIgnoreUserButton",
+            null,
+            () => this.forceUpdate()
+        );
+        // +watcha
     }
 
     componentDidMount() {
@@ -123,10 +135,16 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
         if (this.props.invitedEmail !== prevProps.invitedEmail || this.props.inviterName !== prevProps.inviterName) {
             this.checkInvitedEmail();
         }
+        // watcha+
+        if (this.props.room && this.props.room !== prevProps.room) {
+            this.getInviterEmail().then(inviterEmail => this.setState({ inviterEmail }));
+        }
+        // +watcha
     }
 
     componentWillUnmount() {
         CommunityPrototypeStore.instance.off(UPDATE_EVENT, this.onCommunityUpdate);
+        SettingsStore.unwatchSetting(this.showIgnoreButtonWatcherRef); // watcha+
     }
 
     private async checkInvitedEmail() {
@@ -276,6 +294,17 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
         const inviterUserId = inviteEvent.events.member.getSender();
         return room.currentState.getMember(inviterUserId);
     }
+
+    // watcha+
+    private async getInviterEmail() {
+        const inviteMember = this.getInviteMember();
+        if (!inviteMember) {
+            return;
+        }
+        const profile = await MatrixClientPeg.get().getProfileInfo(inviteMember.userId);
+        return profile?.email
+    }
+    // +watcha
 
     private isDMInvite(): boolean {
         const myMember = this.getMyMember();
@@ -476,7 +505,10 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                     inviterElement = <span>
                         <span className="mx_RoomPreviewBar_inviter">
                             { inviteMember.rawDisplayName }
+                        {/* watcha!
                         </span> ({ inviteMember.userId })
+                        !watcha */}
+                        </span>{ this.state.inviterEmail && ` (${ this.state.inviterEmail })` } {/* watcha+ */}
                     </span>;
                 } else {
                     inviterElement = (<span className="mx_RoomPreviewBar_inviter">{ this.props.inviterName }</span>);
@@ -515,7 +547,10 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                 secondaryActionLabel = _t("Reject");
                 secondaryActionHandler = this.props.onRejectClick;
 
+                /* watcha!
                 if (this.props.onRejectAndIgnoreClick) {
+                !watcha */
+                if (this.props.onRejectAndIgnoreClick && SettingsStore.getValue("showIgnoreUserButton")) { // watcha+
                     extraComponents.push(
                         <AccessibleButton kind="secondary" onClick={this.props.onRejectAndIgnoreClick} key="ignore">
                             { _t("Reject & Ignore user") }
@@ -551,7 +586,10 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                         "<issueLink>submit a bug report</issueLink>.",
                         { errcode: this.props.error.errcode },
                         { issueLink: label => <a
+                            /* watcha!
                             href="https://github.com/vector-im/element-web/issues/new/choose"
+                            !watcha */
+                            href={ `mailto:${getSupportEmailAddress()}` } // watcha+
                             target="_blank"
                             rel="noreferrer noopener">{ label }</a> },
                     ),

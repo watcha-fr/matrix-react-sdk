@@ -37,6 +37,8 @@ import BaseDialog from "./BaseDialog";
 import { IDialogProps } from "./IDialogProps";
 import SidebarUserSettingsTab from "../settings/tabs/user/SidebarUserSettingsTab";
 import KeyboardUserSettingsTab from "../settings/tabs/user/KeyboardUserSettingsTab";
+import { MatrixClientPeg } from '../../../MatrixClientPeg'; // watcha+
+import SSOProfileTab from "../settings/tabs/user/SSOProfileTab"; // watcha+
 
 export enum UserTab {
     General = "USER_GENERAL_TAB",
@@ -51,6 +53,7 @@ export enum UserTab {
     Labs = "USER_LABS_TAB",
     Mjolnir = "USER_MJOLNIR_TAB",
     Help = "USER_HELP_TAB",
+    SSOProfile = "USER_SSO_PROFILE_TAB", // watcha+
 }
 
 interface IProps extends IDialogProps {
@@ -95,6 +98,16 @@ export default class UserSettingsDialog extends React.Component<IProps, IState> 
             "mx_UserSettingsDialog_settingsIcon",
             <GeneralUserSettingsTab closeSettingsFn={this.props.onFinished} />,
         ));
+        // watcha+
+        if (SettingsStore.getValue(UIFeature.watcha_SSOProfile) && !MatrixClientPeg.get().isPartner()) {
+            tabs.push(new Tab(
+                UserTab.SSOProfile,
+                _td("SSO profile"),
+                "mx_UserSettingsDialog_SSOProfileIcon",
+                <SSOProfileTab />
+            ));
+        }
+        // +watcha
         tabs.push(new Tab(
             UserTab.Appearance,
             _td("Appearance"),
