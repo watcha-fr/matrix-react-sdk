@@ -337,6 +337,11 @@ class RoomViewStore extends Store<ActionPayload> {
                     msg = _t("The person who invited you already left the room, or their server is offline.");
                 }
             }
+            // watcha+ until https://github.com/vector-im/element-web/issues/17392
+            else if (err.message === "No known servers") {
+                msg = _t(err.message);
+            }
+            // +watcha
         }
 
         // FIXME: Using an import will result in test failures

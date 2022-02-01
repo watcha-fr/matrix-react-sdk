@@ -106,8 +106,14 @@ export class BannedUser extends React.Component<IBannedUserProps> {
         return (
             <li>
                 { unbanButton }
+                {/* watcha!
                 <span title={_t("Banned by %(displayName)s", { displayName: this.props.by })}>
+                !watcha */}
+                <span title={`${userId} - ` + _t("Banned by %(displayName)s", { displayName: this.props.by })}>
+                    {/* watcha!
                     <strong>{ this.props.member.name }</strong> { userId }
+                    !watcha */}
+                    <strong>{ this.props.member.name }</strong> {/* watcha+ */}
                     { this.props.reason ? " " + _t('Reason') + ": " + this.props.reason : "" }
                 </span>
             </li>
@@ -311,13 +317,18 @@ export default class RolesRoomSettingsTab extends React.Component<IProps> {
 
             Object.keys(userLevels).forEach((user) => {
                 if (!Number.isInteger(userLevels[user])) { return; }
+                const displayName = room.getMember(user)?.rawDisplayName; // watcha+
+                const label = displayName ? `${displayName} (${user})` : user; // watcha+
                 const canChange = userLevels[user] < currentUserLevel && canChangeLevels;
                 if (userLevels[user] > defaultUserLevel) { // privileged
                     privilegedUsers.push(
                         <PowerSelector
                             value={userLevels[user]}
                             disabled={!canChange}
+                            /* watcha!
                             label={user}
+                            !watcha */
+                            label={label} // watcha+
                             key={user}
                             powerLevelKey={user} // Will be sent as the second parameter to `onChange`
                             onChange={this.onUserPowerLevelChanged}
@@ -328,7 +339,10 @@ export default class RolesRoomSettingsTab extends React.Component<IProps> {
                         <PowerSelector
                             value={userLevels[user]}
                             disabled={!canChange}
+                            /* watcha!
                             label={user}
+                            !watcha */
+                            label={label} // watcha+
                             key={user}
                             powerLevelKey={user} // Will be sent as the second parameter to `onChange`
                             onChange={this.onUserPowerLevelChanged}
@@ -418,6 +432,12 @@ export default class RolesRoomSettingsTab extends React.Component<IProps> {
         if (client.isRoomEncrypted(this.props.roomId)) {
             delete eventsLevels[EventType.RoomEncryption];
         }
+
+        // watcha+
+        if (!SettingsStore.getValue("showE2EEUI")) {
+            delete eventsLevels["m.room.encryption"];
+        }
+        // +watcha
 
         const eventPowerSelectors = Object.keys(eventsLevels).map((eventType, i) => {
             if (isSpaceRoom && plEventsToShow[eventType]?.hideForSpace) {
