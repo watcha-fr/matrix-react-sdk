@@ -24,6 +24,7 @@ import { getUserNameColorClass } from '../../../utils/FormattingUtils';
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
 import { replaceableComponent } from "../../../utils/replaceableComponent";
 import UserIdentifier from '../../../customisations/UserIdentifier';
+import { _t } from '../../../languageHandler'; // watcha+
 
 interface IProps {
     mxEvent: MatrixEvent;
@@ -106,7 +107,10 @@ export default class SenderProfile extends React.Component<IProps, IState> {
         const { msgtype } = mxEvent.getContent();
 
         const disambiguate = mxEvent.sender?.disambiguate;
+        /* watcha!
         const displayName = mxEvent.sender?.rawDisplayName || mxEvent.getSender() || "";
+        !watcha */
+        const displayName = mxEvent.sender?.rawDisplayName || this.context.getRoom(mxEvent.getRoomId())?.getMember(mxEvent.getSender())?.rawDisplayName || mxEvent.getSender() || _t("Someone"); // watcha+
         const mxid = mxEvent.sender?.userId || mxEvent.getSender() || "";
 
         if (msgtype === MsgType.Emote) {

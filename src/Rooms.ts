@@ -163,6 +163,7 @@ export function roomContextDetailsText(room: Room): string {
 
     const dmPartner = DMRoomMap.shared().getUserIdForRoomId(room.roomId);
     if (dmPartner) {
+        return undefined; // watcha+
         return dmPartner;
     }
 

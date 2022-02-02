@@ -944,7 +944,10 @@ export default class EventTile extends React.Component<IProps, IState> {
                 <ReadReceiptMarker
                     key={userId}
                     member={receipt.roomMember}
+                    /* watcha!
                     fallbackUserId={userId}
+                    !watcha */
+                    fallbackUserId={receipt.roomMember?.rawDisplayName || userId} // watcha+
                     leftOffset={left}
                     hidden={hidden}
                     readReceiptInfo={readReceiptInfo}

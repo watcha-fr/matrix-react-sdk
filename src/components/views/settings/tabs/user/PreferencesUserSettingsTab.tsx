@@ -137,6 +137,13 @@ const CommunityMigrator = ({ onFinished }) => {
 
 @replaceableComponent("views.settings.tabs.user.PreferencesUserSettingsTab")
 export default class PreferencesUserSettingsTab extends React.Component<IProps, IState> {
+    // watcha+
+    static ROOM_SUMMARY_SETTINGS = [
+        'showExploreChatAttachmentsButton',
+        'showShareRoomButton',
+    ];
+    // +watcha
+
     static ROOM_LIST_SETTINGS = [
         'breadcrumbs',
     ];
@@ -178,6 +185,8 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
         'showImages',
     ];
     static TIMELINE_SETTINGS = [
+        'showShareMessageButton', // watcha+
+        'showViewSourceButton', // watcha+
         'showTypingNotifications',
         'showRedactions',
         'showReadReceipts',
@@ -190,6 +199,8 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
         'scrollToBottomOnMessageSent',
     ];
     static GENERAL_SETTINGS = [
+        'showE2EEUI', // watcha+
+        'showIgnoreUserButton', // watcha+
         'TagPanel.enableTagPanel',
         'promptBeforeInviteUnknownUsers',
         // Start automatically after startup (electron-only)
@@ -375,6 +386,13 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
                     </details>
                     { this.renderGroup(PreferencesUserSettingsTab.COMMUNITIES_SETTINGS, SettingLevel.DEVICE) }
                 </div>
+
+                {/* watcha+ */}
+                <div className="mx_SettingsTab_section">
+                    <span className="mx_SettingsTab_subheading">{_t("Room summary")}</span>
+                    {this.renderGroup(PreferencesUserSettingsTab.ROOM_SUMMARY_SETTINGS)}
+                </div>
+                {/* +watcha */}
 
                 <div className="mx_SettingsTab_section">
                     <span className="mx_SettingsTab_subheading">{ _t("Keyboard shortcuts") }</span>
