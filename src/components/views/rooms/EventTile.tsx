@@ -947,6 +947,7 @@ export default class EventTile extends React.Component<IProps, IState> {
                     /* watcha!
                     fallbackUserId={userId}
                     !watcha */
+                    fallbackUserId={receipt.roomMember?.rawDisplayName || userId} // watcha+
                     leftOffset={left}
                     hidden={hidden}
                     readReceiptInfo={readReceiptInfo}
@@ -955,7 +956,6 @@ export default class EventTile extends React.Component<IProps, IState> {
                     onClick={this.toggleAllReadAvatars}
                     timestamp={receipt.ts}
                     showTwelveHour={this.props.isTwelveHour}
-                    fallbackUserId={receipt.roomMember?.rawDisplayName || userId} // watcha+
                 />,
             );
         }

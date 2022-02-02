@@ -547,16 +547,15 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                 secondaryActionLabel = _t("Reject");
                 secondaryActionHandler = this.props.onRejectClick;
 
-                /* watcha!
+                if (SettingsStore.getValue("showIgnoreUserButton")) { // watcha+
                 if (this.props.onRejectAndIgnoreClick) {
-                !watcha */
-                if (this.props.onRejectAndIgnoreClick && SettingsStore.getValue("showIgnoreUserButton")) { // watcha+
                     extraComponents.push(
                         <AccessibleButton kind="secondary" onClick={this.props.onRejectAndIgnoreClick} key="ignore">
                             { _t("Reject & Ignore user") }
                         </AccessibleButton>,
                     );
                 }
+                } // watcha+
                 break;
             }
             case MessageCase.ViewingRoom: {

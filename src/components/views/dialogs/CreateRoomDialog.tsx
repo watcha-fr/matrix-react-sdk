@@ -282,10 +282,7 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
         }
 
         let e2eeSection;
-        /* watcha!
         if (this.state.joinRule !== JoinRule.Public) {
-        !watcha */
-        if (this.state.joinRule !== JoinRule.Public && SettingsStore.getValue("showE2EEUI")) { // watcha+
             let microcopy;
             if (privateShouldBeEncrypted()) {
                 if (this.state.canChangeEncryption) {
@@ -308,6 +305,7 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
                 <p>{ microcopy }</p>
             </React.Fragment>;
         }
+        if (!SettingsStore.getValue("showE2EEUI")) e2eeSection = null; // watcha+
 
         let federateLabel = _t(
             "You might enable this if the room will only be used for collaborating with internal " +
