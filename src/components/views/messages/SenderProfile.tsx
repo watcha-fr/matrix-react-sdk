@@ -110,8 +110,7 @@ export default class SenderProfile extends React.Component<IProps, IState> {
         /* watcha!
         const displayName = mxEvent.sender?.rawDisplayName || mxEvent.getSender() || "";
         !watcha */
-        const room = this.context.getRoom(mxEvent.getRoomId()); // watcha+
-        const displayName = mxEvent.sender?.rawDisplayName || room?.getMember(mxEvent.getSender())?.rawDisplayName || mxEvent.getSender() || _t("Someone"); // watcha+
+        const displayName = mxEvent.sender?.rawDisplayName || this.context.getRoom(mxEvent.getRoomId())?.getMember(mxEvent.getSender())?.rawDisplayName || mxEvent.getSender() || _t("Someone"); // watcha+
         const mxid = mxEvent.sender?.userId || mxEvent.getSender() || "";
 
         if (msgtype === MsgType.Emote) {

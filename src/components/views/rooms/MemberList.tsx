@@ -521,10 +521,7 @@ export default class MemberList extends React.Component<IProps, IState> {
         const room = cli.getRoom(this.props.roomId);
         let inviteButton;
 
-        /* watcha!
         if (room?.getMyMembership() === 'join' && shouldShowComponent(UIComponent.InviteUsers)) {
-        !watcha */
-        if (room?.getMyMembership() === 'join' && shouldShowComponent(UIComponent.InviteUsers) && !cli.isPartner()) { // watcha+
             let inviteButtonText = _t("Invite to this room");
             const chat = CommunityPrototypeStore.instance.getSelectedCommunityGeneralChat();
             if (chat && chat.roomId === this.props.roomId) {
@@ -544,6 +541,7 @@ export default class MemberList extends React.Component<IProps, IState> {
                 </AccessibleButton>
             );
         }
+        if (cli.isPartner()) inviteButton = null; // watcha+
 
         let invitedHeader;
         let invitedSection;

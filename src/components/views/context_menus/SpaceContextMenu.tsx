@@ -132,10 +132,7 @@ const SpaceContextMenu = ({ space, hideHeader, onFinished, ...props }: IProps) =
     const canAddRooms = space.currentState.maySendStateEvent(EventType.SpaceChild, userId) && !cli.isPartner(); // watcha+
 
     let newRoomSection: JSX.Element;
-    /* watcha!
     if (space.currentState.maySendStateEvent(EventType.SpaceChild, userId)) {
-    !watcha */
-    if (space.currentState.maySendStateEvent(EventType.SpaceChild, userId) && !cli.isPartner()) { // watcha+
         const onNewRoomClick = (ev: ButtonEvent) => {
             ev.preventDefault();
             ev.stopPropagation();
@@ -170,6 +167,7 @@ const SpaceContextMenu = ({ space, hideHeader, onFinished, ...props }: IProps) =
             </IconizedContextMenuOption>
         </>;
     }
+    if (cli.isPartner()) newRoomSection = null // watcha+
 
     const onPreferencesClick = (ev: ButtonEvent) => {
         ev.preventDefault();

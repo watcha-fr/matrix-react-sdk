@@ -441,10 +441,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
         }
 
         let homeButton = null;
-        /* watcha!
         if (this.hasHomePage) {
-        !watcha */
-        if (this.hasHomePage || !MatrixClientPeg.get().isPartner()) { // watcha+
             homeButton = (
                 <IconizedContextMenuOption
                     iconClassName="mx_UserMenu_iconHome"

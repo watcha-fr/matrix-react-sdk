@@ -378,7 +378,6 @@ const UserOptionsSection: React.FC<{
             cli.setIgnoredUsers(ignoredUsers);
         };
 
-        if (showIgnoreButton) { // watcha+
         ignoreButton = (
             <AccessibleButton
                 onClick={onIgnoreToggle}
@@ -387,7 +386,7 @@ const UserOptionsSection: React.FC<{
                 { isIgnored ? _t("Unignore") : _t("Ignore") }
             </AccessibleButton>
         );
-        } // watcha+
+        if (!showIgnoreButton) ignoreButton = null; // watcha+
 
         if (member.roomId && !isSpace) {
             const onReadReceiptButton = function() {
@@ -459,12 +458,10 @@ const UserOptionsSection: React.FC<{
     );
 
     let directMessageButton: JSX.Element;
-    /* watcha!
     if (!isMe) {
-    !watcha */
-    if (!isMe && !cli.isPartner()) { // watcha+
         directMessageButton = <MessageButton userId={member.userId} />;
     }
+    if (cli.isPartner()) directMessageButton = null; // watcha+
 
     return (
         <div className="mx_UserInfo_container">
