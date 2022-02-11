@@ -1015,11 +1015,13 @@ export const SETTINGS: {[setting: string]: ISetting} = {
     "showShareRoomButton": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td("Show share room button"),
+        description: _td("Also visible in contextual menus"),
         default: false,
     },
     "showIgnoreUserButton": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
-        displayName: _td("Show buttons to ignore users (visible on profiles and incoming invitations)"),
+        displayName: _td("Show buttons to ignore users"),
+        description: _td("Visible on user profiles and incoming invitations"),
         default: false,
     },
     "showE2EEUI": {

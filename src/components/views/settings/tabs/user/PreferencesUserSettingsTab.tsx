@@ -138,7 +138,7 @@ const CommunityMigrator = ({ onFinished }) => {
 @replaceableComponent("views.settings.tabs.user.PreferencesUserSettingsTab")
 export default class PreferencesUserSettingsTab extends React.Component<IProps, IState> {
     // watcha+
-    static ROOM_SUMMARY_SETTINGS = [
+    static ROOM_INFO_SETTINGS = [
         'showExploreChatAttachmentsButton',
         'showShareRoomButton',
     ];
@@ -393,8 +393,8 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
 
                 {/* watcha+ */}
                 <div className="mx_SettingsTab_section">
-                    <span className="mx_SettingsTab_subheading">{_t("Room summary")}</span>
-                    {this.renderGroup(PreferencesUserSettingsTab.ROOM_SUMMARY_SETTINGS)}
+                    <span className="mx_SettingsTab_subheading">{_t("Room Info")}</span>
+                    {this.renderGroup(PreferencesUserSettingsTab.ROOM_INFO_SETTINGS)}
                 </div>
                 {/* +watcha */}
 
