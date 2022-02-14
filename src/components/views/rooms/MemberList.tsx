@@ -541,7 +541,6 @@ export default class MemberList extends React.Component<IProps, IState> {
                 </AccessibleButton>
             );
         }
-        if (cli.isPartner()) inviteButton = null; // watcha+
 
         let invitedHeader;
         let invitedSection;
