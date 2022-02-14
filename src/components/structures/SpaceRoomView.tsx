@@ -261,9 +261,11 @@ const SpacePreview = ({ space, onJoinButtonClicked, onRejectButtonClicked }: ISp
                             inviter: () => <b>{ inviter?.name || inviteSender }</b>,
                         }) }
                     </div>
+                    {/* watcha!
                     { inviter ? <div className="mx_SpaceRoomView_preview_inviter_mxid">
                         { inviteSender }
                     </div> : null }
+                    !watcha */}
                 </div>
             </div>;
         }
