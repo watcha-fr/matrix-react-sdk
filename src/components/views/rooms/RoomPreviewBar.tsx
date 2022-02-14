@@ -99,7 +99,6 @@ interface IState {
     accountEmails?: string[];
     invitedEmailMxid?: string;
     threePidFetchError?: MatrixError;
-    inviterEmail?: string; // watcha+
 }
 
 @replaceableComponent("views.rooms.RoomPreviewBar")
@@ -114,7 +113,6 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
 
         this.state = {
             busy: false,
-            inviterEmail: null, // watcha+
         };
 
         // watcha+
@@ -135,11 +133,6 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
         if (this.props.invitedEmail !== prevProps.invitedEmail || this.props.inviterName !== prevProps.inviterName) {
             this.checkInvitedEmail();
         }
-        // watcha+
-        if (this.props.room && this.props.room !== prevProps.room) {
-            this.getInviterEmail().then(inviterEmail => this.setState({ inviterEmail }));
-        }
-        // +watcha
     }
 
     componentWillUnmount() {
@@ -295,16 +288,6 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
         return room.currentState.getMember(inviterUserId);
     }
 
-    // watcha+
-    private async getInviterEmail() {
-        const inviteMember = this.getInviteMember();
-        if (!inviteMember) {
-            return;
-        }
-        const profile = await MatrixClientPeg.get().getProfileInfo(inviteMember.userId);
-        return profile?.email
-    }
-    // +watcha
 
     private isDMInvite(): boolean {
         const myMember = this.getMyMember();
@@ -508,7 +491,7 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                         {/* watcha!
                         </span> ({ inviteMember.userId })
                         !watcha */}
-                        </span>{ this.state.inviterEmail && ` (${ this.state.inviterEmail })` } {/* watcha+ */}
+                        </span> {/* watcha+ */}
                     </span>;
                 } else {
                     inviterElement = (<span className="mx_RoomPreviewBar_inviter">{ this.props.inviterName }</span>);
