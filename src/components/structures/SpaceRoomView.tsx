@@ -515,7 +515,10 @@ const SpaceSetupFirstRooms = ({ space, title, description, onFinished }) => {
     const [error, setError] = useState("");
     const numFields = 3;
     const placeholders = [_t("General"), _t("Random"), _t("Support")];
+    /* watcha!
     const [roomNames, setRoomName] = useStateArray(numFields, [_t("General"), _t("Random"), ""]);
+    !watcha */
+    const [roomNames, setRoomName] = useStateArray(numFields, ""); // watcha+
     const fields = new Array(numFields).fill(0).map((x, i) => {
         const name = "roomName" + i;
         return <Field
@@ -526,7 +529,10 @@ const SpaceSetupFirstRooms = ({ space, title, description, onFinished }) => {
             placeholder={placeholders[i]}
             value={roomNames[i]}
             onChange={ev => setRoomName(i, ev.target.value)}
+            /* watcha!
             autoFocus={i === 2}
+            !watcha */
+            autoFocus={i === 0} // watcha+
             disabled={busy}
             autoComplete="off"
         />;
@@ -762,7 +768,6 @@ const SpaceSetupPrivateInvite = ({ space, onFinished }) => {
                 </a>,
             }) }
         </div>
-        !watcha */}
 
         { error && <div className="mx_SpaceRoomView_errorText">{ error }</div> }
         <form onSubmit={onClick} id="mx_SpaceSetupPrivateInvite">
@@ -789,6 +794,17 @@ const SpaceSetupPrivateInvite = ({ space, onFinished }) => {
                 value={buttonLabel}
             />
         </div>
+        !watcha */}
+
+        {/* watcha+ */}
+        <SpacePublicShare {...{ space }} isPrivate={true} />
+
+        <div className="mx_SpaceRoomView_buttons">
+            <AccessibleButton kind="primary" onClick={onFinished}>
+                { _t("Go to my space") }
+            </AccessibleButton>
+        </div>
+        {/* +watcha */}
     </div>;
 };
 

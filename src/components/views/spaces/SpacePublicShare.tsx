@@ -30,12 +30,17 @@ import { UIComponent } from "../../../settings/UIFeature";
 interface IProps {
     space: Room;
     onFinished?(): void;
+    isPrivate?: boolean; // watcha+
 }
 
+/* watcha!
 const SpacePublicShare = ({ space, onFinished }: IProps) => {
+!watcha */
+const SpacePublicShare = ({ space, onFinished, isPrivate }: IProps) => { // watcha+
     const [copiedText, setCopiedText] = useState(_t("Click to copy"));
 
     return <div className="mx_SpacePublicShare">
+        { isPrivate || // watcha+
         <AccessibleButton
             className="mx_SpacePublicShare_shareButton"
             onClick={async () => {
@@ -53,6 +58,7 @@ const SpacePublicShare = ({ space, onFinished }: IProps) => {
             <h3>{ _t("Share invite link") }</h3>
             <span>{ copiedText }</span>
         </AccessibleButton>
+        } {/* watcha+ */}
         { space.canInvite(MatrixClientPeg.get()?.getUserId()) && shouldShowComponent(UIComponent.InviteUsers)
             ? <AccessibleButton
                 className="mx_SpacePublicShare_inviteButton"
