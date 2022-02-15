@@ -50,6 +50,15 @@ export function getSenderName(event: MatrixEvent): string {
     return event.sender?.name ?? event.getSender() ?? _t("Someone");
 }
 
+// watcha+
+function getDisplayname(event: MatrixEvent, userId = event.getSender()) {
+    const client = MatrixClientPeg.get();
+    const roomId = event.getRoomId();
+    const member = client.getRoom(roomId)?.getMember(userId);
+    return member?.rawDisplayName || userId;
+}
+// +watcha
+
 // These functions are frequently used just to check whether an event has
 // any text to display at all. For this reason they return deferred values
 // to avoid the expense of looking up translations when they're not needed.
@@ -88,8 +97,12 @@ function textForCallInviteEvent(event: MatrixEvent): () => string | null {
 
 function textForMemberEvent(ev: MatrixEvent, allowJSX: boolean, showHiddenEvents?: boolean): () => string | null {
     // XXX: SYJS-16 "sender is sometimes null for join messages"
+    /* watcha!
     const senderName = ev.sender ? ev.sender.name : ev.getSender();
     const targetName = ev.target ? ev.target.name : ev.getStateKey();
+    !watcha */
+    const senderName = ev.sender ? ev.sender.name : getDisplayname(ev); // watcha+
+    const targetName = ev.target ? ev.target.name : getDisplayname(ev, ev.getStateKey()); // watcha+
     const prevContent = ev.getPrevContent();
     const content = ev.getContent();
     const reason = content.reason;
@@ -479,6 +492,7 @@ function textForHistoryVisibilityEvent(event: MatrixEvent): () => string | null 
 // Currently will only display a change if a user's power level is changed
 function textForPowerEvent(event: MatrixEvent): () => string | null {
     const senderName = getSenderName(event);
+    const room = MatrixClientPeg.get().getRoom(event.getRoomId()); // watcha+
     if (!event.getPrevContent() || !event.getPrevContent().users ||
         !event.getContent() || !event.getContent().users) {
         return null;
@@ -512,7 +526,10 @@ function textForPowerEvent(event: MatrixEvent): () => string | null {
         }
         if (from === previousUserDefault && to === currentUserDefault) { return; }
         if (to !== from) {
+            /* watcha!
             const name = UserIdentifierCustomisations.getDisplayUserIdentifier(userId, { roomId: event.getRoomId() });
+            !watcha */
+            const name = room?.getMember(userId)?.rawDisplayName || UserIdentifierCustomisations.getDisplayUserIdentifier(userId, { roomId: event.getRoomId() }); // watcha+
             diffs.push({ userId, name, from, to });
         }
     });
@@ -633,7 +650,10 @@ function textForPinnedEvent(event: MatrixEvent, allowJSX: boolean): () => string
 }
 
 function textForWidgetEvent(event: MatrixEvent): () => string | null {
+    /* watcha!
     const senderName = event.getSender();
+    *watcha */
+    const senderName = event.sender ? event.sender.name : event.getSender(); // watcha+
     const { name: prevName, type: prevType, url: prevUrl } = event.getPrevContent();
     const { name, type, url } = event.getContent() || {};
 

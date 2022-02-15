@@ -47,6 +47,7 @@ export interface IMatrixClientCreds {
     guest?: boolean;
     pickleKey?: string;
     freshLogin?: boolean;
+    partner?: boolean; // watcha+
 }
 
 export interface IMatrixClientPeg {
@@ -292,6 +293,7 @@ class MatrixClientPegClass implements IMatrixClientPeg {
         this.matrixClient.setMaxListeners(500);
 
         this.matrixClient.setGuest(Boolean(creds.guest));
+        this.matrixClient.setPartner(Boolean(creds.partner)); // watcha+
 
         const notifTimelineSet = new EventTimelineSet(null, {
             timelineSupport: true,
