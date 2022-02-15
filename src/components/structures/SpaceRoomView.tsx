@@ -258,9 +258,11 @@ const SpacePreview = ({ space, onJoinButtonClicked, onRejectButtonClicked }: ISp
                             inviter: () => <b>{ inviter?.name || inviteSender }</b>,
                         }) }
                     </div>
+                    {/* watcha!
                     { inviter ? <div className="mx_SpaceRoomView_preview_inviter_mxid">
                         { inviteSender }
                     </div> : null }
+                    !watcha */}
                 </div>
             </div>;
         }
@@ -449,7 +451,10 @@ const SpaceLanding = ({ space }: { space: Room }) => {
         );
     }
 
+    /* watcha!
     const canAddRooms = myMembership === "join" && space.currentState.maySendStateEvent(EventType.SpaceChild, userId);
+    !watcha */
+    const canAddRooms = myMembership === "join" && space.currentState.maySendStateEvent(EventType.SpaceChild, userId) && !cli.isPartner(); // watcha+
 
     let addRoomButton;
     if (canAddRooms) {
@@ -507,7 +512,10 @@ const SpaceSetupFirstRooms = ({ space, title, description, onFinished }) => {
     const [error, setError] = useState("");
     const numFields = 3;
     const placeholders = [_t("General"), _t("Random"), _t("Support")];
+    /* watcha!
     const [roomNames, setRoomName] = useStateArray(numFields, [_t("General"), _t("Random"), ""]);
+    !watcha */
+    const [roomNames, setRoomName] = useStateArray(numFields, ""); // watcha+
     const fields = new Array(numFields).fill(0).map((x, i) => {
         const name = "roomName" + i;
         return <Field
@@ -518,7 +526,10 @@ const SpaceSetupFirstRooms = ({ space, title, description, onFinished }) => {
             placeholder={placeholders[i]}
             value={roomNames[i]}
             onChange={ev => setRoomName(i, ev.target.value)}
+            /* watcha!
             autoFocus={i === 2}
+            !watcha */
+            autoFocus={i === 0} // watcha+
             disabled={busy}
             autoComplete="off"
         />;
@@ -744,6 +755,7 @@ const SpaceSetupPrivateInvite = ({ space, onFinished }) => {
             { _t("Make sure the right people have access. You can invite more later.") }
         </div>
 
+        {/* watcha!
         <div className="mx_SpaceRoomView_inviteTeammates_betaDisclaimer">
             { _t("<b>This is an experimental feature.</b> For now, " +
                 "new users receiving an invite will have to open the invite on <link/> to actually join.", {}, {
@@ -779,6 +791,17 @@ const SpaceSetupPrivateInvite = ({ space, onFinished }) => {
                 value={buttonLabel}
             />
         </div>
+        !watcha */}
+
+        {/* watcha+ */}
+        <SpacePublicShare {...{ space }} isPrivate={true} />
+
+        <div className="mx_SpaceRoomView_buttons">
+            <AccessibleButton kind="primary" onClick={onFinished}>
+                { _t("Go to my space") }
+            </AccessibleButton>
+        </div>
+        {/* +watcha */}
     </div>;
 };
 

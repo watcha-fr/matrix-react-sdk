@@ -47,6 +47,7 @@ import RoomName from "../elements/RoomName";
 import UIStore from "../../../stores/UIStore";
 import ExportDialog from "../dialogs/ExportDialog";
 import RightPanelStore from "../../../stores/right-panel/RightPanelStore";
+import { useSettingValue } from "../../../hooks/useSettings"; // watcha+
 
 interface IProps {
     room: Room;
@@ -60,12 +61,17 @@ interface IAppsSectionProps {
 interface IButtonProps {
     className: string;
     onClick(): void;
+    title?: string; // watcha+
 }
 
+/* watcha!
 const Button: React.FC<IButtonProps> = ({ children, className, onClick }) => {
+!watcha */
+const Button: React.FC<IButtonProps> = ({ children, className, onClick, title }) => { // watcha+
     return <AccessibleButton
         className={classNames("mx_BaseCard_Button mx_RoomSummaryCard_Button", className)}
         onClick={onClick}
+        title={title} // watcha+
     >
         { children }
     </AccessibleButton>;
@@ -222,9 +228,11 @@ const AppsSection: React.FC<IAppsSectionProps> = ({ room }) => {
     return <Group className="mx_RoomSummaryCard_appsGroup" title={_t("Widgets")}>
         { apps.map(app => <AppRow key={app.id} app={app} room={room} />) }
         { copyLayoutBtn }
+        {/* watcha!
         <AccessibleButton kind="link" onClick={onManageIntegrations}>
             { apps.length > 0 ? _t("Edit widgets, bridges & bots") : _t("Add widgets, bridges & bots") }
         </AccessibleButton>
+        !watcha */}
     </Group>;
 };
 
@@ -236,11 +244,31 @@ export const onRoomFilesClick = (allowClose = true) => {
     RightPanelStore.instance.pushCard({ phase: RightPanelPhases.FilePanel }, allowClose);
 };
 
+// watcha+
+export const onRoomDocumentsClick = (allowClose = true) => {
+    RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudDocumentPanel }, allowClose);
+};
+
+export const onRoomCalendarClick = (allowClose = true) => {
+    RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudCalendarPanel }, allowClose);
+};
+
+export const onRoomTasksClick = (allowClose = true) => {
+    RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudTaskPanel }, allowClose);
+};
+// +watcha
+
 const onRoomSettingsClick = () => {
     defaultDispatcher.dispatch({ action: "open_room_settings" });
 };
 
 const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
+    // watcha+
+    const showAttachmentsButton = useSettingValue("showExploreChatAttachmentsButton");
+    const showShareRoomButton = useSettingValue("showShareRoomButton");
+    const showE2EEUI = useSettingValue("showE2EEUI");
+    // +watcha
+
     const cli = useContext(MatrixClientContext);
 
     const onShareRoomClick = () => {
@@ -269,6 +297,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
                     mx_RoomSummaryCard_e2ee_normal: isRoomEncrypted,
                     mx_RoomSummaryCard_e2ee_warning: isRoomEncrypted && e2eStatus === E2EStatus.Warning,
                     mx_RoomSummaryCard_e2ee_verified: isRoomEncrypted && e2eStatus === E2EStatus.Verified,
+                    watcha_RoomSummaryCard_e2ee_hidden: !showE2EEUI, // watcha+
                 })}
             />
         </div>
@@ -295,15 +324,51 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
                     { memberCount }
                 </span>
             </Button>
+            {/* watcha+ */}
+            { SettingsStore.getValue(UIFeature.watcha_Nextcloud) && (
+                <>
+                    <Button
+                        className="mx_RoomSummaryCard_icon_documents"
+                        title={_t("Show documents shared with the room")}
+                        onClick={onRoomDocumentsClick}
+                    >
+                        {_t("Documents")}
+                    </Button>
+                    <Button
+                        className="mx_RoomSummaryCard_icon_calendar"
+                        title={_t("Show the calendar shared with the room")}
+                        onClick={onRoomCalendarClick}
+                    >
+                        {_t("Calendar")}
+                    </Button>
+                    <Button
+                        className="mx_RoomSummaryCard_icon_tasks"
+                        title={_t("Show the to-do list shared with the room")}
+                        onClick={onRoomTasksClick}
+                    >
+                        {_t("To-do list")}
+                    </Button>
+                </>
+            )}
+            {/* +watcha */}
+            {/* watcha!
             <Button className="mx_RoomSummaryCard_icon_files" onClick={onRoomFilesClick}>
                 { _t("Files") }
             </Button>
+            !watcha */}
+            {/* watcha+ */}
+            {showAttachmentsButton && <Button className="mx_MessageComposer_upload" onClick={onRoomFilesClick} title={_t("Show chat attachments")}>
+                { _t("Chat attachments") }
+            </Button>}
+            {/* +watcha */}
             <Button className="mx_RoomSummaryCard_icon_export" onClick={onRoomExportClick}>
                 { _t("Export chat") }
             </Button>
+            {showShareRoomButton && // watcha+
             <Button className="mx_RoomSummaryCard_icon_share" onClick={onShareRoomClick}>
                 { _t("Share room") }
             </Button>
+            } {/* watcha+ */}
             <Button className="mx_RoomSummaryCard_icon_settings" onClick={onRoomSettingsClick}>
                 { _t("Room settings") }
             </Button>

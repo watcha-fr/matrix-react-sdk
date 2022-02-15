@@ -52,6 +52,7 @@ import IconizedContextMenu, {
 } from "../context_menus/IconizedContextMenu";
 import { CommunityPrototypeStore, IRoomProfile } from "../../../stores/CommunityPrototypeStore";
 import { replaceableComponent } from "../../../utils/replaceableComponent";
+import SettingsStore from "../../../settings/SettingsStore"; // watcha+
 
 interface IProps {
     room: Room;
@@ -518,11 +519,13 @@ export default class RoomTile extends React.PureComponent<IProps, IState> {
                             iconClassName="mx_RoomTile_iconInvite"
                         />
                     ) : null }
+                    { SettingsStore.getValue("showShareRoomButton") && <> {/* watcha+ */}
                     { !isDm ? <IconizedContextMenuOption
                         onClick={this.onCopyRoomClick}
                         label={_t("Copy room link")}
                         iconClassName="mx_RoomTile_iconCopyLink"
                     /> : null }
+                    </> } {/* watcha+ */}
                     <IconizedContextMenuOption
                         onClick={this.onOpenRoomSettings}
                         label={_t("Settings")}

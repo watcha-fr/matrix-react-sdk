@@ -118,6 +118,7 @@ import AccessibleButton from "../views/elements/AccessibleButton";
 import { ActionPayload } from "../../dispatcher/payloads";
 import { SummarizedNotificationState } from "../../stores/notifications/SummarizedNotificationState";
 import GenericToast from '../views/toasts/GenericToast';
+import { SSO_LANGUAGE_KEY } from "../../Login"; // watcha+
 
 /** constants for MatrixChat.state.view */
 export enum Views {
@@ -364,6 +365,15 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                     this.props.onTokenLoginCompleted();
                 }
 
+                // watcha+
+                const language = localStorage.getItem(SSO_LANGUAGE_KEY);
+                if (language) {
+                    localStorage.removeItem(SSO_LANGUAGE_KEY);
+                    SettingsStore.setValue("language", null, SettingLevel.DEVICE, language);
+                    PlatformPeg.get().reload();
+                }
+                // +watcha
+
                 if (loggedIn) {
                     this.tokenLogin = true;
 
@@ -427,6 +437,10 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         if (crossSigningIsSetUp) {
             if (SecurityCustomisations.SHOW_ENCRYPTION_SETUP_UI === false) {
                 this.onLoggedIn();
+            // watcha+
+            } else if (!SettingsStore.getValue("showE2EEUI")) {
+            this.onLoggedIn();
+            // +watcha
             } else {
                 this.setStateForNewView({ view: Views.COMPLETE_SECURITY });
             }
@@ -1464,6 +1478,12 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
      * Called when the session is logged out
      */
     private onLoggedOut() {
+        // watcha+
+        if (SdkConfig.get().sso_immediate_redirect === true) {
+            this.setStateForNewView({view: Views.LOADING});
+            return
+        }
+        // +watcha
         this.viewLogin({
             ready: false,
             collapseLhs: false,

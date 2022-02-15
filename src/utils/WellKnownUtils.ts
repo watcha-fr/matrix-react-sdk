@@ -24,6 +24,7 @@ const E2EE_WK_KEY = "io.element.e2ee";
 const E2EE_WK_KEY_DEPRECATED = "im.vector.riot.e2ee";
 const TILE_SERVER_WK_KEY = new UnstableValue(
     "m.tile_server", "org.matrix.msc3488.tile_server");
+const NEXTCLOUD_WK_KEY = "watcha.nextcloud"; // watcha+
 
 /* eslint-disable camelcase */
 export interface ICallBehaviourWellKnown {
@@ -39,6 +40,12 @@ export interface IE2EEWellKnown {
 export interface ITileServerWellKnown {
     map_style_url?: string;
 }
+
+// watcha+
+export interface INextcloudWellKnown {
+    base_url?: string;
+}
+// +watcha
 /* eslint-enable camelcase */
 
 export function getCallBehaviourWellKnown(): ICallBehaviourWellKnown {
@@ -98,3 +105,10 @@ export function getSecureBackupSetupMethods(): SecureBackupSetupMethod[] {
     }
     return wellKnown["secure_backup_setup_methods"];
 }
+
+// watcha+
+export function getNextcloudWellKnown(): INextcloudWellKnown {
+    const clientWellKnown = MatrixClientPeg.get().getClientWellKnown();
+    return clientWellKnown?.[NEXTCLOUD_WK_KEY];
+}
+// +watcha

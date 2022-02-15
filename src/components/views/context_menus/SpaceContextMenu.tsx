@@ -126,7 +126,10 @@ const SpaceContextMenu = ({ space, hideHeader, onFinished, ...props }: IProps) =
         );
     }
 
+    /* watcha!
     const canAddRooms = space.currentState.maySendStateEvent(EventType.SpaceChild, userId);
+    !watcha */
+    const canAddRooms = space.currentState.maySendStateEvent(EventType.SpaceChild, userId) && !cli.isPartner(); // watcha+
 
     let newRoomSection: JSX.Element;
     if (space.currentState.maySendStateEvent(EventType.SpaceChild, userId)) {
@@ -164,6 +167,7 @@ const SpaceContextMenu = ({ space, hideHeader, onFinished, ...props }: IProps) =
             </IconizedContextMenuOption>
         </>;
     }
+    if (cli.isPartner()) newRoomSection = null // watcha+
 
     const onPreferencesClick = (ev: ButtonEvent) => {
         ev.preventDefault();
@@ -200,11 +204,13 @@ const SpaceContextMenu = ({ space, hideHeader, onFinished, ...props }: IProps) =
                 onClick={onExploreRoomsClick}
             />
             { inviteOption }
+            {/* watcha!
             <IconizedContextMenuOption
                 iconClassName="mx_SpacePanel_iconExplore"
                 label={canAddRooms ? _t("Manage & explore rooms") : _t("Explore rooms")}
                 onClick={onExploreRoomsClick}
             />
+            !watcha */}
             <IconizedContextMenuOption
                 iconClassName="mx_SpacePanel_iconPreferences"
                 label={_t("Preferences")}
