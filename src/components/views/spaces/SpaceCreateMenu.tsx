@@ -294,6 +294,7 @@ const SpaceCreateMenu = ({ onFinished }) => {
                 onClick={() => setVisibility(Visibility.Private)}
             />
 
+            {/* watcha!
             <p>
                 { _t("You can also make Spaces from <a>communities</a>.", {}, {
                     a: sub => <AccessibleButton kind="link" onClick={onCreateSpaceFromCommunityClick}>
@@ -303,6 +304,7 @@ const SpaceCreateMenu = ({ onFinished }) => {
                 <br />
                 { _t("To join a space you'll need an invite.") }
             </p>
+            !watcha */}
 
             <SpaceFeedbackPrompt onClick={onFinished} />
         </React.Fragment>;
