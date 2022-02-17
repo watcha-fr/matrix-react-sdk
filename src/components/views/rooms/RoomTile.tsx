@@ -519,13 +519,13 @@ export default class RoomTile extends React.PureComponent<IProps, IState> {
                             iconClassName="mx_RoomTile_iconInvite"
                         />
                     ) : null }
-                    { SettingsStore.getValue("showShareRoomButton") && <> {/* watcha+ */}
+                    { SettingsStore.getValue("showShareRoomButton") && <> { /* eslint-disable indent *//* watcha+ */ }
                     { !isDm ? <IconizedContextMenuOption
                         onClick={this.onCopyRoomClick}
                         label={_t("Copy room link")}
                         iconClassName="mx_RoomTile_iconCopyLink"
                     /> : null }
-                    </> } {/* watcha+ */}
+                    </> /* eslint-enable indent *//* watcha+ */ }
                     <IconizedContextMenuOption
                         onClick={this.onOpenRoomSettings}
                         label={_t("Settings")}

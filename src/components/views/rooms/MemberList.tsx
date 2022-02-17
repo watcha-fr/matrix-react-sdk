@@ -535,7 +535,11 @@ export default class MemberList extends React.Component<IProps, IState> {
                     className="mx_MemberList_invite"
                     onClick={this.onInviteButtonClick}
                     disabled={!this.state.canInvite}
-                    title={this.state.canInvite ? undefined : _t("You do not have permission to invite people to this room.")} // watcha+
+                    // watcha+
+                    title={this.state.canInvite
+                        ? undefined
+                        : _t("You do not have permission to invite people to this room.")}
+                    // +watcha
                 >
                     <span>{ inviteButtonText }</span>
                 </AccessibleButton>

@@ -48,6 +48,13 @@ import { E2EStatus } from '../../utils/ShieldUtils';
 import TimelineCard from '../views/right_panel/TimelineCard';
 import { UPDATE_EVENT } from '../../stores/AsyncStore';
 import { IRightPanelCard, IRightPanelCardState } from '../../stores/right-panel/RightPanelStoreIPanelState';
+// watcha+
+import { _t } from "../../languageHandler";
+import { ROOM_NEXTCLOUD_DOCUMENTS_TAB, ROOM_NEXTCLOUD_CALENDAR_TAB } from "../views/dialogs/RoomSettingsDialog";
+import { AppNames, StateKeys } from "../../utils/watcha_nextcloudUtils";
+import CalendarPanel from "./watcha_CalendarPanel";
+import DocumentPanel from "./watcha_DocumentPanel";
+// +watcha
 
 interface IProps {
     room?: Room; // if showing panels for a given room, this is set
@@ -57,13 +64,6 @@ interface IProps {
     permalinkCreator?: RoomPermalinkCreator;
     e2eStatus?: E2EStatus;
 }
-// watcha+
-import { _t } from "../../languageHandler";
-import { ROOM_NEXTCLOUD_DOCUMENTS_TAB, ROOM_NEXTCLOUD_CALENDAR_TAB } from "../views/dialogs/RoomSettingsDialog";
-import { AppNames, StateKeys } from "../../utils/watcha_nextcloudUtils";
-import CalendarPanel from "./watcha_CalendarPanel"
-import DocumentPanel from "./watcha_DocumentPanel"
-// +watcha
 
 interface IState {
     phase: RightPanelPhases;

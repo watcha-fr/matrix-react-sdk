@@ -1,5 +1,4 @@
 import React, { createRef } from "react";
-
 import { Room } from "matrix-js-sdk/src/models/room";
 import { RoomMember } from "matrix-js-sdk/src/models/room-member";
 
@@ -10,7 +9,6 @@ import BaseDialog from "./BaseDialog";
 import DialogButtons from "../elements/DialogButtons";
 import Field from "../elements/Field";
 import withValidation from "../elements/Validation";
-
 import { IUser } from "./watcha_InviteDialog";
 
 interface IProps {
@@ -100,9 +98,10 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
                 test: ({ value }) => !Email.hasForbiddenDomainForPartner(value),
                 invalid: ({ value }) =>
                     _t(
-                        "Users with an email address belonging to this domain <b></b> should not be invited as external partners",
+                        "Users with an email address belonging to this domain <b></b> " +
+                        "should not be invited as external partners",
                         {},
-                        { b: () => <b>{value.split("@")[1]}</b> }
+                        { b: () => <b>{ value.split("@")[1] }</b> },
                     ),
                 final: true,
             },

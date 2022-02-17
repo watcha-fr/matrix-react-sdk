@@ -104,7 +104,7 @@ export default class UserSettingsDialog extends React.Component<IProps, IState> 
                 UserTab.SSOProfile,
                 _td("SSO profile"),
                 "mx_UserSettingsDialog_SSOProfileIcon",
-                <SSOProfileTab />
+                <SSOProfileTab />,
             ));
         }
         // +watcha

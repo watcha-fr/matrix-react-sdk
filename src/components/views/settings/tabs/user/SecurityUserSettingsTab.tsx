@@ -49,7 +49,6 @@ interface IIgnoredUserProps {
     inProgress: boolean;
 }
 
-
 // watcha+
 interface IIgnoredUserState {
     displayname?: string;
@@ -90,10 +89,10 @@ export class IgnoredUser extends React.Component<IIgnoredUserProps, IIgnoredUser
                 <AccessibleButton onClick={this.onUnignoreClicked} kind='primary_sm' aria-describedby={id} disabled={this.props.inProgress}>
                     { _t('Unignore') }
                 </AccessibleButton>
-                {/* watcha!
+                { /* watcha!
                 <span id={id}>{ this.props.userId }</span>
-                !watcha */}
-                <span id={id} title={this.state.displayname && this.props.userId}>{this.state.displayname || this.props.userId}</span> {/* watcha+ */}
+                !watcha */ }
+                <span id={id} title={this.state.displayname && this.props.userId}>{ this.state.displayname || this.props.userId }</span> { /* watcha+ */ }
             </div>
         );
     }
@@ -393,9 +392,9 @@ export default class SecurityUserSettingsTab extends React.Component<IProps, ISt
                     <div className="mx_SettingsTab_section">
                         { ignoreUsersPanel }
                         { invitesPanel }
-                        { showE2EEUI && <> {/* watcha+ */}
+                        { showE2EEUI && <> { /* eslint-disable-next-line indent *//* watcha+ */ }
                         { e2ePanel }
-                        </> } {/* watcha+ */}
+                        </> /* watcha+ */ }
                     </div>
                 </>;
             }
@@ -403,9 +402,9 @@ export default class SecurityUserSettingsTab extends React.Component<IProps, ISt
 
         return (
             <div className="mx_SettingsTab mx_SecurityUserSettingsTab">
-                { showE2EEUI && <> {/* watcha+ */}
+                { showE2EEUI && <> { /* eslint-disable-next-line indent *//* watcha+ */ }
                 { warning }
-                </> } {/* watcha+ */}
+                </> /* watcha+ */ }
                 <div className="mx_SettingsTab_heading">{ _t("Where you're signed in") }</div>
                 <div className="mx_SettingsTab_section">
                     <span>
@@ -416,7 +415,7 @@ export default class SecurityUserSettingsTab extends React.Component<IProps, ISt
                     </span>
                     <DevicesPanel />
                 </div>
-                { showE2EEUI && <> {/* watcha+ */}
+                { showE2EEUI && <> { /* eslint-disable indent *//* watcha+ */ }
                 <div className="mx_SettingsTab_heading">{ _t("Encryption") }</div>
                 <div className="mx_SettingsTab_section">
                     { secureBackup }
@@ -424,7 +423,7 @@ export default class SecurityUserSettingsTab extends React.Component<IProps, ISt
                     { crossSigning }
                     <CryptographyPanel />
                 </div>
-                </> } {/* watcha+ */}
+                </> /* eslint-enable indent *//* watcha+ */ }
                 { privacySection }
                 { advancedSection }
             </div>

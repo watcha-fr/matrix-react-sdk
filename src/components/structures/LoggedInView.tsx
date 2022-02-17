@@ -678,7 +678,7 @@ class LoggedInView extends React.Component<IProps, IState> {
                     className={wrapperClasses}
                     aria-hidden={this.props.hideToSRUsers}
                 >
-                    { this._matrixClient.isPartner() && <PartnerBar /> } {/* watcha+ */}
+                    { this._matrixClient.isPartner() && <PartnerBar /> /* watcha+ */ }
                     <ToastContainer />
                     <div className={bodyClasses}>
                         <div className='mx_LeftPanel_wrapper'>

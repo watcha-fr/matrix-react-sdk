@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 // Hook to update the local state by ensuring that the component is still mounted
-export default function useSafeState<T>(initialState) {
+export default function useSafeState(initialState) {
     const isMounted = useRef<boolean>();
     const [state, setState] = useState(initialState);
     useEffect(() => {

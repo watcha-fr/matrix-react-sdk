@@ -58,7 +58,7 @@ const SpacePublicShare = ({ space, onFinished, isPrivate }: IProps) => { // watc
             <h3>{ _t("Share invite link") }</h3>
             <span>{ copiedText }</span>
         </AccessibleButton>
-        } {/* watcha+ */}
+        /* watcha+ */ }
         { space.canInvite(MatrixClientPeg.get()?.getUserId()) && shouldShowComponent(UIComponent.InviteUsers)
             ? <AccessibleButton
                 className="mx_SpacePublicShare_inviteButton"

@@ -140,7 +140,7 @@ export default class HelpUserSettingsTab extends React.Component<IProps, IState>
             <div className='mx_SettingsTab_section'>
                 <span className='mx_SettingsTab_subheading'>{ _t("Credits") }</span>
                 <ul>
-                    {/* watcha!
+                    { /* watcha!
                     <li>
                         The <a href="themes/element/img/backgrounds/lake.jpg" rel="noreferrer noopener" target="_blank">
                             default cover photo
@@ -152,7 +152,7 @@ export default class HelpUserSettingsTab extends React.Component<IProps, IState>
                             CC-BY-SA 4.0
                         </a>.
                     </li>
-                    !watcha */}
+                    !watcha */ }
                     <li>
                         The <a
                             href="https://github.com/matrix-org/twemoji-colr"
@@ -247,9 +247,9 @@ export default class HelpUserSettingsTab extends React.Component<IProps, IState>
         const helpLinks = SdkConfig.get().branding?.helpLinks || [];
         if (helpLinks.length) {
             faqText = helpLinks.map(linkEntry => (
-                <p>
-                    <a href={linkEntry.url} key={linkEntry.text} target="_blank" rel="noreferrer noopener">
-                        {linkEntry.text}
+                <p key={linkEntry.text}>
+                    <a href={linkEntry.url} target="_blank" rel="noreferrer noopener">
+                        { linkEntry.text }
                     </a>
                 </p>
             ));
@@ -265,11 +265,11 @@ export default class HelpUserSettingsTab extends React.Component<IProps, IState>
         if (SdkConfig.get().bug_report_endpoint_url) {
             bugReportingSection = (
                 <div className="mx_SettingsTab_section">
-                    {/* watcha!
+                    { /* watcha!
                     <span className='mx_SettingsTab_subheading'>{ _t('Bug reporting') }</span>
-                    !watcha */}
+                    !watcha */ }
                     <div className='mx_SettingsTab_subsectionText'>
-                        {/* watcha!
+                        { /* watcha!
                         { _t(
                             "If you've submitted a bug via GitHub, debug logs can help " +
                             "us track down the problem. Debug logs contain application " +
@@ -293,7 +293,7 @@ export default class HelpUserSettingsTab extends React.Component<IProps, IState>
                                 >{ sub }</a>,
                             },
                         ) }
-                        !watcha */}
+                        !watcha */ }
                     </div>
                 </div>
             );

@@ -392,7 +392,7 @@ const RoomListHeader = ({ spacePanelDisabled, onVisibilityChange }: IProps) => {
             className="mx_RoomListHeader_plusButton"
             title={_t("Add")}
         />
-        } {/* watcha+ */}
+        /* watcha+ */ }
 
         { contextMenu }
     </div>;

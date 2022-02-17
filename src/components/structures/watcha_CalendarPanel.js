@@ -8,7 +8,6 @@ import defaultDispatcher from "../../dispatcher/dispatcher";
 import MatrixClientContext from "../../contexts/MatrixClientContext";
 import SettingsStore from "../../settings/SettingsStore";
 import Spinner from "../views/elements/Spinner";
-
 import { CALENDAR_EVENT_TYPE, StateKeys, getWidgetUrl } from "../../utils/watcha_nextcloudUtils";
 
 const getCalendarId = (room, stateKey) =>
@@ -21,23 +20,21 @@ export default ({ roomId, appName, stateKey, initialTabId, empty, emptyClass, on
 
     const [calendarsReordering, setCalendarsReordering] = useState(true);
     const [iframeLoading, setIframeLoading] = useState(true);
-    const [canSetCalendar, setCanSetCalendar] = useState(
-        room.currentState.maySendStateEvent(CALENDAR_EVENT_TYPE, client.getUserId())
-    );
     const [calendarId, setCalendarId] = useState(getCalendarId(room, stateKey));
 
-    const onRoomStateEvents = event => {
-        if (event.getRoomId() === roomId && event.getType() === CALENDAR_EVENT_TYPE) {
-            setCalendarId(getCalendarId(room, stateKey));
-        }
-    };
+    const canSetCalendar = room.currentState.maySendStateEvent(CALENDAR_EVENT_TYPE, client.getUserId());
 
     useEffect(() => {
+        const onRoomStateEvents = event => {
+            if (event.getRoomId() === roomId && event.getType() === CALENDAR_EVENT_TYPE) {
+                setCalendarId(getCalendarId(room, stateKey));
+            }
+        };
         client.on("RoomState.events", onRoomStateEvents);
         return () => {
             client.removeListener("RoomState.events", onRoomStateEvents);
         };
-    }, []);
+    }, [roomId, room, stateKey, client]);
 
     useEffect(() => {
         if (calendarId) {
@@ -47,7 +44,7 @@ export default ({ roomId, appName, stateKey, initialTabId, empty, emptyClass, on
                 setCalendarsReordering(false);
             });
         }
-    }, [calendarId]);
+    }, [client, calendarId]);
 
     const onRoomSettingsClick = () => {
         const payload = {
@@ -64,7 +61,7 @@ export default ({ roomId, appName, stateKey, initialTabId, empty, emptyClass, on
         } else if (calendarId) {
             panel = (
                 <>
-                    {iframeLoading && <Spinner />}
+                    { iframeLoading && <Spinner /> }
                     <iframe
                         key={calendarId}
                         id="watcha_NextcloudPanel"
@@ -75,6 +72,7 @@ export default ({ roomId, appName, stateKey, initialTabId, empty, emptyClass, on
                         onLoad={() => {
                             setIframeLoading(false);
                         }}
+                        title={appName}
                     />
                 </>
             );
@@ -87,18 +85,18 @@ export default ({ roomId, appName, stateKey, initialTabId, empty, emptyClass, on
                     {
                         span: sub => (
                             <span className="watcha_NextcloudPanel_settingsIcon-noWrap" onClick={onRoomSettingsClick}>
-                                {sub}
+                                { sub }
                             </span>
                         ),
-                    }
+                    },
                 );
             }
             panel = (
                 <div className="mx_RoomView_messageListWrapper">
                     <div className="mx_RoomView_empty">
                         <div className={classNames("mx_RightPanel_empty", emptyClass)}>
-                            <h2>{empty}</h2>
-                            <p>{hint}</p>
+                            <h2>{ empty }</h2>
+                            <p>{ hint }</p>
                         </div>
                     </div>
                 </div>
@@ -107,7 +105,7 @@ export default ({ roomId, appName, stateKey, initialTabId, empty, emptyClass, on
     }
     return (
         <BaseCard className="mx_FilePanel" {...{ onClose }} previousPhase={RightPanelPhases.RoomSummary}>
-            {panel}
+            { panel }
         </BaseCard>
     );
 };

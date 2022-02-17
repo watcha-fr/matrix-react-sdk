@@ -336,6 +336,7 @@ class RoomViewStore extends Store<ActionPayload> {
                 } else {
                     msg = _t("The person who invited you already left the room, or their server is offline.");
                 }
+                /* eslint-disable-next-line brace-style */// watcha+
             }
             // watcha+ until https://github.com/vector-im/element-web/issues/17392
             else if (err.message === "No known servers") {

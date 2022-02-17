@@ -210,7 +210,7 @@ export default class MemberTile extends React.Component<IProps, IState> {
     }
 
     private getPowerLabel(): string {
-        return undefined // watcha+
+        return undefined; // watcha+
         return _t("%(userName)s (power %(powerLevelNumber)s)", {
             userName: UserIdentifierCustomisations.getDisplayUserIdentifier(
                 this.props.member.userId, { roomId: this.props.member.roomId },

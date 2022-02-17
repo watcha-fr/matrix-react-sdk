@@ -1,12 +1,12 @@
 import React, { createRef } from "react";
 import { debounce } from "lodash";
+import { IInvite3PID } from "matrix-js-sdk/src/@types/requests";
 import { Room } from "matrix-js-sdk/src/models/room";
 import classNames from "classnames";
 
 import { _t } from "../../../languageHandler";
 import { getAddressType } from "../../../UserAddress";
 import { inviteMultipleToRoom } from "../../../RoomInvite";
-import { IInvite3PID } from "matrix-js-sdk/src/@types/requests";
 import { KIND_DM } from "./InviteDialog";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
 import * as Avatar from "../../../Avatar";
@@ -24,12 +24,12 @@ import Modal from "../../../Modal";
 import SearchBox from "../../structures/SearchBox";
 import Spinner from "../elements/Spinner";
 import Tooltip from "../elements/Tooltip";
-
 import InvitePartnerDialog from "./watcha_InvitePartnerDialog";
 
 const VALIDATION_THROTTLE_MS = 500;
 const AVATAR_SIZE = 36;
 
+/* eslint-disable camelcase */
 interface ISearchUserDirectory {
     limited: boolean;
     results: {
@@ -39,6 +39,7 @@ interface ISearchUserDirectory {
         email: string;
     }[];
 }
+/* eslint-enable camelcase */
 
 export interface IUser {
     address: string;
@@ -85,7 +86,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
     }
 
     componentDidMount() {
-        this._doUserDirectorySearch(this.state.query);
+        this.doUserDirectorySearch(this.state.query);
     }
 
     showInvitePartnerDialog = () => {
@@ -102,7 +103,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
     };
 
     onSearch = debounce((term: string) => {
-        this._doUserDirectorySearch(term);
+        this.doUserDirectorySearch(term);
     }, VALIDATION_THROTTLE_MS);
 
     onOk = () => {
@@ -254,7 +255,8 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
                     avatarJsx={this.getBaseAvatar(
                         user,
                         null,
-                        require("../../../../res/img/watcha/watcha_paper-plane.svg")
+                        /* eslint-disable-next-line @typescript-eslint/no-var-requires */
+                        require("../../../../res/img/watcha/watcha_paper-plane.svg"),
                     )}
                     onClick={() => {
                         this.removeEmailAddressFromSelectedList(user);
@@ -278,7 +280,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
     };
 
     // come from src/components/views/dialogs/AddressPickerDialog.js
-    _doUserDirectorySearch(query) {
+    doUserDirectorySearch(query) {
         this.setState({
             query,
             pendingSearch: true,
@@ -294,7 +296,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
                 if (this.state.query !== query) {
                     return;
                 }
-                this._processResults(resp.results, query);
+                this.processResults(resp.results, query);
             })
             .catch(err => {
                 console.error("Error whilst searching user directory: ", err);
@@ -306,7 +308,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
     }
 
     // inspired from src/components/views/dialogs/AddressPickerDialog.js
-    _processResults = (results, query) => {
+    processResults = (results, query) => {
         const suggestedList = [];
         const client = MatrixClientPeg.get();
 
@@ -346,7 +348,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
     };
 
     // come from src/components/views/dialogs/InviteDialog.tsx
-    _startDm = async () => {
+    startDm = async () => {
         this.setState({ busy: true });
         const client = MatrixClientPeg.get();
         // const targets = this._convertFilter();
@@ -411,7 +413,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
                         }
                         return roomOptions;
                     },
-                    { invite: [], invite_3pid: [] }
+                    { invite: [], invite_3pid: [] },
                 );
             }
 
@@ -427,7 +429,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
     };
 
     // come from src/components/views/dialogs/InviteDialog.tsx
-    _inviteUsers = () => {
+    inviteUsers = () => {
         const startTime = CountlyAnalytics.getTimestamp();
         this.setState({ busy: true });
         // this._convertFilter();
@@ -449,7 +451,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
         inviteMultipleToRoom(this.props.roomId, targetIds)
             .then(result => {
                 CountlyAnalytics.instance.trackSendInvite(startTime, this.props.roomId, targetIds.length);
-                if (!this._shouldAbortAfterInviteError(result)) {
+                if (!this.shouldAbortAfterInviteError(result)) {
                     // handles setting error message too
                     this.props.onFinished();
                 }
@@ -459,14 +461,14 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
                 this.setState({
                     busy: false,
                     errorText: _t(
-                        "We couldn't invite those users. Please check the users you want to invite and try again."
+                        "We couldn't invite those users. Please check the users you want to invite and try again.",
                     ),
                 });
             });
     };
 
     // come from src/components/views/dialogs/InviteDialog.tsx
-    _shouldAbortAfterInviteError(result) {
+    shouldAbortAfterInviteError(result) {
         const failedUsers = Object.keys(result.states).filter(a => result.states[a] === "error");
         if (failedUsers.length > 0) {
             this.setState({
@@ -475,7 +477,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
                     "The following users might not exist or are invalid, and cannot be invited: %(csvNames)s",
                     {
                         csvNames: failedUsers.join(", "),
-                    }
+                    },
                 ),
             });
             return true; // abort
@@ -495,16 +497,16 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
 
         if (kind === KIND_DM) {
             title = _t("Start a private conversation");
-            invite = this._startDm;
+            invite = this.startDm;
         } else {
             // KIND_INVITE
             const room = MatrixClientPeg.get().getRoom(roomId);
             title = _t(
                 "Invite to <span>%(roomName)s</span>",
                 { roomName: room.name },
-                { span: label => <span className="mx_RoomHeader_settingsHint">{label}</span> }
+                { span: label => <span className="mx_RoomHeader_settingsHint">{ label }</span> },
             );
-            invite = this._inviteUsers;
+            invite = this.inviteUsers;
         }
 
         return (
@@ -513,12 +515,12 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
                     <div className="watcha_InviteDialog_userLists">
                         <Section header={_t("User directory")}>
                             <SuggestedList onSearch={this.onSearch} emptyQuery={!!query} {...{ pendingSearch }}>
-                                {suggestedTiles}
+                                { suggestedTiles }
                             </SuggestedList>
                         </Section>
                         <Section header={_t("Invitation list")}>
                             <SelectedList resume={this.resume} {...{ busy, invite }}>
-                                {selectedTiles}
+                                { selectedTiles }
                             </SelectedList>
                         </Section>
                     </div>
@@ -527,25 +529,26 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
                         onClick={this.showInvitePartnerDialog}
                     >
                         <React.Fragment>
-                            {_t(
-                                "You want to collaborate with a partner from outside your organisation: invite them by e-mail"
-                            )}
+                            { _t(
+                                "You want to collaborate with a partner from outside your organisation: " +
+                                "invite them by e-mail",
+                            ) }
                             <img src={require("../../../../res/img/watcha/watcha_paper-plane.svg")} />
                         </React.Fragment>
                     </AccessibleButton>
                 </div>
-                <div className="error">{errorText}</div>
+                <div className="error">{ errorText }</div>
                 <DialogButtons
                     primaryButton={_t("OK")}
                     disabled={busy}
                     onPrimaryButtonClick={this.onOk}
                     onCancel={onFinished}
                 />
-                {busy ? (
+                { busy ? (
                     <div className="watcha_InviteDialog_Spinner">
                         <Spinner />
                     </div>
-                ) : null}
+                ) : null }
             </BaseDialog>
         );
     }
@@ -558,8 +561,8 @@ interface ISectionProps {
 
 const Section: React.FC<ISectionProps> = ({ className, header, children }) => (
     <div className={classNames("watcha_InviteDialog_Section", className)}>
-        <h2>{header}</h2>
-        {children}
+        <h2>{ header }</h2>
+        { children }
     </div>
 );
 
@@ -574,16 +577,16 @@ const SuggestedList: React.FC<ISuggestedListProps> = ({ pendingSearch, children,
     if (pendingSearch) {
         content = <Spinner />;
     } else if (children) {
-        content = <AutoHideScrollbar>{children}</AutoHideScrollbar>;
+        content = <AutoHideScrollbar>{ children }</AutoHideScrollbar>;
     } else {
         content = (
             <div className="watcha_InviteDialog_list_hint">
                 <span>
-                    {_t(
+                    { _t(
                         emptyQuery
                             ? "No users match your search."
-                            : "No user can be invited to join this room from the directory."
-                    )}
+                            : "No user can be invited to join this room from the directory.",
+                    ) }
                 </span>
             </div>
         );
@@ -592,7 +595,7 @@ const SuggestedList: React.FC<ISuggestedListProps> = ({ pendingSearch, children,
     return (
         <div className="watcha_InviteDialog_list">
             <SearchBox placeholder={_t("Filter users")} onSearch={onSearch} />
-            {content}
+            { content }
         </div>
     );
 };
@@ -635,7 +638,7 @@ class SelectedList extends React.Component<ISelectedListProps, ISelectedListStat
                 <div className="mx_Validation">
                     <ul className="mx_Validation_details">
                         <li className="mx_Validation_detail mx_Validation_invalid">
-                            {_t("Please select one or more users before submitting")}
+                            { _t("Please select one or more users before submitting") }
                         </li>
                     </ul>
                 </div>
@@ -655,10 +658,10 @@ class SelectedList extends React.Component<ISelectedListProps, ISelectedListStat
         });
 
         const content = children ? (
-            <AutoHideScrollbar>{children}</AutoHideScrollbar>
+            <AutoHideScrollbar>{ children }</AutoHideScrollbar>
         ) : (
             <div className="watcha_InviteDialog_list_hint">
-                <span>{_t("Select users<br/>Invite them<br/>Collaborate!", {}, { br: () => <br /> })}</span>
+                <span>{ _t("Select users<br/>Invite them<br/>Collaborate!", {}, { br: () => <br /> }) }</span>
             </div>
         );
 
@@ -669,7 +672,7 @@ class SelectedList extends React.Component<ISelectedListProps, ISelectedListStat
                 onBlur={this.onBlur}
                 tabIndex={-1} // mandatory for `onBlur` to be effective
             >
-                {content}
+                { content }
                 <Tooltip
                     tooltipClassName="mx_Field_tooltip"
                     visible={!!feedback}

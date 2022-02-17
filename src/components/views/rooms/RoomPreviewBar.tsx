@@ -119,7 +119,7 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
         this.showIgnoreButtonWatcherRef = SettingsStore.watchSetting(
             "showIgnoreUserButton",
             null,
-            () => this.forceUpdate()
+            () => this.forceUpdate(),
         );
         // +watcha
     }
@@ -287,7 +287,6 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
         const inviterUserId = inviteEvent.events.member.getSender();
         return room.currentState.getMember(inviterUserId);
     }
-
 
     private isDMInvite(): boolean {
         const myMember = this.getMyMember();
@@ -488,10 +487,10 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                     inviterElement = <span>
                         <span className="mx_RoomPreviewBar_inviter">
                             { inviteMember.rawDisplayName }
-                        {/* watcha!
+                        { /* eslint-disable-line indent *//* watcha!
                         </span> ({ inviteMember.userId })
-                        !watcha */}
-                        </span> {/* watcha+ */}
+                        !watcha */ }
+                        </span> { /* watcha+ */ }
                     </span>;
                 } else {
                     inviterElement = (<span className="mx_RoomPreviewBar_inviter">{ this.props.inviterName }</span>);
@@ -530,6 +529,7 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                 secondaryActionLabel = _t("Reject");
                 secondaryActionHandler = this.props.onRejectClick;
 
+                /* eslint-disable indent */ // watcha+
                 if (SettingsStore.getValue("showIgnoreUserButton")) { // watcha+
                 if (this.props.onRejectAndIgnoreClick) {
                     extraComponents.push(
@@ -539,6 +539,7 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                     );
                 }
                 } // watcha+
+                /* eslint-enable indent */ // watcha+
                 break;
             }
             case MessageCase.ViewingRoom: {
@@ -571,7 +572,7 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                             /* watcha!
                             href="https://github.com/vector-im/element-web/issues/new/choose"
                             !watcha */
-                            href={ `mailto:${getSupportEmailAddress()}` } // watcha+
+                            href={`mailto:${getSupportEmailAddress()}`} // watcha+
                             target="_blank"
                             rel="noreferrer noopener">{ label }</a> },
                     ),

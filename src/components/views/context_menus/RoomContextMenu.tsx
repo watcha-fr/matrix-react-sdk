@@ -204,7 +204,7 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
             </span>
         </IconizedContextMenuOption>;
 
-        if (showShareRoomButton) { // watcha+
+        if (showShareRoomButton) { /* eslint-disable indent */// watcha+
         copyLinkOption = <IconizedContextMenuOption
             onClick={(ev: ButtonEvent) => {
                 ev.preventDefault();
@@ -219,7 +219,7 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
             label={_t("Copy room link")}
             iconClassName="mx_RoomTile_iconCopyLink"
         />;
-        } // watcha+
+        } /* eslint-enable indent */// watcha+
     }
 
     const onTagRoom = (ev: ButtonEvent, tagId: TagID) => {
@@ -257,7 +257,7 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
             { favouriteOption }
             { peopleOption }
 
-            {showAttachmentsButton && // watcha+
+            { showAttachmentsButton && // watcha+
             <IconizedContextMenuOption
                 onClick={(ev: ButtonEvent) => {
                     ev.preventDefault();
@@ -274,7 +274,7 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
                 label={_t("Chat attachments")} // watcha+
                 iconClassName="mx_MessageComposer_upload" // watcha+
             />
-            } {/* watcha+ */}
+            /* watcha+ */ }
 
             <IconizedContextMenuOption
                 onClick={(ev: ButtonEvent) => {

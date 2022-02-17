@@ -10,7 +10,6 @@ import Field from "../../../elements/Field";
 import Modal from "../../../../../Modal";
 import SettingsStore from "../../../../../settings/SettingsStore";
 import Spinner from "../../../elements/Spinner";
-
 import NextcloudShareDialog from "../../../dialogs/watcha_NextcloudShareDialog";
 import useSafeState from "../../../../../hooks/watcha_useSafeState";
 
@@ -19,7 +18,7 @@ interface IProps {
 }
 
 const NextcloudDocumentsSettingsTab: React.FC<IProps> = ({ roomId }) => {
-    const [isBusy, setIsBusy] = useSafeState<boolean>(false);
+    const [isBusy, setIsBusy] = useSafeState(false) as [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     const nextcloudShare = useSettingValue<string>("nextcloudShare", roomId);
 
     const onShare = async (): Promise<void> => {
@@ -70,22 +69,22 @@ const NextcloudDocumentsSettingsTab: React.FC<IProps> = ({ roomId }) => {
         );
         stopSharingButton = (
             <AccessibleButton kind="danger_outline" onClick={onUnshare} disabled={isBusy}>
-                {_t("Stop sharing")}
+                { _t("Stop sharing") }
             </AccessibleButton>
         );
     }
 
     return (
         <div className="mx_SettingsTab">
-            <div className="mx_SettingsTab_heading">{_t("Document sharing")}</div>
+            <div className="mx_SettingsTab_heading">{ _t("Document sharing") }</div>
             <div className="mx_SettingsTab_section">
-                <div className="mx_SettingsTab_subsectionText">{notice}</div>
-                {sharedFolderField}
+                <div className="mx_SettingsTab_subsectionText">{ notice }</div>
+                { sharedFolderField }
                 <div className="watcha_DocumentsSettingsTab_Buttons">
-                    {stopSharingButton}
-                    {isBusy && <Spinner />}
+                    { stopSharingButton }
+                    { isBusy && <Spinner /> }
                     <AccessibleButton kind="primary" onClick={onShare} disabled={isBusy}>
-                        {_t(nextcloudShare ? "Change the shared folder" : "Share a folder")}
+                        { _t(nextcloudShare ? "Change the shared folder" : "Share a folder") }
                     </AccessibleButton>
                 </div>
             </div>

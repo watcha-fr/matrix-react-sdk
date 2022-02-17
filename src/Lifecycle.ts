@@ -419,7 +419,7 @@ export async function restoreFromLocalStorage(opts?: { ignoreGuest?: boolean }):
 
     /* watcha!
     const { hsUrl, isUrl, hasAccessToken, accessToken, userId, deviceId, isGuest } = await getStoredSessionVars();
-    !watcha */
+    !watcha *//* eslint-disable-next-line max-len */
     const { hsUrl, isUrl, hasAccessToken, accessToken, userId, deviceId, isGuest, isPartner } = await getStoredSessionVars(); // watcha+
 
     if (hasAccessToken && !accessToken) {

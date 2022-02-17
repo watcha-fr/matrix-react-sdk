@@ -44,6 +44,7 @@ import { MatrixClientPeg } from "./MatrixClientPeg";
 import { ROOM_SECURITY_TAB } from "./components/views/dialogs/RoomSettingsDialog";
 import AccessibleButton from './components/views/elements/AccessibleButton';
 import RightPanelStore from './stores/right-panel/RightPanelStore';
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */// watcha+
 import UserIdentifierCustomisations from './customisations/UserIdentifier';
 
 export function getSenderName(event: MatrixEvent): string {
@@ -492,7 +493,6 @@ function textForHistoryVisibilityEvent(event: MatrixEvent): () => string | null 
 // Currently will only display a change if a user's power level is changed
 function textForPowerEvent(event: MatrixEvent): () => string | null {
     const senderName = getSenderName(event);
-    const room = MatrixClientPeg.get().getRoom(event.getRoomId()); // watcha+
     if (!event.getPrevContent() || !event.getPrevContent().users ||
         !event.getContent() || !event.getContent().users) {
         return null;
@@ -529,7 +529,7 @@ function textForPowerEvent(event: MatrixEvent): () => string | null {
             /* watcha!
             const name = UserIdentifierCustomisations.getDisplayUserIdentifier(userId, { roomId: event.getRoomId() });
             !watcha */
-            const name = room?.getMember(userId)?.rawDisplayName || UserIdentifierCustomisations.getDisplayUserIdentifier(userId, { roomId: event.getRoomId() }); // watcha+
+            const name = getRoomMemberDisplayname(event, userId); // watcha+
             diffs.push({ userId, name, from, to });
         }
     });

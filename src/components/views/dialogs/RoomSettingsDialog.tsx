@@ -104,7 +104,8 @@ export default class RoomSettingsDialog extends React.Component<IProps, IState> 
             <GeneralRoomSettingsTab roomId={this.props.roomId} />,
         ));
         // watcha+
-        const showNextcloudFeature = SettingsStore.getValue("UIFeature.watcha_Nextcloud") && !MatrixClientPeg.get().isPartner();
+        const showNextcloudFeature =
+            SettingsStore.getValue("UIFeature.watcha_Nextcloud") && !MatrixClientPeg.get().isPartner();
         if (showNextcloudFeature) {
             const canShareFolder = SettingsStore.canSetValue("nextcloudShare", this.props.roomId, SettingLevel.ROOM);
             if (canShareFolder) {
@@ -113,8 +114,8 @@ export default class RoomSettingsDialog extends React.Component<IProps, IState> 
                         ROOM_NEXTCLOUD_DOCUMENTS_TAB,
                         _td("Documents"),
                         "mx_RoomSettingsDialog_nextcloudDocumentsIcon",
-                        <NextcloudDocumentsSettingsTab roomId={this.props.roomId} />
-                    )
+                        <NextcloudDocumentsSettingsTab roomId={this.props.roomId} />,
+                    ),
                 );
             }
             const client = MatrixClientPeg.get();
@@ -126,8 +127,8 @@ export default class RoomSettingsDialog extends React.Component<IProps, IState> 
                         ROOM_NEXTCLOUD_CALENDAR_TAB,
                         _td("Calendars and tasks"),
                         "mx_RoomSettingsDialog_nextcloudCalendarIcon",
-                        <NextcloudCalendarSettingsTab roomId={this.props.roomId} />
-                    )
+                        <NextcloudCalendarSettingsTab roomId={this.props.roomId} />,
+                    ),
                 );
             }
         }

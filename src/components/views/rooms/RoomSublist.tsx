@@ -658,12 +658,12 @@ export default class RoomSublist extends React.Component<IProps, IState> {
                     );
 
                     let addRoomButton = null;
-                    if (!MatrixClientPeg.get().isPartner()) { // watcha+ 
+                    if (!MatrixClientPeg.get().isPartner()) { /* eslint-disable indent */// watcha+
                     if (this.props.AuxButtonComponent) {
                         const AuxButtonComponent = this.props.AuxButtonComponent;
                         addRoomButton = <AuxButtonComponent tabIndex={tabIndex} />;
                     }
-                    } // watcha+  
+                    } /* eslint-enable indent */// watcha+
 
                     const collapseClasses = classNames({
                         'mx_RoomSublist_collapseBtn': true,

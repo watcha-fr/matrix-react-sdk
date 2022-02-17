@@ -1505,9 +1505,9 @@ const BasicUserInfo: React.FC<{
     return <React.Fragment>
         { memberDetails }
 
-        { showE2EEUI && <> {/* watcha+ */}
+        { showE2EEUI && <> { /* eslint-disable-next-line indent *//* watcha+ */ }
         { securitySection }
-        </> } {/* watcha+ */}
+        </> /* watcha+ */ }
         <UserOptionsSection
             canInvite={roomPermissions.canInvite}
             isIgnored={isIgnored}

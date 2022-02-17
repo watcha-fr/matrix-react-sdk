@@ -7,7 +7,6 @@ import DialogButtons from "../elements/DialogButtons";
 import Field from "../elements/Field";
 import SettingsStore from "../../../settings/SettingsStore";
 import Spinner from "../elements/Spinner";
-
 import { getNextcloudBaseUrl, getDocumentSelectorUrl } from "../../../utils/watcha_nextcloudUtils";
 
 interface IProps {
@@ -51,7 +50,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
                 initUrlRef.current = url;
                 urlRef.current = url;
                 setTarget(url);
-            }
+            },
         );
         return () => {
             SettingsStore.unwatchSetting(_nextcloudShareWatcherRef);
@@ -78,7 +77,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
                 {...{ onFinished }}
             >
                 <div className="mx_Dialog_content">
-                    {busy && <Spinner />}
+                    { busy && <Spinner /> }
                     <iframe
                         className={classNames({
                             "watcha_NextcloudShareDialog_iframe-hidden": busy,
@@ -87,6 +86,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
                         onLoad={() => {
                             setBusy(false);
                         }}
+                        title={_t("Document sharing")}
                     />
                     <Field
                         className={classNames({

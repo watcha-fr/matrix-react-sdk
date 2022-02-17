@@ -24,7 +24,7 @@ export function getNextcloudBaseUrl() {
     const url = new URL(
         SdkConfig.get().watcha_nextcloud_base_url ||
             getNextcloudWellKnown()?.base_url ||
-            window.location.origin + "/nextcloud"
+            window.location.origin + "/nextcloud",
     );
     if (!url.pathname.endsWith("/")) {
         url.pathname += "/";
@@ -50,7 +50,7 @@ export function getDocumentWidgetUrl(shareUrl: string, refineTargets: RefineTarg
 export function getWidgetUrl(
     appName: AppNames,
     searchParams = new Map<string, string>(),
-    refineTargets: RefineTargets[] = []
+    refineTargets: RefineTargets[] = [],
 ) {
     refineTargets = [RefineTargets.Widget, ...refineTargets];
     return getIframeUrl(appName, searchParams, refineTargets);
@@ -59,7 +59,7 @@ export function getWidgetUrl(
 function getIframeUrl(
     appName: AppNames,
     searchParams = new Map<string, string>(),
-    refineTargets: RefineTargets[] = []
+    refineTargets: RefineTargets[] = [],
 ) {
     const url = getNextcloudBaseUrl();
     url.pathname += `apps/${appName}`;

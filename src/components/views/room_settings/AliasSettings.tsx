@@ -393,11 +393,11 @@ export default class AliasSettings extends React.Component<IProps, IState> {
                     data-test-id='published-address-fieldset'
                     legend={_t("Published Addresses")}
                     description={<>
-                        { SettingsStore.getValue(UIFeature.watcha_federation) && <> {/* watcha+ */}
+                        { SettingsStore.getValue(UIFeature.watcha_federation) && <> { /* eslint-disable indent *//* watcha+ */ }
                         { isSpaceRoom
                             ? _t("Published addresses can be used by anyone on any server to join your space.")
                             : _t("Published addresses can be used by anyone on any server to join your room.") }
-                        </> } {/* watcha+ */}
+                        </> /* eslint-enable indent *//* watcha+ */ }
                         &nbsp;
                         { _t("To publish an address, it needs to be set as a local address first.") }
                     </>}
@@ -439,7 +439,7 @@ export default class AliasSettings extends React.Component<IProps, IState> {
                         placeholder={_t('New published address (e.g. #alias:server)')}
                         roomId={this.props.roomId}
                     />
-                    } {/* watcha+ */}
+                    /* watcha+ */ }
                 </SettingsFieldset>
                 <SettingsFieldset
                     data-test-id='local-address-fieldset'

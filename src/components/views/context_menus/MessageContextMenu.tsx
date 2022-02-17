@@ -151,7 +151,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
                 }
             }
         }
-    }
+    };
     // +watcha
 
     private checkPermissions = (): void => {
@@ -502,7 +502,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
         }
 
         let reportEventButton: JSX.Element;
-        if (SettingsStore.getValue(UIFeature.watcha_reportEvent)) { // watcha+
+        if (SettingsStore.getValue(UIFeature.watcha_reportEvent)) { /* eslint-disable indent */// watcha+
         if (mxEvent.getSender() !== me) {
             reportEventButton = (
                 <IconizedContextMenuOption
@@ -512,7 +512,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
                 />
             );
         }
-        } // watcha+
+        } /* eslint-enable indent */// watcha+
 
         const { timelineRenderingType } = this.context;
         const isThread = (

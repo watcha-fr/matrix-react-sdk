@@ -71,6 +71,7 @@ export default class MemberAvatar extends React.Component<IProps, IState> {
     private static getState(props: IProps): IState {
         if (props.member?.name) {
             let imageUrl = null;
+            /* eslint-disable-next-line @typescript-eslint/no-unused-vars */// watcha+
             const userTitle = UserIdentifierCustomisations.getDisplayUserIdentifier(
                 props.member.userId, { roomId: props.member?.roomId },
             );

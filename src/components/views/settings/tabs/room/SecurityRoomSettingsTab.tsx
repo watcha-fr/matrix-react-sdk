@@ -445,7 +445,7 @@ export default class SecurityRoomSettingsTab extends React.Component<IProps, ISt
                     />
                     { encryptionSettings }
                 </SettingsFieldset>
-                } {/* watcha+ */}
+                /* watcha+ */ }
 
                 { this.renderJoinRule() }
 

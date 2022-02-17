@@ -437,10 +437,8 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         if (crossSigningIsSetUp) {
             if (SecurityCustomisations.SHOW_ENCRYPTION_SETUP_UI === false) {
                 this.onLoggedIn();
-            // watcha+
-            } else if (!SettingsStore.getValue("showE2EEUI")) {
-            this.onLoggedIn();
-            // +watcha
+            } else if (!SettingsStore.getValue("showE2EEUI")) { // watcha+
+                this.onLoggedIn(); // watcha+
             } else {
                 this.setStateForNewView({ view: Views.COMPLETE_SECURITY });
             }
@@ -1480,8 +1478,8 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
     private onLoggedOut() {
         // watcha+
         if (SdkConfig.get().sso_immediate_redirect === true) {
-            this.setStateForNewView({view: Views.LOADING});
-            return
+            this.setStateForNewView({ view: Views.LOADING });
+            return;
         }
         // +watcha
         this.viewLogin({

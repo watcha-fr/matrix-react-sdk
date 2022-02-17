@@ -321,7 +321,7 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(({
         { children }
         { !client.isPartner() && // watcha+
         <CreateSpaceButton isPanelCollapsed={isPanelCollapsed} setPanelCollapsed={setPanelCollapsed} />
-        } {/* watcha+ */}
+        /* watcha+ */ }
     </IndicatorScrollbar>;
 });
 

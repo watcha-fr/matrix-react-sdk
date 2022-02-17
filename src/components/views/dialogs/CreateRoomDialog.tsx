@@ -374,7 +374,7 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
                             />
                             <p>{ federateLabel }</p>
                         </details>
-                        } {/* watcha+ */}
+                        /* watcha+ */ }
                     </div>
                 </form>
                 <DialogButtons primaryButton={_t('Create Room')}

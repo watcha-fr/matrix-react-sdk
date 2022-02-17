@@ -8,7 +8,6 @@ import BaseCard from "../views/right_panel/BaseCard";
 import defaultDispatcher from "../../dispatcher/dispatcher";
 import SettingsStore from "../../settings/SettingsStore";
 import Spinner from "../views/elements/Spinner";
-
 import { getDocumentWidgetUrl } from "../../utils/watcha_nextcloudUtils";
 
 export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
@@ -34,7 +33,7 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
         if (nextcloudShare) {
             panel = (
                 <>
-                    {iframeLoading && <Spinner />}
+                    { iframeLoading && <Spinner /> }
                     <iframe
                         id="watcha_NextcloudPanel"
                         className={classNames("watcha_NextcloudPanel", {
@@ -44,6 +43,7 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
                         onLoad={() => {
                             setIframeLoading(false);
                         }}
+                        title={_t("Document sharing")}
                     />
                 </>
             );
@@ -56,18 +56,18 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
                     {
                         span: sub => (
                             <span className="watcha_NextcloudPanel_settingsIcon-noWrap" onClick={onRoomSettingsClick}>
-                                {sub}
+                                { sub }
                             </span>
                         ),
-                    }
+                    },
                 );
             }
             panel = (
                 <div className="mx_RoomView_messageListWrapper">
                     <div className="mx_RoomView_empty">
                         <div className={classNames("mx_RightPanel_empty", emptyClass)}>
-                            <h2>{empty}</h2>
-                            <p>{hint}</p>
+                            <h2>{ empty }</h2>
+                            <p>{ hint }</p>
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
     }
     return (
         <BaseCard className="mx_FilePanel" {...{ onClose }} previousPhase={RightPanelPhases.RoomSummary}>
-            {panel}
+            { panel }
         </BaseCard>
     );
 };
