@@ -153,7 +153,10 @@ export enum Views {
     SOFT_LOGOUT,
 }
 
+/* watcha!
 const AUTH_SCREENS = ["register", "login", "forgot_password", "start_sso", "start_cas", "welcome"];
+!watcha */
+const AUTH_SCREENS = ["register", "login", "forgot_password", "start_sso", "start_cas", "welcome", "partner"]; // watcha+
 
 // Actions that are redirected through the onboarding process prior to being
 // re-dispatched. NOTE: some actions are non-trivial and would require
