@@ -372,6 +372,8 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         // by default. We will conditionally show it depending on whether we can
         // detect MSC3030 support (see LabUserSettingsTab.tsx).
         // labsGroup: LabGroup.Messaging,
+        isFeature: true, // watcha+
+        labsGroup: LabGroup.Messaging, // watcha+
         displayName: _td("Jump to date (adds /jumptodate and jump to date headers)"),
         supportedLevels: LEVELS_FEATURE,
         default: false,
