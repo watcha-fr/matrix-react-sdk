@@ -118,6 +118,7 @@ import AccessibleButton from "../views/elements/AccessibleButton";
 import { ActionPayload } from "../../dispatcher/payloads";
 import { SummarizedNotificationState } from "../../stores/notifications/SummarizedNotificationState";
 import GenericToast from '../views/toasts/GenericToast';
+import { parseSsoRedirectOptions } from "../../SdkConfig"; // watcha+
 import { SSO_LANGUAGE_KEY } from "../../Login"; // watcha+
 
 /** constants for MatrixChat.state.view */
@@ -1480,7 +1481,8 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
      */
     private onLoggedOut() {
         // watcha+
-        if (SdkConfig.get().sso_immediate_redirect === true) {
+        const { immediate, on_welcome_page: onWelcomePage } = parseSsoRedirectOptions(SdkConfig.get());
+        if ([immediate, onWelcomePage].includes(true)) {
             this.setStateForNewView({ view: Views.LOADING });
             return;
         }
