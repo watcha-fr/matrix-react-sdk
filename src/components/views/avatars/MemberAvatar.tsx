@@ -81,6 +81,7 @@ export default class MemberAvatar extends React.PureComponent<IProps, IState> {
         }
         if (member?.name) {
             let imageUrl = null;
+            /* eslint-disable-next-line @typescript-eslint/no-unused-vars */// watcha+
             const userTitle = UserIdentifierCustomisations.getDisplayUserIdentifier(
                 member.userId, { roomId: member?.roomId },
             );
@@ -93,7 +94,10 @@ export default class MemberAvatar extends React.PureComponent<IProps, IState> {
             }
             return {
                 name: member.name,
+                /* watcha!
                 title: props.title || userTitle,
+                !watcha */
+                title: props.title, // watcha+
                 imageUrl: imageUrl,
             };
         } else if (props.fallbackUserId) {

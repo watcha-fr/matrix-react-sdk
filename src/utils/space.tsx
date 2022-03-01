@@ -46,6 +46,7 @@ import { ButtonEvent } from "../components/views/elements/AccessibleButton";
 import { AfterLeaveRoomPayload } from "../dispatcher/payloads/AfterLeaveRoomPayload";
 
 export const shouldShowSpaceSettings = (space: Room) => {
+    if (space.client.isPartner()) return false; // watcha+
     const userId = space.client.getUserId();
     return space.getMyMembership() === "join"
         && (space.currentState.maySendStateEvent(EventType.RoomAvatar, userId)

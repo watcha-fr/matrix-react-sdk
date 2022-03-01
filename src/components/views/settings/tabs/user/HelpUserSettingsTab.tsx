@@ -140,6 +140,7 @@ export default class HelpUserSettingsTab extends React.Component<IProps, IState>
             <div className='mx_SettingsTab_section'>
                 <span className='mx_SettingsTab_subheading'>{ _t("Credits") }</span>
                 <ul>
+                    { /* watcha!
                     <li>
                         The <a href="themes/element/img/backgrounds/lake.jpg" rel="noreferrer noopener" target="_blank">
                             default cover photo
@@ -151,6 +152,7 @@ export default class HelpUserSettingsTab extends React.Component<IProps, IState>
                             CC-BY-SA 4.0
                         </a>.
                     </li>
+                    !watcha */ }
                     <li>
                         The <a
                             href="https://github.com/matrix-org/twemoji-colr"
@@ -202,7 +204,10 @@ export default class HelpUserSettingsTab extends React.Component<IProps, IState>
             },
             {
                 'a': (sub) => <a
+                    /* watcha!
                     href="https://element.io/help"
+                    !watcha */
+                    href="https://watcha.fr" // watcha+
                     rel="noreferrer noopener"
                     target="_blank"
                 >
@@ -238,6 +243,19 @@ export default class HelpUserSettingsTab extends React.Component<IProps, IState>
             );
         }
 
+        // watcha+
+        const helpLinks = SdkConfig.get().branding?.helpLinks || [];
+        if (helpLinks.length) {
+            faqText = helpLinks.map(linkEntry => (
+                <p key={linkEntry.text}>
+                    <a href={linkEntry.url} target="_blank" rel="noreferrer noopener">
+                        { linkEntry.text }
+                    </a>
+                </p>
+            ));
+        }
+        // +watcha
+
         let updateButton = null;
         if (this.state.canUpdate) {
             updateButton = <UpdateCheckButton />;
@@ -247,8 +265,11 @@ export default class HelpUserSettingsTab extends React.Component<IProps, IState>
         if (SdkConfig.get().bug_report_endpoint_url) {
             bugReportingSection = (
                 <div className="mx_SettingsTab_section">
+                    { /* watcha!
                     <span className='mx_SettingsTab_subheading'>{ _t('Bug reporting') }</span>
+                    !watcha */ }
                     <div className='mx_SettingsTab_subsectionText'>
+                        { /* watcha!
                         { _t(
                             "If you've submitted a bug via GitHub, debug logs can help " +
                             "us track down the problem. Debug logs contain application " +
@@ -272,6 +293,7 @@ export default class HelpUserSettingsTab extends React.Component<IProps, IState>
                                 >{ sub }</a>,
                             },
                         ) }
+                        !watcha */ }
                     </div>
                 </div>
             );

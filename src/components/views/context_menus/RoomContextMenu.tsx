@@ -45,12 +45,15 @@ import DMRoomMap from "../../../utils/DMRoomMap";
 import { Action } from "../../../dispatcher/actions";
 import PosthogTrackers from "../../../PosthogTrackers";
 import { ViewRoomPayload } from "../../../dispatcher/payloads/ViewRoomPayload";
+import { useSettingValue } from "../../../hooks/useSettings"; // watcha+
 
 interface IProps extends IContextMenuProps {
     room: Room;
 }
 
 const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
+    const showAttachmentsButton = useSettingValue("showExploreChatAttachmentsButton"); // watcha+
+    const showShareRoomButton = useSettingValue("showShareRoomButton"); // watcha+
     const cli = useContext(MatrixClientContext);
     const roomTags = useEventEmitterState(
         RoomListStore.instance,
@@ -212,6 +215,7 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
             </span>
         </IconizedContextMenuOption>;
 
+        if (showShareRoomButton) { /* eslint-disable indent */// watcha+
         copyLinkOption = <IconizedContextMenuOption
             onClick={(ev: ButtonEvent) => {
                 ev.preventDefault();
@@ -226,6 +230,7 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
             label={_t("Copy room link")}
             iconClassName="mx_RoomTile_iconCopyLink"
         />;
+        } /* eslint-enable indent */// watcha+
     }
 
     const onTagRoom = (ev: ButtonEvent, tagId: TagID) => {
@@ -265,6 +270,7 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
             { favouriteOption }
             { peopleOption }
 
+            { showAttachmentsButton && // watcha+
             <IconizedContextMenuOption
                 onClick={(ev: ButtonEvent) => {
                     ev.preventDefault();
@@ -274,9 +280,14 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
                     RightPanelStore.instance.pushCard({ phase: RightPanelPhases.FilePanel }, false);
                     onFinished();
                 }}
+                /* watcha!
                 label={_t("Files")}
                 iconClassName="mx_RoomTile_iconFiles"
+                !watcha */
+                label={_t("Chat attachments")} // watcha+
+                iconClassName="mx_MessageComposer_upload" // watcha+
             />
+            /* watcha+ */ }
 
             <IconizedContextMenuOption
                 onClick={(ev: ButtonEvent) => {

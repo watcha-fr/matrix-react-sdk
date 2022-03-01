@@ -1,0 +1,40 @@
+$watcha-accent: hsl(180, 100%, 35%);
+$watcha-accent-secondary: hsl(180, 100%, 20%);
+$watcha-dark: #15191e;
+
+$accent: $watcha-accent;
+
+.mx_LeftPanel_wrapper {
+    color: white !important;
+    background-color: $watcha-dark;
+
+    .mx_BaseAvatar_image {
+        background-color: unset;
+    }
+}
+
+.mx_RoomTile {
+    &.mx_RoomTile_selected {
+        background: $watcha-accent !important;
+
+        .mx_DecoratedRoomAvatar {
+            .mx_DecoratedRoomAvatar_icon {
+                &:not(.mx_DecoratedRoomAvatar_icon_offline, .mx_DecoratedRoomAvatar_icon_globe):before {
+                    background: $watcha-accent-secondary !important;
+                }
+            }
+
+            .mx_DecoratedRoomAvatar_icon_globe {
+                background: $watcha-dark !important;
+            }
+        }
+    }
+
+    &:not(.mx_RoomTile_selected) {
+        &.mx_RoomTile_hasMenuOpen,
+        &:focus-within,
+        &:hover {
+            background-color: $watcha-accent-secondary !important;
+        }
+    }
+}

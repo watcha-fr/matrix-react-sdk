@@ -42,6 +42,16 @@ limitations under the License.
     mask-image: url('$(res)/img/element-icons/room/settings/advanced.svg');
 }
 
+// watcha+
+.mx_RoomSettingsDialog_nextcloudDocumentsIcon::before {
+    mask-image: url('$(res)/img/watcha/watcha_documents.svg');
+}
+
+.mx_RoomSettingsDialog_nextcloudCalendarIcon::before {
+    mask-image: url('$(res)/img/watcha/watcha_calendar.svg');
+}
+// +watcha
+
 .mx_RoomSettingsDialog .mx_Dialog_title {
     -ms-text-overflow: ellipsis;
     text-overflow: ellipsis;

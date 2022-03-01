@@ -54,6 +54,7 @@ import { CommunityPrototypeStore, IRoomProfile } from "../../../stores/Community
 import { replaceableComponent } from "../../../utils/replaceableComponent";
 import PosthogTrackers from "../../../PosthogTrackers";
 import { ViewRoomPayload } from "../../../dispatcher/payloads/ViewRoomPayload";
+import SettingsStore from "../../../settings/SettingsStore"; // watcha+
 
 interface IProps {
     room: Room;
@@ -533,11 +534,13 @@ export default class RoomTile extends React.PureComponent<IProps, IState> {
                             iconClassName="mx_RoomTile_iconInvite"
                         />
                     ) : null }
+                    { SettingsStore.getValue("showShareRoomButton") && <> { /* eslint-disable indent *//* watcha+ */ }
                     { !isDm ? <IconizedContextMenuOption
                         onClick={this.onCopyRoomClick}
                         label={_t("Copy room link")}
                         iconClassName="mx_RoomTile_iconCopyLink"
                     /> : null }
+                    </> /* eslint-enable indent *//* watcha+ */ }
                     <IconizedContextMenuOption
                         onClick={this.onOpenRoomSettings}
                         label={_t("Settings")}
