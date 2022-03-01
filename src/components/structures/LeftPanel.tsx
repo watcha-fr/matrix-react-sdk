@@ -45,6 +45,7 @@ import RoomBreadcrumbs from "../views/rooms/RoomBreadcrumbs";
 import SettingsStore from "../../settings/SettingsStore";
 import UserMenu from "./UserMenu";
 import { KeyBindingAction } from "../../accessibility/KeyboardShortcuts";
+import { MatrixClientPeg } from "../../MatrixClientPeg"; // watcha+
 
 interface IProps {
     isMinimized: boolean;
@@ -367,11 +368,13 @@ export default class LeftPanel extends React.Component<IProps, IState> {
         if (this.state.showBreadcrumbs === BreadcrumbsMode.Labs) {
             rightButton = <RecentlyViewedButton />;
         } else if (this.state.activeSpace === MetaSpace.Home) {
+            if (!MatrixClientPeg.get().isPartner()) { /* eslint-disable indent */// watcha+
             rightButton = <AccessibleTooltipButton
                 className="mx_LeftPanel_exploreButton"
                 onClick={this.onExplore}
                 title={_t("Explore rooms")}
             />;
+            } /* eslint-enable indent */// watcha+
         }
 
         return (

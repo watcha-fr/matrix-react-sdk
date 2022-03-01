@@ -123,11 +123,16 @@ import { ViewHomePagePayload } from '../../dispatcher/payloads/ViewHomePagePaylo
 import { AfterLeaveRoomPayload } from '../../dispatcher/payloads/AfterLeaveRoomPayload';
 import { DoAfterSyncPreparedPayload } from '../../dispatcher/payloads/DoAfterSyncPreparedPayload';
 import { ViewStartChatOrReusePayload } from '../../dispatcher/payloads/ViewStartChatOrReusePayload';
+import { parseSsoRedirectOptions } from "../../SdkConfig"; // watcha+
+import { SSO_LANGUAGE_KEY } from "../../Login"; // watcha+
 
 // legacy export
 export { default as Views } from "../../Views";
 
+/* watcha!
 const AUTH_SCREENS = ["register", "login", "forgot_password", "start_sso", "start_cas", "welcome"];
+!watcha */
+const AUTH_SCREENS = ["register", "login", "forgot_password", "start_sso", "start_cas", "welcome", "partner"]; // watcha+
 
 // Actions that are redirected through the onboarding process prior to being
 // re-dispatched. NOTE: some actions are non-trivial and would require
@@ -320,6 +325,15 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                     this.props.onTokenLoginCompleted();
                 }
 
+                // watcha+
+                const language = localStorage.getItem(SSO_LANGUAGE_KEY);
+                if (language) {
+                    localStorage.removeItem(SSO_LANGUAGE_KEY);
+                    SettingsStore.setValue("language", null, SettingLevel.DEVICE, language);
+                    PlatformPeg.get().reload();
+                }
+                // +watcha
+
                 if (loggedIn) {
                     this.tokenLogin = true;
 
@@ -381,6 +395,8 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         if (crossSigningIsSetUp) {
             if (SecurityCustomisations.SHOW_ENCRYPTION_SETUP_UI === false) {
                 this.onLoggedIn();
+            } else if (!SettingsStore.getValue("showE2EEUI")) { // watcha+
+                this.onLoggedIn(); // watcha+
             } else {
                 this.setStateForNewView({ view: Views.COMPLETE_SECURITY });
             }
@@ -1374,6 +1390,13 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
      * Called when the session is logged out
      */
     private onLoggedOut() {
+        // watcha+
+        const { immediate, on_welcome_page: onWelcomePage } = parseSsoRedirectOptions(SdkConfig.get());
+        if ([immediate, onWelcomePage].includes(true)) {
+            this.setStateForNewView({ view: Views.LOADING });
+            return;
+        }
+        // +watcha
         this.viewLogin({
             ready: false,
             collapseLhs: false,

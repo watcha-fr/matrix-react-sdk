@@ -90,6 +90,7 @@ const UserWelcomeTop = () => {
 };
 
 const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
+    const client = useContext(MatrixClientContext); // watcha+
     const config = SdkConfig.get();
     const pageUrl = getHomePageUrl(config);
 
@@ -119,6 +120,7 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
     return <AutoHideScrollbar className="mx_HomePage mx_HomePage_default">
         <div className="mx_HomePage_default_wrapper">
             { introSection }
+            { !client.isPartner() && // watcha+
             <div className="mx_HomePage_default_buttons">
                 <AccessibleButton onClick={onClickSendDm} className="mx_HomePage_button_sendDm">
                     { _tDom("Send a Direct Message") }
@@ -130,6 +132,7 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
                     { _tDom("Create a Group Chat") }
                 </AccessibleButton>
             </div>
+            /* watcha+ */ }
         </div>
     </AutoHideScrollbar>;
 };

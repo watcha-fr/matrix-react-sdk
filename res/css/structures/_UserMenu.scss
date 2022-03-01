@@ -203,6 +203,20 @@ limitations under the License.
     .mx_UserMenu_iconSignOut::before {
         mask-image: url('$(res)/img/element-icons/leave.svg');
     }
+
+    // watcha+
+    .mx_UserMenu_iconAdministration::before {
+        mask-image: url('$(res)/img/watcha/watcha_admin.svg');
+    }
+
+    .mx_UserMenu_iconNextcloud::before {
+        mask-image: url('$(res)/img/element-icons/room/files.svg');
+    }
+
+    .mx_UserMenu_iconJitsi::before {
+        mask-image: url('$(res)/img/element-icons/call/video-call.svg');
+    }
+    // +watcha
 }
 
 .mx_UserMenu_CustomStatusSection {

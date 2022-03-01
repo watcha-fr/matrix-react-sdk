@@ -318,3 +318,13 @@
 @import "./views/voip/_DialPadModal.scss";
 @import "./views/voip/_PiPContainer.scss";
 @import "./views/voip/_VideoFeed.scss";
+// watcha+
+@import "./structures/_watcha_NextcloudPanel.scss";
+@import "./structures/_watcha_PartnerBar.scss";
+@import "./views/dialogs/_watcha_InviteDialog.scss";
+@import "./views/dialogs/_watcha_InvitePartnerDialog.scss";
+@import "./views/dialogs/_watcha_NextcloudShareDialog.scss";
+@import "./views/settings/tabs/room/_watcha_CalendarSettingsTab.scss";
+@import "./views/settings/tabs/room/_watcha_DocumentsSettingsTab.scss";
+@import "./views/settings/tabs/user/_watcha_SSOProfile.scss";
+// +watcha

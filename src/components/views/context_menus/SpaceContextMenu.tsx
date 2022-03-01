@@ -181,6 +181,7 @@ const SpaceContextMenu = ({ space, hideHeader, onFinished, ...props }: IProps) =
             }
         </>;
     }
+    if (!canAddRooms && !canAddSubSpaces) newRoomSection = null; // watcha+
 
     const onPreferencesClick = (ev: ButtonEvent) => {
         ev.preventDefault();
@@ -202,6 +203,7 @@ const SpaceContextMenu = ({ space, hideHeader, onFinished, ...props }: IProps) =
         onFinished();
     };
 
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */// watcha+
     const onExploreRoomsClick = (ev: ButtonEvent) => {
         PosthogTrackers.trackInteraction("WebSpaceContextMenuExploreRoomsItem", ev);
         openSpace(ev);
@@ -228,11 +230,13 @@ const SpaceContextMenu = ({ space, hideHeader, onFinished, ...props }: IProps) =
                 onClick={onHomeClick}
             />
             { inviteOption }
+            { /* watcha!
             <IconizedContextMenuOption
                 iconClassName="mx_SpacePanel_iconExplore"
                 label={canAddRooms ? _t("Manage & explore rooms") : _t("Explore rooms")}
                 onClick={onExploreRoomsClick}
             />
+            !watcha */ }
             <IconizedContextMenuOption
                 iconClassName="mx_SpacePanel_iconPreferences"
                 label={_t("Preferences")}
