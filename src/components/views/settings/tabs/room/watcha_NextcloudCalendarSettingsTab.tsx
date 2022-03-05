@@ -308,7 +308,7 @@ const SharedCalendar: React.FC<ISharedCalendarProps> = ({ roomId, stateKey, cale
                         "watcha_CalendarSettingsTab_SharedCalendar_calendarIcon"
                     } />
                     <span className={
-                        "watcha_CalendarSettingsTab_SharedCalendar_maskedIcon" +
+                        "watcha_CalendarSettingsTab_SharedCalendar_maskedIcon " +
                         "watcha_CalendarSettingsTab_SharedCalendar_tasksIcon"
                     } />
                 </div>
@@ -329,7 +329,7 @@ const SharedCalendar: React.FC<ISharedCalendarProps> = ({ roomId, stateKey, cale
             icons = (
                 <span
                     className={
-                        "watcha_CalendarSettingsTab_SharedCalendar_maskedIcon" +
+                        "watcha_CalendarSettingsTab_SharedCalendar_maskedIcon " +
                         "watcha_CalendarSettingsTab_SharedCalendar_tasksIcon"
                     }
                     title={_t("To-do list") + displayName}
