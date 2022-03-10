@@ -994,6 +994,10 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         default: true,
     },
     // watcha+
+    [UIFeature.watcha_administration]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: true,
+    },
     [UIFeature.watcha_E2EEUISetting]: {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
@@ -1003,6 +1007,10 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         default: true,
     },
     [UIFeature.watcha_Nextcloud]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: true,
+    },
+    [UIFeature.watcha_partner]: {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
     },

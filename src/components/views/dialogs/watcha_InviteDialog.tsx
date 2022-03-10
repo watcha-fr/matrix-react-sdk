@@ -21,9 +21,11 @@ import DMRoomMap from "../../../utils/DMRoomMap";
 import EntityTile from "../rooms/EntityTile";
 import Modal from "../../../Modal";
 import SearchBox from "../../structures/SearchBox";
+import SettingsStore from "../../../settings/SettingsStore";
 import Spinner from "../elements/Spinner";
 import Tooltip from "../elements/Tooltip";
 import InvitePartnerDialog from "./watcha_InvitePartnerDialog";
+import { UIFeature } from "../../../settings/UIFeature";
 
 const VALIDATION_THROTTLE_MS = 500;
 const AVATAR_SIZE = 36;
@@ -521,18 +523,20 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
                             </SelectedList>
                         </Section>
                     </div>
-                    <AccessibleButton
-                        className="watcha_InviteDialog_invitePartnerButton"
-                        onClick={this.showInvitePartnerDialog}
-                    >
-                        <React.Fragment>
-                            { _t(
-                                "You want to collaborate with a partner from outside your organisation: " +
-                                "invite them by e-mail",
-                            ) }
-                            <img src={require("../../../../res/img/watcha/watcha_paper-plane.svg")} />
-                        </React.Fragment>
-                    </AccessibleButton>
+                    { SettingsStore.getValue(UIFeature.watcha_partner) &&
+                        <AccessibleButton
+                            className="watcha_InviteDialog_invitePartnerButton"
+                            onClick={this.showInvitePartnerDialog}
+                        >
+                            <React.Fragment>
+                                { _t(
+                                    "You want to collaborate with a partner from outside your organisation: " +
+                                    "invite them by e-mail",
+                                ) }
+                                <img src={require("../../../../res/img/watcha/watcha_paper-plane.svg")} />
+                            </React.Fragment>
+                        </AccessibleButton>
+                    }
                 </div>
                 <div className="error">{ errorText }</div>
                 <DialogButtons

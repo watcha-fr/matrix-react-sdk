@@ -505,7 +505,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
                 />
             { /* watcha+ */ }
             </IconizedContextMenuOptionList>
-            { this.state.isSynapseAdministrator &&
+            { SettingsStore.getValue(UIFeature.watcha_administration) && this.state.isSynapseAdministrator &&
                 <IconizedContextMenuOptionList>
                     <IconizedContextMenuOption
                         iconClassName="mx_UserMenu_iconAdministration"
