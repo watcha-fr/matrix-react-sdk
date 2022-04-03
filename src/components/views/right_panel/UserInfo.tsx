@@ -468,7 +468,7 @@ const UserOptionsSection: React.FC<{
     if (!isMe) {
         directMessageButton = <MessageButton userId={member.userId} />;
     }
-    if (shouldShowComponent(UIComponent.InviteUsers)) directMessageButton = null; // watcha+
+    if (!shouldShowComponent(UIComponent.InviteUsers)) directMessageButton = null; // watcha+
 
     return (
         <div className="mx_UserInfo_container">
