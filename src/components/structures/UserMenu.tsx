@@ -402,7 +402,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
     };
 
     private onJitsiClick = () => {
-        const jitsiBaseUrl = "https://" + Jitsi.getInstance().preferredDomain;
+        const jitsiBaseUrl = SdkConfig.get().watcha_jitsi_home_url || "https://" + Jitsi.getInstance().preferredDomain;
         window.open(jitsiBaseUrl);
         this.setState({ contextMenuPosition: null }); // also close the menu
     };
