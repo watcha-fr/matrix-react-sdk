@@ -268,13 +268,20 @@ const onRoomTasksClick = () => {
 // +watcha
 
 const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
+    const cli = useContext(MatrixClientContext);
+
     // watcha+
+    const [showNextcloudButtons, setShowNextcloudButtons] = useState(false);
+    cli.getCapabilities().then(capabilities => {
+        setShowNextcloudButtons(
+            SettingsStore.getValue(UIFeature.watcha_Nextcloud)
+                && (!cli.isPartner() || capabilities.watcha?.external_authentication_for_partners?.enabled),
+        );
+    });
     const showAttachmentsButton = useSettingValue("showExploreChatAttachmentsButton");
     const showShareRoomButton = useSettingValue("showShareRoomButton");
     const showE2EEUI = useSettingValue("showE2EEUI");
     // +watcha
-
-    const cli = useContext(MatrixClientContext);
 
     const onShareRoomClick = () => {
         Modal.createTrackedDialog('share room dialog', '', ShareDialog, {
@@ -335,7 +342,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
             </Button>
             !watcha *//* eslint-disable indent */
             // watcha+
-            SettingsStore.getValue(UIFeature.watcha_Nextcloud) && <>
+            showNextcloudButtons && <>
                 <Button
                     className="mx_RoomSummaryCard_icon_documents"
                     title={_t("Show documents shared with the room")}

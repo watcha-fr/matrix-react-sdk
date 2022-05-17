@@ -849,6 +849,11 @@ async function startMatrixClient(startSyncing = true): Promise<void> {
  * storage. Used after a session has been logged out.
  */
 export async function onLoggedOut(): Promise<void> {
+    // watcha+
+    const client = MatrixClientPeg.get();
+    const isPartner = client.isPartner();
+    const capabilities = await client.getCapabilities();
+    // +watcha
     _isLoggingOut = false;
     // Ensure that we dispatch a view change **before** stopping the client so
     // so that React components unmount first. This avoids React soft crashes
@@ -856,7 +861,10 @@ export async function onLoggedOut(): Promise<void> {
     dis.dispatch({ action: 'on_logged_out' }, true);
     stopMatrixClient();
     await clearStorage({ deleteEverything: true });
+    /* watcha!
     LifecycleCustomisations.onLoggedOutAndStorageCleared?.();
+    !watcha */
+    LifecycleCustomisations.onLoggedOutAndStorageCleared?.(isPartner, capabilities); // watcha+
 }
 
 /**
