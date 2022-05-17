@@ -404,7 +404,8 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
                         const type = getAddressType(address);
                         if (type === "email") {
                             const invite: IInvite3PID = {
-                                id_server: client.getIdentityServerUrl(true),
+                                // id_server: client.getIdentityServerUrl(true),
+                                id_server: "fake-is.watcha.fr", // until we have an IS
                                 medium: "email",
                                 address,
                             };

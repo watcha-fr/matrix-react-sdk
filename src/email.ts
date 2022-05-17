@@ -33,7 +33,7 @@ export async function isMine(email: string): Promise<boolean> {
 
 export function hasForbiddenDomainForPartner(email: string): boolean {
     const domain = email.split("@")[1];
-    const forbiddenDomains = SdkConfig.get().watcha_forbiddenPartnerDomains;
+    const forbiddenDomains = SdkConfig.get().watcha_forbidden_partner_domains;
     return !!forbiddenDomains?.includes(domain);
 }
 // +watcha

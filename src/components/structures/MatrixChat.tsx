@@ -129,10 +129,8 @@ import { SSO_LANGUAGE_KEY } from "../../Login"; // watcha+
 // legacy export
 export { default as Views } from "../../Views";
 
-/* watcha!
 const AUTH_SCREENS = ["register", "login", "forgot_password", "start_sso", "start_cas", "welcome"];
-!watcha */
-const AUTH_SCREENS = ["register", "login", "forgot_password", "start_sso", "start_cas", "welcome", "partner"]; // watcha+
+AUTH_SCREENS.push("partner"); // watcha+
 
 // Actions that are redirected through the onboarding process prior to being
 // re-dispatched. NOTE: some actions are non-trivial and would require
@@ -1859,6 +1857,13 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 action: 'view_group',
                 group_id: groupId,
             });
+        // watcha+
+        } else if (screen === 'partner') {
+            delete this.props.startingFragmentQueryParams.defaultUsername;
+            dis.dispatch({
+                action: 'start_login',
+            });
+        // +watcha
         } else {
             logger.info("Ignoring showScreen for '%s'", screen);
         }

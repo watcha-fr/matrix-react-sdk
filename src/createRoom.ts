@@ -115,7 +115,7 @@ export default async function createRoom(opts: IOpts): Promise<string | null> {
                     /* watcha!
                     id_server: MatrixClientPeg.get().getIdentityServerUrl(true),
                     !watcha */
-                    id_server: "https://fake-is.watcha.fr", // watcha+ until we have an IS
+                    id_server: "fake-is.watcha.fr", // watcha+ until we have an IS
                     medium: 'email',
                     address: opts.dmUserId,
                 }];
