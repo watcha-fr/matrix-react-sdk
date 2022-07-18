@@ -40,6 +40,7 @@ import { isSecureBackupRequired } from './utils/WellKnownUtils';
 import { ActionPayload } from "./dispatcher/payloads";
 import { Action } from "./dispatcher/actions";
 import { isLoggedIn } from "./utils/login";
+import SettingsStore from "./settings/SettingsStore"; // watcha+
 
 const KEY_BACKUP_POLL_INTERVAL = 5 * 60 * 1000;
 
@@ -223,6 +224,7 @@ export default class DeviceListener {
     }
 
     private async recheck() {
+        if (!SettingsStore.getValue("showE2EEUI")) return; // watcha+
         if (!this.running) return; // we have been stopped
         const cli = MatrixClientPeg.get();
 

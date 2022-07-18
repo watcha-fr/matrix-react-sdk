@@ -50,12 +50,15 @@ import { getKeyBindingsManager } from "../../../KeyBindingsManager";
 import { KeyBindingAction } from "../../../accessibility/KeyboardShortcuts";
 import SettingsStore from "../../../settings/SettingsStore";
 import DevtoolsDialog from "../dialogs/DevtoolsDialog";
+import { useSettingValue } from "../../../hooks/useSettings"; // watcha+
 
 interface IProps extends IContextMenuProps {
     room: Room;
 }
 
 const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
+    const showAttachmentsButton = useSettingValue("showExploreChatAttachmentsButton"); // watcha+
+    const showShareRoomButton = useSettingValue("showShareRoomButton"); // watcha+
     const cli = useContext(MatrixClientContext);
     const roomTags = useEventEmitterState(
         RoomListStore.instance,
@@ -218,6 +221,7 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
             </span>
         </IconizedContextMenuOption>;
 
+        if (showShareRoomButton) { /* eslint-disable indent */// watcha+
         copyLinkOption = <IconizedContextMenuOption
             onClick={(ev: ButtonEvent) => {
                 ev.preventDefault();
@@ -232,9 +236,11 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
             label={_t("Copy room link")}
             iconClassName="mx_RoomTile_iconCopyLink"
         />;
+        } /* eslint-enable indent */// watcha+
     }
 
     let filesOption: JSX.Element;
+    if (showAttachmentsButton) { /* eslint-enable indent */// watcha+
     if (!isVideoRoom) {
         filesOption = <IconizedContextMenuOption
             onClick={(ev: ButtonEvent) => {
@@ -245,10 +251,15 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
                 RightPanelStore.instance.pushCard({ phase: RightPanelPhases.FilePanel }, false);
                 onFinished();
             }}
+            /* watcha!
             label={_t("Files")}
             iconClassName="mx_RoomTile_iconFiles"
+            !watcha */
+            label={_t("Chat attachments")} // watcha+
+            iconClassName="mx_MessageComposer_upload" // watcha+
         />;
     }
+    } /* eslint-enable indent */// watcha+
 
     const pinningEnabled = useFeatureEnabled("feature_pinning");
     const pinCount = usePinnedEvents(pinningEnabled && room)?.length;

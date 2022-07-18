@@ -40,6 +40,7 @@ import { OpenSpaceSettingsPayload } from "../dispatcher/payloads/OpenSpaceSettin
 import { OpenAddExistingToSpaceDialogPayload } from "../dispatcher/payloads/OpenAddExistingToSpaceDialogPayload";
 
 export const shouldShowSpaceSettings = (space: Room) => {
+    if (space.client.isPartner()) return false; // watcha+
     const userId = space.client.getUserId();
     return space.getMyMembership() === "join"
         && (space.currentState.maySendStateEvent(EventType.RoomAvatar, userId)

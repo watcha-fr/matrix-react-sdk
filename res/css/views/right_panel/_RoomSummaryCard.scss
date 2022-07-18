@@ -86,6 +86,12 @@ limitations under the License.
                     mask-image: url('$(res)/img/e2e/warning.svg');
                 }
             }
+
+            // watcha+
+            .watcha_RoomSummaryCard_e2ee_hidden {
+                display: none;
+            }
+            // +watcha
         }
     }
 
@@ -267,3 +273,17 @@ limitations under the License.
 .mx_RoomSummaryCard_icon_export::before {
     mask-image: url('$(res)/img/element-icons/export.svg');
 }
+
+// watcha+
+.mx_RoomSummaryCard_icon_documents::before {
+    mask-image: url("$(res)/img/watcha/watcha_documents.svg");
+}
+
+.mx_RoomSummaryCard_icon_calendar::before {
+    mask-image: url("$(res)/img/watcha/watcha_calendar.svg");
+}
+
+.mx_RoomSummaryCard_icon_tasks::before {
+    mask-image: url("$(res)/img/watcha/watcha_tasks.svg");
+}
+// +watcha

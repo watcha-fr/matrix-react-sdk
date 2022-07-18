@@ -31,6 +31,18 @@ export enum UIFeature {
     AdvancedSettings = "UIFeature.advancedSettings",
     RoomHistorySettings = "UIFeature.roomHistorySettings",
     TimelineEnableRelativeDates = "UIFeature.timelineEnableRelativeDates",
+    // watcha+
+    /* eslint-disable camelcase */
+    watcha_administration = "UIFeature.watcha_administration",
+    watcha_E2EEUISetting = "UIFeature.watcha_E2EEUISetting",
+    watcha_federation = "UIFeature.watcha_federation",
+    watcha_Nextcloud = "UIFeature.watcha_Nextcloud",
+    watcha_partner = "UIFeature.watcha_partner",
+    watcha_SSOProfile = "UIFeature.watcha_SSOProfile",
+    watcha_stickersSetting = "UIFeature.watcha_stickersSetting",
+    watcha_reportEvent = "UIFeature.watcha_reportEvent",
+    /* eslint-enable camelcase */
+    // +watcha
 }
 
 export enum UIComponent {

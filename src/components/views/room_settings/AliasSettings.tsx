@@ -29,6 +29,8 @@ import RoomPublishSetting from "./RoomPublishSetting";
 import RoomAliasField from "../elements/RoomAliasField";
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
 import SettingsFieldset from "../settings/SettingsFieldset";
+import { UIFeature } from "../../../settings/UIFeature"; // watcha+
+import SettingsStore from "../../../settings/SettingsStore"; // watcha+
 
 interface IEditableAliasesListProps {
     roomId?: string;
@@ -388,9 +390,11 @@ export default class AliasSettings extends React.Component<IProps, IState> {
                     data-test-id='published-address-fieldset'
                     legend={_t("Published Addresses")}
                     description={<>
+                        { SettingsStore.getValue(UIFeature.watcha_federation) && <> { /* eslint-disable indent *//* watcha+ */ }
                         { isSpaceRoom
                             ? _t("Published addresses can be used by anyone on any server to join your space.")
                             : _t("Published addresses can be used by anyone on any server to join your room.") }
+                        </> /* eslint-enable indent *//* watcha+ */ }
                         &nbsp;
                         { _t("To publish an address, it needs to be set as a local address first.") }
                     </>}
@@ -416,6 +420,7 @@ export default class AliasSettings extends React.Component<IProps, IState> {
                             return <option value={alias} key={alias} />;
                         }) };
                     </datalist>
+                    { SettingsStore.getValue(UIFeature.watcha_federation) && // watcha+
                     <EditableAliasesList
                         id="roomAltAliases"
                         items={this.state.altAliases}
@@ -431,6 +436,7 @@ export default class AliasSettings extends React.Component<IProps, IState> {
                         placeholder={_t('New published address (e.g. #alias:server)')}
                         roomId={this.props.roomId}
                     />
+                    /* watcha+ */ }
                 </SettingsFieldset>
                 <SettingsFieldset
                     data-test-id='local-address-fieldset'

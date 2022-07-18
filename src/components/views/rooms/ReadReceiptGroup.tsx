@@ -150,7 +150,10 @@ export function ReadReceiptGroup(
             <ReadReceiptMarker
                 key={userId}
                 member={receipt.roomMember}
+                /* watcha!
                 fallbackUserId={userId}
+                !watcha */
+                fallbackUserId={receipt.roomMember?.rawDisplayName || userId} // watcha+
                 offset={position * READ_AVATAR_OFFSET}
                 hidden={hidden}
                 readReceiptInfo={readReceiptInfo}

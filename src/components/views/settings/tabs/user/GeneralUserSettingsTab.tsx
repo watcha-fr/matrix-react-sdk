@@ -316,6 +316,7 @@ export default class GeneralUserSettingsTab extends React.Component<IProps, ISta
                     emails={this.state.emails}
                     onEmailsChange={this.onEmailsChange}
                 />;
+            /* eslint-disable-next-line @typescript-eslint/no-unused-vars */// @ts-ignore // watcha+
             const msisdns = this.state.loading3pids
                 ? <Spinner />
                 : <AccountPhoneNumbers
@@ -326,8 +327,10 @@ export default class GeneralUserSettingsTab extends React.Component<IProps, ISta
                 <span className="mx_SettingsTab_subheading">{ _t("Email addresses") }</span>
                 { emails }
 
+                { /* watcha! until we have an IS that supports sending SMS via OVH
                 <span className="mx_SettingsTab_subheading">{ _t("Phone numbers") }</span>
                 { msisdns }
+                !watcha */ }
             </div>;
         } else if (this.state.serverSupportsSeparateAddAndBind === null) {
             threepidSection = <Spinner />;
@@ -437,6 +440,7 @@ export default class GeneralUserSettingsTab extends React.Component<IProps, ISta
     }
 
     private renderIntegrationManagerSection(): JSX.Element {
+        return null; // watcha+ until we have an IM
         if (!SettingsStore.getValue(UIFeature.Widgets)) return null;
 
         return (

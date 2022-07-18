@@ -34,6 +34,7 @@ import { useFeatureEnabled } from "../../hooks/useSettings";
 import { useStateArray } from "../../hooks/useStateArray";
 import { _t } from "../../languageHandler";
 import PosthogTrackers from "../../PosthogTrackers";
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */// @ts-ignore // watcha+
 import { inviteMultipleToRoom, showRoomInviteDialog } from "../../RoomInvite";
 import { UIComponent } from "../../settings/UIFeature";
 import { UPDATE_EVENT } from "../../stores/AsyncStore";
@@ -198,6 +199,7 @@ const SpaceLandingAddButton = ({ space }) => {
 const SpaceLanding = ({ space }: { space: Room }) => {
     const cli = useContext(MatrixClientContext);
     const myMembership = useMyRoomMembership(space);
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */// @ts-ignore // watcha+
     const userId = cli.getUserId();
 
     const storeIsShowingSpaceMembers = useCallback(
@@ -223,7 +225,10 @@ const SpaceLanding = ({ space }: { space: Room }) => {
     }
 
     const hasAddRoomPermissions = myMembership === "join" &&
+        /* watcha!
         space.currentState.maySendStateEvent(EventType.SpaceChild, userId);
+        !watcha */
+        space.currentState.mayClientSendStateEvent(EventType.SpaceChild, cli); // watcha+
 
     let addRoomButton;
     if (hasAddRoomPermissions) {
@@ -282,7 +287,10 @@ const SpaceSetupFirstRooms = ({ space, title, description, onFinished }) => {
     const [error, setError] = useState("");
     const numFields = 3;
     const placeholders = [_t("General"), _t("Random"), _t("Support")];
+    /* watcha!
     const [roomNames, setRoomName] = useStateArray(numFields, [_t("General"), _t("Random"), ""]);
+    !watcha */
+    const [roomNames, setRoomName] = useStateArray(numFields, ""); // watcha+
     const fields = new Array(numFields).fill(0).map((x, i) => {
         const name = "roomName" + i;
         return <Field
@@ -293,7 +301,10 @@ const SpaceSetupFirstRooms = ({ space, title, description, onFinished }) => {
             placeholder={placeholders[i]}
             value={roomNames[i]}
             onChange={ev => setRoomName(i, ev.target.value)}
+            /* watcha!
             autoFocus={i === 2}
+            !watcha */
+            autoFocus={i === 0} // watcha+
             disabled={busy}
             autoComplete="off"
         />;
@@ -445,10 +456,12 @@ const validateEmailRules = withValidation({
 
 const SpaceSetupPrivateInvite = ({ space, onFinished }) => {
     const [busy, setBusy] = useState(false);
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */// @ts-ignore // watcha+
     const [error, setError] = useState("");
     const numFields = 3;
     const fieldRefs: RefObject<Field>[] = [useRef(), useRef(), useRef()];
     const [emailAddresses, setEmailAddress] = useStateArray(numFields, "");
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */// @ts-ignore // watcha+
     const fields = new Array(numFields).fill(0).map((x, i) => {
         const name = "emailAddress" + i;
         return <Field
@@ -502,15 +515,18 @@ const SpaceSetupPrivateInvite = ({ space, onFinished }) => {
         setBusy(false);
     };
 
+    /* eslint-disable @typescript-eslint/no-unused-vars */// @ts-ignore // watcha+
     let onClick = (ev) => {
         ev.preventDefault();
         onFinished();
     };
+    // @ts-ignore // watcha+
     let buttonLabel = _t("Skip for now");
     if (emailAddresses.some(name => name.trim())) {
         onClick = onNextClick;
         buttonLabel = busy ? _t("Inviting...") : _t("Continue");
     }
+    /* eslint-enable @typescript-eslint/no-unused-vars */// @ts-ignore // watcha+
 
     return <div className="mx_SpaceRoomView_inviteTeammates">
         <h1>{ _t("Invite your teammates") }</h1>
@@ -518,6 +534,7 @@ const SpaceSetupPrivateInvite = ({ space, onFinished }) => {
             { _t("Make sure the right people have access. You can invite more later.") }
         </div>
 
+        { /* watcha!
         <div className="mx_SpaceRoomView_inviteTeammates_betaDisclaimer">
             { _t("<b>This is an experimental feature.</b> For now, " +
                 "new users receiving an invite will have to open the invite on <link/> to actually join.", {}, {
@@ -553,6 +570,17 @@ const SpaceSetupPrivateInvite = ({ space, onFinished }) => {
                 value={buttonLabel}
             />
         </div>
+        !watcha */ }
+
+        { /* watcha+ */ }
+        <SpacePublicShare {...{ space }} isPrivate={true} />
+
+        <div className="mx_SpaceRoomView_buttons">
+            <AccessibleButton kind="primary" onClick={onFinished}>
+                { _t("Go to my space") }
+            </AccessibleButton>
+        </div>
+        { /* +watcha */ }
     </div>;
 };
 

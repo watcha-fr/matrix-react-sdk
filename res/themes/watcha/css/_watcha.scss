@@ -1,0 +1,13 @@
+$watcha-accent: hsl(180, 100%, 35%);
+$watcha-dark: #15191e;
+
+$accent: $watcha-accent;
+
+.mx_LeftPanel_wrapper {
+    color: white !important;
+    background-color: $watcha-dark;
+
+    .mx_BaseAvatar_image {
+        background-color: unset;
+    }
+}

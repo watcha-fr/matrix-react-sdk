@@ -86,6 +86,7 @@ function mockClient(
             return Promise.resolve({
                 displayname: member.rawDisplayName,
                 avatar_url: member.getMxcAvatarUrl(),
+                email: "email@example.com", // watcha+
             });
         } else {
             return Promise.reject();
