@@ -1,0 +1,312 @@
+// Colors from Figma Compound https://www.figma.com/file/X4XTH9iS2KGJ2wFKDqkyed/Compound?node-id=559%3A741
+// ********************
+$dark-primary-content: #ffffff;
+$dark-secondary-content: #A9B2BC;
+$dark-tertiary-content: #8E99A4;
+$dark-quaternary-content: #6F7882;
+$dark-quinary-content: #394049;
+
+$dark-system: #21262C;
+$dark-system-transparent: rgba($dark-system, 0.0); // XXX: workaround for Safari 15.3 linear-gradient bug
+$dark-background: #15191E;
+$dark-overlay-background: rgba($dark-background, 0.85);
+
+$dark-panel-base: #8D97A5; // This color is not intended for use in the app
+$dark-panels: rgba($dark-system, 0.9);
+$dark-panel-selected: rgba($dark-panel-base, 0.3);
+$dark-panel-hover: rgba($dark-panel-base, 0.1);
+$dark-panel-actions: rgba($dark-panel-base, 0.2);
+$dark-space-nav: rgba($dark-panel-base, 0.1);
+// ********************
+
+// Reused Figma non-compound colors
+// ********************
+$dark-inverted-bg-color: $dark-background;
+$dark-header-panel-bg-color: #20252B;
+// ********************
+
+// Theme specific colors
+// ********************
+$dark-icon-button-color: $dark-tertiary-content;
+// ********************
+
+// Colors that aren't in Figma and are theme specific - we need to get rid of these
+// ********************
+$dark-header-panel-text-secondary-color: #c8c8cd;
+$dark-room-highlight-color: #343a46;
+$dark-text-secondary-color: #B9BEC6;
+// ********************
+
+// Colors that aren't in Figma - we need to get rid of these
+// ********************
+$dark-dark-panel-bg-color: $dark-header-panel-bg-color;
+$dark-muted-fg-color: $header-panel-text-primary-color;
+$dark-light-fg-color: $dark-header-panel-text-secondary-color;
+$dark-focus-bg-color: $dark-room-highlight-color;
+$dark-info-plinth-bg-color: $dark-header-panel-bg-color;
+$dark-event-selected-color: $dark-system;
+$dark-topleftmenu-color: $dark-primary-content;
+$dark-roomtopic-color: $dark-text-secondary-color;
+$dark-spacePanel-bg-color: rgba(38, 39, 43, 0.82);
+$dark-panel-gradient: rgba(34, 38, 46, 0), rgba(34, 38, 46, 1);
+$dark-h3-color: $dark-primary-content;
+$dark-event-highlight-bg-color: #25271F;
+$dark-header-panel-text-primary-color: $dark-text-secondary-color;
+// ********************
+
+// Tooltip
+// ********************
+$dark-tooltip-timeline-bg-color: $dark-spacePanel-bg-color;
+$dark-tooltip-timeline-fg-color: $dark-primary-content;
+// ********************
+
+// Widget
+// ********************
+$dark-widget-menu-bar-bg-color: $dark-header-panel-bg-color;
+$dark-widget-body-bg-color: $dark-panel-actions;
+// ********************
+
+// Menu
+// ********************
+$dark-menu-border-color: #000000;
+$dark-menu-bg-color: $dark-header-panel-bg-color;
+$dark-menu-box-shadow-color: $dark-background;
+$dark-menu-selected-color: $dark-room-highlight-color;
+// ********************
+
+// Settings
+// ********************
+$dark-settings-profile-button-bg-color: #e7e7e7;
+$dark-settings-subsection-fg-color: $dark-text-secondary-color;
+// ********************
+
+// Room
+// ********************
+$dark-room-icon-unread-color: #fff;
+// ********************
+
+// RoomHeader
+// ********************
+$dark-roomheader-addroom-bg-color: rgba(92, 100, 112, 0.3);
+$dark-roomheader-addroom-fg-color: $dark-primary-content;
+// ********************
+
+// Rich-text-editor
+// ********************
+$dark-pill-bg-color: $dark-room-highlight-color;
+$dark-pill-hover-bg-color: #545a66;
+// ********************
+
+// Inputs
+// ********************
+$dark-input-border-color: rgba(231, 231, 231, 0.2);
+$dark-input-darker-bg-color: #181b21;
+$dark-input-darker-fg-color: #61708b;
+$dark-input-lighter-bg-color: #f2f5f8;
+// ********************
+
+// Dialog
+// ********************
+$dark-dialog-title-fg-color: $dark-primary-content;
+$dark-dialog-backdrop-color: $dark-menu-border-color;
+$dark-dialog-close-fg-color: #9fa9ba;
+$dark-dialog-close-external-color: $dark-primary-content;
+// ********************
+
+// RoomList
+// ********************
+$dark-roomlist-bg-color: rgba($dark-system, 0.90);
+$dark-roomsublist-skeleton-ui-bg: linear-gradient(180deg, #3e444c 0%, #3e444c00 100%);
+$dark-roomtile-default-badge-bg-color: $dark-input-darker-fg-color;
+// ********************
+
+// Tabbed views
+// ********************
+$dark-tab-label-fg-color: $dark-primary-content;
+$dark-tab-label-active-fg-color: $dark-primary-content;
+// ********************
+
+// Buttons
+// ********************
+$dark-button-primary-fg-color: $dark-primary-content;
+$dark-button-secondary-bg-color: transparent;
+$dark-button-danger-fg-color: $dark-primary-content;
+$dark-button-danger-disabled-fg-color: $dark-primary-content;
+// ********************
+
+// Toggle switch
+// ********************
+$dark-togglesw-off-color: $dark-room-highlight-color;
+// ********************
+
+// Authpage
+// ********************
+$dark-authpage-primary-color: $dark-primary-content;
+// ********************
+
+// Message action bar
+// ********************
+$dark-message-action-bar-bg-color: $dark-header-panel-bg-color;
+$dark-message-action-bar-fg-color: $dark-header-panel-text-primary-color;
+$dark-message-action-bar-border-color: #616b7f;
+$dark-message-action-bar-hover-border-color: $dark-header-panel-text-primary-color;
+// ********************
+
+// Reaction row
+// ********************
+$dark-reaction-row-button-hover-border-color: $dark-header-panel-text-primary-color;
+$dark-reaction-row-button-selected-bg-color: #1f6954;
+// ********************
+
+// Voice messages
+// ********************
+$dark-voice-record-stop-border-color: $dark-quaternary-content;
+$dark-voice-record-icon-color: $dark-quaternary-content;
+// ********************
+
+// Bubble tiles
+// ********************
+$dark-eventbubble-self-bg: #133A34;
+$dark-eventbubble-others-bg: #21262C;
+$dark-eventbubble-bg-hover: #1C2026;
+$dark-eventbubble-reply-color: #C1C6CD;
+// ********************
+
+// Lightbox
+// ********************
+$dark-lightbox-background-bg-color: $dark-menu-border-color;
+$dark-lightbox-background-bg-opacity: 0.85;
+// ********************
+
+// VoIP
+// ********************
+$dark-call-view-button-on-foreground: $dark-primary-content;
+$dark-call-view-button-on-background: $dark-system;
+$dark-call-view-button-off-foreground: $dark-system;
+$dark-call-view-button-off-background: $dark-primary-content;
+$dark-call-view-content-background: $dark-quinary-content;
+
+$dark-video-feed-secondary-background: $dark-system;
+
+$dark-video-lobby-system: $dark-system;
+$dark-video-lobby-background: $dark-background;
+$dark-video-lobby-primary-content: $dark-primary-content;
+// ********************
+
+// Location sharing
+// ********************
+$dark-location-live-color: #5c56f5;
+$dark-location-live-secondary-color: #deddfd;
+// ********************
+
+// Location sharing
+// ********************
+.maplibregl-ctrl-attrib-button {
+    color: $dark-background;
+}
+// ********************
+
+// One-off colors
+// ********************
+$dark-progressbar-bg-color: $dark-system;
+$dark-kbd-border-color: $dark-menu-border-color;
+$dark-visual-bell-bg-color: #800;
+$dark-event-timestamp-color: $dark-text-secondary-color;
+$dark-slider-background-color: $dark-quinary-content;
+$dark-appearance-tab-border-color: $dark-room-highlight-color;
+$dark-composer-shadow-color: rgba(0, 0, 0, 0.28);
+$dark-breadcrumb-placeholder-bg-color: #272c35;
+$dark-theme-button-bg-color: #e3e8f0;
+$dark-resend-button-divider-color: rgba($dark-header-panel-text-primary-color, 0.74);
+$dark-codeblock-background-color: #2a3039;
+$dark-scrollbar-thumb-color: rgba(255, 255, 255, 0.2);
+$dark-selected-color: $dark-room-highlight-color;
+// ********************
+
+// blur amounts for left left panel (only for element theme)
+// ********************
+:root {
+    --lp-background-blur: 45px;
+}
+// ********************
+
+// Mixins
+// ********************
+@define-mixin mx_DialogButton {
+    /* align images in buttons (eg spinners) */
+    vertical-align: middle;
+    border: 0px;
+    border-radius: 8px;
+    font-family: $font-family;
+    font-size: $font-14px;
+    color: $button-fg-color;
+    background-color: $accent;
+    width: auto;
+    padding: 7px;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+    cursor: pointer;
+    display: inline-block;
+    outline: none;
+}
+
+@define-mixin mx_DialogButton_danger {
+    background-color: $accent;
+}
+
+@define-mixin mx_DialogButton_secondary {
+    // flip colours for the secondary ones
+    font-weight: 600;
+    border: 1px solid $accent !important;
+    color: $accent;
+    background-color: $dark-button-secondary-bg-color;
+}
+
+@define-mixin mx_Dialog_link {
+    color: $accent;
+    text-decoration: none;
+}
+// ********************
+
+body {
+    color-scheme: dark;
+}
+
+// Nasty hacks to apply a filter to arbitrary monochrome artwork to make it
+// better match the theme.  Typically applied to dark grey 'off' buttons or
+// light grey 'on' buttons.
+// ********************
+.mx_filterFlipColor {
+    filter: invert(1);
+}
+// ********************
+
+// markdown overrides
+// ********************
+.mx_EventTile_content .markdown-body {
+    table {
+        tr {
+            background-color: $dark-menu-border-color;
+        }
+
+        tr:nth-child(2n) {
+            background-color: #080808;
+        }
+    }
+}
+// ********************
+
+// diff highlight colors
+// ********************
+.hljs-tag {
+    color: inherit; // Without this they'd be weirdly blue which doesn't match the theme
+}
+
+.hljs-addition {
+    background: #1a4b59;
+}
+
+.hljs-deletion {
+    background: #53232a;
+}
+// ********************

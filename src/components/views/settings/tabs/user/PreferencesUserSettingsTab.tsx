@@ -40,6 +40,13 @@ interface IState {
 }
 
 export default class PreferencesUserSettingsTab extends React.Component<IProps, IState> {
+    // watcha+
+    static ROOM_INFO_SETTINGS = [
+        'showExploreChatAttachmentsButton',
+        'showShareRoomButton',
+    ];
+    // +watcha
+
     static ROOM_LIST_SETTINGS = [
         'breadcrumbs',
     ];
@@ -79,6 +86,8 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
         'showImages',
     ];
     static TIMELINE_SETTINGS = [
+        'showShareMessageButton', // watcha+
+        'showViewSourceButton', // watcha+
         'showTypingNotifications',
         'showRedactions',
         'showReadReceipts',
@@ -91,6 +100,8 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
         'scrollToBottomOnMessageSent',
     ];
     static GENERAL_SETTINGS = [
+        'showE2EEUI', // watcha+
+        'showIgnoreUserButton', // watcha+
         'promptBeforeInviteUnknownUsers',
         // Start automatically after startup (electron-only)
         // Autocomplete delay (niche text box)
@@ -157,6 +168,13 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
                     <span className="mx_SettingsTab_subheading">{ _t("Spaces") }</span>
                     { this.renderGroup(PreferencesUserSettingsTab.SPACES_SETTINGS, SettingLevel.ACCOUNT) }
                 </div>
+
+                { /* watcha+ */ }
+                <div className="mx_SettingsTab_section">
+                    <span className="mx_SettingsTab_subheading">{ _t("Room Info") }</span>
+                    { this.renderGroup(PreferencesUserSettingsTab.ROOM_INFO_SETTINGS) }
+                </div>
+                { /* +watcha */ }
 
                 <div className="mx_SettingsTab_section">
                     <span className="mx_SettingsTab_subheading">{ _t("Keyboard shortcuts") }</span>

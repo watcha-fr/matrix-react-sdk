@@ -52,6 +52,11 @@ import { OpenForwardDialogPayload } from "../../../dispatcher/payloads/OpenForwa
 import { OpenReportEventDialogPayload } from "../../../dispatcher/payloads/OpenReportEventDialogPayload";
 import { createMapSiteLinkFromEvent } from '../../../utils/location';
 import { getForwardableEvent } from '../../../events/forward/getForwardableEvent';
+// watcha+
+import { ActionPayload } from "../../../dispatcher/payloads";
+import { SettingUpdatedPayload } from "../../../dispatcher/payloads/SettingUpdatedPayload";
+import { UIFeature } from "../../../settings/UIFeature";
+// +watcha
 
 interface IProps extends IPosition {
     chevronFace: ChevronFace;
@@ -81,6 +86,8 @@ interface IState {
     canRedact: boolean;
     canPin: boolean;
     reactionPickerDisplayed: boolean;
+    showShareMessageButton: boolean; // watcha+
+    showViewSourceButton: boolean; // watcha+
 }
 
 export default class MessageContextMenu extends React.Component<IProps, IState> {
@@ -88,6 +95,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
     public context!: React.ContextType<typeof RoomContext>;
 
     private reactButtonRef = createRef<any>(); // XXX Ref to a functional component
+    private dispatcherRef: string; // watcha+
 
     constructor(props: IProps) {
         super(props);
@@ -96,7 +104,14 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
             canRedact: false,
             canPin: false,
             reactionPickerDisplayed: false,
+            showShareMessageButton: SettingsStore.getValue("showShareMessageButton"), // watcha+
+            showViewSourceButton: SettingsStore.getValue("showViewSourceButton"), // watcha+
         };
+        // watcha+
+        this.dispatcherRef = dis.register(this.onAction);
+        SettingsStore.monitorSetting("showShareMessageButton", null);
+        SettingsStore.monitorSetting("showViewSourceButton", null);
+        // +watcha
     }
 
     public componentDidMount() {
@@ -109,7 +124,33 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
         if (cli) {
             cli.removeListener(RoomMemberEvent.PowerLevel, this.checkPermissions);
         }
+        dis.unregister(this.dispatcherRef); // watcha+
     }
+
+    // watcha+
+    private onAction = (payload: ActionPayload) => {
+        if (payload.action === Action.SettingUpdated) {
+            const settingUpdatedPayload = payload as SettingUpdatedPayload;
+            switch (settingUpdatedPayload.settingName) {
+                case "showShareMessageButton": {
+                    const showShareMessageButton = SettingsStore.getValue("showShareMessageButton");
+                    if (showShareMessageButton !== this.state.showShareMessageButton) {
+                        this.setState({ showShareMessageButton });
+                    }
+                    break;
+                }
+
+                case "showViewSourceButton": {
+                    const showViewSourceButton = SettingsStore.getValue("showViewSourceButton");
+                    if (showViewSourceButton !== this.state.showViewSourceButton) {
+                        this.setState({ showViewSourceButton });
+                    }
+                    break;
+                }
+            }
+        }
+    };
+    // +watcha
 
     private checkPermissions = (): void => {
         const cli = MatrixClientPeg.get();
@@ -403,13 +444,17 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
         }
 
         // This is specifically not behind the developerMode flag to give people insight into the Matrix
+        /* watcha!
         const viewSourceButton = (
+        !watcha */
+        let viewSourceButton = ( // watcha+
             <IconizedContextMenuOption
                 iconClassName="mx_MessageContextMenu_iconSource"
                 label={_t("View source")}
                 onClick={this.onViewSourceClick}
             />
         );
+        if (!this.state.showViewSourceButton) viewSourceButton = null; // watcha+
 
         let unhidePreviewButton: JSX.Element;
         if (eventTileOps?.isWidgetHidden()) {
@@ -441,6 +486,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
                 />
             );
         }
+        if (!this.state.showShareMessageButton) permalinkButton = null; // watcha+
 
         let endPollButton: JSX.Element;
         if (this.canEndPoll(mxEvent)) {
@@ -512,6 +558,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
         }
 
         let reportEventButton: JSX.Element;
+        if (SettingsStore.getValue(UIFeature.watcha_reportEvent)) { /* eslint-disable indent */// watcha+
         if (mxEvent.getSender() !== me) {
             reportEventButton = (
                 <IconizedContextMenuOption
@@ -521,6 +568,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
                 />
             );
         }
+        } /* eslint-enable indent */// watcha+
 
         let copyLinkButton: JSX.Element;
         if (link) {

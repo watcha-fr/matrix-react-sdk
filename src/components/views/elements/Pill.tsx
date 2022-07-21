@@ -255,6 +255,7 @@ export default class Pill extends React.Component<IProps, IState> {
             if (this.state.hover && resource) {
                 tip = <Tooltip label={resource} alignment={Alignment.Right} />;
             }
+            if (this.state.pillType === PillType.UserMention) tip = null; // watcha+
 
             return <MatrixClientContext.Provider value={this.matrixClient}>
                 { this.props.inMessage ?

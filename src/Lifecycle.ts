@@ -63,6 +63,7 @@ import VideoChannelStore from "./stores/VideoChannelStore";
 import { fixStuckDevices } from "./utils/VideoChannelUtils";
 import { Action } from "./dispatcher/actions";
 import AbstractLocalStorageSettingsHandler from "./settings/handlers/AbstractLocalStorageSettingsHandler";
+import { SSO_LANGUAGE_KEY } from "./Login"; // watcha+
 
 const HOMESERVER_URL_KEY = "mx_hs_url";
 const ID_SERVER_URL_KEY = "mx_is_url";
@@ -218,7 +219,9 @@ export function attemptTokenLogin(
         },
     ).then(function(creds) {
         logger.log("Logged in with token");
+        const language = localStorage.getItem(SSO_LANGUAGE_KEY); // watcha+
         return clearStorage().then(async () => {
+            if (language) localStorage.setItem(SSO_LANGUAGE_KEY, language); // watcha+
             await persistCredentials(creds);
             // remember that we just logged in
             sessionStorage.setItem("mx_fresh_login", String(true));
@@ -321,6 +324,7 @@ export interface IStoredSession {
     userId: string;
     deviceId: string;
     isGuest: boolean;
+    isPartner: boolean; // watcha+
 }
 
 /**
@@ -364,7 +368,11 @@ export async function getStoredSessionVars(): Promise<IStoredSession> {
         isGuest = localStorage.getItem("matrix-is-guest") === "true";
     }
 
+    const isPartner = localStorage.getItem("watcha_is_partner") === "true"; // watcha+
+    /* watcha!
     return { hsUrl, isUrl, hasAccessToken, accessToken, userId, deviceId, isGuest };
+    !watcha */
+    return { hsUrl, isUrl, hasAccessToken, accessToken, userId, deviceId, isGuest, isPartner }; // watcha+
 }
 
 // The pickle key is a string of unspecified length and format.  For AES, we
@@ -420,7 +428,10 @@ export async function restoreFromLocalStorage(opts?: { ignoreGuest?: boolean }):
         return false;
     }
 
+    /* watcha!
     const { hsUrl, isUrl, hasAccessToken, accessToken, userId, deviceId, isGuest } = await getStoredSessionVars();
+    !watcha *//* eslint-disable-next-line max-len */
+    const { hsUrl, isUrl, hasAccessToken, accessToken, userId, deviceId, isGuest, isPartner } = await getStoredSessionVars(); // watcha+
 
     if (hasAccessToken && !accessToken) {
         abortLogin();
@@ -458,6 +469,7 @@ export async function restoreFromLocalStorage(opts?: { ignoreGuest?: boolean }):
             guest: isGuest,
             pickleKey: pickleKey,
             freshLogin: freshLogin,
+            partner: isPartner, // watcha+
         }, false);
         return true;
     } else {
@@ -851,13 +863,21 @@ async function startMatrixClient(startSyncing = true): Promise<void> {
  * storage. Used after a session has been logged out.
  */
 export async function onLoggedOut(): Promise<void> {
+    // watcha+
+    const client = MatrixClientPeg.get();
+    const isPartner = client.isPartner();
+    const capabilities = await client.getCapabilities();
+    // +watcha
     // Ensure that we dispatch a view change **before** stopping the client,
     // that React components unmount first. This avoids React soft crashes
     // that can occur when components try to use a null client.
     dis.fire(Action.OnLoggedOut, true);
     stopMatrixClient();
     await clearStorage({ deleteEverything: true });
+    /* watcha!
     LifecycleCustomisations.onLoggedOutAndStorageCleared?.();
+    !watcha */
+    LifecycleCustomisations.onLoggedOutAndStorageCleared?.(isPartner, capabilities); // watcha+
 
     // Do this last, so we can make sure all storage has been cleared and all
     // customisations got the memo.

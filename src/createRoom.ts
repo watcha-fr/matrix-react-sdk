@@ -110,7 +110,10 @@ export default async function createRoom(opts: IOpts): Promise<string | null> {
                 break;
             case 'email':
                 createOpts.invite_3pid = [{
+                    /* watcha!
                     id_server: MatrixClientPeg.get().getIdentityServerUrl(true),
+                    !watcha */
+                    id_server: "fake-is.watcha.fr", // watcha+ until we have an IS
                     medium: 'email',
                     address: opts.dmUserId,
                 }];
@@ -315,6 +318,11 @@ export default async function createRoom(opts: IOpts): Promise<string | null> {
             // the error to the user for if/when the UI is available.
             description = _t("The server does not support the room version specified.");
         }
+        // watcha+
+        if (err.errcode === "M_FORBIDDEN") {
+            description = _t("You don't have permission");
+        }
+        // +watcha
         Modal.createDialog(ErrorDialog, {
             title: _t("Failure to create room"),
             description,

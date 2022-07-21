@@ -131,6 +131,7 @@ export default class LabsUserSettingsTab extends React.Component<{}, IState> {
                 );
             }
 
+            /* watcha!
             if (this.state.showJumpToDate) {
                 groups.getOrCreate(LabGroup.Messaging, []).push(
                     <SettingsFlag
@@ -140,6 +141,7 @@ export default class LabsUserSettingsTab extends React.Component<{}, IState> {
                     />,
                 );
             }
+            !watcha */
 
             if (this.state.showExploringPublicSpaces) {
                 groups.getOrCreate(LabGroup.Spaces, []).push(

@@ -36,6 +36,8 @@ import { IDialogProps } from "./IDialogProps";
 import SidebarUserSettingsTab from "../settings/tabs/user/SidebarUserSettingsTab";
 import KeyboardUserSettingsTab from "../settings/tabs/user/KeyboardUserSettingsTab";
 import { UserTab } from "./UserTab";
+import { MatrixClientPeg } from '../../../MatrixClientPeg'; // watcha+
+import SSOProfileTab from "../settings/tabs/user/watcha_SSOProfileTab"; // watcha+
 
 interface IProps extends IDialogProps {
     initialTabId?: UserTab;
@@ -79,6 +81,20 @@ export default class UserSettingsDialog extends React.Component<IProps, IState> 
             <GeneralUserSettingsTab closeSettingsFn={this.props.onFinished} />,
             "UserSettingsGeneral",
         ));
+        // watcha+
+        if (
+            SettingsStore.getValue(UIFeature.watcha_SSOProfile)
+            && SdkConfig.get().watcha_sso_profile_url
+            && !MatrixClientPeg.get().isPartner()
+        ) {
+            tabs.push(new Tab(
+                UserTab.SSOProfile,
+                _td("SSO profile"),
+                "mx_UserSettingsDialog_SSOProfileIcon",
+                <SSOProfileTab />,
+            ));
+        }
+        // +watcha
         tabs.push(new Tab(
             UserTab.Appearance,
             _td("Appearance"),

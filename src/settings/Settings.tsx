@@ -395,6 +395,8 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         // by default. We will conditionally show it depending on whether we can
         // detect MSC3030 support (see LabUserSettingsTab.tsx).
         // labsGroup: LabGroup.Messaging,
+        isFeature: true, // watcha+
+        labsGroup: LabGroup.Messaging, // watcha+
         displayName: _td("Jump to date (adds /jumptodate and jump to date headers)"),
         supportedLevels: LEVELS_FEATURE,
         default: false,
@@ -452,7 +454,15 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td('Show stickers button'),
         default: true,
+        /* watcha!
         controller: new UIFeatureController(UIFeature.Widgets, false),
+        !watcha */
+        // watcha+
+        controller: new OrderedMultiController([
+            new UIFeatureController(UIFeature.watcha_stickersSetting),
+            new UIFeatureController(UIFeature.Widgets, false),
+        ]),
+        // +watcha
     },
     "MessageComposerInput.showPollsButton": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
@@ -1045,4 +1055,84 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         displayName: _td("Enable hardware acceleration"),
         default: true,
     },
+    // watcha+
+    [UIFeature.watcha_administration]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: true,
+    },
+    [UIFeature.watcha_E2EEUISetting]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: true,
+    },
+    [UIFeature.watcha_federation]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: true,
+    },
+    [UIFeature.watcha_Nextcloud]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: true,
+    },
+    [UIFeature.watcha_partner]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: true,
+    },
+    [UIFeature.watcha_reportEvent]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: true,
+    },
+    [UIFeature.watcha_SSOProfile]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: true,
+    },
+    [UIFeature.watcha_stickersSetting]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: true,
+    },
+    "feature_watcha_webrtc": {
+        isFeature: true,
+        labsGroup: LabGroup.Experimental,
+        supportedLevels: LEVELS_FEATURE,
+        displayName: _td("Enable WebRTC for one-to-one calls"),
+        default: false,
+        controller: new ReloadOnChangeController(),
+    },
+    "showExploreChatAttachmentsButton": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("Show explore chat attachments button"),
+        default: false,
+    },
+    "showShareMessageButton": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("Show share message button"),
+        default: false,
+    },
+    "showViewSourceButton": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("Show view source button"),
+        default: false,
+    },
+    "showShareRoomButton": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("Show share room button"),
+        description: _td("Also visible in contextual menus"),
+        default: false,
+    },
+    "showIgnoreUserButton": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("Show buttons to ignore users"),
+        description: _td("Visible on user profiles and incoming invitations"),
+        default: false,
+    },
+    "showE2EEUI": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("Show end-to-end encryption related UI"),
+        default: false,
+        controller: new UIFeatureController(UIFeature.watcha_E2EEUISetting),
+    },
+    "nextcloudShare": {
+        supportedLevels: [SettingLevel.ROOM],
+        displayName: _td("Share a Nextcloud folder with room members and use it as a common storage space."),
+        default: null,
+    },
+    // +watcha
 };

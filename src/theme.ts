@@ -74,6 +74,7 @@ export function isHighContrastTheme(theme: string) {
 
 export function enumerateThemes(): {[key: string]: string} {
     const BUILTIN_THEMES = {
+        "watcha": "Watcha", // watcha+
         "light": _t("Light"),
         "light-high-contrast": _t("Light high contrast"),
         "dark": _t("Dark"),
