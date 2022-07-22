@@ -99,7 +99,10 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
     }
 
     let introSection;
+    /* watcha!
     if (justRegistered || !!OwnProfileStore.instance.getHttpAvatarUrl(AVATAR_SIZE)) {
+    !watcha */
+    if (justRegistered || !OwnProfileStore.instance.getHttpAvatarUrl(AVATAR_SIZE)) { // watcha+
         introSection = <UserWelcomeTop />;
     } else {
         const brandingConfig = SdkConfig.getObject("branding");
