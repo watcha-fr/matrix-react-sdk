@@ -389,7 +389,10 @@ const SpaceAddExistingRooms = ({ space, onFinished }) => {
                     { _t("Skip for now") }
                 </AccessibleButton>
             }
+            /* watcha!
             filterPlaceholder={_t("Search for rooms or spaces")}
+            !watcha */
+            filterPlaceholder={_t("Search for rooms or people")} // watcha+
             onFinished={onFinished}
             roomsRenderer={defaultRoomsRenderer}
             dmsRenderer={defaultDmsRenderer}
