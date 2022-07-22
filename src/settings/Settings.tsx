@@ -221,6 +221,8 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         },
     },
     "feature_exploring_public_spaces": {
+        isFeature: true, // watcha+
+        labsGroup: LabGroup.Spaces, // watcha+
         displayName: _td("Explore public spaces in the new search dialog"),
         supportedLevels: LEVELS_FEATURE,
         default: false,

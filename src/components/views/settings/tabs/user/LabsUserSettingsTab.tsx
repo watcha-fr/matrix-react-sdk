@@ -141,7 +141,6 @@ export default class LabsUserSettingsTab extends React.Component<{}, IState> {
                     />,
                 );
             }
-            !watcha */
 
             if (this.state.showExploringPublicSpaces) {
                 groups.getOrCreate(LabGroup.Spaces, []).push(
@@ -152,6 +151,7 @@ export default class LabsUserSettingsTab extends React.Component<{}, IState> {
                     />,
                 );
             }
+            !watcha */
 
             labsSections = <>
                 { sortBy(Array.from(groups.entries()), "0").map(([group, flags]) => (
