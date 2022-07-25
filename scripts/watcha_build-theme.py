@@ -9,6 +9,7 @@ DEST = "res/themes/watcha/css"
 DARK_CSS_PATH = "res/themes/dark/css/_dark.scss"
 CSS_PATHS = [
     "res/css/structures/_LeftPanel.scss",
+    "res/css/structures/_QuickSettingsButton.scss",
     "res/css/structures/_RoomSearch.scss",
     "res/css/structures/_SpacePanel.scss",
     "res/css/views/avatars/_DecoratedRoomAvatar.scss",
