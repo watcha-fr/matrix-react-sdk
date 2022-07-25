@@ -19,6 +19,7 @@ import React, { ChangeEvent, createRef, KeyboardEvent, SyntheticEvent } from "re
 import { Room } from "matrix-js-sdk/src/models/room";
 import { RoomType } from "matrix-js-sdk/src/@types/event";
 import { JoinRule, Preset, Visibility } from "matrix-js-sdk/src/@types/partials";
+import { HistoryVisibility } from "matrix-js-sdk/src/@types/partials"; // watcha+
 
 import SdkConfig from '../../../SdkConfig';
 import withValidation, { IFieldState } from '../elements/Validation';
@@ -106,6 +107,7 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
             opts.guestAccess = false;
             const { alias } = this.state;
             createOpts.room_alias_name = alias.substring(1, alias.indexOf(":"));
+            opts.historyVisibility = HistoryVisibility.WorldReadable; // watcha+
         } else {
             // If we cannot change encryption we pass `true` for safety, the server should automatically do this for us.
             opts.encryption = this.state.canChangeEncryption ? this.state.isEncrypted : true;
