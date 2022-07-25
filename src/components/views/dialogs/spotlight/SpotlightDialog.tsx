@@ -537,6 +537,16 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
             }
             if (isPublicRoomResult(result)) {
                 const clientRoom = cli.getRoom(result.publicRoom.room_id);
+                // Element Web currently does not allow guests to join rooms, so we
+                // instead show them view buttons for all rooms. If the room is not
+                // world readable, a modal will appear asking you to register first. If
+                // it is readable, the preview appears as normal.
+                const showViewButton = (
+                    clientRoom?.getMyMembership() === "join" ||
+                    result.publicRoom.world_readable ||
+                    cli.isGuest()
+                );
+
                 const listener = (ev) => {
                     viewRoom(result.publicRoom.room_id, true, ev.type !== "click");
                 };
@@ -548,11 +558,11 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                         onClick={listener}
                         endAdornment={
                             <AccessibleButton
-                                kind={clientRoom ? "primary" : "primary_outline"}
+                                kind={showViewButton ? "primary_outline" : "primary"}
                                 onClick={listener}
                                 tabIndex={-1}
                             >
-                                { _t(clientRoom ? "View" : "Join") }
+                                { showViewButton ? _t("View") : _t("Join") }
                             </AccessibleButton>}
                     >
                         <BaseAvatar
