@@ -236,9 +236,11 @@ export default ({ roomId }: IProps) => {
     let toggle: React.ReactNode;
     if (ownCalendarsLists.length) {
         toggle = (
-            <div className="mx_AppearanceUserSettingsTab_AdvancedToggle" onClick={() => setShowAdvanced(!showAdvanced)}>
+            <AccessibleButton
+                kind="link"
+                onClick={() => setShowAdvanced(!showAdvanced)}>
                 { showAdvanced ? _t("Hide advanced") : _t("Show advanced") }
-            </div>
+            </AccessibleButton>
         );
     }
 
@@ -266,7 +268,7 @@ export default ({ roomId }: IProps) => {
             { addButton }
             { deleteButton }
             { sharedCalendars }
-            <div className="mx_AppearanceUserSettingsTab_Advanced">
+            <div>
                 { toggle }
                 { advanced }
             </div>
