@@ -181,6 +181,9 @@ export interface IConfigOptions {
     spaces_learn_more_url?: string;
 
     // watcha+
+    e2ee?: {
+        default?: boolean;
+    };
     watcha_forbidden_partner_domains?: string[];
     watcha_jitsi_home_url?: string;
     watcha_nextcloud_base_url?: string;
