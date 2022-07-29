@@ -58,6 +58,7 @@ export interface IConfigOptions {
         welcome_background_url?: string | string[]; // chosen at random if array
         auth_header_logo_url?: string;
         auth_footer_links?: {text: string, url: string}[];
+        help_links?: {text: string, url: string}[]; // watcha+
     };
 
     map_style_url?: string; // for location-shared maps
@@ -178,6 +179,18 @@ export interface IConfigOptions {
 
     // XXX: Undocumented URL for the "Learn more about spaces" link in the "Communities don't exist" messaging.
     spaces_learn_more_url?: string;
+
+    // watcha+
+    e2ee?: {
+        default?: boolean;
+    };
+    watcha_forbidden_partner_domains?: string[];
+    watcha_jitsi_home_url?: string;
+    watcha_nextcloud_base_url?: string;
+    watcha_slo_url?: string;
+    watcha_sso_profile_url?: string;
+    watcha_support_email_address?: string;
+    // +watcha
 }
 
 export interface ISsoRedirectOptions {

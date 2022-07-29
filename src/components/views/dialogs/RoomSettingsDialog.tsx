@@ -32,6 +32,12 @@ import SettingsStore from "../../../settings/SettingsStore";
 import { UIFeature } from "../../../settings/UIFeature";
 import BaseDialog from "./BaseDialog";
 import { Action } from '../../../dispatcher/actions';
+// watcha+
+import { CALENDAR_EVENT_TYPE } from "../../../utils/watcha_nextcloudUtils";
+import { SettingLevel } from "../../../settings/SettingLevel";
+import NextcloudCalendarSettingsTab from "../settings/tabs/room/watcha_NextcloudCalendarSettingsTab";
+import NextcloudDocumentsSettingsTab from "../settings/tabs/room/watcha_NextcloudDocumentsSettingsTab";
+// +watcha
 
 export const ROOM_GENERAL_TAB = "ROOM_GENERAL_TAB";
 export const ROOM_SECURITY_TAB = "ROOM_SECURITY_TAB";
@@ -39,6 +45,8 @@ export const ROOM_ROLES_TAB = "ROOM_ROLES_TAB";
 export const ROOM_NOTIFICATIONS_TAB = "ROOM_NOTIFICATIONS_TAB";
 export const ROOM_BRIDGES_TAB = "ROOM_BRIDGES_TAB";
 export const ROOM_ADVANCED_TAB = "ROOM_ADVANCED_TAB";
+export const ROOM_NEXTCLOUD_CALENDAR_TAB = "ROOM_NEXTCLOUD_CALENDAR_TAB"; // watcha+
+export const ROOM_NEXTCLOUD_DOCUMENTS_TAB = "ROOM_NEXTCLOUD_DOCUMENTS_TAB"; // watcha+
 
 interface IProps {
     roomId: string;
@@ -96,6 +104,36 @@ export default class RoomSettingsDialog extends React.Component<IProps, IState> 
             <GeneralRoomSettingsTab roomId={this.props.roomId} />,
             "RoomSettingsGeneral",
         ));
+        // watcha+
+        const showNextcloudFeature =
+            SettingsStore.getValue("UIFeature.watcha_Nextcloud") && !MatrixClientPeg.get().isPartner();
+        if (showNextcloudFeature) {
+            const canShareFolder = SettingsStore.canSetValue("nextcloudShare", this.props.roomId, SettingLevel.ROOM);
+            if (canShareFolder) {
+                tabs.push(
+                    new Tab(
+                        ROOM_NEXTCLOUD_DOCUMENTS_TAB,
+                        _td("Documents"),
+                        "mx_RoomSettingsDialog_nextcloudDocumentsIcon",
+                        <NextcloudDocumentsSettingsTab roomId={this.props.roomId} />,
+                    ),
+                );
+            }
+            const client = MatrixClientPeg.get();
+            const room = client.getRoom(this.props.roomId);
+            const canSetCalendar = room.currentState.maySendStateEvent(CALENDAR_EVENT_TYPE, client.getUserId());
+            if (canSetCalendar) {
+                tabs.push(
+                    new Tab(
+                        ROOM_NEXTCLOUD_CALENDAR_TAB,
+                        _td("Calendars and tasks"),
+                        "mx_RoomSettingsDialog_nextcloudCalendarIcon",
+                        <NextcloudCalendarSettingsTab roomId={this.props.roomId} />,
+                    ),
+                );
+            }
+        }
+        // +watcha
         tabs.push(new Tab(
             ROOM_SECURITY_TAB,
             _td("Security & Privacy"),

@@ -34,6 +34,7 @@ limitations under the License.
 
         .mx_FacePile_faces .mx_BaseAvatar_image {
             border-color: $video-lobby-background;
+            background-color: unset; // watcha+
         }
     }
 

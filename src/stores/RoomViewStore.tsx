@@ -445,7 +445,13 @@ export class RoomViewStore extends Store<ActionPayload> {
                 } else {
                     description = _t("The person who invited you has already left, or their server is offline.");
                 }
+                /* eslint-disable-next-line brace-style */// watcha+
             }
+            // watcha+ until https://github.com/vector-im/element-web/issues/17392
+            else if (err.message === "No known servers") {
+                description = _t(err.message);
+            }
+            // +watcha
         }
 
         Modal.createDialog(ErrorDialog, {

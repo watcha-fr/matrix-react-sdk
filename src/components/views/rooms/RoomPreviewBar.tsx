@@ -39,6 +39,7 @@ import RoomAvatar from "../avatars/RoomAvatar";
 import SettingsStore from "../../../settings/SettingsStore";
 import { UIFeature } from "../../../settings/UIFeature";
 import { ModuleRunner } from "../../../modules/ModuleRunner";
+import { getSupportEmailAddress } from "../../../utils/watcha_config"; // watcha+
 
 const MemberEventHtmlReasonField = "io.element.html_reason";
 
@@ -106,6 +107,7 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
     static defaultProps = {
         onJoinClick() {},
     };
+    private readonly showIgnoreButtonWatcherRef: string; // watcha+
 
     constructor(props) {
         super(props);
@@ -113,6 +115,14 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
         this.state = {
             busy: false,
         };
+
+        // watcha+
+        this.showIgnoreButtonWatcherRef = SettingsStore.watchSetting(
+            "showIgnoreUserButton",
+            null,
+            () => this.forceUpdate(),
+        );
+        // +watcha
     }
 
     componentDidMount() {
@@ -123,6 +133,10 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
         if (this.props.invitedEmail !== prevProps.invitedEmail || this.props.inviterName !== prevProps.inviterName) {
             this.checkInvitedEmail();
         }
+    }
+
+    componentWillUnmount() {
+        SettingsStore.unwatchSetting(this.showIgnoreButtonWatcherRef); // watcha+
     }
 
     private async checkInvitedEmail() {
@@ -501,7 +515,10 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                     inviterElement = <span>
                         <span className="mx_RoomPreviewBar_inviter">
                             { inviteMember.rawDisplayName }
+                        { /* eslint-disable-line indent *//* watcha!
                         </span> ({ inviteMember.userId })
+                        !watcha */ }
+                        </span> { /* watcha+ */ }
                     </span>;
                 } else {
                     inviterElement = (<span className="mx_RoomPreviewBar_inviter">{ this.props.inviterName }</span>);
@@ -538,6 +555,8 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                 secondaryActionLabel = _t("Reject");
                 secondaryActionHandler = this.props.onRejectClick;
 
+                /* eslint-disable indent */ // watcha+
+                if (SettingsStore.getValue("showIgnoreUserButton")) { // watcha+
                 if (this.props.onRejectAndIgnoreClick) {
                     extraComponents.push(
                         <AccessibleButton kind="secondary" onClick={this.props.onRejectAndIgnoreClick} key="ignore">
@@ -545,6 +564,8 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                         </AccessibleButton>,
                     );
                 }
+                } // watcha+
+                /* eslint-enable indent */ // watcha+
                 break;
             }
             case MessageCase.ViewingRoom: {
@@ -582,7 +603,10 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                         "<issueLink>submit a bug report</issueLink>.",
                         { errcode: this.props.error.errcode },
                         { issueLink: label => <a
+                            /* watcha!
                             href="https://github.com/vector-im/element-web/issues/new/choose"
+                            !watcha */
+                            href={`mailto:${getSupportEmailAddress()}`} // watcha+
                             target="_blank"
                             rel="noreferrer noopener">{ label }</a> },
                     ),

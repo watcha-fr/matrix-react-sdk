@@ -129,11 +129,14 @@ import { SnakedObject } from "../../utils/SnakedObject";
 import { leaveRoomBehaviour } from "../../utils/leave-behaviour";
 import VideoChannelStore from "../../stores/VideoChannelStore";
 import { IRoomStateEventsActionPayload } from "../../actions/MatrixActionCreators";
+import { parseSsoRedirectOptions } from "../../SdkConfig"; // watcha+
+import { SSO_LANGUAGE_KEY } from "../../Login"; // watcha+
 
 // legacy export
 export { default as Views } from "../../Views";
 
 const AUTH_SCREENS = ["register", "login", "forgot_password", "start_sso", "start_cas", "welcome"];
+AUTH_SCREENS.push("partner"); // watcha+
 
 // Actions that are redirected through the onboarding process prior to being
 // re-dispatched. NOTE: some actions are non-trivial and would require
@@ -316,6 +319,15 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                     this.props.onTokenLoginCompleted();
                 }
 
+                // watcha+
+                const language = localStorage.getItem(SSO_LANGUAGE_KEY);
+                if (language) {
+                    localStorage.removeItem(SSO_LANGUAGE_KEY);
+                    SettingsStore.setValue("language", null, SettingLevel.DEVICE, language);
+                    PlatformPeg.get().reload();
+                }
+                // +watcha
+
                 if (loggedIn) {
                     this.tokenLogin = true;
 
@@ -373,6 +385,8 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         if (crossSigningIsSetUp) {
             if (SecurityCustomisations.SHOW_ENCRYPTION_SETUP_UI === false) {
                 this.onLoggedIn();
+            } else if (!SettingsStore.getValue("showE2EEUI")) { // watcha+
+                this.onLoggedIn(); // watcha+
             } else {
                 this.setStateForNewView({ view: Views.COMPLETE_SECURITY });
             }
@@ -1313,6 +1327,13 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
      * Called when the session is logged out
      */
     private onLoggedOut() {
+        // watcha+
+        const { immediate, on_welcome_page: onWelcomePage } = parseSsoRedirectOptions(SdkConfig.get());
+        if ([immediate, onWelcomePage].includes(true)) {
+            this.setStateForNewView({ view: Views.LOADING });
+            return;
+        }
+        // +watcha
         this.viewLogin({
             ready: false,
             collapseLhs: false,
@@ -1726,6 +1747,13 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 action: 'view_legacy_group',
                 groupId: groupId,
             });
+        // watcha+
+        } else if (screen === 'partner') {
+            delete this.props.startingFragmentQueryParams.defaultUsername;
+            dis.dispatch({
+                action: 'start_login',
+            });
+        // +watcha
         } else {
             logger.info("Ignoring showScreen for '%s'", screen);
         }

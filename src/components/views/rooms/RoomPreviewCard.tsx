@@ -98,9 +98,11 @@ const RoomPreviewCard: FC<IProps> = ({ room, onJoinButtonClicked, onRejectButton
                             inviter: () => <b>{ inviter?.name || inviteSender }</b>,
                         }) }
                     </div>
+                    { /* watcha!
                     { inviter ? <div className="mx_RoomPreviewCard_inviter_mxid">
                         { inviteSender }
                     </div> : null }
+                    !watcha */ }
                 </div>
                 { room.isElementVideoRoom()
                     ? <BetaPill onClick={viewLabs} tooltipTitle={_t("Video rooms are a beta feature")} />
