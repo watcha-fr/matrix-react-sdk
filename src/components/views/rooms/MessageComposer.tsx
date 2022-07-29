@@ -22,6 +22,7 @@ import { RoomMember } from "matrix-js-sdk/src/models/room-member";
 import { EventType } from 'matrix-js-sdk/src/@types/event';
 import { Optional } from "matrix-events-sdk";
 import { THREAD_RELATION_TYPE } from 'matrix-js-sdk/src/models/thread';
+import { logger } from "matrix-js-sdk/src/logger"; // watcha+
 
 import { _t } from '../../../languageHandler';
 import { MatrixClientPeg } from '../../../MatrixClientPeg';
@@ -51,6 +52,7 @@ import { SettingUpdatedPayload } from "../../../dispatcher/payloads/SettingUpdat
 import MessageComposerButtons from './MessageComposerButtons';
 import { ButtonEvent } from '../elements/AccessibleButton';
 import { ViewRoomPayload } from "../../../dispatcher/payloads/ViewRoomPayload";
+import { findMapStyleUrl } from "../../../utils/location/findMapStyleUrl"; // watcha+
 
 let instanceCount = 0;
 
@@ -88,6 +90,7 @@ interface IState {
     isStickerPickerOpen: boolean;
     showStickersButton: boolean;
     showPollsButton: boolean;
+    showLocationButton: boolean; // watcha+
 }
 
 export default class MessageComposer extends React.Component<IProps, IState> {
@@ -118,6 +121,7 @@ export default class MessageComposer extends React.Component<IProps, IState> {
             isStickerPickerOpen: false,
             showStickersButton: SettingsStore.getValue("MessageComposerInput.showStickersButton"),
             showPollsButton: SettingsStore.getValue("MessageComposerInput.showPollsButton"),
+            showLocationButton: false, // watcha+
         };
 
         this.instanceId = instanceCount++;
@@ -155,6 +159,14 @@ export default class MessageComposer extends React.Component<IProps, IState> {
         UIStore.instance.trackElementDimensions(`MessageComposer${this.instanceId}`, this.ref.current);
         UIStore.instance.on(`MessageComposer${this.instanceId}`, this.onResize);
         this.updateRecordingState(); // grab any cached recordings
+        // watcha+
+        try {
+            const showLocationButton = !window.electron && !!findMapStyleUrl();
+            this.setState({ showLocationButton });
+        } catch (e) {
+            logger.error("Failed to render map", e);
+        }
+        // +watcha
     }
 
     private onResize = (type: UI_EVENTS, entry: ResizeObserverEntry) => {
@@ -470,7 +482,10 @@ export default class MessageComposer extends React.Component<IProps, IState> {
                                 }
                             }}
                             setStickerPickerOpen={this.setStickerPickerOpen}
+                            /* watcha!
                             showLocationButton={!window.electron}
+                            !watcha */
+                            showLocationButton={this.state.showLocationButton} // watcha+
                             showPollsButton={this.state.showPollsButton}
                             showStickersButton={this.state.showStickersButton}
                             toggleButtonMenu={this.toggleButtonMenu}

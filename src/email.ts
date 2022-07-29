@@ -13,6 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+import { MatrixClientPeg } from "./MatrixClientPeg"; // watcha+
+import SdkConfig from "./SdkConfig"; // watcha+
 
 // Regexp based on Simpler Version from https://gist.github.com/gregseth/5582254 - matches RFC2822
 const EMAIL_ADDRESS_REGEX = new RegExp(
@@ -22,3 +24,16 @@ const EMAIL_ADDRESS_REGEX = new RegExp(
 export function looksValid(email: string): boolean {
     return EMAIL_ADDRESS_REGEX.test(email);
 }
+
+// watcha+
+export async function isMine(email: string): Promise<boolean> {
+    const { threepids } = await MatrixClientPeg.get().getThreePids();
+    return threepids.some(threepid => threepid.medium === "email" && threepid.address === email);
+}
+
+export function hasForbiddenDomainForPartner(email: string): boolean {
+    const domain = email.split("@")[1];
+    const forbiddenDomains = SdkConfig.get().watcha_forbidden_partner_domains;
+    return !!forbiddenDomains?.includes(domain);
+}
+// +watcha

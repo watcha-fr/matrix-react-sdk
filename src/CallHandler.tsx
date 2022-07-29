@@ -866,7 +866,10 @@ export default class CallHandler extends EventEmitter {
             Modal.createDialog(ErrorDialog, {
                 description: _t('You cannot place a call with yourself.'),
             });
+        /* watcha!
         } else if (members.length === 2) {
+        !watcha */
+        } else if (members.length === 2 && SettingsStore.getValue("feature_watcha_webrtc")) { // watcha+
             logger.info(`Place ${type} call in ${roomId}`);
 
             this.placeMatrixCall(roomId, type, transferee);

@@ -25,7 +25,10 @@ import { MatrixClientPeg } from './MatrixClientPeg';
 import MultiInviter, { CompletionStates } from './utils/MultiInviter';
 import Modal from './Modal';
 import { _t } from './languageHandler';
+/* watcha!
 import InviteDialog from "./components/views/dialogs/InviteDialog";
+!watcha */
+import InviteDialog from "./components/views/dialogs/watcha_InviteDialog"; // watcha+
 import BaseAvatar from "./components/views/avatars/BaseAvatar";
 import { mediaFromMxc } from "./customisations/Media";
 import ErrorDialog from "./components/views/dialogs/ErrorDialog";

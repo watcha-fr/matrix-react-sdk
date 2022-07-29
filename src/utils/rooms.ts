@@ -33,6 +33,7 @@ export function privateShouldBeEncrypted(): boolean {
         const defaultDisabled = e2eeWellKnown["default"] === false;
         return !defaultDisabled;
     }
+    return !(SdkConfig.getObject("e2ee")?.get("default") === false); // watcha+
     return true;
 }
 

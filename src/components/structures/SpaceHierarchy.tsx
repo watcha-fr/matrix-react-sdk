@@ -431,7 +431,10 @@ export const HierarchyLevel = ({
 }: IHierarchyLevelProps) => {
     const cli = useContext(MatrixClientContext);
     const space = cli.getRoom(root.room_id);
+    /* watcha!
     const hasPermissions = space?.currentState.maySendStateEvent(EventType.SpaceChild, cli.getUserId());
+    !watcha */
+    const hasPermissions = space?.currentState.mayClientSendStateEvent(EventType.SpaceChild, cli); // watcha+
 
     const sortedChildren = sortBy(root.children_state, ev => {
         return getChildOrder(ev.content.order, ev.origin_server_ts, ev.state_key);
@@ -753,7 +756,10 @@ const SpaceHierarchy = ({
                 content = <Spinner />;
             } else {
                 const hasPermissions = space?.getMyMembership() === "join" &&
+                    /* watcha!
                     space.currentState.maySendStateEvent(EventType.SpaceChild, cli.getUserId());
+                    !watcha */
+                    space.currentState.mayClientSendStateEvent(EventType.SpaceChild, cli); // watcha+
 
                 let results: JSX.Element;
                 if (filteredRoomSet.size) {

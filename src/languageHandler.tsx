@@ -106,10 +106,13 @@ const translateWithFallback = (text: string, options?: object): { translated?: s
             // "missing translation" error.
             //
             // Don't do this in develop so people remember to run yarn i18n.
+            return { translated: text?.replace(/Element/g, "Watcha"), isFallback: true }; // watcha+
             return { translated: text, isFallback: true };
         }
+        return { translated: fallbackTranslated?.replace(/Element/g, "Watcha"), isFallback: true }; // watcha+
         return { translated: fallbackTranslated, isFallback: true };
     }
+    return { translated: translated?.replace(/Element/g, "Watcha") }; // watcha+
     return { translated };
 };
 
