@@ -33,6 +33,7 @@ import MatrixActionCreators from './actions/MatrixActionCreators';
 import Modal from './Modal';
 import MatrixClientBackedSettingsHandler from "./settings/handlers/MatrixClientBackedSettingsHandler";
 import * as StorageManager from './utils/StorageManager';
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */// @ts-ignore // watcha+
 import IdentityAuthClient from './IdentityAuthClient';
 import { crossSigningCallbacks, tryToUnlockSecretStorageWithDehydrationKey } from './SecurityManager';
 import SecurityCustomisations from "./customisations/Security";
