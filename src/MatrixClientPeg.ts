@@ -33,6 +33,7 @@ import MatrixActionCreators from './actions/MatrixActionCreators';
 import Modal from './Modal';
 import MatrixClientBackedSettingsHandler from "./settings/handlers/MatrixClientBackedSettingsHandler";
 import * as StorageManager from './utils/StorageManager';
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */// @ts-ignore // watcha+
 import IdentityAuthClient from './IdentityAuthClient';
 import { crossSigningCallbacks, tryToUnlockSecretStorageWithDehydrationKey } from './SecurityManager';
 import SecurityCustomisations from "./customisations/Security";
@@ -284,7 +285,9 @@ class MatrixClientPegClass implements IMatrixClientPeg {
                 SHOW_QR_CODE_METHOD,
                 verificationMethods.RECIPROCATE_QR_CODE,
             ],
+            /* watcha! until we have an IS
             identityServer: new IdentityAuthClient(),
+            !watcha */
             cryptoCallbacks: {},
         };
 
