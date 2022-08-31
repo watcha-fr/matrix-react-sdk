@@ -284,7 +284,9 @@ class MatrixClientPegClass implements IMatrixClientPeg {
                 SHOW_QR_CODE_METHOD,
                 verificationMethods.RECIPROCATE_QR_CODE,
             ],
+            /* watcha! until we have an IS
             identityServer: new IdentityAuthClient(),
+            !watcha */
             cryptoCallbacks: {},
         };
 
