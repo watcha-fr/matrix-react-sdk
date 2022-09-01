@@ -14,10 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-/* watcha!
 function onLoggedOutAndStorageCleared(): void {
-!watcha */
-function onLoggedOutAndStorageCleared(isPartner, capabilities): void { // watcha+
     // E.g. redirect user or call other APIs after logout
 }
 
