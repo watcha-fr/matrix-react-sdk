@@ -872,6 +872,7 @@ export async function onLoggedOut(): Promise<void> {
     const client = MatrixClientPeg.get();
     const isPartner = client.isPartner();
     const capabilities = await client.getCapabilities();
+    const externalAuthenticationForPartners = capabilities.watcha?.external_authentication_for_partners?.enabled;
     // +watcha
     // Ensure that we dispatch a view change **before** stopping the client,
     // that React components unmount first. This avoids React soft crashes
@@ -879,10 +880,7 @@ export async function onLoggedOut(): Promise<void> {
     dis.fire(Action.OnLoggedOut, true);
     stopMatrixClient();
     await clearStorage({ deleteEverything: true });
-    /* watcha!
     LifecycleCustomisations.onLoggedOutAndStorageCleared?.();
-    !watcha */
-    LifecycleCustomisations.onLoggedOutAndStorageCleared?.(isPartner, capabilities); // watcha+
 
     // Do this last, so we can make sure all storage has been cleared and all
     // customisations got the memo.
@@ -890,6 +888,12 @@ export async function onLoggedOut(): Promise<void> {
         logger.log("Redirecting to external provider to finish logout");
         // XXX: Defer this so that it doesn't race with MatrixChat unmounting the world by going to /#/login
         setTimeout(() => {
+            // watcha+
+            if (isPartner && !externalAuthenticationForPartners) {
+                window.location.hash = "/partner";
+                return;
+            }
+            // +watcha
             window.location.href = SdkConfig.get().logout_redirect_url;
         }, 100);
     }
