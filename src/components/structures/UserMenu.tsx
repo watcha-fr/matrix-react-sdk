@@ -399,12 +399,14 @@ export default class UserMenu extends React.Component<IProps, IState> {
                             onClick={this.onNextcloudClick}
                         />
                     }
-                    <IconizedContextMenuOption
-                        iconClassName="mx_UserMenu_iconJitsi"
-                        label={_t("Videoconferencing")}
-                        title={_t("Open the videoconferencing platform in a new tab")}
-                        onClick={this.onJitsiClick}
-                    />
+                    { SettingsStore.getValue(UIFeature.Voip) &&
+                        <IconizedContextMenuOption
+                            iconClassName="mx_UserMenu_iconJitsi"
+                            label={_t("Videoconferencing")}
+                            title={_t("Open the videoconferencing platform in a new tab")}
+                            onClick={this.onJitsiClick}
+                        />
+                    }
                 </IconizedContextMenuOptionList>
             }
             <IconizedContextMenuOptionList>
