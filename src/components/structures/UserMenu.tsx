@@ -379,7 +379,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
                 />
             { /* watcha+ */ }
             </IconizedContextMenuOptionList>
-            { SettingsStore.getValue(UIFeature.watcha_administration) && this.state.isSynapseAdministrator &&
+            { SettingsStore.getValue(UIFeature.watcha_Administration) && this.state.isSynapseAdministrator &&
                 <IconizedContextMenuOptionList>
                     <IconizedContextMenuOption
                         iconClassName="mx_UserMenu_iconAdministration"
@@ -391,7 +391,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
             }
             { !MatrixClientPeg.get().isPartner() &&
                 <IconizedContextMenuOptionList>
-                    { SettingsStore.getValue("UIFeature.watcha_Nextcloud") &&
+                    { SettingsStore.getValue(UIFeature.watcha_Nextcloud) &&
                         <IconizedContextMenuOption
                             iconClassName="mx_UserMenu_iconNextcloud"
                             label={_t("My documents")}

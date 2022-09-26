@@ -462,7 +462,7 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         !watcha */
         // watcha+
         controller: new OrderedMultiController([
-            new UIFeatureController(UIFeature.watcha_stickersSetting),
+            new UIFeatureController(UIFeature.watcha_StickersSetting),
             new UIFeatureController(UIFeature.Widgets, false),
         ]),
         // +watcha
@@ -1059,7 +1059,7 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         default: true,
     },
     // watcha+
-    [UIFeature.watcha_administration]: {
+    [UIFeature.watcha_Administration]: {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
     },
@@ -1067,7 +1067,7 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
     },
-    [UIFeature.watcha_federation]: {
+    [UIFeature.watcha_Federation]: {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
     },
@@ -1075,11 +1075,11 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
     },
-    [UIFeature.watcha_partner]: {
+    [UIFeature.watcha_Partner]: {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
     },
-    [UIFeature.watcha_reportEvent]: {
+    [UIFeature.watcha_ReportEvent]: {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
     },
@@ -1087,7 +1087,7 @@ export const SETTINGS: {[setting: string]: ISetting} = {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
     },
-    [UIFeature.watcha_stickersSetting]: {
+    [UIFeature.watcha_StickersSetting]: {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
     },

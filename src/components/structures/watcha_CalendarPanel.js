@@ -19,6 +19,7 @@ import classNames from "classnames";
 import { RoomStateEvent } from "matrix-js-sdk/src/models/room-state";
 
 import { _t } from "../../languageHandler";
+import { UIFeature } from "../../settings/UIFeature";
 import BaseCard from "../views/right_panel/BaseCard";
 import defaultDispatcher from "../../dispatcher/dispatcher";
 import MatrixClientContext from "../../contexts/MatrixClientContext";
@@ -71,7 +72,7 @@ export default ({ roomId, appName, stateKey, initialTabId, empty, emptyClass, on
     };
 
     let panel;
-    if (SettingsStore.getValue("UIFeature.watcha_Nextcloud")) {
+    if (SettingsStore.getValue(UIFeature.watcha_Nextcloud)) {
         if (calendarId && calendarsReordering) {
             panel = <Spinner />;
         } else if (calendarId) {

@@ -106,7 +106,7 @@ export default class RoomSettingsDialog extends React.Component<IProps, IState> 
         ));
         // watcha+
         const showNextcloudFeature =
-            SettingsStore.getValue("UIFeature.watcha_Nextcloud") && !MatrixClientPeg.get().isPartner();
+            SettingsStore.getValue(UIFeature.watcha_Nextcloud) && !MatrixClientPeg.get().isPartner();
         if (showNextcloudFeature) {
             const canShareFolder = SettingsStore.canSetValue("nextcloudShare", this.props.roomId, SettingLevel.ROOM);
             if (canShareFolder) {

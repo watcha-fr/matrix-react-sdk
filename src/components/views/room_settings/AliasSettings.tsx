@@ -390,7 +390,7 @@ export default class AliasSettings extends React.Component<IProps, IState> {
                     data-test-id='published-address-fieldset'
                     legend={_t("Published Addresses")}
                     description={<>
-                        { SettingsStore.getValue(UIFeature.watcha_federation) && <> { /* eslint-disable indent *//* watcha+ */ }
+                        { SettingsStore.getValue(UIFeature.watcha_Federation) && <> { /* eslint-disable indent *//* watcha+ */ }
                         { isSpaceRoom
                             ? _t("Published addresses can be used by anyone on any server to join your space.")
                             : _t("Published addresses can be used by anyone on any server to join your room.") }
@@ -420,7 +420,7 @@ export default class AliasSettings extends React.Component<IProps, IState> {
                             return <option value={alias} key={alias} />;
                         }) };
                     </datalist>
-                    { SettingsStore.getValue(UIFeature.watcha_federation) && // watcha+
+                    { SettingsStore.getValue(UIFeature.watcha_Federation) && // watcha+
                     <EditableAliasesList
                         id="roomAltAliases"
                         items={this.state.altAliases}
