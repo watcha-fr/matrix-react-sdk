@@ -50,7 +50,11 @@ import { getKeyBindingsManager } from "../../../KeyBindingsManager";
 import { KeyBindingAction } from "../../../accessibility/KeyboardShortcuts";
 import SettingsStore from "../../../settings/SettingsStore";
 import DevtoolsDialog from "../dialogs/DevtoolsDialog";
-import { useSettingValue } from "../../../hooks/useSettings"; // watcha+
+// watcha+
+import { useSettingValue } from "../../../hooks/useSettings";
+import NextcloudShareDialog from "../dialogs/watcha_NextcloudShareDialog";
+import WidgetUtils from "../../../utils/WidgetUtils";
+// +watcha
 
 interface IProps extends IContextMenuProps {
     room: Room;
@@ -200,6 +204,23 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
         </IconizedContextMenuOption>;
     }
 
+    // watcha+
+    let shareDocuments: JSX.Element;
+    if (WidgetUtils.canUserModifyWidgets(room.roomId)) {
+        shareDocuments = <IconizedContextMenuOption
+            onClick={(ev: ButtonEvent) => {
+                ev.preventDefault();
+                ev.stopPropagation();
+
+                Modal.createDialog(NextcloudShareDialog, { roomId: room.roomId });
+                onFinished();
+            }}
+            label={_t("Share documents")}
+            iconClassName="watcha_RoomTile_iconDocuments"
+        />
+        }
+    // +watcha
+
     let peopleOption: JSX.Element;
     let copyLinkOption: JSX.Element;
     if (!isDm) {
@@ -240,7 +261,6 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
     }
 
     let filesOption: JSX.Element;
-    if (showAttachmentsButton) { /* eslint-enable indent */// watcha+
     if (!isVideoRoom) {
         filesOption = <IconizedContextMenuOption
             onClick={(ev: ButtonEvent) => {
@@ -259,7 +279,7 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
             iconClassName="mx_MessageComposer_upload" // watcha+
         />;
     }
-    } /* eslint-enable indent */// watcha+
+    if (!showAttachmentsButton) filesOption = null; // watcha+
 
     const pinningEnabled = useFeatureEnabled("feature_pinning");
     const pinCount = usePinnedEvents(pinningEnabled && room)?.length;
@@ -357,6 +377,7 @@ const RoomContextMenu = ({ room, onFinished, ...props }: IProps) => {
             { filesOption }
             { pinsOption }
             { widgetsOption }
+            { shareDocuments /* watcha+ */ }
             { lowPriorityOption }
             { copyLinkOption }
 

@@ -254,10 +254,6 @@ const onRoomSettingsClick = (ev: ButtonEvent) => {
 };
 
 // watcha+
-const onRoomDocumentsClick = () => {
-    RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudDocumentPanel }, true);
-};
-
 const onRoomCalendarClick = () => {
     RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudCalendarPanel }, true);
 };
@@ -353,13 +349,6 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
                 </Button> }
             { /* watcha+ */ }
             { showNextcloudButtons && !isVideoRoom && <>
-                <Button
-                    className="mx_RoomSummaryCard_icon_documents"
-                    title={_t("Show documents shared with the room")}
-                    onClick={onRoomDocumentsClick}
-                >
-                    { _t("Documents") }
-                </Button>
                 <Button
                     className="mx_RoomSummaryCard_icon_calendar"
                     title={_t("Show the calendar shared with the room")}

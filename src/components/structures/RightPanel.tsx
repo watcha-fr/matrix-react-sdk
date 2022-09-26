@@ -46,10 +46,9 @@ import { IRightPanelCard, IRightPanelCardState } from '../../stores/right-panel/
 import { Action } from '../../dispatcher/actions';
 // watcha+
 import { _t } from "../../languageHandler";
-import { ROOM_NEXTCLOUD_DOCUMENTS_TAB, ROOM_NEXTCLOUD_CALENDAR_TAB } from "../views/dialogs/RoomSettingsDialog";
+import { ROOM_NEXTCLOUD_CALENDAR_TAB } from "../views/dialogs/RoomSettingsDialog";
 import { AppNames, StateKeys } from "../../utils/watcha_nextcloudUtils";
 import CalendarPanel from "./watcha_CalendarPanel";
-import DocumentPanel from "./watcha_DocumentPanel";
 // +watcha
 
 interface IProps {
@@ -264,18 +263,6 @@ export default class RightPanel extends React.Component<IProps, IState> {
                 break;
 
             // watcha+
-            case RightPanelPhases.NextcloudDocumentPanel:
-                card = (
-                    <DocumentPanel
-                        roomId={roomId}
-                        initialTabId={ROOM_NEXTCLOUD_DOCUMENTS_TAB}
-                        empty={_t("No document shared with this room")}
-                        emptyClass="watcha_DocumentPanel_empty"
-                        onClose={this.onClose}
-                    />
-                );
-                break;
-
             case RightPanelPhases.NextcloudCalendarPanel:
                 card = (
                     <CalendarPanel

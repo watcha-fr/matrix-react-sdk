@@ -15,25 +15,31 @@ limitations under the License.
 */
 
 import classNames from "classnames";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { _t } from "../../../languageHandler";
+import { WidgetType } from "../../../widgets/WidgetType";
 import BaseDialog from "./BaseDialog";
 import DialogButtons from "../elements/DialogButtons";
+import ErrorDialog from "../dialogs/ErrorDialog";
 import Field from "../elements/Field";
+import MatrixClientContext from "../../../contexts/MatrixClientContext";
+import Modal from "../../../Modal";
 import SettingsStore from "../../../settings/SettingsStore";
 import Spinner from "../elements/Spinner";
+import WidgetUtils from "../../../utils/WidgetUtils";
 import { getNextcloudBaseUrl, getDocumentSelectorUrl } from "../../../utils/watcha_nextcloudUtils";
 
 interface IProps {
     roomId: string;
-    onFinished(target?: string): Promise<void>;
+    onFinished(): Promise<void>;
 }
 
 const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
+    const client = useContext(MatrixClientContext);
     const initUrlRef = useRef(getDocumentSelectorUrl(SettingsStore.getValue("nextcloudShare", roomId)));
     const urlRef = useRef(initUrlRef.current);
-    const [target, setTarget] = useState(initUrlRef.current);
+    const [widgetUrl, setWidgetUrl] = useState(initUrlRef.current);
 
     const [busy, setBusy] = useState(true);
 
@@ -49,7 +55,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
                 return;
             }
             const url = getDocumentSelectorUrl(data);
-            setTarget(url);
+            setWidgetUrl(url);
         }
         window.addEventListener("message", receiveMessage, false);
         return () => {
@@ -65,7 +71,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
                 const url = getDocumentSelectorUrl(newValAtLevel);
                 initUrlRef.current = url;
                 urlRef.current = url;
-                setTarget(url);
+                setWidgetUrl(url);
             },
         );
         return () => {
@@ -74,14 +80,31 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
     }, [roomId]);
 
     const onOK = () => {
-        onFinished(target);
+        const userId = client.getUserId();
+        const ts = Date.now();
+        const widgetId = `nextcloud_document_${userId}_${ts}`;
+        const widgetType = WidgetType.NEXTCLOUD_DOCUMENT;
+        const widgetData = {};
+
+        WidgetUtils.setRoomWidget(roomId, widgetId, widgetType, widgetUrl, "Documents", widgetData)
+            .catch(e => {
+                if (e.errcode === "M_FORBIDDEN") {
+                    Modal.createDialog(ErrorDialog, {
+                        title: _t("Permission Required"),
+                        description: _t("You do not have permission to share documents in this room"),
+                    });
+                }
+            })
+            .finally(() => {
+                onFinished();
+            });
     };
 
     const onCancel = () => {
-        onFinished(null);
+        onFinished();
     };
 
-    const params = new URL(target).searchParams;
+    const params = new URL(widgetUrl).searchParams;
     const path = params.get("dir");
     const relativePath = path ? path.replace(/^\//, "") : null;
 
@@ -117,8 +140,8 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
                 <DialogButtons
                     primaryButton={_t("OK")}
                     onPrimaryButtonClick={onOK}
-                    primaryDisabled={!relativePath || target === initUrlRef.current}
-                    onCancel={onCancel}
+                    primaryDisabled={!relativePath || widgetUrl === initUrlRef.current}
+                    {...{ onCancel }}
                 />
             </BaseDialog>
         </React.Fragment>

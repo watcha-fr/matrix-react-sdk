@@ -39,10 +39,6 @@ limitations under the License.
     }
 }
 
-.watcha_DocumentPanel_empty::before {
-    mask-image: url("$(res)/img/watcha/watcha_documents.svg");
-}
-
 .watcha_CalendarPanel_empty::before {
     mask-image: url("$(res)/img/watcha/watcha_calendar.svg");
 }

@@ -247,4 +247,10 @@ limitations under the License.
     .mx_RoomTile_iconSignOut::before {
         mask-image: url('$(res)/img/element-icons/leave.svg');
     }
+
+    // watcha+
+    .watcha_RoomTile_iconDocuments::before {
+        mask-image: url("$(res)/img/watcha/watcha_documents.svg");
+    }
+    // +watcha
 }

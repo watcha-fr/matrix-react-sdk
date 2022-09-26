@@ -478,6 +478,7 @@ export default class AppTile extends React.Component<IProps, IState> {
      * @returns {bool} true If using a local version of the widget
      */
     private usingLocalWidget(): boolean {
+        if (WidgetType.NEXTCLOUD_DOCUMENT.matches(this.props.app.type)) return true; // watcha+
         return WidgetType.JITSI.matches(this.props.app.type);
     }
 

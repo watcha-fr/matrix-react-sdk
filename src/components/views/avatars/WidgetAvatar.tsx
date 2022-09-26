@@ -37,6 +37,13 @@ const WidgetAvatar: React.FC<IProps> = ({ app, className, width = 20, height = 2
     } else if (app.type.includes("clock")) {
         iconUrls = [require("../../../../res/img/element-icons/room/default_clock.svg").default];
     }
+    // watcha+
+    if (app.type.startsWith("nextcloud")) {
+        if (app.type.includes("document")) {
+            iconUrls = [require("../../../../res/img/watcha/watcha_documents.svg")];
+        }
+    }
+    // +watcha
 
     return (
         <BaseAvatar

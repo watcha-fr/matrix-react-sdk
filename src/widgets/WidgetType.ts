@@ -20,6 +20,7 @@ export class WidgetType {
     public static readonly STICKERPICKER = new WidgetType("m.stickerpicker", "m.stickerpicker");
     public static readonly INTEGRATION_MANAGER = new WidgetType("m.integration_manager", "m.integration_manager");
     public static readonly CUSTOM = new WidgetType("m.custom", "m.custom");
+    public static readonly NEXTCLOUD_DOCUMENT = new WidgetType("watcha.nextcloud.document", "watcha.nextcloud.document"); // watcha+
 
     constructor(public readonly preferred: string, public readonly legacy: string) {
     }
