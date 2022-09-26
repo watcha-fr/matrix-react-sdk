@@ -363,7 +363,7 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
                         { publicPrivateLabel }
                         { e2eeSection }
                         { aliasField }
-                        { SettingsStore.getValue(UIFeature.watcha_federation) && // watcha+
+                        { SettingsStore.getValue(UIFeature.watcha_Federation) && // watcha+
                         <details onToggle={this.onDetailsToggled} className="mx_CreateRoomDialog_details">
                             <summary className="mx_CreateRoomDialog_details_summary">
                                 { this.state.detailsOpen ? _t('Hide advanced') : _t('Show advanced') }

@@ -564,7 +564,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
         }
 
         let reportEventButton: JSX.Element;
-        if (SettingsStore.getValue(UIFeature.watcha_reportEvent)) { /* eslint-disable indent */// watcha+
+        if (SettingsStore.getValue(UIFeature.watcha_ReportEvent)) { /* eslint-disable indent */// watcha+
         if (mxEvent.getSender() !== me) {
             reportEventButton = (
                 <IconizedContextMenuOption

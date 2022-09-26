@@ -18,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 
 import { _t } from "../../languageHandler";
+import { UIFeature } from "../../settings/UIFeature";
 import { useSettingValue } from "../../hooks/useSettings";
 import BaseCard from "../views/right_panel/BaseCard";
 import defaultDispatcher from "../../dispatcher/dispatcher";
@@ -44,7 +45,7 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
     };
 
     let panel;
-    if (SettingsStore.getValue("UIFeature.watcha_Nextcloud")) {
+    if (SettingsStore.getValue(UIFeature.watcha_Nextcloud)) {
         if (nextcloudShare) {
             panel = (
                 <>

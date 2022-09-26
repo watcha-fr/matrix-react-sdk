@@ -543,7 +543,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
                             </SelectedList>
                         </Section>
                     </div>
-                    { SettingsStore.getValue(UIFeature.watcha_partner) &&
+                    { SettingsStore.getValue(UIFeature.watcha_Partner) &&
                         <AccessibleButton
                             className="watcha_InviteDialog_invitePartnerButton"
                             onClick={this.showInvitePartnerDialog}
