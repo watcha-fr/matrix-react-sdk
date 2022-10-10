@@ -71,7 +71,7 @@ const NextcloudDocumentsSettingsTab: React.FC<IProps> = ({ roomId }) => {
     if (nextcloudShare) {
         const params = new URL(nextcloudShare).searchParams;
         const path = params.get("dir");
-        const relativePath = path ? path.replace(/^\//, "") : null;
+        const relativePath = path ? path.split("/").pop() : null;
         sharedFolderField = (
             <Field
                 className={classNames({

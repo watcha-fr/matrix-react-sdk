@@ -48,38 +48,48 @@ export function getNextcloudBaseUrl() {
     return url;
 }
 
-export function getDocumentSelectorUrl(shareUrl: string) {
-    return getDocumentWidgetUrl(shareUrl, [RefineTargets.DocumentSelector]);
+export function getDocumentSelectorUrl(shareUrl: string, skipDirParam = true) {
+    return getDocumentWidgetUrl(shareUrl, [RefineTargets.DocumentSelector], skipDirParam);
 }
 
-export function getDocumentWidgetUrl(shareUrl: string, refineTargets: RefineTargets[] = []) {
+export function getDocumentWidgetUrl(shareUrl: string, refineTargets: RefineTargets[] = [], skipDirParam = true) {
     let path = "/";
+    let fileId = null;
     if (shareUrl) {
         const url = new URL(shareUrl);
         path = url.searchParams.get("dir");
+        fileId = url.searchParams.get("fileid");
     }
     const appName = AppNames.Files;
     const searchParams = new Map([["dir", path]]);
-    return getWidgetUrl(appName, searchParams, refineTargets);
+    if (fileId) {
+        searchParams.set("fileid", fileId);
+    }
+    return getWidgetUrl(appName, searchParams, refineTargets, skipDirParam);
 }
 
 export function getWidgetUrl(
     appName: AppNames,
     searchParams = new Map<string, string>(),
     refineTargets: RefineTargets[] = [],
+    skipDirParam = false,
 ) {
     refineTargets = [RefineTargets.Widget, ...refineTargets];
-    return getIframeUrl(appName, searchParams, refineTargets);
+    return getIframeUrl(appName, searchParams, refineTargets, skipDirParam);
 }
 
 function getIframeUrl(
     appName: AppNames,
     searchParams = new Map<string, string>(),
     refineTargets: RefineTargets[] = [],
+    skipDirParam = false,
 ) {
     const url = getNextcloudBaseUrl();
     url.pathname += `apps/${appName}`;
     for (const [key, value] of searchParams.entries()) {
+        if (key == "dir" && skipDirParam && searchParams.get("fileid")) {
+            continue;
+        }
         url.searchParams.append(key, value);
     }
     for (const target of refineTargets) {
