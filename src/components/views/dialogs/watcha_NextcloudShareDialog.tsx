@@ -48,7 +48,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
             ) {
                 return;
             }
-            const url = getDocumentSelectorUrl(data);
+            const url = getDocumentSelectorUrl(data, false);
             setTarget(url);
         }
         window.addEventListener("message", receiveMessage, false);
@@ -62,7 +62,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
             "nextcloudShare",
             roomId,
             (originalSettingName, changedInRoomId, atLevel, newValAtLevel, newValue) => {
-                const url = getDocumentSelectorUrl(newValAtLevel);
+                const url = getDocumentSelectorUrl(newValAtLevel, false);
                 initUrlRef.current = url;
                 urlRef.current = url;
                 setTarget(url);
@@ -83,7 +83,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
 
     const params = new URL(target).searchParams;
     const path = params.get("dir");
-    const relativePath = path ? path.replace(/^\//, "") : null;
+    const relativePath = path ? path.split("/").pop() : null;
 
     return (
         <React.Fragment>
