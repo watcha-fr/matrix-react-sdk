@@ -45,6 +45,11 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
         'showExploreChatAttachmentsButton',
         'showShareRoomButton',
     ];
+
+    static USER_PROFILE_SETTINGS = [
+        'showIgnoreUserButton',
+        'showDeactivateUserButton',
+    ];
     // +watcha
 
     static ROOM_LIST_SETTINGS = [
@@ -102,7 +107,6 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
     ];
     static GENERAL_SETTINGS = [
         'showE2EEUI', // watcha+
-        'showIgnoreUserButton', // watcha+
         'promptBeforeInviteUnknownUsers',
         // Start automatically after startup (electron-only)
         // Autocomplete delay (niche text box)
@@ -174,6 +178,11 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
                 <div className="mx_SettingsTab_section">
                     <span className="mx_SettingsTab_subheading">{ _t("Room Info") }</span>
                     { this.renderGroup(PreferencesUserSettingsTab.ROOM_INFO_SETTINGS) }
+                </div>
+
+                <div className="mx_SettingsTab_section">
+                    <span className="mx_SettingsTab_subheading">{ _t("User profile") }</span>
+                    { this.renderGroup(PreferencesUserSettingsTab.USER_PROFILE_SETTINGS) }
                 </div>
                 { /* +watcha */ }
 

@@ -1122,8 +1122,13 @@ export const SETTINGS: {[setting: string]: ISetting} = {
     },
     "showIgnoreUserButton": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
-        displayName: _td("Show buttons to ignore users"),
-        description: _td("Visible on user profiles and incoming invitations"),
+        displayName: _td("Show button to ignore user"),
+        description: _td("Also visible on incoming invitations"),
+        default: false,
+    },
+    "showDeactivateUserButton": {
+        supportedLevels: LEVELS_ACCOUNT_SETTINGS,
+        displayName: _td("Show button to disable the user's account"),
         default: false,
     },
     "showE2EEUI": {

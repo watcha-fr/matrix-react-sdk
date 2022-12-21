@@ -1182,6 +1182,7 @@ const BasicUserInfo: React.FC<{
     devices: IDevice[];
     isRoomEncrypted: boolean;
 }> = ({ room, member, devices, isRoomEncrypted }) => {
+    const showDeactivateButton = useSettingValue("showDeactivateUserButton"); // watcha+
     const showE2EEUI = useSettingValue("showE2EEUI"); // watcha+
     const cli = useContext(MatrixClientContext);
 
@@ -1259,6 +1260,7 @@ const BasicUserInfo: React.FC<{
             </AccessibleButton>
         );
     }
+    if (!showDeactivateButton) synapseDeactivateButton = null; // watcha+
 
     let memberDetails;
     let adminToolsContainer;
