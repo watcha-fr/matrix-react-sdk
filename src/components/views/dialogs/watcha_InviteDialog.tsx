@@ -43,7 +43,6 @@ import SearchBox from "../../structures/SearchBox";
 import SettingsStore from "../../../settings/SettingsStore";
 import Spinner from "../elements/Spinner";
 import Tooltip from "../elements/Tooltip";
-
 import InvitePartnerDialog from "./watcha_InvitePartnerDialog";
 
 const VALIDATION_THROTTLE_MS = 500;
@@ -515,7 +514,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
         let invite;
 
         if (kind === KIND_DM) {
-            title = _t("Start a private conversation");
+            title = _t("Start chat");
             invite = this.startDm;
         } else {
             // KIND_INVITE
