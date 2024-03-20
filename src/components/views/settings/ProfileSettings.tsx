@@ -195,7 +195,8 @@ export default class ProfileSettings extends React.Component<{}, IState> {
                 />
                 <div className="mx_ProfileSettings_profile">
                     <div className="mx_ProfileSettings_profile_controls">
-                        <span className="mx_SettingsTab_subheading">{ _t("Profile") }</span>
+                        Yo
+                        <span className="mx_SettingsTab_subheading">{ _t("Profile") }SAlut toi</span>
                         <Field
                             label={_t("Display Name")}
                             type="text"
