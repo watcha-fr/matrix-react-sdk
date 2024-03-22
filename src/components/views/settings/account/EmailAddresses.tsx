@@ -115,7 +115,7 @@ export class ExistingEmailAddress extends React.Component<IExistingEmailAddressP
         return (
             <div className="mx_ExistingEmailAddress">
                 <span className="mx_ExistingEmailAddress_email">{ this.props.email.address }</span>
-                <AccessibleButton onClick={this.onRemove} kind="danger_sm">
+                <AccessibleButton disabled onClick={this.onRemove} kind="danger_sm">
                     { _t("Remove") }
                 </AccessibleButton>
             </div>
@@ -236,7 +236,7 @@ export default class EmailAddresses extends React.Component<IProps, IState> {
         });
 
         let addButton = (
-            <AccessibleButton onClick={this.onAddClick} kind="primary">
+            <AccessibleButton disabled onClick={this.onAddClick} kind="primary">
                 { _t("Add") }
             </AccessibleButton>
         );
