@@ -198,6 +198,7 @@ export default class ProfileSettings extends React.Component<{}, IState> {
                         Test d'ajout sur la branch
                         <span className="mx_SettingsTab_subheading">{ _t("Profile") }Test d'ajout sur la branch 2</span>
                         <Field
+                            disabled
                             label={_t("Display Name")}
                             type="text"
                             value={this.state.displayName}
