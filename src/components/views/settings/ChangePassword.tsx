@@ -381,6 +381,7 @@ export default class ChangePassword extends React.Component<IProps, IState> {
                     <form className={this.props.className} onSubmit={this.onClickChange}>
                         <div className={rowClassName}>
                             <Field
+                                disabled
                                 ref={field => this[FIELD_OLD_PASSWORD] = field}
                                 type="password"
                                 label={_t('Current password')}
@@ -391,6 +392,7 @@ export default class ChangePassword extends React.Component<IProps, IState> {
                         </div>
                         <div className={rowClassName}>
                             <PassphraseField
+                                disabled
                                 fieldRef={field => this[FIELD_NEW_PASSWORD] = field}
                                 type="password"
                                 label={_td("New Password")}
@@ -404,6 +406,7 @@ export default class ChangePassword extends React.Component<IProps, IState> {
                         </div>
                         <div className={rowClassName}>
                             <Field
+                                disabled
                                 ref={field => this[FIELD_NEW_PASSWORD_CONFIRM] = field}
                                 type="password"
                                 label={_t("Confirm password")}
@@ -413,7 +416,7 @@ export default class ChangePassword extends React.Component<IProps, IState> {
                                 autoComplete="new-password"
                             />
                         </div>
-                        <AccessibleButton className={buttonClassName} kind={this.props.buttonKind} onClick={this.onClickChange}>
+                        <AccessibleButton disabled className={buttonClassName} kind={this.props.buttonKind} onClick={this.onClickChange}>
                             { this.props.buttonLabel || _t('Change Password') }
                         </AccessibleButton>
                     </form>
