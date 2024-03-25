@@ -29,6 +29,8 @@ import PassphraseField from "../auth/PassphraseField";
 import { PASSWORD_MIN_SCORE } from '../auth/RegistrationForm';
 import SetEmailDialog from "../dialogs/SetEmailDialog";
 import QuestionDialog from "../dialogs/QuestionDialog";
+import SettingsStore from "../../../settings/SettingsStore";
+import { UIFeature } from "../../../settings/UIFeature";
 
 const FIELD_OLD_PASSWORD = 'field_old_password';
 const FIELD_NEW_PASSWORD = 'field_new_password';
@@ -381,7 +383,7 @@ export default class ChangePassword extends React.Component<IProps, IState> {
                     <form className={this.props.className} onSubmit={this.onClickChange}>
                         <div className={rowClassName}>
                             <Field
-                                disabled
+                                disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)}
                                 ref={field => this[FIELD_OLD_PASSWORD] = field}
                                 type="password"
                                 label={_t('Current password')}
@@ -392,7 +394,7 @@ export default class ChangePassword extends React.Component<IProps, IState> {
                         </div>
                         <div className={rowClassName}>
                             <PassphraseField
-                                disabled
+                                disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)}
                                 fieldRef={field => this[FIELD_NEW_PASSWORD] = field}
                                 type="password"
                                 label={_td("New Password")}
@@ -406,7 +408,7 @@ export default class ChangePassword extends React.Component<IProps, IState> {
                         </div>
                         <div className={rowClassName}>
                             <Field
-                                disabled
+                                disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)}
                                 ref={field => this[FIELD_NEW_PASSWORD_CONFIRM] = field}
                                 type="password"
                                 label={_t("Confirm password")}
@@ -416,7 +418,7 @@ export default class ChangePassword extends React.Component<IProps, IState> {
                                 autoComplete="new-password"
                             />
                         </div>
-                        <AccessibleButton disabled className={buttonClassName} kind={this.props.buttonKind} onClick={this.onClickChange}>
+                        <AccessibleButton disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)} className={buttonClassName} kind={this.props.buttonKind} onClick={this.onClickChange}>
                             { this.props.buttonLabel || _t('Change Password') }
                         </AccessibleButton>
                     </form>

@@ -30,6 +30,8 @@ import AvatarSetting from './AvatarSetting';
 import ExternalLink from '../elements/ExternalLink';
 import UserIdentifierCustomisations from '../../../customisations/UserIdentifier';
 import { chromeFileInputFix } from "../../../utils/BrowserWorkarounds";
+import SettingsStore from "../../../settings/SettingsStore";
+import { UIFeature } from "../../../settings/UIFeature";
 
 interface IState {
     userId?: string;
@@ -197,7 +199,7 @@ export default class ProfileSettings extends React.Component<{}, IState> {
                     <div className="mx_ProfileSettings_profile_controls">
                         <span className="mx_SettingsTab_subheading">{ _t("Profile") }</span>
                         <Field
-                            disabled
+                            disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)}
                             label={_t("Display Name")}
                             type="text"
                             value={this.state.displayName}

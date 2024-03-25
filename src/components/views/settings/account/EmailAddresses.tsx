@@ -27,6 +27,8 @@ import * as Email from "../../../../email";
 import AddThreepid from "../../../../AddThreepid";
 import Modal from '../../../../Modal';
 import ErrorDialog from "../../dialogs/ErrorDialog";
+import SettingsStore from "../../../../settings/SettingsStore";
+import { UIFeature } from "../../../../settings/UIFeature";
 
 /*
 TODO: Improve the UX for everything in here.
@@ -115,7 +117,7 @@ export class ExistingEmailAddress extends React.Component<IExistingEmailAddressP
         return (
             <div className="mx_ExistingEmailAddress">
                 <span className="mx_ExistingEmailAddress_email">{ this.props.email.address }</span>
-                <AccessibleButton disabled onClick={this.onRemove} kind="danger_sm">
+                <AccessibleButton disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)} onClick={this.onRemove} kind="danger_sm">
                     { _t("Remove") }
                 </AccessibleButton>
             </div>
@@ -236,7 +238,7 @@ export default class EmailAddresses extends React.Component<IProps, IState> {
         });
 
         let addButton = (
-            <AccessibleButton disabled onClick={this.onAddClick} kind="primary">
+            <AccessibleButton disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)} onClick={this.onAddClick} kind="primary">
                 { _t("Add") }
             </AccessibleButton>
         );
@@ -268,7 +270,7 @@ export default class EmailAddresses extends React.Component<IProps, IState> {
                         type="text"
                         label={_t("Email Address")}
                         autoComplete="off"
-                        disabled
+                        disabled={this.state.verifying || SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)}
                         value={this.state.newEmailAddress}
                         onChange={this.onChangeNewEmailAddress}
                     />
