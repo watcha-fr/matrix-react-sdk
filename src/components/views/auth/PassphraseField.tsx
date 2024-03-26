@@ -22,6 +22,8 @@ import SdkConfig from "../../../SdkConfig";
 import withValidation, { IFieldState, IValidationResult } from "../elements/Validation";
 import { _t, _td } from "../../../languageHandler";
 import Field, { IInputProps } from "../elements/Field";
+import SettingsStore from "../../../settings/SettingsStore";
+import { UIFeature } from "../../../settings/UIFeature";
 
 interface IProps extends Omit<IInputProps, "onValidate"> {
     autoFocus?: boolean;
@@ -104,6 +106,7 @@ class PassphraseField extends PureComponent<IProps> {
 
     render() {
         return <Field
+            disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)}
             id={this.props.id}
             autoFocus={this.props.autoFocus}
             className={classNames("mx_PassphraseField", this.props.className)}
