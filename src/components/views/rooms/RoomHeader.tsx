@@ -45,6 +45,7 @@ import { NotificationStateEvents } from '../../../stores/notifications/Notificat
 import RoomContext from "../../../contexts/RoomContext";
 import RoomLiveShareWarning from '../beacon/RoomLiveShareWarning';
 import { BetaPill } from "../beta/BetaCard";
+import { UIFeature } from "../../../settings/UIFeature";
 
 export interface ISearchInfo {
     searchTerm: string;
@@ -225,7 +226,7 @@ export default class RoomHeader extends React.Component<IProps, IState> {
                 key="video"
             />;
             /* watcha+ */
-            if (SettingsStore.getValue('watcha_sitivFieldDisabled')) buttons.push(voiceCallButton);
+            if (SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)) buttons.push(voiceCallButton);
             else buttons.push(voiceCallButton, videoCallButton);
             /* +watcha */
         }

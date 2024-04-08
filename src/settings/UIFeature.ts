@@ -41,7 +41,7 @@ export enum UIFeature {
     watcha_SSOProfile = "UIFeature.watcha_ssoProfile",
     watcha_StickersSetting = "UIFeature.watcha_stickersSetting",
     watcha_ReportEvent = "UIFeature.watcha_reportEvent",
-    watcha_sitivFieldDisabled = "UIFeature.watcha_sitivFieldDisabled",
+    watcha_SitivFieldDisabled = "UIFeature.watcha_sitivFieldDisabled",
     /* eslint-enable camelcase */
     // +watcha
 }
