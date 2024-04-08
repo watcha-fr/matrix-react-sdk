@@ -224,7 +224,10 @@ export default class RoomHeader extends React.Component<IProps, IState> {
                 title={_t("Video call")}
                 key="video"
             />;
-            buttons.push(voiceCallButton, videoCallButton);
+            /* watcha+ */
+            if (SettingsStore.getValue('watcha_sitivFieldDisabled')) buttons.push(voiceCallButton);
+            else buttons.push(voiceCallButton, videoCallButton);
+            /* +watcha */
         }
 
         if (this.props.onForgetClick) {
