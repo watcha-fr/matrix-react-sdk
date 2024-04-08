@@ -199,7 +199,7 @@ export default class ProfileSettings extends React.Component<{}, IState> {
                     <div className="mx_ProfileSettings_profile_controls">
                         <span className="mx_SettingsTab_subheading">{ _t("Profile") }</span>
                         <Field
-                            disabled={SettingsStore.getValue(UIFeature.watcha_sitivFieldDisabled)} // watcha++
+                            disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)} // watcha++
                             label={_t("Display Name")}
                             type="text"
                             value={this.state.displayName}

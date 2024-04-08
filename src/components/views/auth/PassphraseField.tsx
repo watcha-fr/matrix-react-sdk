@@ -106,7 +106,7 @@ class PassphraseField extends PureComponent<IProps> {
 
     render() {
         return <Field
-            disabled={SettingsStore.getValue(UIFeature.watcha_sitivFieldDisabled)} // watcha++
+            disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)} // watcha++
             id={this.props.id}
             autoFocus={this.props.autoFocus}
             className={classNames("mx_PassphraseField", this.props.className)}
