@@ -20,6 +20,9 @@ enum Views {
     // trying to re-animate a matrix client or register as a guest.
     LOADING,
 
+    // Another tab holds the lock.
+    CONFIRM_LOCK_THEFT,
+
     // we are showing the welcome view
     WELCOME,
 
@@ -38,6 +41,9 @@ enum Views {
     // flow to setup SSSS / cross-signing on this account
     E2E_SETUP,
 
+    // screen that allows users to select which use case they’ll use matrix for
+    USE_CASE_SELECTION,
+
     // we are logged in with an active matrix client. The logged_in state also
     // includes guests users as they too are logged in at the client level.
     LOGGED_IN,
@@ -45,6 +51,9 @@ enum Views {
     // We are logged out (invalid token) but have our local state again. The user
     // should log back in to rehydrate the client.
     SOFT_LOGOUT,
+
+    // Another instance of the application has started up. We just show an error page.
+    LOCK_STOLEN,
 }
 
 export default Views;

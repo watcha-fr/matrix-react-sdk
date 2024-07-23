@@ -14,33 +14,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { EventType, MatrixEvent } from "matrix-js-sdk/src/matrix";
+import { EventType, MatrixEvent, Room } from "matrix-js-sdk/src/matrix";
 
 import { shouldDisplayAsBeaconTile } from "../../../src/utils/beacon/timeline";
-import { makeBeaconInfoEvent } from "../../test-utils";
+import { makeBeaconInfoEvent, stubClient } from "../../test-utils";
 
-describe('shouldDisplayAsBeaconTile', () => {
-    const userId = '@user:server';
-    const roomId = '!room:server';
+describe("shouldDisplayAsBeaconTile", () => {
+    const userId = "@user:server";
+    const roomId = "!room:server";
     const liveBeacon = makeBeaconInfoEvent(userId, roomId, { isLive: true });
     const notLiveBeacon = makeBeaconInfoEvent(userId, roomId, { isLive: false });
     const memberEvent = new MatrixEvent({ type: EventType.RoomMember });
     const redactedBeacon = makeBeaconInfoEvent(userId, roomId, { isLive: false });
-    redactedBeacon.makeRedacted(redactedBeacon);
+    redactedBeacon.makeRedacted(redactedBeacon, new Room(roomId, stubClient(), userId));
 
-    it('returns true for a beacon with live property set to true', () => {
+    it("returns true for a beacon with live property set to true", () => {
         expect(shouldDisplayAsBeaconTile(liveBeacon)).toBe(true);
     });
 
-    it('returns true for a redacted beacon', () => {
+    it("returns true for a redacted beacon", () => {
         expect(shouldDisplayAsBeaconTile(redactedBeacon)).toBe(true);
     });
 
-    it('returns false for a beacon with live property set to false', () => {
+    it("returns false for a beacon with live property set to false", () => {
         expect(shouldDisplayAsBeaconTile(notLiveBeacon)).toBe(false);
     });
 
-    it('returns false for a non beacon event', () => {
+    it("returns false for a non beacon event", () => {
         expect(shouldDisplayAsBeaconTile(memberEvent)).toBe(false);
     });
 });

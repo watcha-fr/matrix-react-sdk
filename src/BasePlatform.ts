@@ -17,22 +17,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { MatrixClient } from "matrix-js-sdk/src/client";
-import { encodeUnpaddedBase64 } from "matrix-js-sdk/src/crypto/olmlib";
+import {
+    MatrixClient,
+    MatrixEvent,
+    Room,
+    SSOAction,
+    encodeUnpaddedBase64,
+    OidcRegistrationClientMetadata,
+} from "matrix-js-sdk/src/matrix";
 import { logger } from "matrix-js-sdk/src/logger";
-import { MatrixEvent } from "matrix-js-sdk/src/models/event";
-import { Room } from "matrix-js-sdk/src/models/room";
 
-import dis from './dispatcher/dispatcher';
-import BaseEventIndexManager from './indexing/BaseEventIndexManager';
+import dis from "./dispatcher/dispatcher";
+import BaseEventIndexManager from "./indexing/BaseEventIndexManager";
 import { ActionPayload } from "./dispatcher/payloads";
 import { CheckUpdatesPayload } from "./dispatcher/payloads/CheckUpdatesPayload";
 import { Action } from "./dispatcher/actions";
 import { hideToast as hideUpdateToast } from "./toasts/UpdateToast";
 import { MatrixClientPeg } from "./MatrixClientPeg";
-import { idbLoad, idbSave, idbDelete } from "./utils/StorageManager";
+import { idbLoad, idbSave, idbDelete } from "./utils/StorageAccess";
 import { ViewRoomPayload } from "./dispatcher/payloads/ViewRoomPayload";
 import { IConfigOptions } from "./IConfigOptions";
+import SdkConfig from "./SdkConfig";
+import { buildAndEncodePickleKey, encryptPickleKey } from "./utils/tokens/pickling";
 
 export const SSO_HOMESERVER_URL_KEY = "mx_sso_hs_url";
 export const SSO_ID_SERVER_URL_KEY = "mx_sso_is_url";
@@ -69,18 +75,18 @@ export default abstract class BasePlatform {
     protected notificationCount = 0;
     protected errorDidOccur = false;
 
-    constructor() {
+    protected constructor() {
         dis.register(this.onAction);
         this.startUpdateCheck = this.startUpdateCheck.bind(this);
     }
 
-    public abstract getConfig(): Promise<IConfigOptions>;
+    public abstract getConfig(): Promise<IConfigOptions | undefined>;
 
     public abstract getDefaultDeviceDisplayName(): string;
 
     protected onAction = (payload: ActionPayload): void => {
         switch (payload.action) {
-            case 'on_client_not_viable':
+            case "on_client_not_viable":
             case Action.OnLoggedOut:
                 this.setNotificationCount(0);
                 break;
@@ -129,7 +135,7 @@ export default abstract class BasePlatform {
         if (MatrixClientPeg.userRegisteredWithinLastHours(24)) return false;
 
         try {
-            const [version, deferUntil] = JSON.parse(localStorage.getItem(UPDATE_DEFER_KEY));
+            const [version, deferUntil] = JSON.parse(localStorage.getItem(UPDATE_DEFER_KEY)!);
             return newVersion !== version || Date.now() > deferUntil;
         } catch (e) {
             return true;
@@ -151,7 +157,7 @@ export default abstract class BasePlatform {
      * Return true if platform supports multi-language
      * spell-checking, otherwise false.
      */
-    public supportsMultiLanguageSpellCheck(): boolean {
+    public supportsSpellCheckSettings(): boolean {
         return false;
     }
 
@@ -192,15 +198,15 @@ export default abstract class BasePlatform {
     public displayNotification(
         title: string,
         msg: string,
-        avatarUrl: string,
+        avatarUrl: string | null,
         room: Room,
         ev?: MatrixEvent,
     ): Notification {
-        const notifBody = {
+        const notifBody: NotificationOptions = {
             body: msg,
             silent: true, // we play our own sounds
         };
-        if (avatarUrl) notifBody['icon'] = avatarUrl;
+        if (avatarUrl) notifBody["icon"] = avatarUrl;
         const notification = new window.Notification(title, notifBody);
 
         notification.onclick = () => {
@@ -210,7 +216,7 @@ export default abstract class BasePlatform {
                 metricsTrigger: "Notification",
             };
 
-            if (ev.getThread()) {
+            if (ev?.getThread()) {
                 payload.event_id = ev.getId();
             }
 
@@ -254,7 +260,7 @@ export default abstract class BasePlatform {
         return false;
     }
 
-    public getSettingValue(settingName: string): Promise<any> {
+    public async getSettingValue(settingName: string): Promise<any> {
         return undefined;
     }
 
@@ -272,9 +278,15 @@ export default abstract class BasePlatform {
         return null;
     }
 
-    public setLanguage(preferredLangs: string[]) {}
+    public setLanguage(preferredLangs: string[]): void {}
 
-    public setSpellCheckLanguages(preferredLangs: string[]) {}
+    public setSpellCheckEnabled(enabled: boolean): void {}
+
+    public async getSpellCheckEnabled(): Promise<boolean> {
+        return false;
+    }
+
+    public setSpellCheckLanguages(preferredLangs: string[]): void {}
 
     public getSpellCheckLanguages(): Promise<string[]> | null {
         return null;
@@ -302,9 +314,13 @@ export default abstract class BasePlatform {
         return null;
     }
 
-    protected getSSOCallbackUrl(fragmentAfterLogin: string): URL {
+    /**
+     * The URL to return to after a successful SSO authentication
+     * @param fragmentAfterLogin optional fragment for specific view to return to
+     */
+    public getSSOCallbackUrl(fragmentAfterLogin = ""): URL {
         const url = new URL(window.location.href);
-        url.hash = fragmentAfterLogin || "";
+        url.hash = fragmentAfterLogin;
         return url;
     }
 
@@ -313,71 +329,45 @@ export default abstract class BasePlatform {
      * @param {MatrixClient} mxClient the matrix client using which we should start the flow
      * @param {"sso"|"cas"} loginType the type of SSO it is, CAS/SSO.
      * @param {string} fragmentAfterLogin the hash to pass to the app during sso callback.
+     * @param {SSOAction} action the SSO flow to indicate to the IdP, optional.
      * @param {string} idpId The ID of the Identity Provider being targeted, optional.
      */
     public startSingleSignOn(
         mxClient: MatrixClient,
         loginType: "sso" | "cas",
-        fragmentAfterLogin: string,
+        fragmentAfterLogin?: string,
         idpId?: string,
+        action?: SSOAction,
     ): void {
         // persist hs url and is url for when the user is returned to the app with the login token
         localStorage.setItem(SSO_HOMESERVER_URL_KEY, mxClient.getHomeserverUrl());
         if (mxClient.getIdentityServerUrl()) {
-            localStorage.setItem(SSO_ID_SERVER_URL_KEY, mxClient.getIdentityServerUrl());
+            localStorage.setItem(SSO_ID_SERVER_URL_KEY, mxClient.getIdentityServerUrl()!);
         }
         if (idpId) {
             localStorage.setItem(SSO_IDP_ID_KEY, idpId);
         }
         const callbackUrl = this.getSSOCallbackUrl(fragmentAfterLogin);
-        window.location.href = mxClient.getSsoLoginUrl(callbackUrl.toString(), loginType, idpId); // redirect to SSO
+        window.location.href = mxClient.getSsoLoginUrl(callbackUrl.toString(), loginType, idpId, action); // redirect to SSO
     }
 
     /**
      * Get a previously stored pickle key.  The pickle key is used for
-     * encrypting libolm objects.
+     * encrypting libolm objects and react-sdk-crypto data.
      * @param {string} userId the user ID for the user that the pickle key is for.
-     * @param {string} userId the device ID that the pickle key is for.
+     * @param {string} deviceId the device ID that the pickle key is for.
      * @returns {string|null} the previously stored pickle key, or null if no
      *     pickle key has been stored.
      */
     public async getPickleKey(userId: string, deviceId: string): Promise<string | null> {
-        if (!window.crypto || !window.crypto.subtle) {
-            return null;
-        }
-        let data;
+        let data: { encrypted?: BufferSource; iv?: BufferSource; cryptoKey?: CryptoKey } | undefined;
         try {
             data = await idbLoad("pickleKey", [userId, deviceId]);
         } catch (e) {
             logger.error("idbLoad for pickleKey failed", e);
         }
-        if (!data) {
-            return null;
-        }
-        if (!data.encrypted || !data.iv || !data.cryptoKey) {
-            logger.error("Badly formatted pickle key");
-            return null;
-        }
 
-        const additionalData = new Uint8Array(userId.length + deviceId.length + 1);
-        for (let i = 0; i < userId.length; i++) {
-            additionalData[i] = userId.charCodeAt(i);
-        }
-        additionalData[userId.length] = 124; // "|"
-        for (let i = 0; i < deviceId.length; i++) {
-            additionalData[userId.length + 1 + i] = deviceId.charCodeAt(i);
-        }
-
-        try {
-            const key = await crypto.subtle.decrypt(
-                { name: "AES-GCM", iv: data.iv, additionalData }, data.cryptoKey,
-                data.encrypted,
-            );
-            return encodeUnpaddedBase64(key);
-        } catch (e) {
-            logger.error("Error decrypting pickle key");
-            return null;
-        }
+        return (await buildAndEncodePickleKey(data, userId, deviceId)) ?? null;
     }
 
     /**
@@ -388,33 +378,16 @@ export default abstract class BasePlatform {
      *     support storing pickle keys.
      */
     public async createPickleKey(userId: string, deviceId: string): Promise<string | null> {
-        if (!window.crypto || !window.crypto.subtle) {
-            return null;
-        }
-        const crypto = window.crypto;
         const randomArray = new Uint8Array(32);
         crypto.getRandomValues(randomArray);
-        const cryptoKey = await crypto.subtle.generateKey(
-            { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"],
-        );
-        const iv = new Uint8Array(32);
-        crypto.getRandomValues(iv);
-
-        const additionalData = new Uint8Array(userId.length + deviceId.length + 1);
-        for (let i = 0; i < userId.length; i++) {
-            additionalData[i] = userId.charCodeAt(i);
+        const data = await encryptPickleKey(randomArray, userId, deviceId);
+        if (data === undefined) {
+            // no crypto support
+            return null;
         }
-        additionalData[userId.length] = 124; // "|"
-        for (let i = 0; i < deviceId.length; i++) {
-            additionalData[userId.length + 1 + i] = deviceId.charCodeAt(i);
-        }
-
-        const encrypted = await crypto.subtle.encrypt(
-            { name: "AES-GCM", iv, additionalData }, cryptoKey, randomArray,
-        );
 
         try {
-            await idbSave("pickleKey", [userId, deviceId], { encrypted, iv, cryptoKey });
+            await idbSave("pickleKey", [userId, deviceId], data);
         } catch (e) {
             return null;
         }
@@ -424,7 +397,7 @@ export default abstract class BasePlatform {
     /**
      * Delete a previously stored pickle key from storage.
      * @param {string} userId the user ID for the user that the pickle key is for.
-     * @param {string} userId the device ID that the pickle key is for.
+     * @param {string} deviceId the device ID that the pickle key is for.
      */
     public async destroyPickleKey(userId: string, deviceId: string): Promise<void> {
         try {
@@ -432,5 +405,67 @@ export default abstract class BasePlatform {
         } catch (e) {
             logger.error("idbDelete failed in destroyPickleKey", e);
         }
+    }
+
+    /**
+     * Clear app storage, called when logging out to perform data clean up.
+     */
+    public async clearStorage(): Promise<void> {
+        window.sessionStorage.clear();
+        window.localStorage.clear();
+    }
+
+    /**
+     * Base URL to use when generating external links for this client, for platforms e.g. Desktop this will be a different instance
+     */
+    public get baseUrl(): string {
+        return window.location.origin + window.location.pathname;
+    }
+
+    /**
+     * Fallback Client URI to use for OIDC client registration for if one is not specified in config.json
+     */
+    public get defaultOidcClientUri(): string {
+        return window.location.origin;
+    }
+
+    /**
+     * Metadata to use for dynamic OIDC client registrations
+     */
+    public async getOidcClientMetadata(): Promise<OidcRegistrationClientMetadata> {
+        const config = SdkConfig.get();
+        return {
+            clientName: config.brand,
+            clientUri: config.oidc_metadata?.client_uri ?? this.defaultOidcClientUri,
+            redirectUris: [this.getOidcCallbackUrl().href],
+            logoUri: config.oidc_metadata?.logo_uri ?? new URL("vector-icons/1024.png", this.baseUrl).href,
+            applicationType: "web",
+            // XXX: We break the spec by not consistently supplying these required fields
+            // @ts-ignore
+            contacts: config.oidc_metadata?.contacts,
+            // @ts-ignore
+            tosUri: config.oidc_metadata?.tos_uri ?? config.terms_and_conditions_links?.[0]?.url,
+            // @ts-ignore
+            policyUri: config.oidc_metadata?.policy_uri ?? config.privacy_policy_url,
+        };
+    }
+
+    /**
+     * Suffix to append to the `state` parameter of OIDC /auth calls. Will be round-tripped to the callback URI.
+     * Currently only required for ElectronPlatform for passing element-desktop-ssoid.
+     */
+    public getOidcClientState(): string {
+        return "";
+    }
+
+    /**
+     * The URL to return to after a successful OIDC authentication
+     */
+    public getOidcCallbackUrl(): URL {
+        const url = new URL(window.location.href);
+        // The redirect URL has to exactly match that registered at the OIDC server, so
+        // ensure that the fragment part of the URL is empty.
+        url.hash = "";
+        return url;
     }
 }

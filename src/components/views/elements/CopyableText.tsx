@@ -20,26 +20,26 @@ import classNames from "classnames";
 
 import { _t } from "../../../languageHandler";
 import { copyPlaintext } from "../../../utils/strings";
-import { ButtonEvent } from "./AccessibleButton";
-import AccessibleTooltipButton from "./AccessibleTooltipButton";
+import AccessibleButton, { ButtonEvent } from "./AccessibleButton";
 
-interface IProps {
+interface IProps extends React.HTMLAttributes<HTMLDivElement> {
     children?: React.ReactNode;
-    getTextToCopy: () => string;
+    getTextToCopy: () => string | null;
     border?: boolean;
     className?: string;
 }
 
-const CopyableText: React.FC<IProps> = ({ children, getTextToCopy, border=true, className }) => {
+const CopyableText: React.FC<IProps> = ({ children, getTextToCopy, border = true, className, ...props }) => {
     const [tooltip, setTooltip] = useState<string | undefined>(undefined);
 
-    const onCopyClickInternal = async (e: ButtonEvent) => {
+    const onCopyClickInternal = async (e: ButtonEvent): Promise<void> => {
         e.preventDefault();
-        const successful = await copyPlaintext(getTextToCopy());
-        setTooltip(successful ? _t('Copied!') : _t('Failed to copy'));
+        const text = getTextToCopy();
+        const successful = !!text && (await copyPlaintext(text));
+        setTooltip(successful ? _t("common|copied") : _t("error|failed_copy"));
     };
 
-    const onHideTooltip = () => {
+    const onHideTooltip = (): void => {
         if (tooltip) {
             setTooltip(undefined);
         }
@@ -49,15 +49,19 @@ const CopyableText: React.FC<IProps> = ({ children, getTextToCopy, border=true, 
         mx_CopyableText_border: border,
     });
 
-    return <div className={combinedClassName}>
-        { children }
-        <AccessibleTooltipButton
-            title={tooltip ?? _t("Copy")}
-            onClick={onCopyClickInternal}
-            className="mx_CopyableText_copyButton"
-            onHideTooltip={onHideTooltip}
-        />
-    </div>;
+    return (
+        <div className={combinedClassName} {...props}>
+            {children}
+            <AccessibleButton
+                title={tooltip ?? _t("action|copy")}
+                onClick={onCopyClickInternal}
+                className="mx_CopyableText_copyButton"
+                onTooltipOpenChange={(open) => {
+                    if (!open) onHideTooltip();
+                }}
+            />
+        </div>
+    );
 };
 
 export default CopyableText;

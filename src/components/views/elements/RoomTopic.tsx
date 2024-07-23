@@ -14,13 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useCallback, useContext, useRef } from "react";
-import { Room } from "matrix-js-sdk/src/models/room";
+import React, { useCallback, useContext, useState } from "react";
+import { Room, EventType } from "matrix-js-sdk/src/matrix";
 import classNames from "classnames";
-import { EventType } from "matrix-js-sdk/src/@types/event";
+import { Tooltip } from "@vector-im/compound-web";
 
 import { useTopic } from "../../../hooks/room/useTopic";
-import { Alignment } from "./Tooltip";
 import { _t } from "../../../languageHandler";
 import dis from "../../../dispatcher/dispatcher";
 import { Action } from "../../../dispatcher/actions";
@@ -29,83 +28,110 @@ import InfoDialog from "../dialogs/InfoDialog";
 import { useDispatcher } from "../../../hooks/useDispatcher";
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
 import AccessibleButton from "./AccessibleButton";
-import { Linkify } from "./Linkify";
-import TooltipTarget from "./TooltipTarget";
-import { topicToHtml } from "../../../HtmlUtils";
+import { Linkify, topicToHtml } from "../../../HtmlUtils";
+import { tryTransformPermalinkToLocalHref } from "../../../utils/permalinks/Permalinks";
 
 interface IProps extends React.HTMLProps<HTMLDivElement> {
-    room?: Room;
+    room: Room;
 }
 
-export default function RoomTopic({
-    room,
-    ...props
-}: IProps) {
+export function onRoomTopicLinkClick(e: React.MouseEvent): void {
+    const anchor = e.target as HTMLLinkElement;
+    const localHref = tryTransformPermalinkToLocalHref(anchor.href);
+
+    if (localHref !== anchor.href) {
+        // it could be converted to a localHref -> therefore handle locally
+        e.preventDefault();
+        window.location.hash = localHref;
+    }
+}
+
+export default function RoomTopic({ room, className, ...props }: IProps): JSX.Element {
     const client = useContext(MatrixClientContext);
-    const ref = useRef<HTMLDivElement>();
+    const [disableTooltip, setDisableTooltip] = useState(false);
 
     const topic = useTopic(room);
-    const body = topicToHtml(topic?.text, topic?.html, ref);
+    const body = topicToHtml(topic?.text, topic?.html);
 
-    const onClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-        props.onClick?.(e);
-        const target = e.target as HTMLElement;
-        if (target.tagName.toUpperCase() === "A") {
-            return;
-        }
+    const onClick = useCallback(
+        (e: React.MouseEvent<HTMLDivElement>) => {
+            props.onClick?.(e);
 
-        dis.fire(Action.ShowRoomTopic);
-    }, [props]);
+            const target = e.target as HTMLElement;
 
-    const ignoreHover = (ev: React.MouseEvent): boolean => {
-        return (ev.target as HTMLElement).tagName.toUpperCase() === "A";
+            if (target.tagName.toUpperCase() !== "A") {
+                dis.fire(Action.ShowRoomTopic);
+                return;
+            }
+
+            onRoomTopicLinkClick(e);
+        },
+        [props],
+    );
+
+    const onHover = (ev: React.MouseEvent | React.FocusEvent): void => {
+        setDisableTooltip((ev.target as HTMLElement).tagName.toUpperCase() === "A");
     };
 
     useDispatcher(dis, (payload) => {
         if (payload.action === Action.ShowRoomTopic) {
-            const canSetTopic = room.currentState.maySendStateEvent(EventType.RoomTopic, client.getUserId());
-            const body = topicToHtml(topic?.text, topic?.html, ref, true);
+            const canSetTopic = room.currentState.maySendStateEvent(EventType.RoomTopic, client.getSafeUserId());
+            const body = topicToHtml(topic?.text, topic?.html, undefined, true);
 
             const modal = Modal.createDialog(InfoDialog, {
                 title: room.name,
-                description: <div>
-                    <Linkify
-                        as="p"
-                        onClick={(ev: MouseEvent) => {
-                            if ((ev.target as HTMLElement).tagName.toUpperCase() === "A") {
-                                modal.close();
-                            }
-                        }}
-                    >
-                        { body }
-                    </Linkify>
-                    { canSetTopic && <AccessibleButton
-                        kind="primary_outline"
-                        onClick={() => {
-                            modal.close();
-                            dis.dispatch({ action: "open_room_settings" });
-                        }}>
-                        { _t("Edit topic") }
-                    </AccessibleButton> }
-                </div>,
+                description: (
+                    <div>
+                        <Linkify
+                            options={{
+                                attributes: {
+                                    onClick(e: React.MouseEvent<HTMLDivElement>) {
+                                        onClick(e);
+                                        modal.close();
+                                    },
+                                },
+                            }}
+                            as="p"
+                        >
+                            {body}
+                        </Linkify>
+                        {canSetTopic && (
+                            <AccessibleButton
+                                kind="primary_outline"
+                                onClick={() => {
+                                    modal.close();
+                                    dis.dispatch({ action: "open_room_settings" });
+                                }}
+                            >
+                                {_t("room|edit_topic")}
+                            </AccessibleButton>
+                        )}
+                    </div>
+                ),
                 hasCloseButton: true,
                 button: false,
             });
         }
     });
 
-    const className = classNames(props.className, "mx_RoomTopic");
+    // Do not render the tooltip if the topic is empty
+    // We still need to have a div for the header buttons to be displayed correctly
+    if (!body) return <div className={classNames(className, "mx_RoomTopic")} />;
 
-    return <div {...props}
-        ref={ref}
-        onClick={onClick}
-        dir="auto"
-        className={className}
-    >
-        <TooltipTarget label={_t("Click to read topic")} alignment={Alignment.Bottom} ignoreHover={ignoreHover}>
-            <Linkify>
-                { body }
-            </Linkify>
-        </TooltipTarget>
-    </div>;
+    return (
+        <Tooltip label={_t("room|read_topic")} disabled={disableTooltip}>
+            <div
+                {...props}
+                tabIndex={0}
+                role="button"
+                onClick={onClick}
+                className={classNames(className, "mx_RoomTopic")}
+                onMouseOver={onHover}
+                onFocus={onHover}
+                aria-label={_t("room|read_topic")}
+            >
+                <Linkify>{body}</Linkify>
+            </div>
+        </Tooltip>
+    );
 }

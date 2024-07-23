@@ -14,34 +14,59 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { SyntheticEvent, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
-import { Room } from "matrix-js-sdk/src/models/room";
+import {
+    MenuItem,
+    Tooltip,
+    Separator,
+    ToggleMenuItem,
+    Text,
+    Badge,
+    Heading,
+    IconButton,
+    Link,
+} from "@vector-im/compound-web";
+import { Icon as SearchIcon } from "@vector-im/compound-design-tokens/icons/search.svg";
+import { Icon as FavouriteIcon } from "@vector-im/compound-design-tokens/icons/favourite.svg";
+import { Icon as UserAddIcon } from "@vector-im/compound-design-tokens/icons/user-add.svg";
+import { Icon as UserProfileSolidIcon } from "@vector-im/compound-design-tokens/icons/user-profile-solid.svg";
+import { Icon as LinkIcon } from "@vector-im/compound-design-tokens/icons/link.svg";
+import { Icon as SettingsIcon } from "@vector-im/compound-design-tokens/icons/settings.svg";
+import { Icon as ExportArchiveIcon } from "@vector-im/compound-design-tokens/icons/export-archive.svg";
+import { Icon as LeaveIcon } from "@vector-im/compound-design-tokens/icons/leave.svg";
+import { Icon as FilesIcon } from "@vector-im/compound-design-tokens/icons/files.svg";
+import { Icon as PollsIcon } from "@vector-im/compound-design-tokens/icons/polls.svg";
+import { Icon as PinIcon } from "@vector-im/compound-design-tokens/icons/pin.svg";
+import { Icon as LockIcon } from "@vector-im/compound-design-tokens/icons/lock-solid.svg";
+import { Icon as LockOffIcon } from "@vector-im/compound-design-tokens/icons/lock-off.svg";
+import { Icon as PublicIcon } from "@vector-im/compound-design-tokens/icons/public.svg";
+import { Icon as ErrorIcon } from "@vector-im/compound-design-tokens/icons/error.svg";
+import { Icon as ChevronDownIcon } from "@vector-im/compound-design-tokens/icons/chevron-down.svg";
+import { EventType, JoinRule, Room, RoomStateEvent } from "matrix-js-sdk/src/matrix";
 
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
-import { useIsEncrypted } from '../../../hooks/useIsEncrypted';
+import { useIsEncrypted } from "../../../hooks/useIsEncrypted";
 import BaseCard, { Group } from "./BaseCard";
-import { _t } from '../../../languageHandler';
+import { _t } from "../../../languageHandler";
 import RoomAvatar from "../avatars/RoomAvatar";
-import AccessibleButton, { ButtonEvent } from "../elements/AccessibleButton";
+import AccessibleButton from "../elements/AccessibleButton";
 import defaultDispatcher from "../../../dispatcher/dispatcher";
-import { RightPanelPhases } from '../../../stores/right-panel/RightPanelStorePhases';
+import { RightPanelPhases } from "../../../stores/right-panel/RightPanelStorePhases";
 import Modal from "../../../Modal";
-import ShareDialog from '../dialogs/ShareDialog';
-import { useEventEmitter } from "../../../hooks/useEventEmitter";
+import ShareDialog from "../dialogs/ShareDialog";
+import { useEventEmitter, useEventEmitterState } from "../../../hooks/useEventEmitter";
 import WidgetUtils from "../../../utils/WidgetUtils";
 import { IntegrationManagers } from "../../../integrations/IntegrationManagers";
 import SettingsStore from "../../../settings/SettingsStore";
-import TextWithTooltip from "../elements/TextWithTooltip";
 import WidgetAvatar from "../avatars/WidgetAvatar";
-import AccessibleTooltipButton from "../elements/AccessibleTooltipButton";
 import WidgetStore, { IApp } from "../../../stores/WidgetStore";
 import { E2EStatus } from "../../../utils/ShieldUtils";
+import { RoomPermalinkCreator } from "../../../utils/permalinks/Permalinks";
 import RoomContext from "../../../contexts/RoomContext";
 import { UIComponent, UIFeature } from "../../../settings/UIFeature";
 import { ChevronFace, ContextMenuTooltipButton, useContextMenu } from "../../structures/ContextMenu";
-import WidgetContextMenu from "../context_menus/WidgetContextMenu";
-import { useRoomMemberCount } from "../../../hooks/useRoomMembers";
+import { WidgetContextMenu } from "../context_menus/WidgetContextMenu";
 import { useFeatureEnabled } from "../../../hooks/useSettings";
 import { usePinnedEvents } from "./PinnedMessagesCard";
 import { Container, MAX_PINNED, WidgetLayoutStore } from "../../../stores/widgets/WidgetLayoutStore";
@@ -51,38 +76,34 @@ import ExportDialog from "../dialogs/ExportDialog";
 import RightPanelStore from "../../../stores/right-panel/RightPanelStore";
 import PosthogTrackers from "../../../PosthogTrackers";
 import { shouldShowComponent } from "../../../customisations/helpers/UIComponents";
+import { PollHistoryDialog } from "../dialogs/PollHistoryDialog";
+import { Flex } from "../../utils/Flex";
+import RoomListStore, { LISTS_UPDATE_EVENT } from "../../../stores/room-list/RoomListStore";
+import { DefaultTagID } from "../../../stores/room-list/models";
+import { tagRoom } from "../../../utils/room/tagRoom";
+import { canInviteTo } from "../../../utils/room/canInviteTo";
+import { inviteToRoom } from "../../../utils/room/inviteToRoom";
+import { useAccountData } from "../../../hooks/useAccountData";
+import { useRoomState } from "../../../hooks/useRoomState";
+import { useTopic } from "../../../hooks/room/useTopic";
+import { Linkify, topicToHtml } from "../../../HtmlUtils";
+import { Box } from "../../utils/Box";
+import { onRoomTopicLinkClick } from "../elements/RoomTopic";
 import { useSettingValue } from "../../../hooks/useSettings"; // watcha+
 
 interface IProps {
     room: Room;
+    permalinkCreator: RoomPermalinkCreator;
     onClose(): void;
+    onSearchClick?: () => void;
 }
 
 interface IAppsSectionProps {
     room: Room;
 }
 
-interface IButtonProps {
-    className: string;
-    onClick(ev: ButtonEvent): void;
-    title?: string; // watcha+
-}
-
-/* watcha!
-const Button: React.FC<IButtonProps> = ({ children, className, onClick }) => {
-!watcha */
-const Button: React.FC<IButtonProps> = ({ children, className, onClick, title }) => { // watcha+
-    return <AccessibleButton
-        className={classNames("mx_BaseCard_Button mx_RoomSummaryCard_Button", className)}
-        onClick={onClick}
-        title={title} // watcha+
-    >
-        { children }
-    </AccessibleButton>;
-};
-
-export const useWidgets = (room: Room) => {
-    const [apps, setApps] = useState<IApp[]>(WidgetStore.instance.getApps(room.roomId));
+export const useWidgets = (room: Room): IApp[] => {
+    const [apps, setApps] = useState<IApp[]>(() => WidgetStore.instance.getApps(room.roomId));
 
     const updateApps = useCallback(() => {
         // Copy the array so that we always trigger a re-render, as some updates mutate the array of apps/settings
@@ -108,10 +129,10 @@ const AppRow: React.FC<IAppRowProps> = ({ app, room }) => {
     const [canModifyWidget, setCanModifyWidget] = useState<boolean>();
 
     useEffect(() => {
-        setCanModifyWidget(WidgetUtils.canUserModifyWidgets(room.roomId));
-    }, [room.roomId]);
+        setCanModifyWidget(WidgetUtils.canUserModifyWidgets(room.client, room.roomId));
+    }, [room.client, room.roomId]);
 
-    const onOpenWidgetClick = () => {
+    const onOpenWidgetClick = (): void => {
         RightPanelStore.instance.pushCard({
             phase: RightPanelPhases.Widget,
             state: { widgetId: app.id },
@@ -120,43 +141,55 @@ const AppRow: React.FC<IAppRowProps> = ({ app, room }) => {
 
     const isPinned = WidgetLayoutStore.instance.isInContainer(room, app, Container.Top);
     const togglePin = isPinned
-        ? () => { WidgetLayoutStore.instance.moveToContainer(room, app, Container.Right); }
-        : () => { WidgetLayoutStore.instance.moveToContainer(room, app, Container.Top); };
+        ? () => {
+              WidgetLayoutStore.instance.moveToContainer(room, app, Container.Right);
+          }
+        : () => {
+              WidgetLayoutStore.instance.moveToContainer(room, app, Container.Top);
+          };
 
     const [menuDisplayed, handle, openMenu, closeMenu] = useContextMenu<HTMLDivElement>();
     let contextMenu;
     if (menuDisplayed) {
-        const rect = handle.current.getBoundingClientRect();
-        contextMenu = <WidgetContextMenu
-            chevronFace={ChevronFace.None}
-            right={UIStore.instance.windowWidth - rect.right}
-            bottom={UIStore.instance.windowHeight - rect.top}
-            onFinished={closeMenu}
-            app={app}
-        />;
+        const rect = handle.current?.getBoundingClientRect();
+        const rightMargin = rect?.right ?? 0;
+        const topMargin = rect?.top ?? 0;
+        contextMenu = (
+            <WidgetContextMenu
+                chevronFace={ChevronFace.None}
+                right={UIStore.instance.windowWidth - rightMargin}
+                bottom={UIStore.instance.windowHeight - topMargin}
+                onFinished={closeMenu}
+                app={app}
+            />
+        );
     }
 
     const cannotPin = !isPinned && !WidgetLayoutStore.instance.canAddToContainer(room, Container.Top);
 
     let pinTitle: string;
     if (cannotPin) {
-        pinTitle = _t("You can only pin up to %(count)s widgets", { count: MAX_PINNED });
+        pinTitle = _t("right_panel|pinned_messages|limits", { count: MAX_PINNED });
     } else {
-        pinTitle = isPinned ? _t("Unpin") : _t("Pin");
+        pinTitle = isPinned ? _t("action|unpin") : _t("action|pin");
     }
 
     const isMaximised = WidgetLayoutStore.instance.isInContainer(room, app, Container.Center);
     const toggleMaximised = isMaximised
-        ? () => { WidgetLayoutStore.instance.moveToContainer(room, app, Container.Right); }
-        : () => { WidgetLayoutStore.instance.moveToContainer(room, app, Container.Center); };
+        ? () => {
+              WidgetLayoutStore.instance.moveToContainer(room, app, Container.Right);
+          }
+        : () => {
+              WidgetLayoutStore.instance.moveToContainer(room, app, Container.Center);
+          };
 
-    const maximiseTitle = isMaximised ? _t("Close") : _t("Maximise");
+    const maximiseTitle = isMaximised ? _t("action|close") : _t("action|maximise");
 
     let openTitle = "";
     if (isPinned) {
-        openTitle = _t("Unpin this widget to view it in this panel");
+        openTitle = _t("widget|unpin_to_view_right_panel");
     } else if (isMaximised) {
-        openTitle =_t("Close this widget to view it in this panel");
+        openTitle = _t("widget|close_to_view_right_panel");
     }
 
     const classes = classNames("mx_BaseCard_Button mx_RoomSummaryCard_Button", {
@@ -164,91 +197,95 @@ const AppRow: React.FC<IAppRowProps> = ({ app, room }) => {
         mx_RoomSummaryCard_Button_maximised: isMaximised,
     });
 
-    return <div className={classes} ref={handle}>
-        <AccessibleTooltipButton
-            className="mx_RoomSummaryCard_icon_app"
-            onClick={onOpenWidgetClick}
-            // only show a tooltip if the widget is pinned
-            title={openTitle}
-            forceHide={!(isPinned || isMaximised)}
-            disabled={isPinned || isMaximised}
-        >
-            <WidgetAvatar app={app} />
-            <span>{ name }</span>
-            { subtitle }
-        </AccessibleTooltipButton>
+    return (
+        <div className={classes} ref={handle}>
+            <AccessibleButton
+                className="mx_RoomSummaryCard_icon_app"
+                onClick={onOpenWidgetClick}
+                // only show a tooltip if the widget is pinned
+                title={!(isPinned || isMaximised) ? undefined : openTitle}
+                disabled={isPinned || isMaximised}
+            >
+                <WidgetAvatar app={app} size="20px" />
+                <span>{name}</span>
+                {subtitle}
+            </AccessibleButton>
 
-        { canModifyWidget && <ContextMenuTooltipButton
-            className="mx_RoomSummaryCard_app_options"
-            isExpanded={menuDisplayed}
-            onClick={openMenu}
-            title={_t("Options")}
-        /> }
+            {canModifyWidget && (
+                <ContextMenuTooltipButton
+                    className="mx_RoomSummaryCard_app_options"
+                    isExpanded={menuDisplayed}
+                    onClick={openMenu}
+                    title={_t("common|options")}
+                />
+            )}
 
-        <AccessibleTooltipButton
-            className="mx_RoomSummaryCard_app_pinToggle"
-            onClick={togglePin}
-            title={pinTitle}
-            disabled={cannotPin}
-        />
-        <AccessibleTooltipButton
-            className="mx_RoomSummaryCard_app_maximiseToggle"
-            onClick={toggleMaximised}
-            title={maximiseTitle}
-        />
+            <AccessibleButton
+                className="mx_RoomSummaryCard_app_pinToggle"
+                onClick={togglePin}
+                title={pinTitle}
+                disabled={cannotPin}
+            />
+            <AccessibleButton
+                className="mx_RoomSummaryCard_app_maximiseToggle"
+                onClick={toggleMaximised}
+                title={maximiseTitle}
+            />
 
-        { contextMenu }
-    </div>;
+            {contextMenu}
+        </div>
+    );
 };
 
 const AppsSection: React.FC<IAppsSectionProps> = ({ room }) => {
     const apps = useWidgets(room);
+    // Filter out virtual widgets
+    const realApps = useMemo(() => apps.filter((app) => app.eventId !== undefined), [apps]);
 
     /* eslint-disable-next-line @typescript-eslint/no-unused-vars */// @ts-ignore // watcha+
-    const onManageIntegrations = () => {
+    const onManageIntegrations = (): void => {
         const managers = IntegrationManagers.sharedInstance();
         if (!managers.hasManager()) {
             managers.openNoManagerDialog();
         } else {
             // noinspection JSIgnoredPromiseFromCall
-            managers.getPrimaryManager().open(room);
+            managers.getPrimaryManager()?.open(room);
         }
     };
 
-    let copyLayoutBtn = null;
-    if (apps.length > 0 && WidgetLayoutStore.instance.canCopyLayoutToRoom(room)) {
+    let copyLayoutBtn: JSX.Element | null = null;
+    if (realApps.length > 0 && WidgetLayoutStore.instance.canCopyLayoutToRoom(room)) {
         copyLayoutBtn = (
             <AccessibleButton kind="link" onClick={() => WidgetLayoutStore.instance.copyLayoutToRoom(room)}>
-                { _t("Set my room layout for everyone") }
+                {_t("widget|set_room_layout")}
             </AccessibleButton>
         );
     }
 
-    return <Group className="mx_RoomSummaryCard_appsGroup" title={_t("Widgets")}>
-        { apps.map(app => <AppRow key={app.id} app={app} room={room} />) }
-        { copyLayoutBtn }
+    return (
+        <Group className="mx_RoomSummaryCard_appsGroup" title={_t("right_panel|widgets_section")}>
+            {realApps.map((app) => (
+                <AppRow key={app.id} app={app} room={room} />
+            ))}
+            {copyLayoutBtn}
         { /* watcha!
-        <AccessibleButton kind="link" onClick={onManageIntegrations}>
-            { apps.length > 0 ? _t("Edit widgets, bridges & bots") : _t("Add widgets, bridges & bots") }
-        </AccessibleButton>
+            <AccessibleButton kind="link" onClick={onManageIntegrations}>
+                {realApps.length > 0 ? _t("right_panel|edit_integrations") : _t("right_panel|add_integrations")}
+            </AccessibleButton>
         !watcha */ }
-    </Group>;
+        </Group>
+    );
 };
 
-const onRoomMembersClick = (ev: ButtonEvent) => {
-    RightPanelStore.instance.pushCard({ phase: RightPanelPhases.RoomMemberList }, true);
-    PosthogTrackers.trackInteraction("WebRightPanelRoomInfoPeopleButton", ev);
-};
-
-const onRoomFilesClick = () => {
+const onRoomFilesClick = (): void => {
     RightPanelStore.instance.pushCard({ phase: RightPanelPhases.FilePanel }, true);
 };
 
-const onRoomPinsClick = () => {
+const onRoomPinsClick = (): void => {
     RightPanelStore.instance.pushCard({ phase: RightPanelPhases.PinnedMessages }, true);
 };
 
-const onRoomSettingsClick = (ev: ButtonEvent) => {
+const onRoomSettingsClick = (ev: Event): void => {
     defaultDispatcher.dispatch({ action: "open_room_settings" });
     PosthogTrackers.trackInteraction("WebRightPanelRoomInfoSettingsButton", ev);
 };
@@ -267,7 +304,99 @@ const onRoomTasksClick = () => {
 };
 // +watcha
 
-const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
+// watcha+
+const onRoomDocumentsClick = () => {
+    RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudDocumentPanel }, true);
+};
+
+const onRoomCalendarClick = () => {
+    RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudCalendarPanel }, true);
+};
+
+const onRoomTasksClick = () => {
+    RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudTaskPanel }, true);
+};
+// +watcha
+
+const RoomTopic: React.FC<Pick<IProps, "room">> = ({ room }): JSX.Element | null => {
+    const [expanded, setExpanded] = useState(false);
+
+    const topic = useTopic(room);
+    const body = topicToHtml(topic?.text, topic?.html);
+
+    const onEditClick = (e: SyntheticEvent): void => {
+        e.preventDefault();
+        e.stopPropagation();
+        defaultDispatcher.dispatch({ action: "open_room_settings" });
+    };
+
+    if (!body) {
+        return (
+            <Flex
+                as="section"
+                direction="column"
+                justify="center"
+                gap="var(--cpd-space-2x)"
+                className="mx_RoomSummaryCard_topic"
+            >
+                <Box flex="1">
+                    <Link kind="primary" onClick={onEditClick}>
+                        <Text size="sm" weight="regular">
+                            {_t("right_panel|add_topic")}
+                        </Text>
+                    </Link>
+                </Box>
+            </Flex>
+        );
+    }
+
+    const content = expanded ? <Linkify>{body}</Linkify> : body;
+    return (
+        <Flex
+            as="section"
+            direction="column"
+            justify="center"
+            gap="var(--cpd-space-2x)"
+            className={classNames("mx_RoomSummaryCard_topic", {
+                mx_RoomSummaryCard_topic_collapsed: !expanded,
+            })}
+        >
+            <Box flex="1" className="mx_RoomSummaryCard_topic_container">
+                <Text
+                    size="sm"
+                    weight="regular"
+                    onClick={(ev: React.MouseEvent): void => {
+                        if (ev.target instanceof HTMLAnchorElement) {
+                            onRoomTopicLinkClick(ev);
+                            return;
+                        }
+                        setExpanded(!expanded);
+                    }}
+                >
+                    {content}
+                </Text>
+                <IconButton
+                    className="mx_RoomSummaryCard_topic_chevron"
+                    size="24px"
+                    onClick={() => setExpanded(!expanded)}
+                >
+                    <ChevronDownIcon />
+                </IconButton>
+            </Box>
+            {expanded && (
+                <Box flex="1" className="mx_RoomSummaryCard_topic_edit">
+                    <Link kind="primary" onClick={onEditClick}>
+                        <Text size="sm" weight="regular">
+                            {_t("action|edit")}
+                        </Text>
+                    </Link>
+                </Box>
+            )}
+        </Flex>
+    );
+};
+
+const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, onSearchClick }) => {
     const cli = useContext(MatrixClientContext);
 
     // watcha+
@@ -283,126 +412,218 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, onClose }) => {
     const showE2EEUI = useSettingValue("showE2EEUI");
     // +watcha
 
-    const onShareRoomClick = () => {
+    const onShareRoomClick = (): void => {
         Modal.createDialog(ShareDialog, {
             target: room,
         });
     };
 
-    const onRoomExportClick = async () => {
+    const onRoomExportClick = async (): Promise<void> => {
         Modal.createDialog(ExportDialog, {
             room,
         });
     };
 
+    const onRoomPollHistoryClick = (): void => {
+        Modal.createDialog(PollHistoryDialog, {
+            room,
+            matrixClient: cli,
+            permalinkCreator,
+        });
+    };
+
+    const onLeaveRoomClick = (): void => {
+        defaultDispatcher.dispatch({
+            action: "leave_room",
+            room_id: room.roomId,
+        });
+    };
+
+    const onRoomMembersClick = (ev: Event): void => {
+        RightPanelStore.instance.pushCard({ phase: RightPanelPhases.RoomMemberList }, true);
+        PosthogTrackers.trackInteraction("WebRightPanelRoomInfoPeopleButton", ev);
+    };
+
     const isRoomEncrypted = useIsEncrypted(cli, room);
     const roomContext = useContext(RoomContext);
     const e2eStatus = roomContext.e2eStatus;
-    const isVideoRoom = useFeatureEnabled("feature_video_rooms") && room.isElementVideoRoom();
+    const videoRoomsEnabled = useFeatureEnabled("feature_video_rooms");
+    const elementCallVideoRoomsEnabled = useFeatureEnabled("feature_element_call_video_rooms");
+    const isVideoRoom =
+        videoRoomsEnabled && (room.isElementVideoRoom() || (elementCallVideoRoomsEnabled && room.isCallRoom()));
+
+    const roomState = useRoomState(room);
+    const directRoomsList = useAccountData<Record<string, string[]>>(room.client, EventType.Direct);
+    const [isDirectMessage, setDirectMessage] = useState(false);
+    useEffect(() => {
+        for (const [, dmRoomList] of Object.entries(directRoomsList)) {
+            if (dmRoomList.includes(room?.roomId ?? "")) {
+                setDirectMessage(true);
+                break;
+            }
+        }
+    }, [room, directRoomsList]);
 
     const alias = room.getCanonicalAlias() || room.getAltAliases()[0] || "";
-    const header = <React.Fragment>
-        <div className="mx_RoomSummaryCard_avatar" role="presentation">
-            <RoomAvatar room={room} height={54} width={54} viewAvatarOnClick />
-            <TextWithTooltip
-                tooltip={isRoomEncrypted ? _t("Encrypted") : _t("Not encrypted")}
-                class={classNames("mx_RoomSummaryCard_e2ee", {
-                    mx_RoomSummaryCard_e2ee_normal: isRoomEncrypted,
-                    mx_RoomSummaryCard_e2ee_warning: isRoomEncrypted && e2eStatus === E2EStatus.Warning,
-                    mx_RoomSummaryCard_e2ee_verified: isRoomEncrypted && e2eStatus === E2EStatus.Verified,
-                    watcha_RoomSummaryCard_e2ee_hidden: !showE2EEUI, // watcha+
-                })}
-            />
-        </div>
-
-        <RoomName room={room}>
-            { name => (
-                <h2 title={name}>
-                    { name }
-                </h2>
-            ) }
-        </RoomName>
-        <div className="mx_RoomSummaryCard_alias" title={alias}>
-            { alias }
-        </div>
-    </React.Fragment>;
-
-    const memberCount = useRoomMemberCount(room);
-    const pinningEnabled = useFeatureEnabled("feature_pinning");
-    const pinCount = usePinnedEvents(pinningEnabled && room)?.length;
-
-    return <BaseCard header={header} className="mx_RoomSummaryCard" onClose={onClose}>
-        <Group title={_t("About")} className="mx_RoomSummaryCard_aboutGroup">
-            <Button className="mx_RoomSummaryCard_icon_people" onClick={onRoomMembersClick}>
-                { _t("People") }
-                <span className="mx_BaseCard_Button_sublabel">
-                    { memberCount }
-                </span>
-            </Button>
-            { /* watcha!
-            { !isVideoRoom && <Button className="mx_RoomSummaryCard_icon_files" onClick={onRoomFilesClick}>
-                { _t("Files") }
-            </Button> }
-            !watcha */ }
-            { pinningEnabled && !isVideoRoom &&
-                <Button className="mx_RoomSummaryCard_icon_pins" onClick={onRoomPinsClick}>
-                    { _t("Pinned") }
-                    { pinCount > 0 && <span className="mx_BaseCard_Button_sublabel">
-                        { pinCount }
-                    </span> }
-                </Button> }
-            { /* watcha+ */ }
-            { showNextcloudButtons && !isVideoRoom && <>
-                <Button
-                    className="mx_RoomSummaryCard_icon_documents"
-                    title={_t("Show documents shared with the room")}
-                    onClick={onRoomDocumentsClick}
-                >
-                    { _t("Documents") }
-                </Button>
-                <Button
-                    className="mx_RoomSummaryCard_icon_calendar"
-                    title={_t("Show the calendar shared with the room")}
-                    onClick={onRoomCalendarClick}
-                >
-                    { _t("Calendar") }
-                </Button>
-                <Button
-                    className="mx_RoomSummaryCard_icon_tasks"
-                    title={_t("Show the to-do list shared with the room")}
-                    onClick={onRoomTasksClick}
-                >
-                    { _t("To-do list") }
-                </Button>
-            </> }
-            { showAttachmentsButton && !isVideoRoom && <Button
-                className="mx_MessageComposer_upload"
-                onClick={onRoomFilesClick}
-                title={_t("Show chat attachments")}
+    const header = (
+        <header className="mx_RoomSummaryCard_container">
+            <RoomAvatar room={room} size="80px" viewAvatarOnClick />
+            <RoomName room={room}>
+                {(name) => (
+                    <Heading
+                        as="h1"
+                        size="md"
+                        weight="semibold"
+                        className="mx_RoomSummaryCard_roomName text-primary"
+                        title={name}
+                    >
+                        {name}
+                    </Heading>
+                )}
+            </RoomName>
+            <Text
+                as="div"
+                size="sm"
+                weight="semibold"
+                className="mx_RoomSummaryCard_alias text-secondary"
+                title={alias}
             >
-                { _t("Chat attachments") }
-            </Button>
-            /* +watcha */ }
-            { !isVideoRoom && <Button className="mx_RoomSummaryCard_icon_export" onClick={onRoomExportClick}>
-                { _t("Export chat") }
-            </Button> }
-            { showShareRoomButton && // watcha+
-            <Button className="mx_RoomSummaryCard_icon_share" onClick={onShareRoomClick}>
-                { _t("Share room") }
-            </Button>
-            /* watcha+ */ }
-            <Button className="mx_RoomSummaryCard_icon_settings" onClick={onRoomSettingsClick}>
-                { _t("Room settings") }
-            </Button>
-        </Group>
+                {alias}
+            </Text>
 
-        {
-            SettingsStore.getValue(UIFeature.Widgets)
-            && !isVideoRoom
-            && shouldShowComponent(UIComponent.AddIntegrations)
-            && <AppsSection room={room} />
-        }
-    </BaseCard>;
+            <Flex as="section" justify="center" gap="var(--cpd-space-2x)" className="mx_RoomSummaryCard_badges">
+                {!isDirectMessage && roomState.getJoinRule() === JoinRule.Public && (
+                    <Badge kind="default">
+                        <PublicIcon width="1em" />
+                        {_t("common|public_room")}
+                    </Badge>
+                )}
+
+                {isRoomEncrypted && e2eStatus !== E2EStatus.Warning && (
+                    <Badge kind="success">
+                        <LockIcon width="1em" />
+                        {_t("common|encrypted")}
+                    </Badge>
+                )}
+
+                {!e2eStatus && (
+                    <Badge kind="default">
+                        <LockOffIcon width="1em" />
+                        {_t("common|unencrypted")}
+                    </Badge>
+                )}
+
+                {e2eStatus === E2EStatus.Warning && (
+                    <Badge kind="critical">
+                        <ErrorIcon width="1em" />
+                        {_t("common|not_trusted")}
+                    </Badge>
+                )}
+            </Flex>
+
+            <RoomTopic room={room} />
+        </header>
+    );
+
+    const pinningEnabled = useFeatureEnabled("feature_pinning");
+    const pinCount = usePinnedEvents(pinningEnabled ? room : undefined)?.length;
+
+    const roomTags = useEventEmitterState(RoomListStore.instance, LISTS_UPDATE_EVENT, () =>
+        RoomListStore.instance.getTagsForRoom(room),
+    );
+    const canInviteToState = useEventEmitterState(room, RoomStateEvent.Update, () => canInviteTo(room));
+    const isFavorite = roomTags.includes(DefaultTagID.Favourite);
+
+    return (
+        <BaseCard header={null} className="mx_RoomSummaryCard" onClose={onClose}>
+            <Flex
+                as="header"
+                className="mx_RoomSummaryCard_header"
+                gap="var(--cpd-space-3x)"
+                align="center"
+                justify="space-between"
+            >
+                <Tooltip label={_t("action|search")} placement="right">
+                    <button
+                        className="mx_RoomSummaryCard_searchBtn"
+                        data-testid="summary-search"
+                        onClick={() => {
+                            onSearchClick?.();
+                        }}
+                        aria-label={_t("action|search")}
+                    >
+                        <SearchIcon width="100%" height="100%" />
+                    </button>
+                </Tooltip>
+                <AccessibleButton
+                    data-testid="base-card-close-button"
+                    className="mx_BaseCard_close"
+                    onClick={onClose}
+                    title={_t("action|close")}
+                />
+            </Flex>
+
+            {header}
+
+            <Separator />
+
+            <ToggleMenuItem
+                Icon={FavouriteIcon}
+                label={_t("room|context_menu|favourite")}
+                checked={isFavorite}
+                onChange={() => tagRoom(room, DefaultTagID.Favourite)}
+                // XXX: https://github.com/element-hq/compound/issues/288
+                onSelect={() => {}}
+            />
+            <MenuItem
+                Icon={UserAddIcon}
+                label={_t("action|invite")}
+                disabled={!canInviteToState}
+                onSelect={() => inviteToRoom(room)}
+            />
+            <MenuItem Icon={LinkIcon} label={_t("action|copy_link")} onSelect={onShareRoomClick} />
+            <MenuItem Icon={SettingsIcon} label={_t("common|settings")} onSelect={onRoomSettingsClick} />
+
+            <Separator />
+            <MenuItem
+                // this icon matches the legacy implementation
+                // and is a short term solution until legacy room header is removed
+                Icon={UserProfileSolidIcon}
+                label={_t("common|people")}
+                onSelect={onRoomMembersClick}
+            />
+            {!isVideoRoom && (
+                <>
+                    <MenuItem Icon={FilesIcon} label={_t("right_panel|files_button")} onSelect={onRoomFilesClick} />
+                    <MenuItem
+                        Icon={PollsIcon}
+                        label={_t("right_panel|polls_button")}
+                        onSelect={onRoomPollHistoryClick}
+                    />
+                    {pinningEnabled && (
+                        <MenuItem
+                            Icon={PinIcon}
+                            label={_t("right_panel|pinned_messages_button")}
+                            onSelect={onRoomPinsClick}
+                        >
+                            <Text as="span" size="sm">
+                                {pinCount}
+                            </Text>
+                        </MenuItem>
+                    )}
+                    <MenuItem Icon={ExportArchiveIcon} label={_t("export_chat|title")} onSelect={onRoomExportClick} />
+                </>
+            )}
+
+            <Separator />
+
+            <MenuItem Icon={LeaveIcon} kind="critical" label={_t("action|leave_room")} onSelect={onLeaveRoomClick} />
+
+            {SettingsStore.getValue(UIFeature.Widgets) &&
+                !isVideoRoom &&
+                shouldShowComponent(UIComponent.AddIntegrations) && <AppsSection room={room} />}
+        </BaseCard>
+    );
 };
 
 export default RoomSummaryCard;

@@ -14,8 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as React from "react";
-import { mount, ReactWrapper } from "enzyme";
+import React, { HTMLAttributes } from "react";
+import { render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import {
     IState,
@@ -26,16 +27,13 @@ import {
     useRovingTabIndex,
 } from "../../src/accessibility/RovingTabIndex";
 
-const Button = (props) => {
-    const [onFocus, isActive, ref] = useRovingTabIndex();
+const Button = (props: HTMLAttributes<HTMLButtonElement>) => {
+    const [onFocus, isActive, ref] = useRovingTabIndex<HTMLButtonElement>();
     return <button {...props} onFocus={onFocus} tabIndex={isActive ? 0 : -1} ref={ref} />;
 };
 
-const checkTabIndexes = (buttons: ReactWrapper, expectations: number[]) => {
-    expect(buttons.length).toBe(expectations.length);
-    for (let i = 0; i < buttons.length; i++) {
-        expect(buttons.at(i).prop("tabIndex")).toBe(expectations[i]);
-    }
+const checkTabIndexes = (buttons: NodeListOf<HTMLElement>, expectations: number[]) => {
+    expect([...buttons].map((b) => b.tabIndex)).toStrictEqual(expectations);
 };
 
 // give the buttons keys for the fibre reconciler to not treat them all as the same
@@ -46,98 +44,133 @@ const button4 = <Button key={4}>d</Button>;
 
 // mock offsetParent
 Object.defineProperty(HTMLElement.prototype, "offsetParent", {
-    get() { return this.parentNode; },
+    get() {
+        return this.parentNode;
+    },
 });
 
 describe("RovingTabIndex", () => {
     it("RovingTabIndexProvider renders children as expected", () => {
-        const wrapper = mount(<RovingTabIndexProvider>
-            { () => <div><span>Test</span></div> }
-        </RovingTabIndexProvider>);
-        expect(wrapper.text()).toBe("Test");
-        expect(wrapper.html()).toBe('<div><span>Test</span></div>');
+        const { container } = render(
+            <RovingTabIndexProvider>
+                {() => (
+                    <div>
+                        <span>Test</span>
+                    </div>
+                )}
+            </RovingTabIndexProvider>,
+        );
+        expect(container.textContent).toBe("Test");
+        expect(container.innerHTML).toBe("<div><span>Test</span></div>");
     });
 
     it("RovingTabIndexProvider works as expected with useRovingTabIndex", () => {
-        const wrapper = mount(<RovingTabIndexProvider>
-            { () => <React.Fragment>
-                { button1 }
-                { button2 }
-                { button3 }
-            </React.Fragment> }
-        </RovingTabIndexProvider>);
+        const { container, rerender } = render(
+            <RovingTabIndexProvider>
+                {() => (
+                    <React.Fragment>
+                        {button1}
+                        {button2}
+                        {button3}
+                    </React.Fragment>
+                )}
+            </RovingTabIndexProvider>,
+        );
 
         // should begin with 0th being active
-        checkTabIndexes(wrapper.find("button"), [0, -1, -1]);
+        checkTabIndexes(container.querySelectorAll("button"), [0, -1, -1]);
 
         // focus on 2nd button and test it is the only active one
-        wrapper.find("button").at(2).simulate("focus");
-        wrapper.update();
-        checkTabIndexes(wrapper.find("button"), [-1, -1, 0]);
+        container.querySelectorAll("button")[2].focus();
+        checkTabIndexes(container.querySelectorAll("button"), [-1, -1, 0]);
 
         // focus on 1st button and test it is the only active one
-        wrapper.find("button").at(1).simulate("focus");
-        wrapper.update();
-        checkTabIndexes(wrapper.find("button"), [-1, 0, -1]);
+        container.querySelectorAll("button")[1].focus();
+        checkTabIndexes(container.querySelectorAll("button"), [-1, 0, -1]);
 
         // check that the active button does not change even on an explicit blur event
-        wrapper.find("button").at(1).simulate("blur");
-        wrapper.update();
-        checkTabIndexes(wrapper.find("button"), [-1, 0, -1]);
+        container.querySelectorAll("button")[1].blur();
+        checkTabIndexes(container.querySelectorAll("button"), [-1, 0, -1]);
 
         // update the children, it should remain on the same button
-        wrapper.setProps({
-            children: () => [button1, button4, button2, button3],
-        });
-        wrapper.update();
-        checkTabIndexes(wrapper.find("button"), [-1, -1, 0, -1]);
+        rerender(
+            <RovingTabIndexProvider>
+                {() => (
+                    <React.Fragment>
+                        {button1}
+                        {button4}
+                        {button2}
+                        {button3}
+                    </React.Fragment>
+                )}
+            </RovingTabIndexProvider>,
+        );
+        checkTabIndexes(container.querySelectorAll("button"), [-1, -1, 0, -1]);
 
         // update the children, remove the active button, it should move to the next one
-        wrapper.setProps({
-            children: () => [button1, button4, button3],
-        });
-        wrapper.update();
-        checkTabIndexes(wrapper.find("button"), [-1, -1, 0]);
+        rerender(
+            <RovingTabIndexProvider>
+                {() => (
+                    <React.Fragment>
+                        {button1}
+                        {button4}
+                        {button3}
+                    </React.Fragment>
+                )}
+            </RovingTabIndexProvider>,
+        );
+        checkTabIndexes(container.querySelectorAll("button"), [-1, -1, 0]);
     });
 
     it("RovingTabIndexProvider works as expected with RovingTabIndexWrapper", () => {
-        const wrapper = mount(<RovingTabIndexProvider>
-            { () => <React.Fragment>
-                { button1 }
-                { button2 }
-                <RovingTabIndexWrapper>
-                    { ({ onFocus, isActive, ref }) =>
-                        <button
-                            onFocus={onFocus}
-                            tabIndex={isActive ? 0 : -1}
-                            ref={ref as React.RefObject<HTMLButtonElement>}>.</button>
-                    }
-                </RovingTabIndexWrapper>
-            </React.Fragment> }
-        </RovingTabIndexProvider>);
+        const { container } = render(
+            <RovingTabIndexProvider>
+                {() => (
+                    <React.Fragment>
+                        {button1}
+                        {button2}
+                        <RovingTabIndexWrapper>
+                            {({ onFocus, isActive, ref }) => (
+                                <button
+                                    onFocus={onFocus}
+                                    tabIndex={isActive ? 0 : -1}
+                                    ref={ref as React.RefObject<HTMLButtonElement>}
+                                >
+                                    .
+                                </button>
+                            )}
+                        </RovingTabIndexWrapper>
+                    </React.Fragment>
+                )}
+            </RovingTabIndexProvider>,
+        );
 
         // should begin with 0th being active
-        checkTabIndexes(wrapper.find("button"), [0, -1, -1]);
+        checkTabIndexes(container.querySelectorAll("button"), [0, -1, -1]);
 
         // focus on 2nd button and test it is the only active one
-        wrapper.find("button").at(2).simulate("focus");
-        wrapper.update();
-        checkTabIndexes(wrapper.find("button"), [-1, -1, 0]);
+        container.querySelectorAll("button")[2].focus();
+        checkTabIndexes(container.querySelectorAll("button"), [-1, -1, 0]);
     });
 
     describe("reducer functions as expected", () => {
         it("SetFocus works as expected", () => {
             const ref1 = React.createRef<HTMLElement>();
             const ref2 = React.createRef<HTMLElement>();
-            expect(reducer({
-                activeRef: ref1,
-                refs: [ref1, ref2],
-            }, {
-                type: Type.SetFocus,
-                payload: {
-                    ref: ref2,
-                },
-            })).toStrictEqual({
+            expect(
+                reducer(
+                    {
+                        activeRef: ref1,
+                        refs: [ref1, ref2],
+                    },
+                    {
+                        type: Type.SetFocus,
+                        payload: {
+                            ref: ref2,
+                        },
+                    },
+                ),
+            ).toStrictEqual({
                 activeRef: ref2,
                 refs: [ref1, ref2],
             });
@@ -150,7 +183,6 @@ describe("RovingTabIndex", () => {
             const ref4 = React.createRef<HTMLElement>();
 
             let state: IState = {
-                activeRef: null,
                 refs: [ref1, ref2, ref3, ref4],
             };
 
@@ -161,7 +193,6 @@ describe("RovingTabIndex", () => {
                 },
             });
             expect(state).toStrictEqual({
-                activeRef: null,
                 refs: [ref1, ref3, ref4],
             });
 
@@ -172,7 +203,6 @@ describe("RovingTabIndex", () => {
                 },
             });
             expect(state).toStrictEqual({
-                activeRef: null,
                 refs: [ref1, ref4],
             });
 
@@ -183,7 +213,6 @@ describe("RovingTabIndex", () => {
                 },
             });
             expect(state).toStrictEqual({
-                activeRef: null,
                 refs: [ref1],
             });
 
@@ -194,7 +223,6 @@ describe("RovingTabIndex", () => {
                 },
             });
             expect(state).toStrictEqual({
-                activeRef: null,
                 refs: [],
             });
         });
@@ -205,15 +233,16 @@ describe("RovingTabIndex", () => {
             const ref3 = React.createRef<HTMLElement>();
             const ref4 = React.createRef<HTMLElement>();
 
-            mount(<React.Fragment>
-                <span ref={ref1} />
-                <span ref={ref2} />
-                <span ref={ref3} />
-                <span ref={ref4} />
-            </React.Fragment>);
+            render(
+                <React.Fragment>
+                    <span ref={ref1} />
+                    <span ref={ref2} />
+                    <span ref={ref3} />
+                    <span ref={ref4} />
+                </React.Fragment>,
+            );
 
             let state: IState = {
-                activeRef: null,
                 refs: [],
             };
 
@@ -333,5 +362,61 @@ describe("RovingTabIndex", () => {
             });
         });
     });
-});
 
+    describe("handles arrow keys", () => {
+        it("should handle up/down arrow keys work when handleUpDown=true", async () => {
+            const { container } = render(
+                <RovingTabIndexProvider handleUpDown>
+                    {({ onKeyDownHandler }) => (
+                        <div onKeyDown={onKeyDownHandler}>
+                            {button1}
+                            {button2}
+                            {button3}
+                        </div>
+                    )}
+                </RovingTabIndexProvider>,
+            );
+
+            container.querySelectorAll("button")[0].focus();
+            checkTabIndexes(container.querySelectorAll("button"), [0, -1, -1]);
+
+            await userEvent.keyboard("[ArrowDown]");
+            checkTabIndexes(container.querySelectorAll("button"), [-1, 0, -1]);
+
+            await userEvent.keyboard("[ArrowDown]");
+            checkTabIndexes(container.querySelectorAll("button"), [-1, -1, 0]);
+
+            await userEvent.keyboard("[ArrowUp]");
+            checkTabIndexes(container.querySelectorAll("button"), [-1, 0, -1]);
+
+            await userEvent.keyboard("[ArrowUp]");
+            checkTabIndexes(container.querySelectorAll("button"), [0, -1, -1]);
+
+            // Does not loop without
+            await userEvent.keyboard("[ArrowUp]");
+            checkTabIndexes(container.querySelectorAll("button"), [0, -1, -1]);
+        });
+
+        it("should call scrollIntoView if specified", async () => {
+            const { container } = render(
+                <RovingTabIndexProvider handleUpDown scrollIntoView>
+                    {({ onKeyDownHandler }) => (
+                        <div onKeyDown={onKeyDownHandler}>
+                            {button1}
+                            {button2}
+                            {button3}
+                        </div>
+                    )}
+                </RovingTabIndexProvider>,
+            );
+
+            container.querySelectorAll("button")[0].focus();
+            checkTabIndexes(container.querySelectorAll("button"), [0, -1, -1]);
+
+            const button = container.querySelectorAll("button")[1];
+            const mock = jest.spyOn(button, "scrollIntoView");
+            await userEvent.keyboard("[ArrowDown]");
+            expect(mock).toHaveBeenCalled();
+        });
+    });
+});

@@ -17,7 +17,7 @@ limitations under the License.
 
 import { IClientWellKnown } from "matrix-js-sdk/src/matrix";
 
-import { ValidatedServerConfig } from "./utils/AutoDiscoveryUtils";
+import { ValidatedServerConfig } from "./utils/ValidatedServerConfig";
 
 // Convention decision: All config options are lower_snake_case
 // We use an isolated file for the interface so we can mess around with the eslint options.
@@ -57,7 +57,7 @@ export interface IConfigOptions {
     branding?: {
         welcome_background_url?: string | string[]; // chosen at random if array
         auth_header_logo_url?: string;
-        auth_footer_links?: {text: string, url: string}[];
+        auth_footer_links?: { text: string; url: string }[];
         help_links?: {text: string, url: string}[]; // watcha+
     };
 
@@ -72,15 +72,15 @@ export interface IConfigOptions {
     permalink_prefix?: string;
 
     update_base_url?: string;
-    desktop_builds?: {
+    desktop_builds: {
         available: boolean;
         logo: string; // url
         url: string; // download url
     };
-    mobile_builds?: {
-        ios?: string; // download url
-        android?: string; // download url
-        fdroid?: string; // download url
+    mobile_builds: {
+        ios: string | null; // download url
+        android: string | null; // download url
+        fdroid: string | null; // download url
     };
 
     mobile_guide_toast?: boolean;
@@ -96,17 +96,18 @@ export interface IConfigOptions {
     integrations_rest_url?: string;
     integrations_widgets_urls?: string[];
 
-    show_labs_settings?: boolean;
+    show_labs_settings: boolean;
     features?: Record<string, boolean>; // <FeatureName, EnabledBool>
 
     bug_report_endpoint_url?: string; // omission disables bug reporting
-    uisi_autorageshake_app?: string;
+    uisi_autorageshake_app?: string; // defaults to "element-auto-uisi"
     sentry?: {
         dsn: string;
         environment?: string; // "production", etc
     };
 
     widget_build_url?: string; // url called to replace jitsi/call widget creation
+    widget_build_url_ignore_dm?: boolean;
     audio_stream_url?: string;
     jitsi?: {
         preferred_domain: string;
@@ -116,6 +117,13 @@ export interface IConfigOptions {
     };
     voip?: {
         obey_asserted_identity?: boolean; // MSC3086
+    };
+    element_call: {
+        url?: string;
+        guest_spa_url?: string;
+        use_exclusively?: boolean;
+        participant_limit?: number;
+        brand?: string;
     };
 
     logout_redirect_url?: string;
@@ -130,15 +138,10 @@ export interface IConfigOptions {
         admin_message_md: string; // message for how to contact the server owner when reporting an event
     };
 
-    welcome_user_id?: string;
-
     room_directory?: {
         servers: string[];
     };
 
-    piwik?: false | {
-        policy_url: string; // deprecated in favour of `privacy_policy_url` at root instead
-    };
     posthog?: {
         project_api_key: string;
         api_host: string; // hostname
@@ -146,39 +149,72 @@ export interface IConfigOptions {
     analytics_owner?: string; // defaults to `brand`
     privacy_policy_url?: string; // location for cookie policy
 
-    // Server hosting upsell options
-    hosting_signup_link?: string; // slightly different from `host_signup`
-    host_signup?: {
-        brand?: string; // acts as the enabled flag too (truthy == show)
-
-        // Required-ness denotes when `brand` is truthy
-        cookie_policy_url: string;
-        privacy_policy_url: string;
-        terms_of_service_url: string;
-        url: string;
-        domains?: string[];
-    };
-
     enable_presence_by_hs_url?: Record<string, boolean>; // <HomeserverName, Enabled>
 
-    terms_and_conditions_links?: { url: string, text: string }[];
+    terms_and_conditions_links?: { url: string; text: string }[];
+    help_url: string;
+    help_encryption_url: string;
 
     latex_maths_delims?: {
         inline?: {
             left?: string;
             right?: string;
+            pattern?: {
+                tex?: string;
+                latex?: string;
+            };
         };
         display?: {
             left?: string;
             right?: string;
+            pattern?: {
+                tex?: string;
+                latex?: string;
+            };
         };
     };
 
     sync_timeline_limit?: number;
     dangerously_allow_unsafe_and_insecure_passwords?: boolean; // developer option
 
-    // XXX: Undocumented URL for the "Learn more about spaces" link in the "Communities don't exist" messaging.
-    spaces_learn_more_url?: string;
+    voice_broadcast?: {
+        // length per voice chunk in seconds
+        chunk_length?: number;
+        // max voice broadcast length in seconds
+        max_length?: number;
+    };
+
+    user_notice?: {
+        title: string;
+        description: string;
+        show_once?: boolean;
+    };
+
+    feedback: {
+        existing_issues_url: string;
+        new_issue_url: string;
+    };
+
+    /**
+     * Configuration for OIDC issuers where a static client_id has been issued for the app.
+     * Otherwise dynamic client registration is attempted.
+     * The issuer URL must have a trailing `/`.
+     * OPTIONAL
+     */
+    oidc_static_clients?: {
+        [issuer: string]: { client_id: string };
+    };
+
+    /**
+     * Configuration for OIDC dynamic registration where a static OIDC client is not configured.
+     */
+    oidc_metadata?: {
+        client_uri?: string;
+        logo_uri?: string;
+        tos_uri?: string;
+        policy_uri?: string;
+        contacts?: string[];
+    };
 
     // watcha+
     e2ee?: {

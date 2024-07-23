@@ -1,5 +1,5 @@
 /*
-Copyright 2019 New Vector Ltd
+Copyright 2019, 2024 New Vector Ltd
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { createRef } from 'react';
+import React, { createRef } from "react";
 import classNames from "classnames";
+import { EventType } from "matrix-js-sdk/src/matrix";
 
 import { _t } from "../../../languageHandler";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
 import Field from "../elements/Field";
-import { mediaFromMxc } from "../../../customisations/Media";
-import AccessibleButton from "../elements/AccessibleButton";
+import AccessibleButton, { ButtonEvent } from "../elements/AccessibleButton";
 import AvatarSetting from "../settings/AvatarSetting";
-import { htmlSerializeFromMdIfNeeded } from '../../../editor/serialize';
-import { chromeFileInputFix } from "../../../utils/BrowserWorkarounds";
+import { htmlSerializeFromMdIfNeeded } from "../../../editor/serialize";
+import { idNameForRoom } from "../avatars/RoomAvatar";
 
 interface IProps {
     roomId: string;
@@ -33,9 +33,10 @@ interface IProps {
 interface IState {
     originalDisplayName: string;
     displayName: string;
-    originalAvatarUrl: string;
-    avatarUrl: string;
-    avatarFile: File;
+    originalAvatarUrl: string | null;
+    avatarFile: File | null;
+    // If true, the user has indicated that they wish to remove the avatar and this should happen on save.
+    avatarRemovalPending: boolean;
     originalTopic: string;
     topic: string;
     profileFieldsTouched: Record<string, boolean>;
@@ -48,48 +49,42 @@ interface IState {
 export default class RoomProfileSettings extends React.Component<IProps, IState> {
     private avatarUpload = createRef<HTMLInputElement>();
 
-    constructor(props: IProps) {
+    public constructor(props: IProps) {
         super(props);
 
-        const client = MatrixClientPeg.get();
+        const client = MatrixClientPeg.safeGet();
         const room = client.getRoom(props.roomId);
         if (!room) throw new Error(`Expected a room for ID: ${props.roomId}`);
 
-        const avatarEvent = room.currentState.getStateEvents("m.room.avatar", "");
-        let avatarUrl = avatarEvent && avatarEvent.getContent() ? avatarEvent.getContent()["url"] : null;
-        if (avatarUrl) avatarUrl = mediaFromMxc(avatarUrl).getSquareThumbnailHttp(96);
+        const avatarEvent = room.currentState.getStateEvents(EventType.RoomAvatar, "");
+        const avatarUrl = avatarEvent?.getContent()["url"] ?? null;
 
-        const topicEvent = room.currentState.getStateEvents("m.room.topic", "");
-        const topic = topicEvent && topicEvent.getContent() ? topicEvent.getContent()['topic'] : '';
+        const topicEvent = room.currentState.getStateEvents(EventType.RoomTopic, "");
+        const topic = topicEvent && topicEvent.getContent() ? topicEvent.getContent()["topic"] : "";
 
-        const nameEvent = room.currentState.getStateEvents('m.room.name', '');
-        const name = nameEvent && nameEvent.getContent() ? nameEvent.getContent()['name'] : '';
+        const nameEvent = room.currentState.getStateEvents(EventType.RoomName, "");
+        const name = nameEvent && nameEvent.getContent() ? nameEvent.getContent()["name"] : "";
 
+        const userId = client.getSafeUserId();
         this.state = {
             originalDisplayName: name,
             displayName: name,
             originalAvatarUrl: avatarUrl,
-            avatarUrl: avatarUrl,
             avatarFile: null,
+            avatarRemovalPending: false,
             originalTopic: topic,
             topic: topic,
             profileFieldsTouched: {},
-            canSetName: room.currentState.maySendStateEvent('m.room.name', client.getUserId()),
-            canSetTopic: room.currentState.maySendStateEvent('m.room.topic', client.getUserId()),
-            canSetAvatar: room.currentState.maySendStateEvent('m.room.avatar', client.getUserId()),
+            canSetName: room.currentState.maySendStateEvent(EventType.RoomName, userId),
+            canSetTopic: room.currentState.maySendStateEvent(EventType.RoomTopic, userId),
+            canSetAvatar: room.currentState.maySendStateEvent(EventType.RoomAvatar, userId),
         };
     }
 
-    private uploadAvatar = (): void => {
-        this.avatarUpload.current.click();
-    };
-
-    private removeAvatar = (): void => {
-        // clear file upload field so same file can be selected
-        this.avatarUpload.current.value = "";
+    private onAvatarChanged = (file: File): void => {
         this.setState({
-            avatarUrl: null,
-            avatarFile: null,
+            avatarFile: file,
+            avatarRemovalPending: false,
             profileFieldsTouched: {
                 ...this.state.profileFieldsTouched,
                 avatar: true,
@@ -97,11 +92,24 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
         });
     };
 
-    private isSaveEnabled = () => {
+    private removeAvatar = (): void => {
+        // clear file upload field so same file can be selected
+        if (this.avatarUpload.current) this.avatarUpload.current.value = "";
+        this.setState({
+            avatarFile: null,
+            avatarRemovalPending: true,
+            profileFieldsTouched: {
+                ...this.state.profileFieldsTouched,
+                avatar: true,
+            },
+        });
+    };
+
+    private isSaveEnabled = (): boolean => {
         return Boolean(Object.values(this.state.profileFieldsTouched).length);
     };
 
-    private cancelProfileChanges = async (e: React.MouseEvent): Promise<void> => {
+    private cancelProfileChanges = async (e: ButtonEvent): Promise<void> => {
         e.stopPropagation();
         e.preventDefault();
 
@@ -110,8 +118,8 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
             profileFieldsTouched: {},
             displayName: this.state.originalDisplayName,
             topic: this.state.originalTopic,
-            avatarUrl: this.state.originalAvatarUrl,
             avatarFile: null,
+            avatarRemovalPending: false,
         });
     };
 
@@ -122,7 +130,7 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
         if (!this.isSaveEnabled()) return;
         this.setState({ profileFieldsTouched: {} });
 
-        const client = MatrixClientPeg.get();
+        const client = MatrixClientPeg.safeGet();
         const newState: Partial<IState> = {};
 
         // TODO: What do we do about errors?
@@ -134,13 +142,14 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
         }
 
         if (this.state.avatarFile) {
-            const uri = await client.uploadContent(this.state.avatarFile);
-            await client.sendStateEvent(this.props.roomId, 'm.room.avatar', { url: uri }, '');
-            newState.avatarUrl = mediaFromMxc(uri).getSquareThumbnailHttp(96);
-            newState.originalAvatarUrl = newState.avatarUrl;
+            const { content_uri: uri } = await client.uploadContent(this.state.avatarFile);
+            await client.sendStateEvent(this.props.roomId, EventType.RoomAvatar, { url: uri }, "");
+            newState.originalAvatarUrl = uri;
             newState.avatarFile = null;
-        } else if (this.state.originalAvatarUrl !== this.state.avatarUrl) {
-            await client.sendStateEvent(this.props.roomId, 'm.room.avatar', {}, '');
+        } else if (this.state.avatarRemovalPending) {
+            await client.sendStateEvent(this.props.roomId, EventType.RoomAvatar, {}, "");
+            newState.avatarRemovalPending = false;
+            newState.originalAvatarUrl = null;
         }
 
         if (this.state.originalTopic !== this.state.topic) {
@@ -190,80 +199,35 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
         }
     };
 
-    private onAvatarChanged = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        if (!e.target.files || !e.target.files.length) {
-            this.setState({
-                avatarUrl: this.state.originalAvatarUrl,
-                avatarFile: null,
-                profileFieldsTouched: {
-                    ...this.state.profileFieldsTouched,
-                    avatar: false,
-                },
-            });
-            return;
-        }
-
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            this.setState({
-                avatarUrl: String(ev.target.result),
-                avatarFile: file,
-                profileFieldsTouched: {
-                    ...this.state.profileFieldsTouched,
-                    avatar: true,
-                },
-            });
-        };
-        reader.readAsDataURL(file);
-    };
-
-    public render(): JSX.Element {
+    public render(): React.ReactNode {
         let profileSettingsButtons;
-        if (
-            this.state.canSetName ||
-            this.state.canSetTopic ||
-            this.state.canSetAvatar
-        ) {
+        if (this.state.canSetName || this.state.canSetTopic || this.state.canSetAvatar) {
             profileSettingsButtons = (
-                <div className="mx_ProfileSettings_buttons">
+                <div className="mx_RoomProfileSettings_buttons">
                     <AccessibleButton
                         onClick={this.cancelProfileChanges}
-                        kind="link"
+                        kind="primary_outline"
                         disabled={!this.isSaveEnabled()}
                     >
-                        { _t("Cancel") }
+                        {_t("action|cancel")}
                     </AccessibleButton>
-                    <AccessibleButton
-                        onClick={this.saveProfile}
-                        kind="primary"
-                        disabled={!this.isSaveEnabled()}
-                    >
-                        { _t("Save") }
+                    <AccessibleButton onClick={this.saveProfile} kind="primary" disabled={!this.isSaveEnabled()}>
+                        {_t("action|save")}
                     </AccessibleButton>
                 </div>
             );
         }
 
+        const canRemove = this.state.profileFieldsTouched.avatar
+            ? Boolean(this.state.avatarFile)
+            : Boolean(this.state.originalAvatarUrl);
+
         return (
-            <form
-                onSubmit={this.saveProfile}
-                autoComplete="off"
-                noValidate={true}
-                className="mx_ProfileSettings"
-            >
-                <input
-                    type="file"
-                    ref={this.avatarUpload}
-                    className="mx_ProfileSettings_avatarUpload"
-                    onClick={chromeFileInputFix}
-                    onChange={this.onAvatarChanged}
-                    accept="image/*"
-                />
-                <div className="mx_ProfileSettings_profile">
-                    <div className="mx_ProfileSettings_profile_controls">
+            <form onSubmit={this.saveProfile} autoComplete="off" noValidate={true} className="mx_RoomProfileSettings">
+                <div className="mx_RoomProfileSettings_profile">
+                    <div className="mx_RoomProfileSettings_profile_controls">
                         <Field
-                            label={_t("Room Name")}
+                            label={_t("room_settings|general|name_field_label")}
                             type="text"
                             value={this.state.displayName}
                             autoComplete="off"
@@ -272,11 +236,11 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
                         />
                         <Field
                             className={classNames(
-                                "mx_ProfileSettings_profile_controls_topic",
-                                "mx_ProfileSettings_profile_controls_topic--room",
+                                "mx_RoomProfileSettings_profile_controls_topic",
+                                "mx_RoomProfileSettings_profile_controls_topic--room",
                             )}
                             id="profileTopic" // See: NewRoomIntro.tsx
-                            label={_t("Room Topic")}
+                            label={_t("room_settings|general|topic_field_label")}
                             disabled={!this.state.canSetTopic}
                             type="text"
                             value={this.state.topic}
@@ -286,13 +250,20 @@ export default class RoomProfileSettings extends React.Component<IProps, IState>
                         />
                     </div>
                     <AvatarSetting
-                        avatarUrl={this.state.avatarUrl}
-                        avatarName={this.state.displayName || this.props.roomId}
-                        avatarAltText={_t("Room avatar")}
-                        uploadAvatar={this.state.canSetAvatar ? this.uploadAvatar : undefined}
-                        removeAvatar={this.state.canSetAvatar ? this.removeAvatar : undefined} />
+                        avatar={
+                            this.state.avatarRemovalPending
+                                ? undefined
+                                : this.state.avatarFile ?? this.state.originalAvatarUrl ?? undefined
+                        }
+                        avatarAltText={_t("room_settings|general|avatar_field_label")}
+                        disabled={!this.state.canSetAvatar}
+                        onChange={this.onAvatarChanged}
+                        removeAvatar={canRemove ? this.removeAvatar : undefined}
+                        placeholderId={idNameForRoom(MatrixClientPeg.safeGet().getRoom(this.props.roomId)!)}
+                        placeholderName={MatrixClientPeg.safeGet().getRoom(this.props.roomId)!.name}
+                    />
                 </div>
-                { profileSettingsButtons }
+                {profileSettingsButtons}
             </form>
         );
     }

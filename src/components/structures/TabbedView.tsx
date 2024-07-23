@@ -1,7 +1,7 @@
 /*
 Copyright 2017 Travis Ralston
 Copyright 2019 New Vector Ltd
-Copyright 2019, 2020 The Matrix.org Foundation C.I.C.
+Copyright 2019, 2020, 2024 The Matrix.org Foundation C.I.C.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,17 +18,17 @@ limitations under the License.
 
 import * as React from "react";
 import classNames from "classnames";
-import { logger } from "matrix-js-sdk/src/logger";
 
-import { _t } from '../../languageHandler';
-import AutoHideScrollbar from './AutoHideScrollbar';
-import AccessibleButton from "../views/elements/AccessibleButton";
+import { _t, TranslationKey } from "../../languageHandler";
+import AutoHideScrollbar from "./AutoHideScrollbar";
 import { PosthogScreenTracker, ScreenName } from "../../PosthogTrackers";
+import { NonEmptyArray } from "../../@types/common";
+import { RovingAccessibleButton, RovingTabIndexProvider } from "../../accessibility/RovingTabIndex";
 
 /**
  * Represents a tab for the TabbedView.
  */
-export class Tab {
+export class Tab<T extends string> {
     /**
      * Creates a new tab.
      * @param {string} id The tab's ID.
@@ -37,124 +37,162 @@ export class Tab {
      * @param {React.ReactNode} body The JSX for the tab container.
      * @param {string} screenName The screen name to report to Posthog.
      */
-    constructor(
-        public readonly id: string,
-        public readonly label: string,
-        public readonly icon: string,
+    public constructor(
+        public readonly id: T,
+        public readonly label: TranslationKey,
+        public readonly icon: string | null,
         public readonly body: React.ReactNode,
         public readonly screenName?: ScreenName,
     ) {}
 }
 
+export function useActiveTabWithDefault<T extends string>(
+    tabs: NonEmptyArray<Tab<string>>,
+    defaultTabID: T,
+    initialTabID?: T,
+): [T, (tabId: T) => void] {
+    const [activeTabId, setActiveTabId] = React.useState(
+        initialTabID && tabs.some((t) => t.id === initialTabID) ? initialTabID : defaultTabID,
+    );
+
+    return [activeTabId, setActiveTabId];
+}
+
 export enum TabLocation {
-    LEFT = 'left',
-    TOP = 'top',
+    LEFT = "left",
+    TOP = "top",
 }
 
-interface IProps {
-    tabs: Tab[];
-    initialTabId?: string;
-    tabLocation: TabLocation;
-    onChange?: (tabId: string) => void;
-    screenName?: ScreenName;
+interface ITabPanelProps<T extends string> {
+    tab: Tab<T>;
 }
 
-interface IState {
-    activeTabIndex: number;
+function domIDForTabID(tabId: string): string {
+    return `mx_tabpanel_${tabId}`;
 }
 
-export default class TabbedView extends React.Component<IProps, IState> {
-    constructor(props: IProps) {
-        super(props);
+function TabPanel<T extends string>({ tab }: ITabPanelProps<T>): JSX.Element {
+    return (
+        <div
+            className="mx_TabbedView_tabPanel"
+            key={tab.id}
+            id={domIDForTabID(tab.id)}
+            aria-labelledby={`${domIDForTabID(tab.id)}_label`}
+        >
+            <AutoHideScrollbar className="mx_TabbedView_tabPanelContent">{tab.body}</AutoHideScrollbar>
+        </div>
+    );
+}
 
-        let activeTabIndex = 0;
-        if (props.initialTabId) {
-            const tabIndex = props.tabs.findIndex(t => t.id === props.initialTabId);
-            if (tabIndex >= 0) activeTabIndex = tabIndex;
-        }
+interface ITabLabelProps<T extends string> {
+    tab: Tab<T>;
+    isActive: boolean;
+    onClick: () => void;
+}
 
-        this.state = {
-            activeTabIndex,
-        };
+function TabLabel<T extends string>({ tab, isActive, onClick }: ITabLabelProps<T>): JSX.Element {
+    const classes = classNames("mx_TabbedView_tabLabel", {
+        mx_TabbedView_tabLabel_active: isActive,
+    });
+
+    let tabIcon: JSX.Element | undefined;
+    if (tab.icon) {
+        tabIcon = <span className={`mx_TabbedView_maskedIcon ${tab.icon}`} />;
     }
 
-    static defaultProps = {
-        tabLocation: TabLocation.LEFT,
+    const id = domIDForTabID(tab.id);
+
+    const label = _t(tab.label);
+    return (
+        <RovingAccessibleButton
+            className={classes}
+            onClick={onClick}
+            data-testid={`settings-tab-${tab.id}`}
+            role="tab"
+            aria-selected={isActive}
+            aria-controls={id}
+            element="li"
+        >
+            {tabIcon}
+            <span className="mx_TabbedView_tabLabel_text" id={`${id}_label`}>
+                {label}
+            </span>
+        </RovingAccessibleButton>
+    );
+}
+
+interface IProps<T extends string> {
+    // An array of objects representign tabs that the tabbed view will display.
+    tabs: NonEmptyArray<Tab<T>>;
+    // The ID of the tab to show
+    activeTabId: T;
+    // The location of the tabs, dictating the layout of the TabbedView.
+    tabLocation?: TabLocation;
+    // A callback that is called when the active tab should change
+    onChange: (tabId: T) => void;
+    // The screen name to report to Posthog.
+    screenName?: ScreenName;
+    /**
+     * If true, the layout of the tabbed view will be responsive to the viewport size (eg, just showing icons
+     * instead of names of tabs).
+     * Only applies if `tabLocation === TabLocation.LEFT`.
+     * Default: false.
+     */
+    responsive?: boolean;
+}
+
+/**
+ * A tabbed view component. Given objects representing content with titles, displays
+ * them in a tabbed view where the user can select which one of the items to view at once.
+ */
+export default function TabbedView<T extends string>(props: IProps<T>): JSX.Element {
+    const tabLocation = props.tabLocation ?? TabLocation.LEFT;
+
+    const getTabById = (id: T): Tab<T> | undefined => {
+        return props.tabs.find((tab) => tab.id === id);
     };
 
-    private getActiveTabIndex() {
-        if (!this.state || !this.state.activeTabIndex) return 0;
-        return this.state.activeTabIndex;
-    }
+    const labels = props.tabs.map((tab) => (
+        <TabLabel
+            key={"tab_label_" + tab.id}
+            tab={tab}
+            isActive={tab.id === props.activeTabId}
+            onClick={() => props.onChange(tab.id)}
+        />
+    ));
+    const tab = getTabById(props.activeTabId);
+    const panel = tab ? <TabPanel tab={tab} /> : null;
 
-    /**
-     * Shows the given tab
-     * @param {Tab} tab the tab to show
-     * @private
-     */
-    private setActiveTab(tab: Tab) {
-        const idx = this.props.tabs.indexOf(tab);
-        if (idx !== -1) {
-            if (this.props.onChange) this.props.onChange(tab.id);
-            this.setState({ activeTabIndex: idx });
-        } else {
-            logger.error("Could not find tab " + tab.label + " in tabs");
-        }
-    }
+    const tabbedViewClasses = classNames({
+        mx_TabbedView: true,
+        mx_TabbedView_tabsOnLeft: tabLocation == TabLocation.LEFT,
+        mx_TabbedView_tabsOnTop: tabLocation == TabLocation.TOP,
+        mx_TabbedView_responsive: props.responsive,
+    });
 
-    private renderTabLabel(tab: Tab) {
-        let classes = "mx_TabbedView_tabLabel ";
+    const screenName = tab?.screenName ?? props.screenName;
 
-        const idx = this.props.tabs.indexOf(tab);
-        if (idx === this.getActiveTabIndex()) classes += "mx_TabbedView_tabLabel_active";
-
-        let tabIcon = null;
-        if (tab.icon) {
-            tabIcon = <span className={`mx_TabbedView_maskedIcon ${tab.icon}`} />;
-        }
-
-        const onClickHandler = () => this.setActiveTab(tab);
-
-        const label = _t(tab.label);
-        return (
-            <AccessibleButton className={classes} key={"tab_label_" + tab.label} onClick={onClickHandler}>
-                { tabIcon }
-                <span className="mx_TabbedView_tabLabel_text">
-                    { label }
-                </span>
-            </AccessibleButton>
-        );
-    }
-
-    private renderTabPanel(tab: Tab): React.ReactNode {
-        return (
-            <div className="mx_TabbedView_tabPanel" key={"mx_tabpanel_" + tab.label}>
-                <AutoHideScrollbar className='mx_TabbedView_tabPanelContent'>
-                    { tab.body }
-                </AutoHideScrollbar>
-            </div>
-        );
-    }
-
-    public render(): React.ReactNode {
-        const labels = this.props.tabs.map(tab => this.renderTabLabel(tab));
-        const tab = this.props.tabs[this.getActiveTabIndex()];
-        const panel = this.renderTabPanel(tab);
-
-        const tabbedViewClasses = classNames({
-            'mx_TabbedView': true,
-            'mx_TabbedView_tabsOnLeft': this.props.tabLocation == TabLocation.LEFT,
-            'mx_TabbedView_tabsOnTop': this.props.tabLocation == TabLocation.TOP,
-        });
-
-        return (
-            <div className={tabbedViewClasses}>
-                <PosthogScreenTracker screenName={tab?.screenName ?? this.props.screenName} />
-                <div className="mx_TabbedView_tabLabels">
-                    { labels }
-                </div>
-                { panel }
-            </div>
-        );
-    }
+    return (
+        <div className={tabbedViewClasses}>
+            {screenName && <PosthogScreenTracker screenName={screenName} />}
+            <RovingTabIndexProvider
+                handleLoop
+                handleHomeEnd
+                handleLeftRight={tabLocation == TabLocation.TOP}
+                handleUpDown={tabLocation == TabLocation.LEFT}
+            >
+                {({ onKeyDownHandler }) => (
+                    <ul
+                        className="mx_TabbedView_tabLabels"
+                        role="tablist"
+                        aria-orientation={tabLocation == TabLocation.LEFT ? "vertical" : "horizontal"}
+                        onKeyDown={onKeyDownHandler}
+                    >
+                        {labels}
+                    </ul>
+                )}
+            </RovingTabIndexProvider>
+            {panel}
+        </div>
+    );
 }

@@ -15,12 +15,21 @@ limitations under the License.
 */
 
 import { logger } from "matrix-js-sdk/src/logger";
-import { ClientEvent, EventType, MatrixClient } from "matrix-js-sdk/src/matrix";
+import { ClientEvent, MatrixClient } from "matrix-js-sdk/src/matrix";
 
 import defaultDispatcher from "../dispatcher/dispatcher";
-import { MatrixClientPeg } from "../MatrixClientPeg";
-import { LocalRoom, LocalRoomState, LOCAL_ROOM_ID_PREFIX } from "../models/LocalRoom";
-import * as thisModule from "./local-room";
+import { LocalRoom, LocalRoomState } from "../models/LocalRoom";
+import { isLocalRoom } from "./localRoom/isLocalRoom";
+import { isRoomReady } from "./localRoom/isRoomReady";
+
+const isActualRoomIdDefined = (actualRoomId: string | undefined): actualRoomId is string => {
+    if (actualRoomId === undefined) {
+        // should not happen
+        throw new Error("Local room in CREATED state without actual room Id occurred");
+    }
+
+    return true;
+};
 
 /**
  * Does a room action:
@@ -38,13 +47,12 @@ import * as thisModule from "./local-room";
 export async function doMaybeLocalRoomAction<T>(
     roomId: string,
     fn: (actualRoomId: string) => Promise<T>,
-    client?: MatrixClient,
+    client: MatrixClient,
 ): Promise<T> {
-    if (roomId.startsWith(LOCAL_ROOM_ID_PREFIX)) {
-        client = client ?? MatrixClientPeg.get();
+    if (isLocalRoom(roomId)) {
         const room = client.getRoom(roomId) as LocalRoom;
 
-        if (room.isCreated) {
+        if (room.isCreated && isActualRoomIdDefined(room.actualRoomId)) {
             return fn(room.actualRoomId);
         }
 
@@ -63,34 +71,6 @@ export async function doMaybeLocalRoomAction<T>(
 }
 
 /**
- * Tests whether a room created based on a local room is ready.
- */
-export function isRoomReady(
-    client: MatrixClient,
-    localRoom: LocalRoom,
-): boolean {
-    // not ready if no actual room id exists
-    if (!localRoom.actualRoomId) return false;
-
-    const room = client.getRoom(localRoom.actualRoomId);
-    // not ready if the room does not exist
-    if (!room) return false;
-
-    // not ready if not all members joined/invited
-    if (room.getInvitedAndJoinedMemberCount() !== 1 + localRoom.targets?.length) return false;
-
-    const roomHistoryVisibilityEvents = room.currentState.getStateEvents(EventType.RoomHistoryVisibility);
-    // not ready if the room history has not been configured
-    if (roomHistoryVisibilityEvents.length === 0) return false;
-
-    const roomEncryptionEvents = room.currentState.getStateEvents(EventType.RoomEncryption);
-    // not ready if encryption has not been configured (applies only to encrypted rooms)
-    if (localRoom.encrypted === true && roomEncryptionEvents.length === 0) return false;
-
-    return true;
-}
-
-/**
  * Waits until a room is ready and then applies the after-create local room callbacks.
  * Also implements a stopgap timeout after that a room is assumed to be ready.
  *
@@ -98,41 +78,47 @@ export function isRoomReady(
  * @async
  * @param {MatrixClient} client
  * @param {LocalRoom} localRoom
+ * @param actualRoomId Id of the actual room
  * @returns {Promise<string>} Resolved to the actual room id
  */
 export async function waitForRoomReadyAndApplyAfterCreateCallbacks(
     client: MatrixClient,
     localRoom: LocalRoom,
+    actualRoomId: string,
 ): Promise<string> {
-    if (thisModule.isRoomReady(client, localRoom)) {
-        return applyAfterCreateCallbacks(localRoom, localRoom.actualRoomId).then(() => {
+    if (isRoomReady(client, localRoom)) {
+        return applyAfterCreateCallbacks(localRoom, actualRoomId).then(() => {
             localRoom.state = LocalRoomState.CREATED;
             client.emit(ClientEvent.Room, localRoom);
-            return Promise.resolve(localRoom.actualRoomId);
+            return Promise.resolve(actualRoomId);
         });
     }
 
-    return new Promise((resolve) => {
-        const finish = () => {
+    return new Promise((resolve, reject) => {
+        const finish = (): void => {
             if (checkRoomStateIntervalHandle) clearInterval(checkRoomStateIntervalHandle);
             if (stopgapTimeoutHandle) clearTimeout(stopgapTimeoutHandle);
 
-            applyAfterCreateCallbacks(localRoom, localRoom.actualRoomId).then(() => {
-                localRoom.state = LocalRoomState.CREATED;
-                client.emit(ClientEvent.Room, localRoom);
-                resolve(localRoom.actualRoomId);
-            });
+            applyAfterCreateCallbacks(localRoom, actualRoomId)
+                .then(() => {
+                    localRoom.state = LocalRoomState.CREATED;
+                    client.emit(ClientEvent.Room, localRoom);
+                    resolve(actualRoomId);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
         };
 
-        const stopgapFinish = () => {
+        const stopgapFinish = (): void => {
             logger.warn(`Assuming local room ${localRoom.roomId} is ready after hitting timeout`);
             finish();
         };
 
-        const checkRoomStateIntervalHandle = setInterval(() => {
-            if (thisModule.isRoomReady(client, localRoom)) finish();
+        const checkRoomStateIntervalHandle = window.setInterval(() => {
+            if (isRoomReady(client, localRoom)) finish();
         }, 500);
-        const stopgapTimeoutHandle = setTimeout(stopgapFinish, 5000);
+        const stopgapTimeoutHandle = window.setTimeout(stopgapFinish, 5000);
     });
 }
 
