@@ -621,16 +621,16 @@ const SpaceSetupPrivateInvite: React.FC<{
         </div>
         !watcha */ }
         
-        { /* watcha+ */ }
-        <SpacePublicShare {...{ space }} isPrivate={true} />
+            { /* watcha+ */ }
+            <SpacePublicShare {...{ space }} isPrivate={true} />
 
-        <div className="mx_SpaceRoomView_buttons">
-            <AccessibleButton kind="primary" onClick={onFinished}>
-                { _t("Go to my space") }
-            </AccessibleButton>
-        </div>
-        { /* +watcha */ }
-    </div>;
+            <div className="mx_SpaceRoomView_buttons">
+                <AccessibleButton kind="primary" onClick={onFinished}>
+                    { _t("Go to my space") }
+                </AccessibleButton>
+            </div>
+            { /* +watcha */ }
+        </div>)
 };
 
 export default class SpaceRoomView extends React.PureComponent<IProps, IState> {
