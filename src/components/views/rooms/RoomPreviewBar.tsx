@@ -529,11 +529,12 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                 if (inviteMember) {
                     inviterElement = (
                         <span>
-                            <span className="mx_RoomPreviewBar_inviter">{inviteMember.rawDisplayName}</span> (
-                        { /* eslint-disable-line indent *//* watcha!
-                            {inviteMember.userId})
-                            !watcha */ }
-                        </span> { /* watcha+ */ }
+                            <span className="mx_RoomPreviewBar_inviter">
+                                {inviteMember.rawDisplayName}
+                            </span> 
+                            { /* watcha!(
+                            {inviteMember.userId}) !watcha*/ }
+                        </span>
                     );
                 } else {
                     inviterElement = <span className="mx_RoomPreviewBar_inviter">{this.props.inviterName}</span>;
