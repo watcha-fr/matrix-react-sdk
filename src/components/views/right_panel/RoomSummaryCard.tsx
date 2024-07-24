@@ -241,7 +241,6 @@ const AppsSection: React.FC<IAppsSectionProps> = ({ room }) => {
     const apps = useWidgets(room);
     // Filter out virtual widgets
     const realApps = useMemo(() => apps.filter((app) => app.eventId !== undefined), [apps]);
-
     /* eslint-disable-next-line @typescript-eslint/no-unused-vars */// @ts-ignore // watcha+
     const onManageIntegrations = (): void => {
         const managers = IntegrationManagers.sharedInstance();
@@ -268,11 +267,11 @@ const AppsSection: React.FC<IAppsSectionProps> = ({ room }) => {
                 <AppRow key={app.id} app={app} room={room} />
             ))}
             {copyLayoutBtn}
-        { /* watcha!
+            { /* watcha!
             <AccessibleButton kind="link" onClick={onManageIntegrations}>
                 {realApps.length > 0 ? _t("right_panel|edit_integrations") : _t("right_panel|add_integrations")}
             </AccessibleButton>
-        !watcha */ }
+            !watcha */ }
         </Group>
     );
 };
@@ -289,20 +288,6 @@ const onRoomSettingsClick = (ev: Event): void => {
     defaultDispatcher.dispatch({ action: "open_room_settings" });
     PosthogTrackers.trackInteraction("WebRightPanelRoomInfoSettingsButton", ev);
 };
-
-// watcha+
-const onRoomDocumentsClick = () => {
-    RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudDocumentPanel }, true);
-};
-
-const onRoomCalendarClick = () => {
-    RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudCalendarPanel }, true);
-};
-
-const onRoomTasksClick = () => {
-    RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudTaskPanel }, true);
-};
-// +watcha
 
 // watcha+
 const onRoomDocumentsClick = () => {
@@ -491,7 +476,10 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
                 {alias}
             </Text>
 
+            {/* watcha!
             <Flex as="section" justify="center" gap="var(--cpd-space-2x)" className="mx_RoomSummaryCard_badges">
+             !watcha */}
+            <Flex as="section" justify="center" gap="var(--cpd-space-2x)" className={classNames("mx_RoomSummaryCard_badges", {watcha_RoomSummaryCard_e2ee_hidden: !showE2EEUI,})}> {/* watcha+ */}
                 {!isDirectMessage && roomState.getJoinRule() === JoinRule.Public && (
                     <Badge kind="default">
                         <PublicIcon width="1em" />
@@ -595,23 +583,31 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
             {!isVideoRoom && (
                 <>
                     <MenuItem Icon={FilesIcon} label={_t("right_panel|files_button")} onSelect={onRoomFilesClick} />
-                    <MenuItem
-                        Icon={PollsIcon}
-                        label={_t("right_panel|polls_button")}
-                        onSelect={onRoomPollHistoryClick}
-                    />
+                    <MenuItem Icon={PollsIcon} label={_t("right_panel|polls_button")} onSelect={onRoomPollHistoryClick} />
                     {pinningEnabled && (
-                        <MenuItem
-                            Icon={PinIcon}
-                            label={_t("right_panel|pinned_messages_button")}
-                            onSelect={onRoomPinsClick}
-                        >
+                        <MenuItem Icon={PinIcon} label={_t("right_panel|pinned_messages_button")} onSelect={onRoomPinsClick} >
                             <Text as="span" size="sm">
                                 {pinCount}
                             </Text>
                         </MenuItem>
                     )}
                     <MenuItem Icon={ExportArchiveIcon} label={_t("export_chat|title")} onSelect={onRoomExportClick} />
+                    {showNextcloudButtons && (
+                        <>
+                            <MenuItem
+                                label={_t("Show documents shared with the room")}
+                                onSelect={onRoomDocumentsClick}
+                            />
+                            <MenuItem
+                                label={_t("Show the calendar shared with the room")}
+                                onSelect={onRoomCalendarClick}
+                            />
+                            <MenuItem
+                                label={_t("Show the to-do list shared with the room")}
+                                onSelect={onRoomTasksClick}
+                            />
+                        </>
+                    )}
                 </>
             )}
 
