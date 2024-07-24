@@ -534,7 +534,6 @@ export default class RoomPreviewBar extends React.Component<IProps, IState> {
                             {inviteMember.userId})
                             !watcha */ }
                         </span> { /* watcha+ */ }
-                    </span>
                     );
                 } else {
                     inviterElement = <span className="mx_RoomPreviewBar_inviter">{this.props.inviterName}</span>;
