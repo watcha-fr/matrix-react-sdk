@@ -446,24 +446,27 @@ export default class SecurityRoomSettingsTab extends React.Component<IProps, ISt
         return (
             <SettingsTab>
                 <SettingsSection heading={_t("room_settings|security|title")}>
+                { SettingsStore.getValue("showE2EEUI") && // watcha+
                     <SettingsFieldset
                         legend={_t("settings|security|encryption_section")}
                         description={
                             isEncryptionForceDisabled && !isEncrypted
                                 ? undefined
                                 : _t("room_settings|security|encryption_permanent")
-                                { SettingsStore.getValue("showE2EEUI") && // watcha+
-                                    <SettingsFieldset legend={_t("Encryption")} description={_t("Once enabled, encryption cannot be disabled.")}>
-                                        <LabelledToggleSwitch
-                                            value={isEncrypted}
-                                            onChange={this.onEncryptionChange}
-                                            label={_t("Encrypted")}
-                                            disabled={!canEnableEncryption}
-                                        />
-                                        { encryptionSettings }
-                                    </SettingsFieldset>
-                                    /* watcha+ */ }
-
+                        }
+                    >
+                        <LabelledToggleSwitch
+                            value={isEncrypted}
+                            onChange={this.onEncryptionChange}
+                            label={_t("common|encrypted")}
+                            disabled={!canEnableEncryption}
+                        />
+                        {isEncryptionForceDisabled && !isEncrypted && (
+                            <Caption>{_t("room_settings|security|encryption_forced")}</Caption>
+                        )}
+                        {encryptionSettings}
+                    </SettingsFieldset>
+                /* watcha+ */ }
                     {this.renderJoinRule()}
                     {historySection}
                 </SettingsSection>
