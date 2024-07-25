@@ -552,30 +552,6 @@ export async function getStoredSessionVars(): Promise<Partial<IStoredSession>> {
     return { hsUrl, isUrl, hasAccessToken, accessToken, refreshToken, hasRefreshToken, userId, deviceId, isGuest, isPartner }; // watcha+
 }
 
-// The pickle key is a string of unspecified length and format.  For AES, we
-// need a 256-bit Uint8Array. So we HKDF the pickle key to generate the AES
-// key.  The AES key should be zeroed after it is used.
-async function pickleKeyToAesKey(pickleKey: string): Promise<Uint8Array> {
-    const pickleKeyBuffer = new Uint8Array(pickleKey.length);
-    for (let i = 0; i < pickleKey.length; i++) {
-        pickleKeyBuffer[i] = pickleKey.charCodeAt(i);
-    }
-    const hkdfKey = await window.crypto.subtle.importKey(
-        "raw", pickleKeyBuffer, "HKDF", false, ["deriveBits"],
-    );
-    pickleKeyBuffer.fill(0);
-    return new Uint8Array(await window.crypto.subtle.deriveBits(
-        {
-            name: "HKDF", hash: "SHA-256",
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore: https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/879
-            salt: new Uint8Array(32), info: new Uint8Array(0),
-        },
-        hkdfKey,
-        256,
-    ));
-}
-
 async function abortLogin(): Promise<void> {
     const signOut = await showStorageEvictedDialog();
     if (signOut) {
