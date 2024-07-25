@@ -1062,8 +1062,8 @@ async function startMatrixClient(
 export async function onLoggedOut(): Promise<void> {
     // watcha+
     const client = MatrixClientPeg.get();
-    const isPartner = client.isPartner();
-    const capabilities = await client.getCapabilities();
+    const isPartner = client!.isPartner();
+    const capabilities = await client!.getCapabilities();
     const externalAuthenticationForPartners = capabilities.watcha?.external_authentication_for_partners?.enabled;
     // +watcha
     // Ensure that we dispatch a view change **before** stopping the client,
