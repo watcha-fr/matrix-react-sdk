@@ -33,7 +33,7 @@ export function looksValid(email: string): boolean {
 
 // watcha+
 export async function isMine(email: string): Promise<boolean> {
-    const { threepids } = await MatrixClientPeg.get().getThreePids();
+    const { threepids } = await (MatrixClientPeg.get()!).getThreePids();
     return threepids.some(threepid => threepid.medium === "email" && threepid.address === email);
 }
 

@@ -42,24 +42,25 @@ const SpacePublicShare: React.FC<IProps> = ({ space, onFinished, isPrivate }: IP
     return (
         <div className="mx_SpacePublicShare">
             { isPrivate || // watcha+
-        <AccessibleButton
-            className="mx_SpacePublicShare_shareButton"
-            onClick={async () => {
-                const permalinkCreator = new RoomPermalinkCreator(space);
-                permalinkCreator.load();
-                const success = await copyPlaintext(permalinkCreator.forShareableRoom());
-                const text = success ? _t("Copied!") : _t("Failed to copy");
-                setCopiedText(text);
-                await sleep(5000);
-                if (copiedText === text) { // if the text hasn't changed by another click then clear it after some time
-                    setCopiedText(_t("Click to copy"));
-                }
-            }}
-        >
-            <h3>{ _t("Share invite link") }</h3>
-            <span>{ copiedText }</span>
-        </AccessibleButton>
-        /* watcha+ */ }
+            <AccessibleButton
+                className="mx_SpacePublicShare_shareButton"
+                onClick={async (): Promise<void> => {
+                    const permalinkCreator = new RoomPermalinkCreator(space);
+                    permalinkCreator.load();
+                    const success = await copyPlaintext(permalinkCreator.forShareableRoom());
+                    const text = success ? _t("common|copied") : _t("error|failed_copy");
+                    setCopiedText(text);
+                    await sleep(5000);
+                    if (copiedText === text) {
+                        // if the text hasn't changed by another click then clear it after some time
+                        setCopiedText(_t("action|click_to_copy"));
+                    }
+                }}
+            >
+                {_t("space|invite_link")}
+                <div>{copiedText}</div>
+            </AccessibleButton>
+            /* watcha+ */ }
             {space.canInvite(MatrixClientPeg.safeGet().getSafeUserId()) &&
             shouldShowComponent(UIComponent.InviteUsers) ? (
                 <AccessibleButton

@@ -49,14 +49,14 @@ const NextcloudDocumentsSettingsTab: React.FC<IProps> = ({ roomId }) => {
         _updateNextcloudShare(null);
     };
 
-    const _updateNextcloudShare = (target?: string): void => {
+    const _updateNextcloudShare = (target?: string | null): void => {
         setIsBusy(true);
         SettingsStore.setValue("nextcloudShare", roomId, SettingLevel.ROOM, target)
             .catch(error => {
                 console.error(error);
                 Modal.createDialog(ErrorDialog, {
-                    title: _t("Error changing Nextcloud share"),
-                    description: _t("An error occurred changing the room's Nextcloud share."),
+                    title: _t("watcha|error_changing_nextcloud"),
+                    description: _t("watcha|error_changing_nextcloud_description"),
                 });
             })
             .finally(() => {
@@ -78,21 +78,21 @@ const NextcloudDocumentsSettingsTab: React.FC<IProps> = ({ roomId }) => {
                     watcha_NextcloudShareDialog_Field_rootSelection: !relativePath,
                 })}
                 element="input"
-                label={_t("Shared folder")}
-                value={relativePath}
+                label={_t("watcha|shared_folder")}
+                value={relativePath ?? ""}
                 disabled
             />
         );
         stopSharingButton = (
             <AccessibleButton kind="danger_outline" onClick={onUnshare} disabled={isBusy}>
-                { _t("Stop sharing") }
+                { _t("watcha|stop_sharing") }
             </AccessibleButton>
         );
     }
 
     return (
         <div className="mx_SettingsTab">
-            <div className="mx_SettingsTab_heading">{ _t("Document sharing") }</div>
+            <div className="mx_SettingsTab_heading">{ _t("watcha|document_sharing") }</div>
             <div className="mx_SettingsTab_section">
                 <div className="mx_SettingsTab_subsectionText">{ notice }</div>
                 { sharedFolderField }
@@ -101,7 +101,7 @@ const NextcloudDocumentsSettingsTab: React.FC<IProps> = ({ roomId }) => {
                     { isBusy && <Spinner /> }
                     { nextcloudShare ? null : (
                         <AccessibleButton kind="primary" onClick={onShare} disabled={isBusy}>
-                            { _t("Share a folder") }
+                            { _t("watcha|share_folder") }
                         </AccessibleButton>
                     ) }
                 </div>

@@ -71,7 +71,7 @@ const DehydratedDeviceStatus: React.FC = () => {
 
 // watcha+
 interface IIgnoredUserState {
-    displayname?: string;
+    displayname?: string | null;
 }
 // +watcha
 
@@ -87,8 +87,7 @@ export class IgnoredUser extends React.Component<IIgnoredUserProps, IIgnoredUser
         };
         const client = MatrixClientPeg.get();
         const { userId } = props;
-        client
-            .getProfileInfo(userId, "displayname")
+        client?.getProfileInfo(userId, "displayname")
             .then(({ displayname }) => {
                 this.setState({ displayname });
             })

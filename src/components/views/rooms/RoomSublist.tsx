@@ -667,7 +667,7 @@ export default class RoomSublist extends React.Component<IProps, IState> {
                     );
 
                     let addRoomButton: JSX.Element | undefined;
-                    if (!MatrixClientPeg.get().isPartner()) { /* eslint-disable indent */// watcha+
+                    if (!MatrixClientPeg.get()?.isPartner()) { /* eslint-disable indent */// watcha+
                     if (this.props.AuxButtonComponent) {
                         const AuxButtonComponent = this.props.AuxButtonComponent;
                         addRoomButton = <AuxButtonComponent tabIndex={tabIndex} />;

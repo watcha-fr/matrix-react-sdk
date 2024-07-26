@@ -402,7 +402,7 @@ export default async function createRoom(client: MatrixClient, opts: IOpts): Pro
                 }
                 // watcha+
                 if (err.errcode === "M_FORBIDDEN") {
-                    description = _t("You don't have permission");
+                    description = _t("space|user_lacks_permission");
                 }
                 // +watcha
                 Modal.createDialog(ErrorDialog, {

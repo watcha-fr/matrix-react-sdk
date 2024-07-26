@@ -124,7 +124,7 @@ export class BannedUser extends React.Component<IBannedUserProps> {
                 <span title={_t("room_settings|permissions|banned_by", { displayName: this.props.by })}>
                     <strong>{this.props.member.name}</strong> {userId}
                 !watcha */ }
-                <span title={`${userId} - ` + _t("Banned by %(displayName)s", { displayName: this.props.by })}> { /* watcha+ */ }
+                <span title={`${userId} - ` + _t("room_settings|permissions|banned_by", { displayName: this.props.by })}> { /* watcha+ */ }
                     <strong>{ this.props.member.name }</strong> { /* watcha+ */ }
                     {this.props.reason
                         ? " " + _t("room_settings|permissions|ban_reason") + ": " + this.props.reason

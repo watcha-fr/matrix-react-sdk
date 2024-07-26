@@ -18,6 +18,7 @@ import { MatrixClient } from "matrix-js-sdk/src/matrix";
 
 import { shouldForceDisableEncryption } from "./crypto/shouldForceDisableEncryption";
 import { getE2EEWellKnown } from "./WellKnownUtils";
+import SdkConfig from "../SdkConfig"; // watcha+
 
 export function privateShouldBeEncrypted(client: MatrixClient): boolean {
     if (shouldForceDisableEncryption(client)) {

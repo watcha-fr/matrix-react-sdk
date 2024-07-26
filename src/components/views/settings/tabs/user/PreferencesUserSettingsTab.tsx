@@ -173,12 +173,12 @@ export default class PreferencesUserSettingsTab extends React.Component<IProps, 
 
                 { /* watcha+ */ }
                 <div className="mx_SettingsTab_section">
-                    <span className="mx_SettingsTab_subheading">{ _t("Room Info") }</span>
+                    <span className="mx_SettingsTab_subheading">{ _t("right_panel|room_summary_card|title") }</span>
                     { this.renderGroup(PreferencesUserSettingsTab.ROOM_INFO_SETTINGS) }
                 </div>
 
                 <div className="mx_SettingsTab_section">
-                    <span className="mx_SettingsTab_subheading">{ _t("User profile") }</span>
+                    <span className="mx_SettingsTab_subheading">{ _t("watcha|user_profile") }</span>
                     { this.renderGroup(PreferencesUserSettingsTab.USER_PROFILE_SETTINGS) }
                 </div>
                 { /* +watcha */ }

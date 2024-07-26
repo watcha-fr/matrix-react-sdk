@@ -55,7 +55,6 @@ import { RoomKnocksBar } from "./RoomKnocksBar";
 import { isVideoRoom } from "../../../utils/video-rooms";
 import { notificationLevelToIndicator } from "../../../utils/notifications";
 import { CallGuestLinkButton } from "./RoomHeader/CallGuestLinkButton";
-import { UIFeature } from "../../../settings/UIFeature";
 
 export default function RoomHeader({
     room,

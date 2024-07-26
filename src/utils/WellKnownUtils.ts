@@ -23,6 +23,7 @@ const E2EE_WK_KEY_DEPRECATED = "im.vector.riot.e2ee";
 export const TILE_SERVER_WK_KEY = new UnstableValue("m.tile_server", "org.matrix.msc3488.tile_server");
 const EMBEDDED_PAGES_WK_PROPERTY = "io.element.embedded_pages";
 const NEXTCLOUD_WK_KEY = "watcha.nextcloud"; // watcha+
+import { MatrixClientPeg } from '../MatrixClientPeg'; // watcha+
 
 /* eslint-disable camelcase */
 export interface ICallBehaviourWellKnown {

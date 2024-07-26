@@ -457,7 +457,6 @@
         "authentication": "Authentication",
         "avatar": "Avatar",
         "beta": "Beta",
-        "calendar": "Calendar and tasks",
         "camera": "Camera",
         "cameras": "Cameras",
         "cancel": "Cancel",
@@ -469,7 +468,6 @@
         "description": "Description",
         "deselect_all": "Deselect all",
         "device": "Device",
-        "documents": "Documents",
         "edited": "edited",
         "email_address": "Email address",
         "emoji": "Emoji",
@@ -3950,6 +3948,18 @@
         "video_call_using": "Video call using:",
         "voice_call": "Voice call",
         "you_are_presenting": "You are presenting"
+    },
+    "watcha":{
+        "calendar": "Calendar and tasks",
+        "documents": "Documents",
+        "sso_profile": "SSO Profile",
+        "user_profile": "User profile",
+        "error_changing_nextcloud": "Error changing Nextcloud share",
+        "error_changing_nextcloud_description": "An error occurred changing the room's Nextcloud share.",
+        "share_folder": "Share a folder",
+        "shared_folder": "Shared folder",
+        "stop_sharing": "Stop sharing",
+        "document_sharing": "Document sharing"
     },
     "widget": {
         "added_by": "Widget added by",

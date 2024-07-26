@@ -17,7 +17,7 @@ limitations under the License.
 import { useEffect, useRef, useState } from "react";
 
 // Hook to update the local state by ensuring that the component is still mounted
-export default function useSafeState(initialState) {
+export default function  useSafeState<T>(initialState: T): [T, (value: T) => void] {
     const isMounted = useRef<boolean>();
     const [state, setState] = useState(initialState);
     useEffect(() => {
@@ -26,7 +26,7 @@ export default function useSafeState(initialState) {
             isMounted.current = false;
         };
     }, []);
-    const _setState = value => {
+    const _setState = (value: T) => {
         if (isMounted.current) {
             return setState(value);
         }

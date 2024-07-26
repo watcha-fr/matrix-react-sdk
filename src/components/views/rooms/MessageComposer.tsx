@@ -64,7 +64,6 @@ import { setUpVoiceBroadcastPreRecording } from "../../../voice-broadcast/utils/
 import { SdkContextClass } from "../../../contexts/SDKContext";
 import { VoiceBroadcastInfoState } from "../../../voice-broadcast";
 import { createCantStartVoiceMessageBroadcastDialog } from "../dialogs/CantStartVoiceMessageBroadcastDialog";
-import { UIFeature } from "../../../settings/UIFeature";
 import { formatTimeLeft } from "../../../DateUtils";
 
 let instanceCount = 0;
@@ -189,7 +188,7 @@ export class MessageComposer extends React.Component<IProps, IState> {
         this.updateRecordingState(); // grab any cached recordings
         // watcha+
         try {
-            const showLocationButton = !window.electron && !!findMapStyleUrl();
+            const showLocationButton = !window.electron && !!findMapStyleUrl(this.context);
             this.setState({ showLocationButton });
         } catch (e) {
             logger.error("Failed to render map", e);

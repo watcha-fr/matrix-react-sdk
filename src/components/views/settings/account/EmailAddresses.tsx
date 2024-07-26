@@ -127,7 +127,7 @@ export class ExistingEmailAddress extends React.Component<IExistingEmailAddressP
                     {this.props.email.address}
                 </span>
                 <AccessibleButton disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)} // watcha++
-                                  onClick={this.onRemove} kind="danger_sm" disabled={this.props.disabled}>
+                                  onClick={this.onRemove} kind="danger_sm">
                     {_t("action|remove")}
                 </AccessibleButton>
             </div>
@@ -268,7 +268,7 @@ export default class EmailAddresses extends React.Component<IProps, IState> {
 
         let addButton = (
             <AccessibleButton disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)} // watcha++
-                              onClick={this.onAddClick} kind="primary" disabled={this.props.disabled}>
+                              onClick={this.onAddClick} kind="primary">
                 {_t("action|add")}
             </AccessibleButton>
         );

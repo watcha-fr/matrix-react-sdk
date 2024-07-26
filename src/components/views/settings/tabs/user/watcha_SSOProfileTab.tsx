@@ -24,7 +24,7 @@ const SSOProfileTab: React.FC = () => {
 
     return (
         <div className="watcha_SSOProfile">
-            <iframe className="watcha_SSOProfile_iframe" src={SSOProfileUrl} title={_t("SSO Profile")} />
+            <iframe className="watcha_SSOProfile_iframe" src={SSOProfileUrl} title={_t("watcha|sso_profile")} />
         </div>
     );
 };

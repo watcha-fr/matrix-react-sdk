@@ -57,7 +57,7 @@ export function getDocumentWidgetUrl(shareUrl: string, refineTargets: RefineTarg
     let fileId = null;
     if (shareUrl) {
         const url = new URL(shareUrl);
-        path = url.searchParams.get("dir");
+        path = url.searchParams.get("dir")!;
         fileId = url.searchParams.get("fileid");
     }
     const appName = AppNames.Files;

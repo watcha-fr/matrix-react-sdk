@@ -44,7 +44,7 @@ import { Action } from "../../dispatcher/actions";
 import { XOR } from "../../@types/common";
 // watcha+
 import { _t } from "../../languageHandler";
-import { ROOM_NEXTCLOUD_DOCUMENTS_TAB, ROOM_NEXTCLOUD_CALENDAR_TAB } from "../views/dialogs/RoomSettingsDialog";
+import { RoomSettingsTab } from "../views/dialogs/RoomSettingsDialog";
 import { AppNames, StateKeys } from "../../utils/watcha_nextcloudUtils";
 import CalendarPanel from "./watcha_CalendarPanel";
 import DocumentPanel from "./watcha_DocumentPanel";
@@ -320,7 +320,7 @@ export default class RightPanel extends React.Component<Props, IState> {
                 card = (
                     <DocumentPanel
                         roomId={roomId}
-                        initialTabId={ROOM_NEXTCLOUD_DOCUMENTS_TAB}
+                        initialTabId={RoomSettingsTab.Documents}
                         empty={_t("No document shared with this room")}
                         emptyClass="watcha_DocumentPanel_empty"
                         onClose={this.onClose}
@@ -334,7 +334,7 @@ export default class RightPanel extends React.Component<Props, IState> {
                         roomId={roomId}
                         appName={AppNames.Calendar}
                         stateKey={StateKeys.VEVENT}
-                        initialTabId={ROOM_NEXTCLOUD_CALENDAR_TAB}
+                        initialTabId={RoomSettingsTab.Calendar}
                         empty={_t("No calendar shared with this room")}
                         emptyClass="watcha_CalendarPanel_empty"
                         onClose={this.onClose}
