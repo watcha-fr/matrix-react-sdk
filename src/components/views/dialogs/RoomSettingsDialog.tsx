@@ -175,31 +175,33 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
         }
         // watcha+
         const showNextcloudFeature =
-            SettingsStore.getValue(UIFeature.watcha_Nextcloud) && !MatrixClientPeg.get().isPartner();
+            SettingsStore.getValue(UIFeature.watcha_Nextcloud) && !MatrixClientPeg.get()?.isPartner();
         if (showNextcloudFeature) {
-            const canShareFolder = SettingsStore.canSetValue("nextcloudShare", this.state.roomId, SettingLevel.ROOM);
+            const canShareFolder = SettingsStore.canSetValue("nextcloudShare", this.state.room, SettingLevel.ROOM);
             if (canShareFolder) {
                 tabs.push(
                     new Tab(
                         RoomSettingsTab.Documents,
-                        _td("Documents"),
+                        _td("common|documents"),
                         "mx_RoomSettingsDialog_nextcloudDocumentsIcon",
-                        <NextcloudDocumentsSettingsTab roomId={this.state.roomId} />,
+                        <NextcloudDocumentsSettingsTab roomId={this.state.room} />,
                     ),
                 );
             }
             const client = MatrixClientPeg.get();
-            const room = client.getRoom(this.state.roomId);
-            const canSetCalendar = room.currentState.maySendStateEvent(CALENDAR_EVENT_TYPE, client.getUserId());
-            if (canSetCalendar) {
-                tabs.push(
-                    new Tab(
-                        RoomSettingsTab.Calendar,
-                        _td("Calendars and tasks"),
-                        "mx_RoomSettingsDialog_nextcloudCalendarIcon",
-                        <NextcloudCalendarSettingsTab roomId={this.state.roomId} />,
-                    ),
-                );
+            const room = client?.getRoom(this.state.room);
+            if(client.getUserId() !== null){
+                const canSetCalendar = room?.currentState.maySendStateEvent(CALENDAR_EVENT_TYPE, client.getUserId());
+                if (canSetCalendar) {
+                    tabs.push(
+                        new Tab(
+                            RoomSettingsTab.Calendar,
+                            _td("common|calendar"),
+                            "mx_RoomSettingsDialog_nextcloudCalendarIcon",
+                            <NextcloudCalendarSettingsTab roomId={this.state.room} />,
+                        ),
+                    );
+                }
             }
         }
         // +watcha

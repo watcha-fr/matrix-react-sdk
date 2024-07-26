@@ -370,14 +370,14 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             this.props.onTokenLoginCompleted();
         }
 
-                // watcha+
-                const language = localStorage.getItem(SSO_LANGUAGE_KEY);
-                if (language) {
-                    localStorage.removeItem(SSO_LANGUAGE_KEY);
-                    SettingsStore.setValue("language", null, SettingLevel.DEVICE, language);
-                    PlatformPeg.get().reload();
-                }
-                // +watcha
+        // watcha+
+        const language = localStorage.getItem(SSO_LANGUAGE_KEY);
+        if (language) {
+            localStorage.removeItem(SSO_LANGUAGE_KEY);
+            SettingsStore.setValue("language", null, SettingLevel.DEVICE, language);
+            PlatformPeg.get()?.reload();
+        }
+        // +watcha
 
         if (delegatedAuthSucceeded) {
             // token auth/OIDC worked! Time to fire up the client.
@@ -1881,7 +1881,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             });
         // watcha+
         } else if (screen === 'partner') {
-            delete this.props.startingFragmentQueryParams.defaultUsername;
+            delete this.props.startingFragmentQueryParams?.defaultUsername;
             dis.dispatch({
                 action: 'start_login',
             });
