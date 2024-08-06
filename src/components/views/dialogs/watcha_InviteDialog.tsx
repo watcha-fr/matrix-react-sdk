@@ -20,11 +20,12 @@ import { IInvite3PID } from "matrix-js-sdk/src/@types/requests";
 import { Room } from "matrix-js-sdk/src/models/room";
 import classNames from "classnames";
 
+import { MatrixCall } from "matrix-js-sdk/src/webrtc/call";
 import { _t } from "../../../languageHandler";
-import { findDMForUser } from "../../../utils/direct-messages";
+import { findDMForUser } from "../../../utils/dm/findDMForUser";
 import { getAddressType } from "../../../UserAddress";
 import { inviteMultipleToRoom } from "../../../RoomInvite";
-import { KIND_DM } from "./InviteDialogTypes";
+import { InviteKind } from "./InviteDialogTypes";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
 import { privateShouldBeEncrypted } from "../../../utils/rooms";
 import { UIFeature } from "../../../settings/UIFeature";
@@ -70,12 +71,6 @@ export interface IUser {
     isKnown?: boolean;
 }
 
-interface IInviteDialogProps {
-    onFinished(): void;
-    kind?: string;
-    roomId?: string;
-}
-
 interface IInviteDialogState {
     originalList: IUser[];
     suggestedList: IUser[];
@@ -83,15 +78,47 @@ interface IInviteDialogState {
     query: string;
     pendingSearch: boolean;
     busy: boolean;
-    errorText?: string;
+    errorText?: string | null;
 }
 
-export default class InviteDialog extends React.Component<IInviteDialogProps, IInviteDialogState> {
-    static defaultProps = {
-        kind: KIND_DM,
+
+interface BaseProps {
+    // Takes a boolean which is true if a user / users were invited /
+    // a call transfer was initiated or false if the dialog was cancelled
+    // with no action taken.
+    onFinished: (success?: boolean) => void;
+
+    // Initial value to populate the filter with
+    initialText?: string;
+}
+
+interface InviteDMProps extends BaseProps {
+    // The kind of invite being performed. Assumed to be InviteKind.Dm if not provided.
+    kind?: InviteKind.Dm;
+}
+
+interface InviteRoomProps extends BaseProps {
+    kind: InviteKind.Invite;
+
+    // The room ID this dialog is for. Only required for InviteKind.Invite.
+    roomId: string;
+}
+
+interface InviteCallProps extends BaseProps {
+    kind: InviteKind.CallTransfer;
+
+    // The call to transfer. Only required for InviteKind.CallTransfer.
+    call: MatrixCall;
+}
+
+type Props = InviteDMProps | InviteRoomProps | InviteCallProps;
+
+export default class InviteDialog extends React.PureComponent<Props, IInviteDialogState> {
+    static defaultProps: Partial<Props> = {
+        kind: InviteKind.Dm,
     };
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
         this.state = {
             originalList: [],
@@ -109,9 +136,9 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
     }
 
     showInvitePartnerDialog = () => {
-        const { roomId } = this.props;
+        const { roomId } = this.props.roomId;
         const { originalList, suggestedList, selectedList } = this.state;
-        const room = MatrixClientPeg.get().getRoom(roomId);
+        const room = MatrixClientPeg.get()?.getRoom(roomId);
         Modal.createDialog(InvitePartnerDialog, {
             room,
             originalList,
@@ -133,7 +160,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
         this.setState({ busy: false });
     };
 
-    addEmailAddressToSelectedList = emailAddress => {
+    addEmailAddressToSelectedList = (emailAddress: any) => {
         let knownUser;
         const { originalList } = this.state;
         for (const user of originalList) {
@@ -157,7 +184,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
         }
     };
 
-    addToSelectedList = user => {
+    addToSelectedList = (user: any) => {
         this.setState(({ suggestedList, selectedList }) => {
             for (let i = 0; i < suggestedList.length; i++) {
                 if (suggestedList[i] === user) {
@@ -171,7 +198,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
         });
     };
 
-    removeEmailAddressFromSelectedList = user => {
+    removeEmailAddressFromSelectedList = (user: any) => {
         this.setState(({ selectedList }) => {
             for (let i = 0; i < selectedList.length; i++) {
                 if (selectedList[i] === user) {
@@ -182,7 +209,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
         });
     };
 
-    removeFromSelectedList = user => {
+    removeFromSelectedList = (user: any) => {
         this.setState(({ suggestedList, selectedList }) => {
             for (let i = 0; i < selectedList.length; i++) {
                 if (selectedList[i] === user) {
@@ -194,7 +221,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
         });
     };
 
-    getSortedUserList = list => {
+    getSortedUserList = (list: any[]) => {
         return list.slice().sort((a, b) => {
             const nameA = a.displayName.toLowerCase();
             const nameB = b.displayName.toLowerCase();
@@ -219,8 +246,8 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
                 avatarJsx: this.getBaseAvatar(user),
             };
             const subtextLabel = {
-                join: _t("Already room member"),
-                invite: _t("Already invited"),
+                join: _t("watcha|already_room_member"),
+                invite: _t("watcha|already_invited"),
             };
             return subtextLabel.hasOwnProperty(user.membership) ? (
                 <EntityTile
@@ -513,7 +540,7 @@ export default class InviteDialog extends React.Component<IInviteDialogProps, II
         let title;
         let invite;
 
-        if (kind === KIND_DM) {
+        if (kind === InviteKind.Dm) {
             title = _t("Start chat");
             invite = this.startDm;
         } else {

@@ -3959,7 +3959,23 @@
         "share_folder": "Share a folder",
         "shared_folder": "Shared folder",
         "stop_sharing": "Stop sharing",
-        "document_sharing": "Document sharing"
+        "document_sharing": "Document sharing",
+        "already_room_member": "Already room member",
+        "already_invited": "Already invited",
+        "enable_webrtc": "Enable WebRTC for one-to-one calls",
+        "attachment_button": "Show explore chat attachments button",
+        "share_message_button": "Show share message button",
+        "view_source_button": "Show view source button",
+        "share_room_button": "Show share room button",
+        "share_room_button_description": "Also visible in contextual menus",
+        "ignore_user_button": "Show button to ignore user",
+        "ignore_user_button_description": "Also visible on incoming invitations",
+        "deactivate_user_button": "Show button to disable the user's account",
+        "E2EEUI": "Show end-to-end encryption related UI",
+        "nextcloud_share": "Share a Nextcloud folder with room members and use it as a common storage space."
+        
+
+
     },
     "widget": {
         "added_by": "Widget added by",

@@ -116,7 +116,7 @@ export class IgnoredUser extends React.Component<IIgnoredUserProps, IIgnoredUser
                 { /* watcha!
                 <span id={id}>{this.props.userId}</span>
                 !watcha */ }
-                <span id={id} title={this.state.displayname && this.props.userId}>{ this.state.displayname || this.props.userId }</span> { /* watcha+ */ }
+                <span id={id} title={this.state.displayname ?? this.props.userId}>{ this.state.displayname || this.props.userId }</span> { /* watcha+ */ }
             </div>
         );
     }

@@ -118,7 +118,7 @@ export function getSecureBackupSetupMethods(matrixClient: MatrixClient): SecureB
 
 // watcha+
 export function getNextcloudWellKnown(): INextcloudWellKnown {
-    const clientWellKnown = MatrixClientPeg.get().getClientWellKnown();
+    const clientWellKnown = MatrixClientPeg.get()!.getClientWellKnown();
     return clientWellKnown?.[NEXTCLOUD_WK_KEY];
 }
 // +watcha
