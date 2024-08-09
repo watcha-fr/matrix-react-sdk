@@ -50,9 +50,9 @@ export default ({ roomId }: IProps) => {
     const room = client.getRoom(roomId);
 
     const getCalendarEvents = useCallback((): ICalendarEvents => ({
-        VEVENT_VTODO: room.currentState.getStateEvents(CALENDAR_EVENT_TYPE, StateKeys.VEVENT_VTODO),
-        VEVENT: room.currentState.getStateEvents(CALENDAR_EVENT_TYPE, StateKeys.VEVENT),
-        VTODO: room.currentState.getStateEvents(CALENDAR_EVENT_TYPE, StateKeys.VTODO),
+        VEVENT_VTODO: room!.currentState.getStateEvents(CALENDAR_EVENT_TYPE, StateKeys.VEVENT_VTODO),
+        VEVENT: room!.currentState.getStateEvents(CALENDAR_EVENT_TYPE, StateKeys.VEVENT),
+        VTODO: room!.currentState.getStateEvents(CALENDAR_EVENT_TYPE, StateKeys.VTODO),
     }), [room]);
 
     const [calendarEvents, setCalendarEvents] = useState(getCalendarEvents());

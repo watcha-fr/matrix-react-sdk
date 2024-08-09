@@ -138,7 +138,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
         this.dispatcherRef = defaultDispatcher.register(this.onAction);
         this.themeWatcherRef = SettingsStore.watchSetting("theme", null, this.onThemeChanged);
         // watcha+
-        MatrixClientPeg!.get()
+        MatrixClientPeg.get()!
             .isSynapseAdministrator()
             .then(isSynapseAdministrator => {
                 this.setState({ isSynapseAdministrator });
@@ -485,7 +485,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
                     />
                 </IconizedContextMenuOptionList>
             }
-            { !MatrixClientPeg!.get().isPartner() &&
+            { !MatrixClientPeg.get()!.isPartner() &&
                 <IconizedContextMenuOptionList>
                     { SettingsStore.getValue(UIFeature.watcha_Nextcloud) &&
                         <IconizedContextMenuOption

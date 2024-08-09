@@ -191,7 +191,7 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
             const client = MatrixClientPeg.get();
             const room = client?.getRoom(this.state.room.roomId);
             if(client!.getUserId() !== null){
-                const canSetCalendar = room?.currentState.maySendStateEvent(CALENDAR_EVENT_TYPE, client!.getUserId());
+                const canSetCalendar = room?.currentState.maySendStateEvent(CALENDAR_EVENT_TYPE, client!.getUserId()!);
                 if (canSetCalendar) {
                     tabs.push(
                         new Tab(
