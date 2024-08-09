@@ -508,7 +508,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
         /* watcha!
         const viewSourceButton = (
         !watcha */
-        let viewSourceButton = ( // watcha+
+        let viewSourceButton: JSX.Element | null = ( // watcha+
             <IconizedContextMenuOption
                 iconClassName="mx_MessageContextMenu_iconSource"
                 label={_t("timeline|context_menu|view_source")}
@@ -547,7 +547,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
                 />
             );
         }
-        if (!this.state.showShareMessageButton) permalinkButton = null; // watcha+
+        if (!this.state.showShareMessageButton) permalinkButton = undefined; // watcha+
 
         let endPollButton: JSX.Element | undefined;
         if (this.canEndPoll(mxEvent)) {

@@ -592,7 +592,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
                         </MenuItem>
                     )}
                     <MenuItem Icon={ExportArchiveIcon} label={_t("export_chat|title")} onSelect={onRoomExportClick} />
-                    {showNextcloudButtons && (
+                    {showNextcloudButtons && ( // watcha+
                         <>
                             <MenuItem
                                 label={_t("Show documents shared with the room")}
@@ -608,6 +608,16 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
                             />
                         </>
                     )}
+                    { showShareRoomButton && 
+                        <MenuItem className="mx_RoomSummaryCard_icon_share" onSelect={onShareRoomClick}
+                        label= { _t("Share room") }
+                        />
+                    }
+                    { showAttachmentsButton && 
+                        <Button className="mx_MessageComposer_upload" onSelect={onRoomFilesClick} title={_t("Show chat attachments")}>
+                        { _t("Chat attachments") }
+                        </Button>
+                    /* +watcha */ }
                 </>
             )}
 

@@ -422,7 +422,7 @@ const SpaceAddExistingRooms: React.FC<{
             /* watcha!
                 filterPlaceholder={_t("space|room_filter_placeholder")}
             !watcha */
-            filterPlaceholder={_t("Search for rooms or people")} // watcha+
+            filterPlaceholder={_t("forward|filter_placeholder")} // watcha+
                 onFinished={onFinished}
                 roomsRenderer={defaultRoomsRenderer}
                 dmsRenderer={defaultDmsRenderer}
@@ -626,7 +626,7 @@ const SpaceSetupPrivateInvite: React.FC<{
 
             <div className="mx_SpaceRoomView_buttons">
                 <AccessibleButton kind="primary" onClick={onFinished}>
-                    { _t("Go to my space") }
+                    { _t("create_space|done_action") }
                 </AccessibleButton>
             </div>
             { /* +watcha */ }

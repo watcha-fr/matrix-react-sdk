@@ -321,7 +321,7 @@ export default class RightPanel extends React.Component<Props, IState> {
                     <DocumentPanel
                         roomId={roomId}
                         initialTabId={RoomSettingsTab.Documents}
-                        empty={_t("No document shared with this room")}
+                        empty={_t("watcha|empty_documents")}
                         emptyClass="watcha_DocumentPanel_empty"
                         onClose={this.onClose}
                     />
@@ -335,7 +335,7 @@ export default class RightPanel extends React.Component<Props, IState> {
                         appName={AppNames.Calendar}
                         stateKey={StateKeys.VEVENT}
                         initialTabId={RoomSettingsTab.Calendar}
-                        empty={_t("No calendar shared with this room")}
+                        empty={_t("watcha|empty_calendar")}
                         emptyClass="watcha_CalendarPanel_empty"
                         onClose={this.onClose}
                     />
@@ -348,8 +348,8 @@ export default class RightPanel extends React.Component<Props, IState> {
                         roomId={roomId}
                         appName={AppNames.Tasks}
                         stateKey={StateKeys.VTODO}
-                        initialTabId={ROOM_NEXTCLOUD_CALENDAR_TAB}
-                        empty={_t("No to-do list shared with this room")}
+                        initialTabId={RoomSettingsTab.Calendar}
+                        empty={_t("watcha|empty_task")}
                         emptyClass="watcha_TaskPanel_empty"
                         onClose={this.onClose}
                     />

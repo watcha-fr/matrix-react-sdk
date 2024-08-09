@@ -3972,8 +3972,19 @@
         "ignore_user_button_description": "Also visible on incoming invitations",
         "deactivate_user_button": "Show button to disable the user's account",
         "E2EEUI": "Show end-to-end encryption related UI",
-        "nextcloud_share": "Share a Nextcloud folder with room members and use it as a common storage space."
-        
+        "nextcloud_share": "Share a Nextcloud folder with room members and use it as a common storage space.",
+        "empty_documents": "No document shared with this room",
+        "empty_calendar": "No calendar shared with this room",
+        "empty_task": "No to-do list shared with this room",
+        "administration": "Administration",
+        "administration_title": "Open the administration console in a new tab",
+        "my_documents": "My documents",
+        "my_documents_title": "Open my documents in a new tab",
+        "videoconferencing": "Videoconferencing",
+        "videoconferencing_title": "Open the videoconferencing platform in a new tab",
+        "limited_rights": "You are logged in from a partner account with limited rights",
+        "chat_attachments": "Chat attachments"
+
 
 
     },

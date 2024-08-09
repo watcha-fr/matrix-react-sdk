@@ -275,7 +275,7 @@ const RoomContextMenu: React.FC<IProps> = ({ room, onFinished, ...props }) => {
                 label={_t("right_panel|files_button")}
                 iconClassName="mx_RoomTile_iconFiles"
             !watcha */
-            label={_t("Chat attachments")} // watcha+
+            label={_t("watcha|chat_attachments")} // watcha+
             iconClassName="mx_MessageComposer_upload" // watcha+
             />
         );

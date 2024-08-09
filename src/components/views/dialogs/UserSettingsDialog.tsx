@@ -114,11 +114,11 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
         if (
             SettingsStore.getValue(UIFeature.watcha_SSOProfile)
             && SdkConfig.get().watcha_sso_profile_url
-            && !MatrixClientPeg.get().isPartner()
+            && !MatrixClientPeg!.get().isPartner()
         ) {
             tabs.push(new Tab(
                 UserTab.SSOProfile,
-                _td("SSO profile"),
+                _td("watcha|sso_profile"),
                 "mx_UserSettingsDialog_SSOProfileIcon",
                 <SSOProfileTab />,
             ));

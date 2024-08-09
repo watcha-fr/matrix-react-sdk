@@ -24,7 +24,7 @@ type Data = Pick<IFieldState, "value" | "allowEmpty">;
 interface IResult {
     key: string;
     valid: boolean;
-    text: string;
+    text: string | React.ReactNode; // watcha+
 }
 
 interface IRule<T, D = undefined> {

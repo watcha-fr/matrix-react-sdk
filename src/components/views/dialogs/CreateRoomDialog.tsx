@@ -371,7 +371,7 @@ export default class CreateRoomDialog extends React.Component<IProps, IState> {
                 </React.Fragment>
             );
         }
-        if (!SettingsStore.getValue("showE2EEUI")) e2eeSection = null; // watcha+
+        if (!SettingsStore.getValue("showE2EEUI")) e2eeSection = undefined; // watcha+
 
         let federateLabel = _t("create_room|unfederated_label_default_off");
         if (SdkConfig.get().default_federate === false) {

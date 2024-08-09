@@ -13,7 +13,9 @@
         "declaration": true,
         "jsx": "react",
         "lib": ["es2021", "dom", "dom.iterable"],
-        "strict": true
+        "strict": true, // watcha+
+        "allowJs": true, // watcha+
+        "checkJs": false // watcha+
     },
     "include": [
         "./node_modules/matrix-js-sdk/src/@types/*.d.ts",

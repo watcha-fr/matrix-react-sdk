@@ -381,7 +381,7 @@ export default class MemberList extends React.Component<IProps, IState> {
                     // watcha+
                     title={this.state.canInvite
                         ? undefined
-                        : _t("You do not have permission to invite people to this room.")}
+                        : _t("invite|error_permissions_room")}
                     // +watcha
                 >
                     <UserAddIcon width="1em" height="1em" />

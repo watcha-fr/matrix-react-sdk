@@ -466,7 +466,7 @@ export const UserOptionsSection: React.FC<{
                 {isIgnored ? _t("action|unignore") : _t("action|ignore")}
             </AccessibleButton>
         );
-        if (!showIgnoreButton) ignoreButton = null; // watcha+
+        if (!showIgnoreButton) ignoreButton = undefined; // watcha+
 
         if (member instanceof RoomMember && member.roomId && !isSpace) {
             const onReadReceiptButton = function (): void {
@@ -557,8 +557,7 @@ export const UserOptionsSection: React.FC<{
     );
 
     const directMessageButton =
-        isMe || !shouldShowComponent(UIComponent.CreateRooms) ? null : <MessageButton member={member} />;
-    if (!shouldShowComponent(UIComponent.InviteUsers)) directMessageButton = null; // watcha+
+        isMe || !shouldShowComponent(UIComponent.CreateRooms) || !shouldShowComponent(UIComponent.InviteUsers) ? null : <MessageButton member={member} />;// watcha+
 
     return (
         <div className="mx_UserInfo_container">

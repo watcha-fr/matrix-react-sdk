@@ -31,7 +31,7 @@ const PartnerBar = () => {
 
     return (
         <div className={classNames("watcha_PartnerBar", { watcha_PartnerBar_hidden: hidePartnerBar })}>
-            <span>{ _t("You are logged in from a partner account with limited rights") }</span>
+            <span>{ _t("watcha|limited_rights") }</span>
             <img src={require("../../../res/img/cancel.svg").default} {...{ onClick }} />
         </div>
     );

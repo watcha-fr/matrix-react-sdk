@@ -174,7 +174,7 @@ export default class MemberTile extends React.Component<IProps, IState> {
     }
 
     private getPowerLabel(): string {
-        return undefined; // watcha+
+        return ''; // watcha+
         return _t("member_list|power_label", {
             userName: UserIdentifierCustomisations.getDisplayUserIdentifier(this.props.member.userId, {
                 roomId: this.props.member.roomId,

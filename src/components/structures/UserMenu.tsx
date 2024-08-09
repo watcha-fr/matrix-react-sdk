@@ -138,7 +138,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
         this.dispatcherRef = defaultDispatcher.register(this.onAction);
         this.themeWatcherRef = SettingsStore.watchSetting("theme", null, this.onThemeChanged);
         // watcha+
-        MatrixClientPeg.get()
+        MatrixClientPeg!.get()
             .isSynapseAdministrator()
             .then(isSynapseAdministrator => {
                 this.setState({ isSynapseAdministrator });
@@ -479,27 +479,27 @@ export default class UserMenu extends React.Component<IProps, IState> {
                 <IconizedContextMenuOptionList>
                     <IconizedContextMenuOption
                         iconClassName="mx_UserMenu_iconAdministration"
-                        label={_t("Administration")}
-                        title={_t("Open the administration console in a new tab")}
+                        label={_t("watcha|administration")}
+                        title={_t("watcha|administration_title")}
                         onClick={this.onAdministrationClick}
                     />
                 </IconizedContextMenuOptionList>
             }
-            { !MatrixClientPeg.get().isPartner() &&
+            { !MatrixClientPeg!.get().isPartner() &&
                 <IconizedContextMenuOptionList>
                     { SettingsStore.getValue(UIFeature.watcha_Nextcloud) &&
                         <IconizedContextMenuOption
                             iconClassName="mx_UserMenu_iconNextcloud"
-                            label={_t("My documents")}
-                            title={_t("Open my documents in a new tab")}
+                            label={_t("watcha|my_documents")}
+                            title={_t("watcha|my_documents_title")}
                             onClick={this.onNextcloudClick}
                         />
                     }
                     { SettingsStore.getValue(UIFeature.Voip) &&
                         <IconizedContextMenuOption
                             iconClassName="mx_UserMenu_iconJitsi"
-                            label={_t("Videoconferencing")}
-                            title={_t("Open the videoconferencing platform in a new tab")}
+                            label={_t("watcha|videoconferencing")}
+                            title={_t("watcha|videoconferencing_title")}
                             onClick={this.onJitsiClick}
                         />
                     }

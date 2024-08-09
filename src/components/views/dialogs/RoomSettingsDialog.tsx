@@ -177,28 +177,28 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
         const showNextcloudFeature =
             SettingsStore.getValue(UIFeature.watcha_Nextcloud) && !MatrixClientPeg.get()?.isPartner();
         if (showNextcloudFeature) {
-            const canShareFolder = SettingsStore.canSetValue("nextcloudShare", this.state.room, SettingLevel.ROOM);
+            const canShareFolder = SettingsStore.canSetValue("nextcloudShare", this.state.room.roomId, SettingLevel.ROOM);
             if (canShareFolder) {
                 tabs.push(
                     new Tab(
                         RoomSettingsTab.Documents,
                         _td("watcha|documents"),
                         "mx_RoomSettingsDialog_nextcloudDocumentsIcon",
-                        <NextcloudDocumentsSettingsTab roomId={this.state.room} />,
+                        <NextcloudDocumentsSettingsTab roomId={this.state.room.roomId} />,
                     ),
                 );
             }
             const client = MatrixClientPeg.get();
-            const room = client?.getRoom(this.state.room);
-            if(client.getUserId() !== null){
-                const canSetCalendar = room?.currentState.maySendStateEvent(CALENDAR_EVENT_TYPE, client.getUserId());
+            const room = client?.getRoom(this.state.room.roomId);
+            if(client!.getUserId() !== null){
+                const canSetCalendar = room?.currentState.maySendStateEvent(CALENDAR_EVENT_TYPE, client!.getUserId());
                 if (canSetCalendar) {
                     tabs.push(
                         new Tab(
                             RoomSettingsTab.Calendar,
                             _td("watcha|calendar"),
                             "mx_RoomSettingsDialog_nextcloudCalendarIcon",
-                            <NextcloudCalendarSettingsTab roomId={this.state.room} />,
+                            <NextcloudCalendarSettingsTab roomId={this.state.room.roomId} />,
                         ),
                     );
                 }
