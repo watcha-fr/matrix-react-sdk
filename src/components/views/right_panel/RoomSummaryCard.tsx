@@ -44,6 +44,11 @@ import { Icon as PublicIcon } from "@vector-im/compound-design-tokens/icons/publ
 import { Icon as ErrorIcon } from "@vector-im/compound-design-tokens/icons/error.svg";
 import { Icon as ChevronDownIcon } from "@vector-im/compound-design-tokens/icons/chevron-down.svg";
 import { EventType, JoinRule, Room, RoomStateEvent } from "matrix-js-sdk/src/matrix";
+import { Icon as DocumentsIcon } from "../../../../res/img/watcha/watcha_documents.svg"; // watcha+
+import { Icon as CalendarIcon } from "../../../../res/img/watcha/watcha_calendar.svg"; // watcha+
+import { Icon as TaskIcon } from "../../../../res/img/watcha/watcha_tasks.svg"; // watcha+
+
+
 
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
 import { useIsEncrypted } from "../../../hooks/useIsEncrypted";
@@ -569,7 +574,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
                 disabled={!canInviteToState}
                 onSelect={() => inviteToRoom(room)}
             />
-            <MenuItem Icon={LinkIcon} label={_t("action|copy_link")} onSelect={onShareRoomClick} />
+            {showShareRoomButton && <MenuItem Icon={LinkIcon} label={_t("watcha|share_room")} onSelect={onShareRoomClick} /> /* watcha+ */}
             <MenuItem Icon={SettingsIcon} label={_t("common|settings")} onSelect={onRoomSettingsClick} />
 
             <Separator />
@@ -595,29 +600,22 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
                     {showNextcloudButtons && ( // watcha+
                         <>
                             <MenuItem
-                                label={_t("Show documents shared with the room")}
+                                Icon={DocumentsIcon}
+                                label={_t("watcha|show_documents")}
                                 onSelect={onRoomDocumentsClick}
                             />
                             <MenuItem
-                                label={_t("Show the calendar shared with the room")}
+                                Icon={CalendarIcon}
+                                label={_t("watcha|show_calendar")}
                                 onSelect={onRoomCalendarClick}
                             />
                             <MenuItem
-                                label={_t("Show the to-do list shared with the room")}
+                                Icon={TaskIcon}
+                                label={_t("watcha|show_task")}
                                 onSelect={onRoomTasksClick}
                             />
                         </>
-                    )}
-                    { showShareRoomButton && 
-                        <MenuItem className="mx_RoomSummaryCard_icon_share" onSelect={onShareRoomClick}
-                        label= { _t("Share room") }
-                        />
-                    }
-                    { showAttachmentsButton && 
-                        <Button className="mx_MessageComposer_upload" onSelect={onRoomFilesClick} title={_t("Show chat attachments")}>
-                        { _t("Chat attachments") }
-                        </Button>
-                    /* +watcha */ }
+                    ) /* +watcha*/}
                 </>
             )}
 

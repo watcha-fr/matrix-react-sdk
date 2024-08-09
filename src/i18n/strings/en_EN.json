@@ -3983,8 +3983,11 @@
         "videoconferencing": "Videoconferencing",
         "videoconferencing_title": "Open the videoconferencing platform in a new tab",
         "limited_rights": "You are logged in from a partner account with limited rights",
-        "chat_attachments": "Chat attachments"
-
+        "chat_attachments": "Chat attachments",
+        "share_room": "Share room",
+        "show_documents": "Show documents shared with the room",
+        "show_calendar": "Show the calendar shared with the room",
+        "show_task": "Show the to-do list shared with the room"
 
 
     },
