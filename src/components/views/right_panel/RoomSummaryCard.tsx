@@ -587,7 +587,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
             />
             {!isVideoRoom && (
                 <>
-                    <MenuItem Icon={FilesIcon} label={_t("right_panel|files_button")} onSelect={onRoomFilesClick} />
+                    {showAttachmentsButton && <MenuItem Icon={FilesIcon} label={_t("right_panel|files_button")} onSelect={onRoomFilesClick} /> /* watcha+ */}
                     <MenuItem Icon={PollsIcon} label={_t("right_panel|polls_button")} onSelect={onRoomPollHistoryClick} />
                     {pinningEnabled && (
                         <MenuItem Icon={PinIcon} label={_t("right_panel|pinned_messages_button")} onSelect={onRoomPinsClick} >
