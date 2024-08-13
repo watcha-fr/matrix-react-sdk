@@ -3950,7 +3950,9 @@
         "you_are_presenting": "You are presenting"
     },
     "watcha":{
-        "calendar": "Calendar and tasks",
+        "calendar": "Calendar",
+        "tasks": "To-do list",
+        "calendar_tasks": "Calendar and tasks",
         "documents": "Documents",
         "sso_profile": "SSO Profile",
         "user_profile": "User profile",
@@ -3987,7 +3989,23 @@
         "share_room": "Share room",
         "show_documents": "Show documents shared with the room",
         "show_calendar": "Show the calendar shared with the room",
-        "show_task": "Show the to-do list shared with the room"
+        "show_task": "Show the to-do list shared with the room",
+        "add_calendar_tasks": "Add a calendar with to-do list",
+        "add_calendar_tasks_title": "Create and share a calendar including a to-do list: it will be dedicated to the room without you or any other member owning it",
+        "delete_calendar_tasks": "Please note that all events and tasks there will be permanently lost.",
+        "delete_calendar_tasks_title": "Are you sure you want to delete the calendar and to-do list of this room?",
+        "count_shared_calendar_list": "%(count)s Other member currently sharing a resource",
+        "calendar_include_tasks": "Calendar including a to-do list",
+        "count_calendar_include_tasks": "%(count)s My calendar including a to-do list",
+        "count_calendar": "%(count)s My calendar",
+        "count_tasks": "%(count)s My to-do list",
+        "share_ressources_calendar_tasks": "It is also possible to select resources to share from one's own calendars and to-do lists.",
+        "calendar_tasks_sharing": "Calendars and to-do lists sharing",
+        "calendar_tasks_sharing_text": "Share a Nextcloud calendar and to-do list with room members and use it as a common planning basis.",
+        "stop_sharing_title": "Are you sure you want to end this sharing?",
+        "stop_sharing_description": "Please note that only the owner of this resource will be able to share it again.",
+        "error_two_ressources":"It is not possible to share two resources of the same type within the same room"
+
 
 
     },

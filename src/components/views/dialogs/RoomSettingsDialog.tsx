@@ -196,7 +196,7 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
                     tabs.push(
                         new Tab(
                             RoomSettingsTab.Calendar,
-                            _td("watcha|calendar"),
+                            _td("watcha|calendar_tasks"),
                             "mx_RoomSettingsDialog_nextcloudCalendarIcon",
                             <NextcloudCalendarSettingsTab roomId={this.state.room.roomId} />,
                         ),

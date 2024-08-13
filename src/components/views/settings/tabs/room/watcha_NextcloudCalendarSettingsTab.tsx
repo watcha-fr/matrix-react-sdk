@@ -64,7 +64,7 @@ export default ({ roomId }: IProps) => {
 
     const isShared = (stateKey: StateKeys) => Boolean(calendarEvents[stateKey]?.getContent()?.id);
 
-    const isSharedByMe = (stateKey: StateKeys) => calendarEvents[stateKey] && isOwnedByMe(calendarEvents[stateKey]);
+    const isSharedByMe = (stateKey: StateKeys) => calendarEvents[stateKey] && isOwnedByMe(calendarEvents[stateKey]!);
 
     const serviceShareAny = calendarEvents[StateKeys.VEVENT_VTODO]?.getContent()?.is_personal === false;
 
@@ -126,11 +126,10 @@ export default ({ roomId }: IProps) => {
                     kind="primary"
                     onClick={onNew}
                     title={_t(
-                        "Create and share a calendar including a to-do list: " +
-                        "it will be dedicated to the room without you or any other member owning it",
+                        "watcha|add_calendar_tasks_title",
                     )}
                 >
-                    { _t("Add a calendar with to-do list") }
+                    { _t("watcha|add_calendar_tasks") }
                 </AccessibleButton>
             </div>
         );
@@ -139,9 +138,9 @@ export default ({ roomId }: IProps) => {
     const onRemove = async (): Promise<void> => {
         Modal.createDialog(QuestionDialog, {
             danger: true,
-            title: _t("Are you sure you want to delete the calendar and to-do list of this room?"),
-            description: _t("Please note that all events and tasks there will be permanently lost."),
-            button: _t("Delete"),
+            title: _t("watcha|delete_calendar_tasks_title"),
+            description: _t("watcha|delete_calendar_tasks"),
+            button: _t("action|delete"),
             onFinished: proceed => {
                 if (proceed) {
                     client.unsetRoomCalendar(roomId, StateKeys.VEVENT_VTODO);
@@ -155,7 +154,7 @@ export default ({ roomId }: IProps) => {
         deleteButton = (
             <div className="mx_SettingsTab_section">
                 <AccessibleButton kind="danger" onClick={onRemove}>
-                    { _t("Delete") }
+                    { _t("action|delete") }
                 </AccessibleButton>
             </div>
         );
@@ -165,11 +164,11 @@ export default ({ roomId }: IProps) => {
 
     for (const stateKey of Object.values(StateKeys)) {
         const calendarEvent = calendarEvents[stateKey];
-        const calendar: ICalendarEventContent = calendarEvent?.getContent();
-        if (!calendar || isEmpty(calendar) || !isOwnedByAnUser(calendarEvent) || isOwnedByMe(calendarEvent)) {
+        const calendar: ICalendarEventContent = calendarEvent!.getContent()!;
+        if (!calendar || isEmpty(calendar) || (calendarEvent && !isOwnedByAnUser(calendarEvent)) || (calendarEvent && isOwnedByMe(calendarEvent))) {
             continue;
         }
-        const ownerId = isOwnedByAnUser(calendarEvent) ? calendarEvent.getSender() : null;
+        const ownerId = calendarEvent && isOwnedByAnUser(calendarEvent) ? calendarEvent.getSender() ?? "" : "";
         sharedCalendarsList.push(
             <SharedCalendar key={stateKey} {...{ roomId, stateKey, ownerId }} calendarId={calendar.id} />,
         );
@@ -180,7 +179,7 @@ export default ({ roomId }: IProps) => {
         sharedCalendars = (
             <div className="mx_SettingsTab_section watcha_CalendarSettingsTab_sharedCalendarsList">
                 <span className="mx_SettingsTab_subheading">
-                    { _t("%(count)s Other member currently sharing a resource", { count: sharedCalendarsList.length }) }
+                    { _t("watcha|count_shared_calendar_list", { count: sharedCalendarsList.length }) }
                 </span>
                 { sharedCalendarsList }
             </div>
@@ -194,12 +193,12 @@ export default ({ roomId }: IProps) => {
             ownCalendarsLists.push(
                 <OwnCalendarList
                     {...{ roomId }}
-                    subheading={_t("%(count)s My calendar including a to-do list", {
+                    subheading={_t("watcha|count_calendar_include_tasks", {
                         count: ownCalendars.VEVENT_VTODO.length,
                     })}
                     stateKey={StateKeys.VEVENT_VTODO}
                     calendars={ownCalendars.VEVENT_VTODO}
-                    sharedCalendarId={getSharedCalendarId(StateKeys.VEVENT_VTODO)}
+                    sharedCalendarId={getSharedCalendarId(StateKeys.VEVENT_VTODO ?? undefined)}
                     disabled={!canBeShared(StateKeys.VEVENT_VTODO)}
                     key={StateKeys.VEVENT_VTODO}
                 />,
@@ -209,10 +208,10 @@ export default ({ roomId }: IProps) => {
             ownCalendarsLists.push(
                 <OwnCalendarList
                     {...{ roomId }}
-                    subheading={_t("%(count)s My calendar", { count: ownCalendars.VEVENT.length })}
+                    subheading={_t("watcha|count_calendar", { count: ownCalendars.VEVENT.length })}
                     stateKey={StateKeys.VEVENT}
                     calendars={ownCalendars.VEVENT}
-                    sharedCalendarId={getSharedCalendarId(StateKeys.VEVENT)}
+                    sharedCalendarId={getSharedCalendarId(StateKeys.VEVENT) ?? undefined}
                     disabled={!canBeShared(StateKeys.VEVENT)}
                     key={StateKeys.VEVENT}
                 />,
@@ -222,10 +221,10 @@ export default ({ roomId }: IProps) => {
             ownCalendarsLists.push(
                 <OwnCalendarList
                     {...{ roomId }}
-                    subheading={_t("%(count)s My to-do list", { count: ownCalendars.VTODO.length })}
+                    subheading={_t("watcha|count_tasks", { count: ownCalendars.VTODO.length })}
                     stateKey={StateKeys.VTODO}
                     calendars={ownCalendars.VTODO}
-                    sharedCalendarId={getSharedCalendarId(StateKeys.VTODO)}
+                    sharedCalendarId={getSharedCalendarId(StateKeys.VTODO ?? undefined)}
                     disabled={!canBeShared(StateKeys.VTODO)}
                     key={StateKeys.VTODO}
                 />,
@@ -239,7 +238,7 @@ export default ({ roomId }: IProps) => {
             <AccessibleButton
                 kind="link"
                 onClick={() => setShowAdvanced(!showAdvanced)}>
-                { showAdvanced ? _t("Hide advanced") : _t("Show advanced") }
+                { showAdvanced ? _t("action|hide_advanced") : _t("action|show_advanced") }
             </AccessibleButton>
         );
     }
@@ -249,7 +248,7 @@ export default ({ roomId }: IProps) => {
         advanced = (
             <>
                 <div className="mx_SettingsTab_subsectionText">
-                    { _t("It is also possible to select resources to share from one's own calendars and to-do lists.") }
+                    { _t("watcha|share_ressources_calendar_tasks") }
                 </div>
                 { ownCalendarsLists }
             </>
@@ -258,7 +257,7 @@ export default ({ roomId }: IProps) => {
 
     return (
         <div className="mx_SettingsTab">
-            <div className="mx_SettingsTab_heading">{ _t("Calendars and to-do lists sharing") }</div>
+            <div className="mx_SettingsTab_heading">{ _t("watcha|calendar_tasks_sharing") }</div>
             <div className="mx_SettingsTab_subsectionText">
                 { _t(
                     "Share a Nextcloud calendar and to-do list with room members " +
@@ -303,9 +302,9 @@ const SharedCalendar: React.FC<ISharedCalendarProps> = ({ roomId, stateKey, cale
 
     const onUnshare = (): void => {
         Modal.createDialog(QuestionDialog, {
-            title: _t("Are you sure you want to end this sharing?"),
-            description: _t("Please note that only the owner of this resource will be able to share it again."),
-            button: _t("Stop sharing"),
+            title: _t("watcha|stop_sharing_title"),
+            description: _t("watcha|stop_sharing_description"),
+            button: _t("watcha|stop_sharing"),
             onFinished: proceed => {
                 if (proceed) {
                     client.unsetRoomCalendar(roomId, stateKey);
@@ -320,7 +319,7 @@ const SharedCalendar: React.FC<ISharedCalendarProps> = ({ roomId, stateKey, cale
             icons = (
                 <div
                     className="watcha_CalendarSettingsTab_SharedCalendar_maskedIcon_container"
-                    title={_t("Calendar including a to-do list") + displayName}
+                    title={_t("watcha|calendar_include_tasks") + displayName}
                 >
                     <span className={
                         "watcha_CalendarSettingsTab_SharedCalendar_maskedIcon " +
@@ -340,7 +339,7 @@ const SharedCalendar: React.FC<ISharedCalendarProps> = ({ roomId, stateKey, cale
                         "watcha_CalendarSettingsTab_SharedCalendar_maskedIcon " +
                         "watcha_CalendarSettingsTab_SharedCalendar_calendarIcon"
                     }
-                    title={_t("Calendar") + displayName}
+                    title={_t("watcha|calendar") + displayName}
                 />
             );
             break;
@@ -351,7 +350,7 @@ const SharedCalendar: React.FC<ISharedCalendarProps> = ({ roomId, stateKey, cale
                         "watcha_CalendarSettingsTab_SharedCalendar_maskedIcon " +
                         "watcha_CalendarSettingsTab_SharedCalendar_tasksIcon"
                     }
-                    title={_t("To-do list") + displayName}
+                    title={_t("watcha|tasks") + displayName}
                 />
             );
             break;
@@ -368,7 +367,7 @@ const SharedCalendar: React.FC<ISharedCalendarProps> = ({ roomId, stateKey, cale
                 kind="danger_outline"
                 onClick={onUnshare}
             >
-                { _t("Stop sharing") }
+                { _t("watcha|stop_sharing") }
             </AccessibleButton>
         </div>
     );
@@ -411,7 +410,7 @@ const OwnCalendarList: React.FC<IOwnCalendarListProps> = ({
     if (iAmCurrentlySharing) {
         unshareButton = (
             <AccessibleButton kind="danger_outline" onClick={onUnshare}>
-                { _t("Stop sharing") }
+                { _t("watcha|stop_sharing") }
             </AccessibleButton>
         );
     }
@@ -432,9 +431,9 @@ const OwnCalendarList: React.FC<IOwnCalendarListProps> = ({
         );
     };
 
-    let title: string;
+    let title: string="";
     if (disabled) {
-        title = _t("It is not possible to share two resources of the same type within the same room");
+        title = _t("watcha|error_two_ressources");
     }
 
     return (
