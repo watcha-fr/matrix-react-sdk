@@ -136,7 +136,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     }
 
     showInvitePartnerDialog = () => {
-        const { roomId } = this.props.roomId;
+        const { roomId } = this.props;
         const { originalList, suggestedList, selectedList } = this.state;
         const room = MatrixClientPeg.get()?.getRoom(roomId);
         Modal.createDialog(InvitePartnerDialog, {
@@ -195,6 +195,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                     };
                 }
             }
+            return {};
         });
     };
 
@@ -206,6 +207,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                     return { selectedList };
                 }
             }
+            return {};
         });
     };
 
@@ -218,6 +220,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                     return { suggestedList, selectedList };
                 }
             }
+            return {};
         });
     };
 

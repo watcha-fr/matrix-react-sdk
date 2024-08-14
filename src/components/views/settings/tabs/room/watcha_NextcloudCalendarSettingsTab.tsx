@@ -198,7 +198,7 @@ export default ({ roomId }: IProps) => {
                     })}
                     stateKey={StateKeys.VEVENT_VTODO}
                     calendars={ownCalendars.VEVENT_VTODO}
-                    sharedCalendarId={getSharedCalendarId(StateKeys.VEVENT_VTODO ?? undefined)}
+                    sharedCalendarId={getSharedCalendarId(StateKeys.VEVENT_VTODO) ?? undefined}
                     disabled={!canBeShared(StateKeys.VEVENT_VTODO)}
                     key={StateKeys.VEVENT_VTODO}
                 />,
@@ -224,7 +224,7 @@ export default ({ roomId }: IProps) => {
                     subheading={_t("watcha|count_tasks", { count: ownCalendars.VTODO.length })}
                     stateKey={StateKeys.VTODO}
                     calendars={ownCalendars.VTODO}
-                    sharedCalendarId={getSharedCalendarId(StateKeys.VTODO ?? undefined)}
+                    sharedCalendarId={getSharedCalendarId(StateKeys.VTODO) ?? undefined}
                     disabled={!canBeShared(StateKeys.VTODO)}
                     key={StateKeys.VTODO}
                 />,
@@ -259,10 +259,7 @@ export default ({ roomId }: IProps) => {
         <div className="mx_SettingsTab">
             <div className="mx_SettingsTab_heading">{ _t("watcha|calendar_tasks_sharing") }</div>
             <div className="mx_SettingsTab_subsectionText">
-                { _t(
-                    "Share a Nextcloud calendar and to-do list with room members " +
-                    "and use it as a common planning basis.",
-                ) }
+                { _t("watcha|calendar_tasks_sharing_text") }
             </div>
             { addButton }
             { deleteButton }
@@ -447,7 +444,7 @@ const OwnCalendarList: React.FC<IOwnCalendarListProps> = ({
                     label: getLabel(calendar),
                     disabled,
                 }))}
-                value={iAmCurrentlySharing ? sharedCalendarId.toString() : undefined}
+                value={iAmCurrentlySharing && sharedCalendarId !== undefined ? sharedCalendarId.toString() : undefined}
                 onChange={onCalendarChange}
             />
         </div>
