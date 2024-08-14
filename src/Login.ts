@@ -40,7 +40,7 @@ import { isUserRegistrationSupported } from "./utils/oidc/isUserRegistrationSupp
  */
 export type ClientLoginFlow = LoginFlow | OidcNativeFlow;
 //import { getCurrentLanguage } from "./languageHandler"; // watcha+
-//export const SSO_LANGUAGE_KEY = "watcha_sso_language"; // watcha+
+export const SSO_LANGUAGE_KEY = "watcha_sso_language"; // watcha+
 
 interface ILoginOptions {
     defaultDeviceDisplayName?: string;
