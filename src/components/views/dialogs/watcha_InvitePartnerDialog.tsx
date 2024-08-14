@@ -24,7 +24,7 @@ import * as Email from "../../../email";
 import BaseDialog from "./BaseDialog";
 import DialogButtons from "../elements/DialogButtons";
 import Field from "../elements/Field";
-import withValidation from "../elements/Validation";
+import withValidation, { IFieldState, IValidationResult } from "../elements/Validation";
 import { IUser } from "./watcha_InviteDialog";
 
 interface IProps {
@@ -45,7 +45,7 @@ interface IState {
 export default class InvitePartnerDialog extends React.Component<IProps, IState> {
     private fieldRef: React.RefObject<Field> = createRef();
 
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
         this.state = {
             emailAddress: "",
@@ -55,10 +55,10 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
     }
 
     public componentDidMount() {
-        this.fieldRef.current.focus();
+        this.fieldRef.current?.focus();
     }
 
-    private onChange = event => {
+    private onChange = (event: React.ChangeEvent<any>) => {
         this.setState({ emailAddress: event.target.value });
     };
 
@@ -68,7 +68,7 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
         });
     };
 
-    private onKeyDown = event => {
+    private onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === Key.ENTER) {
             this.onOk();
             event.preventDefault();
@@ -78,16 +78,16 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
         }
     };
 
-    private onValidate = async fieldState => {
+    private onValidate = async (fieldState: IFieldState): Promise<IValidationResult> => {
         const result = await this._validationRules(fieldState);
         this.setState({
-            isValid: result.valid,
+            isValid: result.valid ?? false,
         });
         return result;
     };
 
     private _validationRules = withValidation<this, { value: string }>({
-        deriveData: async ({ value }) => ({ value }),
+        deriveData: async ({ value }) => ({ value: value ?? '' }),
         rules: [
             {
                 key: "notNull",
@@ -96,13 +96,13 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
             {
                 key: "validUponSubmission",
                 skip: () => !this.state.pendingSubmission,
-                test: ({ value }) => Email.looksValid(value),
+                test: ({ value }) => Email.looksValid(value ?? ''),
                 invalid: () => _t("watcha|enter_valid_email"),
                 final: true,
             },
             {
                 key: "notMine",
-                test: async ({ value }) => !(await Email.isMine(value)),
+                test: async ({ value }) => !(await Email.isMine(value ?? '')),
                 invalid: () => _t("watcha|email_already_bound"),
                 final: true,
             },
@@ -111,7 +111,7 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
                 skip: ({ value }) =>
                     this.props.selectedList.some(user => user.email === value) ||
                     this.props.suggestedList.some(user => user.email === value),
-                test: ({ value }) => !Email.hasForbiddenDomainForPartner(value),
+                test: ({ value }) => !Email.hasForbiddenDomainForPartner(value ?? ''),
                 invalid: ({ value }) =>
                     _t(
                         "watcha|error_email_domain",
@@ -135,15 +135,15 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
             {
                 key: "notRoomMember",
                 skip: () => !this.props.room,
-                test: async ({ value }) => !this.isMemberWithMembership(value, "join"),
+                test: async ({ value }) => !this.isMemberWithMembership(value ?? '', "join"),
                 invalid: () => _t("watcha|user_already_room_member"),
                 final: true,
             },
             {
                 key: "notInvited",
                 skip: () => !this.props.room,
-                test: async ({ value }) => !this.isMemberWithMembership(value, "invite"),
-                invalid: () => _t("This email address belongs to a user already invited to this room"),
+                test: async ({ value }) => !this.isMemberWithMembership(value ?? '', "invite"),
+                invalid: () => _t("watcha|user_already_inivte_room"),
                 final: true,
             },
         ],
@@ -155,6 +155,7 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
             return false;
         }
         const { room } = this.props;
+        if (!room) throw new Error("Room ID given to InviteDialog does not look like a room");
         const members = room.getMembersWithMembership(membership);
         return members.some((member: RoomMember) => member.userId === user.address);
     };
@@ -173,7 +174,7 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
         const { emailAddress } = this.state;
 
         const field = this.fieldRef.current;
-        await field.validate({ allowEmpty: false });
+        await field!.validate({ allowEmpty: false });
 
         // Validation and state updates are async, so we need to wait for them to complete
         // first. Queue a `setState` callback and wait for it to resolve.
@@ -185,9 +186,9 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
             addEmailAddressToSelectedList(emailAddress);
             onFinished();
         } else {
-            field.focus();
+            field!.focus();
             if (!this.state.isValid) {
-                field.validate({ allowEmpty: false, focused: true });
+                field!.validate({ allowEmpty: false, focused: true });
             }
         }
     };
