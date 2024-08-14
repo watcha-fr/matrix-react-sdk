@@ -97,13 +97,13 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
                 key: "validUponSubmission",
                 skip: () => !this.state.pendingSubmission,
                 test: ({ value }) => Email.looksValid(value),
-                invalid: () => _t("Please enter a valid email address"),
+                invalid: () => _t("watcha|enter_valid_email"),
                 final: true,
             },
             {
                 key: "notMine",
                 test: async ({ value }) => !(await Email.isMine(value)),
-                invalid: () => _t("This email address is already bound to your account"),
+                invalid: () => _t("watcha|email_already_bound"),
                 final: true,
             },
             {
@@ -114,8 +114,7 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
                 test: ({ value }) => !Email.hasForbiddenDomainForPartner(value),
                 invalid: ({ value }) =>
                     _t(
-                        "Users with an email address belonging to this domain <b></b> " +
-                        "should not be invited as external partners",
+                        "watcha|error_email_domain",
                         {},
                         { b: () => <b>{ value.split("@")[1] }</b> },
                     ),
@@ -124,20 +123,20 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
             {
                 key: "emailNotInInvitations",
                 test: async ({ value }) => !this.props.selectedList.some(user => user.address === value),
-                invalid: () => _t("You have already added this email address to the invitation list"),
+                invalid: () => _t("watcha|email_already_add"),
                 final: true,
             },
             {
                 key: "userNotInInvitations",
                 test: async ({ value }) => !this.props.selectedList.some(user => user.email === value),
-                invalid: () => _t("This email address belongs to a user you have already added to the invitation list"),
+                invalid: () => _t("watcha|user_already_add"),
                 final: true,
             },
             {
                 key: "notRoomMember",
                 skip: () => !this.props.room,
                 test: async ({ value }) => !this.isMemberWithMembership(value, "join"),
-                invalid: () => _t("This email address belongs to a user who is already a room member"),
+                invalid: () => _t("watcha|user_already_room_member"),
                 final: true,
             },
             {
@@ -200,7 +199,7 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
         return (
             <BaseDialog
                 className="watcha_InvitePartnerDialog"
-                title={_t("Invite by email")}
+                title={_t("invite|email_caption")}
                 onKeyDown={this.onKeyDown}
                 onFinished={onFinished}
             >
@@ -208,14 +207,14 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
                     <Field
                         id="emailAddress"
                         ref={this.fieldRef}
-                        label={_t("Email")}
-                        placeholder={_t("joe@example.com")}
+                        label={_t("auth|email_field_label")}
+                        placeholder={_t("watcha|email_placeholder")}
                         value={emailAddress}
                         onChange={this.onChange}
                         onValidate={this.onValidate}
                     />
                 </div>
-                <DialogButtons primaryButton={_t("OK")} onPrimaryButtonClick={this.onOk} onCancel={onFinished} />
+                <DialogButtons primaryButton={_t("action|ok")} onPrimaryButtonClick={this.onOk} onCancel={onFinished} />
             </BaseDialog>
         );
     }

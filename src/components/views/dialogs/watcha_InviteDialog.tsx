@@ -264,7 +264,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 <EntityTile
                     {...commonProps}
                     subtextLabel={user.displayName !== user.email ? user.email : undefined}
-                    title={_t("Click to add this user to the invitation list")}
+                    title={_t("watcha|invite_user")}
                     showPresence={false}
                     onClick={() => {
                         this.addToSelectedList(user);
@@ -284,7 +284,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 key: user.address,
                 className: "watcha_InviteDialog_EntityTile_invite",
                 name: user.displayName,
-                title: _t("Click to remove this invitation"),
+                title: _t("watcha|remove_invitation"),
                 showPresence: false,
             };
             return user.isKnown ? (
@@ -300,7 +300,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 <EntityTile
                     {...commonProps}
                     className={classNames(commonProps.className, "watcha_InviteDialog_EntityTile_partner")}
-                    subtextLabel={_t("An invitation will be sent to this email address")}
+                    subtextLabel={_t("watcha|send_invitation_mail")}
                     avatarJsx={this.getBaseAvatar(
                         user,
                         null,
@@ -349,7 +349,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             })
             .catch(err => {
                 console.error("Error whilst searching user directory: ", err);
-                this.setState({ errorText: err.errcode ? err.message : _t("Something went wrong!") });
+                this.setState({ errorText: err.errcode ? err.message : _t("error|something_went_wrong") });
             })
             .then(() => {
                 this.setState({ pendingSearch: false });
@@ -473,7 +473,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             console.error(err);
             this.setState({
                 busy: false,
-                errorText: _t("We couldn't create your DM."),
+                errorText: _t("inivte|error_dm"),
             });
         }
     };
@@ -492,7 +492,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             console.error("Failed to find the room to invite users to");
             this.setState({
                 busy: false,
-                errorText: _t("Something went wrong trying to invite the users."),
+                errorText: _t("error|error_find_room"),
             });
             return;
         }
@@ -509,7 +509,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 this.setState({
                     busy: false,
                     errorText: _t(
-                        "We couldn't invite those users. Please check the users you want to invite and try again.",
+                        "invite|error_invite",
                     ),
                 });
             });
@@ -522,7 +522,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             this.setState({
                 busy: false,
                 errorText: _t(
-                    "The following users might not exist or are invalid, and cannot be invited: %(csvNames)s",
+                    "invite|error_find_user_description",
                     {
                         csvNames: failedUsers.join(", "),
                     },
@@ -544,7 +544,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         let invite;
 
         if (kind === InviteKind.Dm) {
-            title = _t("Start chat");
+            title = _t("action|start_chat");
             invite = this.startDm;
         } else {
             // KIND_INVITE
@@ -561,12 +561,12 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             <BaseDialog className="watcha_InviteDialog" {...{ title, onFinished }}>
                 <div className="mx_Dialog_content">
                     <div className="watcha_InviteDialog_userLists">
-                        <Section header={_t("User directory")}>
+                        <Section header={_t("invite|transfer_user_directory_tab")}>
                             <SuggestedList onSearch={this.onSearch} emptyQuery={!!query} {...{ pendingSearch }}>
                                 { suggestedTiles }
                             </SuggestedList>
                         </Section>
-                        <Section header={_t("Invitation list")}>
+                        <Section header={_t("watcha|invitation_list")}>
                             <SelectedList resume={this.resume} {...{ busy, invite }}>
                                 { selectedTiles }
                             </SelectedList>
@@ -578,10 +578,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                             onClick={this.showInvitePartnerDialog}
                         >
                             <>
-                                { _t(
-                                    "You want to collaborate with a partner from outside your organisation: " +
-                                    "invite them by e-mail",
-                                ) }
+                                { _t("watcha|invtation_externe",) }
                                 <img src={require("../../../../res/img/watcha/watcha_paper-plane.svg").default} />
                             </>
                         </AccessibleButton>
@@ -589,7 +586,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 </div>
                 <div className="error">{ errorText }</div>
                 <DialogButtons
-                    primaryButton={_t("OK")}
+                    primaryButton={_t("action|ok")}
                     disabled={busy}
                     onPrimaryButtonClick={this.onOk}
                     onCancel={onFinished}
@@ -634,8 +631,8 @@ const SuggestedList: React.FC<ISuggestedListProps> = ({ pendingSearch, children,
                 <span>
                     { _t(
                         emptyQuery
-                            ? "No users match your search."
-                            : "No user can be invited to join this room from the directory.",
+                            ? "watcha|no_users_match"
+                            : "watcha|no_user_can_be_invited",
                     ) }
                 </span>
             </div>
@@ -644,7 +641,7 @@ const SuggestedList: React.FC<ISuggestedListProps> = ({ pendingSearch, children,
 
     return (
         <div className="watcha_InviteDialog_list">
-            <SearchBox placeholder={_t("Filter users")} onSearch={onSearch} />
+            <SearchBox placeholder={_t("watcha|filter_users")} onSearch={onSearch} />
             { content }
         </div>
     );
@@ -688,7 +685,7 @@ class SelectedList extends React.Component<ISelectedListProps, ISelectedListStat
                 <div className="mx_Validation">
                     <ul className="mx_Validation_details">
                         <li className="mx_Validation_detail mx_Validation_invalid">
-                            { _t("Please select one or more users before submitting") }
+                            { _t("watcha|select_one_or_more_users") }
                         </li>
                     </ul>
                 </div>
@@ -711,7 +708,7 @@ class SelectedList extends React.Component<ISelectedListProps, ISelectedListStat
             <AutoHideScrollbar>{ children }</AutoHideScrollbar>
         ) : (
             <div className="watcha_InviteDialog_list_hint">
-                <span>{ _t("Select users<br/>Invite them<br/>Collaborate!", {}, { br: () => <br /> }) }</span>
+                <span>{ _t("watcha|invite_dialog", {}, { br: () => <br /> }) }</span>
             </div>
         );
 

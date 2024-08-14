@@ -4004,7 +4004,29 @@
         "calendar_tasks_sharing_text": "Share a Nextcloud calendar and to-do list with room members and use it as a common planning basis.",
         "stop_sharing_title": "Are you sure you want to end this sharing?",
         "stop_sharing_description": "Please note that only the owner of this resource will be able to share it again.",
-        "error_two_ressources":"It is not possible to share two resources of the same type within the same room"
+        "error_two_ressources":"It is not possible to share two resources of the same type within the same room",
+        "invite_user": "Click to add this user to the invitation list",
+        "remove_invitation": "Click to remove this invitation",
+        "send_invitation_mail": "An invitation will be sent to this email address",
+        "invitation_list": "Invitation list",
+        "invtation_externe": "You want to collaborate with a partner from outside your organisation: invite them by e-mail",
+        "no_users_match": "No users match your search.",
+        "no_user_can_be_invited": "No user can be invited to join this room from the directory.",
+        "filter_users": "Filter users",
+        "select_one_or_more_users": "Please select one or more users before submitting",
+        "invite_dialog": "Select users<br/>Invite them<br/>Collaborate!",
+        "enter_valid_email": "Please enter a valid email address",
+        "email_already_bound": "This email address is already bound to your account",
+        "error_email_domain": "Users with an email address belonging to this domain <b></b> should not be invited as external partners",
+        "email_already_add": "You have already added this email address to the invitation list",
+        "user_already_add": "This email address belongs to a user you have already added to the invitation list",
+        "user_already_room_member": "This email address belongs to a user who is already a room member",
+        "user_already_inivte_room": "This email address belongs to a user already invited to this room",
+        "email_placeholder": "joe@example.com",
+        "select_folder_share": "Select a folder to share",
+        "selected_folder": "Selected folder",
+        "no_folder_selected": "No folder selected"
+
 
 
 

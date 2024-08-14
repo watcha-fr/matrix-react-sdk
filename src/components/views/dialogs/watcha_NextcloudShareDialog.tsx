@@ -89,7 +89,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
         <React.Fragment>
             <BaseDialog
                 className="watcha_NextcloudShareDialog"
-                title={_t("Select a folder to share")}
+                title={_t("watcha|select_folder_share")}
                 {...{ onFinished }}
             >
                 <div className="mx_Dialog_content">
@@ -102,20 +102,20 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
                         onLoad={() => {
                             setBusy(false);
                         }}
-                        title={_t("Document sharing")}
+                        title={_t("watcha|document_sharing")}
                     />
                     <Field
                         className={classNames({
                             watcha_NextcloudShareDialog_Field_rootSelection: !relativePath,
                         })}
                         element="input"
-                        label={_t("Selected folder")}
-                        value={relativePath || _t("No folder selected")}
+                        label={_t("watcha|selected_folder")}
+                        value={relativePath || _t("watcha|no_folder_selected")}
                         disabled
                     />
                 </div>
                 <DialogButtons
-                    primaryButton={_t("OK")}
+                    primaryButton={_t("action|ok")}
                     onPrimaryButtonClick={onOK}
                     primaryDisabled={!relativePath || target === initUrlRef.current}
                     onCancel={onCancel}
