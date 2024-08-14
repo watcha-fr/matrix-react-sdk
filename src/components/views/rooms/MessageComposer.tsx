@@ -26,7 +26,7 @@ import {
 } from "matrix-js-sdk/src/matrix";
 import { Optional } from "matrix-events-sdk";
 import { Tooltip } from "@vector-im/compound-web";
-import { logger } from "matrix-js-sdk/src/logger"; // watcha+
+//import { logger } from "matrix-js-sdk/src/logger"; // watcha+
 
 import { _t } from "../../../languageHandler";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
@@ -54,7 +54,7 @@ import { SettingUpdatedPayload } from "../../../dispatcher/payloads/SettingUpdat
 import MessageComposerButtons from "./MessageComposerButtons";
 import AccessibleButton, { ButtonEvent } from "../elements/AccessibleButton";
 import { ViewRoomPayload } from "../../../dispatcher/payloads/ViewRoomPayload";
-import { findMapStyleUrl } from "../../../utils/location/findMapStyleUrl"; // watcha+
+//import { findMapStyleUrl } from "../../../utils/location/findMapStyleUrl"; // watcha+
 import { isLocalRoom } from "../../../utils/localRoom/isLocalRoom";
 import { Features } from "../../../settings/Settings";
 import { VoiceMessageRecording } from "../../../audio/VoiceMessageRecording";
