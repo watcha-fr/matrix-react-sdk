@@ -186,14 +186,14 @@ export class MessageComposer extends React.Component<IProps, IState> {
         UIStore.instance.trackElementDimensions(`MessageComposer${this.instanceId}`, this.ref.current!);
         UIStore.instance.on(`MessageComposer${this.instanceId}`, this.onResize);
         this.updateRecordingState(); // grab any cached recordings
-        // watcha+
+        /* watcha+
         try {
             const showLocationButton = !window.electron && !!findMapStyleUrl(this.context);
             this.setState({ showLocationButton });
         } catch (e) {
             logger.error("Failed to render map", e);
         }
-        // +watcha
+        +watcha */
     }
 
     private onResize = (type: UI_EVENTS, entry: ResizeObserverEntry): void => {

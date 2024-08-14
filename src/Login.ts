@@ -272,12 +272,12 @@ export async function sendLoginRequest(
 
     const data = await client.login(loginType, loginParams);
 
-    // watcha+
+    /* watcha+
     const locale = data.locale;
     if (locale && locale !== getCurrentLanguage()) {
         localStorage.setItem(SSO_LANGUAGE_KEY, locale);
     }
-    // +watcha
+     +watcha*/
 
     const wellknown = data.well_known;
     if (wellknown) {

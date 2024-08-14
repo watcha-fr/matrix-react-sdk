@@ -78,7 +78,7 @@ const NextcloudShareDialog: React.FC<IProps> = ({ roomId, onFinished }) => {
     };
 
     const onCancel = () => {
-        onFinished(null);
+        onFinished(undefined);
     };
 
     const params = new URL(target).searchParams;
