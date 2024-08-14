@@ -68,7 +68,7 @@ export default class InvitePartnerDialog extends React.Component<IProps, IState>
         });
     };
 
-    private onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    private onKeyDown = (event: React.KeyboardEvent<Element>) => {
         if (event.key === Key.ENTER) {
             this.onOk();
             event.preventDefault();
