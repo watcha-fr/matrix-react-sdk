@@ -252,13 +252,12 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 join: _t("watcha|already_room_member"),
                 invite: _t("watcha|already_invited"),
             };
-            return subtextLabel.hasOwnProperty(user.membership) ? (
+            return user.membership && subtextLabel.hasOwnProperty(user.membership) ? (
                 <EntityTile
                     {...commonProps}
                     className="watcha_InviteDialog_EntityTile_roomMember"
                     subtextLabel={subtextLabel[user.membership]}
                     presenceState="offline"
-                    suppressOnHover={true}
                 />
             ) : (
                 <EntityTile
@@ -303,7 +302,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                     subtextLabel={_t("watcha|send_invitation_mail")}
                     avatarJsx={this.getBaseAvatar(
                         user,
-                        null,
+                        undefined,
                         /* eslint-disable-next-line @typescript-eslint/no-var-requires */
                         require("../../../../res/img/watcha/watcha_paper-plane.svg").default,
                     )}
@@ -318,23 +317,23 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         }
     };
 
-    getBaseAvatar = (user, name?: string, url?: string) => {
+    getBaseAvatar = (user: IUser, name?: string, url?: string) => {
         if (!name) {
             name = user.displayName || user.address;
         }
         if (!url) {
-            url = Avatar.avatarUrlForUser(user, AVATAR_SIZE, AVATAR_SIZE);
+            url = Avatar.avatarUrlForUser(user, AVATAR_SIZE, AVATAR_SIZE) ?? undefined;
         }
-        return <BaseAvatar width={AVATAR_SIZE} height={AVATAR_SIZE} {...{ name, url }} />;
+        return <BaseAvatar size={'${AVATAR_SIZE}px'} height={AVATAR_SIZE} {...{ name, url }} />;
     };
 
     // come from src/components/views/dialogs/AddressPickerDialog.js
-    doUserDirectorySearch(query) {
+    doUserDirectorySearch(query: string) {
         this.setState({
             query,
             pendingSearch: true,
         });
-        MatrixClientPeg.get()
+        MatrixClientPeg.get()!
             .searchUserDirectory({
                 term: query,
                 limit: 500,
@@ -357,13 +356,13 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     }
 
     // inspired from src/components/views/dialogs/AddressPickerDialog.js
-    processResults = (results, query) => {
+    processResults = (results: string, query: string) => {
         const suggestedList = [];
         const client = MatrixClientPeg.get();
 
         for (const user of results) {
             const userId = user.user_id;
-            if (userId === client.credentials.userId) {
+            if (client && userId === client.credentials.userId) {
                 continue; // remove the actual user from the list of users
             }
             const email = user.email;
