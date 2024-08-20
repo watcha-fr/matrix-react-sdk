@@ -372,7 +372,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
 
     // inspired from src/components/views/dialogs/AddressPickerDialog.js
     processResults = (results: IUserDirectoryResult[], query: string) => {
-        const suggestedList: IUser = [];
+        const suggestedList: IUser[] = [];
         const client = MatrixClientPeg.get();
 
         for (const user of results) {
