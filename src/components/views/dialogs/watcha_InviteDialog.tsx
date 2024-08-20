@@ -118,6 +118,7 @@ type Props = InviteDMProps | InviteRoomProps | InviteCallProps;
 export default class InviteDialog extends React.PureComponent<Props, IInviteDialogState> {
     static defaultProps: Partial<Props> = {
         kind: InviteKind.Dm,
+        initialText: "",
     };
 
     constructor(props: Props) {
@@ -143,15 +144,17 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     }
 
     showInvitePartnerDialog = () => {
-        const { originalList, suggestedList, selectedList } = this.state;
-        const room = MatrixClientPeg.get()?.getRoom(this.props.roomId);
-        Modal.createDialog(InvitePartnerDialog, {
-            room,
-            originalList,
-            suggestedList,
-            selectedList,
-            addEmailAddressToSelectedList: this.addEmailAddressToSelectedList,
-        });
+        if (this.props.kind === InviteKind.Invite) {
+            const { originalList, suggestedList, selectedList } = this.state;
+            const room = MatrixClientPeg.get()?.getRoom(this.props.roomId);
+            Modal.createDialog(InvitePartnerDialog, {
+                room,
+                originalList,
+                suggestedList,
+                selectedList,
+                addEmailAddressToSelectedList: this.addEmailAddressToSelectedList,
+            });
+        }
     };
 
     onSearch = debounce((term: string) => {
@@ -551,7 +554,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         if (this.props.kind === InviteKind.Dm){
             title = _t("action|start_chat");
             invite = this.startDm;
-        } else {
+        } else if (this.props.kind === InviteKind.Invite) {
             // KIND_INVITE
             const roomId = this.props.roomId;
             const room = MatrixClientPeg.get()?.getRoom(roomId);
