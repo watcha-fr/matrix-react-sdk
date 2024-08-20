@@ -704,7 +704,7 @@ class SelectedList extends React.Component<ISelectedListProps, ISelectedListStat
     private validate() {
         const { invite, resume, children } = this.props;
         if (Array.isArray(children) && children.length) {
-            invite();
+            invite?.();
         } else {
             const feedback = (
                 <div className="mx_Validation">
