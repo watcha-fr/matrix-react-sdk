@@ -49,6 +49,7 @@ import InvitePartnerDialog from "./watcha_InvitePartnerDialog";
 const VALIDATION_THROTTLE_MS = 500;
 const AVATAR_SIZE = 36;
 
+
 /* eslint-disable camelcase */
 interface ISearchUserDirectory {
     limited: boolean;
@@ -464,7 +465,10 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 }
 
                 if (targetIds.length > 1) {
-                    createRoomOptions.createOpts = targetIds.reduce(
+                    createRoomOptions.createOpts = targetIds.reduce<{
+                        invite_3pid: IInvite3PID[];
+                        invite: string[];
+                    }>(
                         (roomOptions, address) => {
                             const type = getAddressType(address);
                             if (type === "email") {
