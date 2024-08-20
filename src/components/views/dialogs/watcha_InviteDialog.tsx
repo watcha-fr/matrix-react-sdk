@@ -383,10 +383,10 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             const email = user.email;
             const displayName = user.display_name || email || userId;
 
-            let membership;
+            let membership: "invite" | "join" | "leave" | "ban" | undefined;;
             if (this.props.kind === InviteKind.Invite) {
                 const room = client?.getRoom(this.props.roomId);
-                membership = room?.getMember(userId)?.membership;
+                membership = room?.getMember(userId)?.membership as "invite" | "join" | "leave" | "ban" | undefined;
             }
 
             const addressType: "mx-user-id" | "email" = user.email ? "email" : "mx-user-id";
@@ -422,8 +422,8 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         const targetIds = targets.map(user => user.address);
 
         // Check if there is already a DM with these people and reuse it if possible.
-        let existingRoom: Room;
-        if (targetIds.length === 1) {
+        let existingRoom: Room | undefined;
+        if (targetIds.length === 1 && client) {
             existingRoom = findDMForUser(client, targetIds[0]);
         } else {
             existingRoom = DMRoomMap.shared().getDMRoomForIdentifiers(targetIds);
@@ -441,7 +441,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
 
         const createRoomOptions = { inlineErrors: true } as any; // XXX: Type out `createRoomOptions`
 
-        if (privateShouldBeEncrypted(client)) {
+        if (client && privateShouldBeEncrypted(client)) {
             // Check whether all users have uploaded device keys before.
             // If so, enable encryption in the new room.
             // const has3PidMembers = targets.some(t => t instanceof ThreepidMember);
