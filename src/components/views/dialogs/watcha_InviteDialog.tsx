@@ -59,7 +59,7 @@ interface IUserDirectoryResult {
     user_id: string;
     display_name?: string;
     avatar_url?: string;
-    email: string;
+    email?: string;
 }
 /* eslint-enable camelcase */
 
@@ -267,7 +267,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 join: _t("watcha|already_room_member"),
                 invite: _t("watcha|already_invited"),
             };
-            return user.membership && subtextLabel.hasOwnProperty(user.membership) ? (
+            return user.membership && subtextLabel.hasOwnProperty(user.membership) && (user.membership === "join" || user.membership === "invite") ? (
                 <EntityTile
                     {...commonProps}
                     className="watcha_InviteDialog_EntityTile_roomMember"
@@ -372,7 +372,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
 
     // inspired from src/components/views/dialogs/AddressPickerDialog.js
     processResults = (results: IUserDirectoryResult[], query: string) => {
-        const suggestedList = [];
+        const suggestedList: IUser = [];
         const client = MatrixClientPeg.get();
 
         for (const user of results) {
@@ -384,16 +384,18 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             const displayName = user.display_name || email || userId;
 
             let membership;
-            if (this.props.roomId) {
-                const room = client.getRoom(this.props.roomId);
-                membership = room.getMember(userId)?.membership;
+            if (this.props.kind === InviteKind.Invite) {
+                const room = client?.getRoom(this.props.roomId);
+                membership = room?.getMember(userId)?.membership;
             }
+
+            const addressType: "mx-user-id" | "email" = user.email ? "email" : "mx-user-id";
 
             // TODO: as the upstream interface has changed, it should be simplified by removing useless fields
             if (this.state.selectedList.every(user => user.address != userId)) {
                 suggestedList.push({
                     address: userId,
-                    addressType: "mx-user-id",
+                    addressType,
                     displayName,
                     avatarUrl: user.avatar_url,
                     email,
