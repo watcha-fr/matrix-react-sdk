@@ -383,7 +383,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             const email = user.email;
             const displayName = user.display_name || email || userId;
 
-            let membership: "invite" | "join" | "leave" | "ban" | undefined;;
+            let membership: "invite" | "join" | "leave" | "ban" | undefined;
             if (this.props.kind === InviteKind.Invite) {
                 const room = client?.getRoom(this.props.roomId);
                 membership = room?.getMember(userId)?.membership as "invite" | "join" | "leave" | "ban" | undefined;
@@ -422,7 +422,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         const targetIds = targets.map(user => user.address);
 
         // Check if there is already a DM with these people and reuse it if possible.
-        let existingRoom: Room | undefined;
+        let existingRoom: Room | undefined | null;
         if (targetIds.length === 1 && client) {
             existingRoom = findDMForUser(client, targetIds[0]);
         } else {
@@ -457,34 +457,36 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         // Check if it's a traditional DM and create the room if required.
         // TODO: [Canonical DMs] Remove this check and instead just create the multi-person DM
         try {
-            const isSelf = targetIds.length === 1 && targetIds[0] === client.getUserId();
-            if (targetIds.length === 1 && !isSelf) {
-                createRoomOptions.dmUserId = targetIds[0];
-            }
+            if(client){
+                const isSelf = targetIds.length === 1 && targetIds[0] === client.getUserId();
+                if (targetIds.length === 1 && !isSelf) {
+                    createRoomOptions.dmUserId = targetIds[0];
+                }
 
-            if (targetIds.length > 1) {
-                createRoomOptions.createOpts = targetIds.reduce(
-                    (roomOptions, address) => {
-                        const type = getAddressType(address);
-                        if (type === "email") {
-                            const invite: IInvite3PID = {
-                                // id_server: client.getIdentityServerUrl(true),
-                                id_server: "fake-is.watcha.fr", // until we have an IS
-                                medium: "email",
-                                address,
-                            };
-                            roomOptions.invite_3pid.push(invite);
-                        } else if (type === "mx-user-id") {
-                            roomOptions.invite.push(address);
-                        }
-                        return roomOptions;
-                    },
-                    { invite: [], invite_3pid: [] },
-                );
-            }
+                if (targetIds.length > 1) {
+                    createRoomOptions.createOpts = targetIds.reduce(
+                        (roomOptions, address) => {
+                            const type = getAddressType(address);
+                            if (type === "email") {
+                                const invite: IInvite3PID = {
+                                    // id_server: client.getIdentityServerUrl(true),
+                                    id_server: "fake-is.watcha.fr", // until we have an IS
+                                    medium: "email",
+                                    address,
+                                };
+                                roomOptions.invite_3pid.push(invite);
+                            } else if (type === "mx-user-id") {
+                                roomOptions.invite.push(address);
+                            }
+                            return roomOptions;
+                        },
+                        { invite: [], invite_3pid: [] },
+                    );
+                }
 
-            await createRoom(createRoomOptions);
-            this.props.onFinished();
+                await createRoom(client, createRoomOptions);
+                this.props.onFinished();
+            }
         } catch (err) {
             console.error(err);
             this.setState({
@@ -502,33 +504,34 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         // const targetIds = targets.map(t => t.userId);
         const { selectedList } = this.state;
         const targetIds = selectedList.map(user => user.address);
-
-        const room = MatrixClientPeg.get().getRoom(this.props.roomId);
-        if (!room) {
-            console.error("Failed to find the room to invite users to");
-            this.setState({
-                busy: false,
-                errorText: _t("error|error_find_room"),
-            });
-            return;
-        }
-
-        inviteMultipleToRoom(this.props.roomId, targetIds)
-            .then(result => {
-                if (!this.shouldAbortAfterInviteError(result)) {
-                    // handles setting error message too
-                    this.props.onFinished();
-                }
-            })
-            .catch(err => {
-                console.error(err);
+        if (this.props.kind === InviteKind.Invite) {
+            const room = MatrixClientPeg.get()?.getRoom(this.props.roomId);
+            if (!room) {
+                console.error("Failed to find the room to invite users to");
                 this.setState({
                     busy: false,
-                    errorText: _t(
-                        "invite|error_invite",
-                    ),
+                    errorText: _t("invite|error_find_room"),
                 });
-            });
+                return;
+            }
+
+            inviteMultipleToRoom(this.props.roomId, targetIds)
+                .then(result => {
+                    if (!this.shouldAbortAfterInviteError(result)) {
+                        // handles setting error message too
+                        this.props.onFinished();
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    this.setState({
+                        busy: false,
+                        errorText: _t(
+                            "invite|error_invite",
+                        ),
+                    });
+                });
+        }
     };
 
     // come from src/components/views/dialogs/InviteDialog.tsx
