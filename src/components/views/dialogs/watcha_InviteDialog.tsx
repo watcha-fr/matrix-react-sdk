@@ -52,12 +52,14 @@ const AVATAR_SIZE = 36;
 /* eslint-disable camelcase */
 interface ISearchUserDirectory {
     limited: boolean;
-    results: {
-        user_id: string;
-        display_name?: string;
-        avatar_url?: string;
-        email: string;
-    }[];
+    results: IUserDirectoryResult[];
+}
+
+interface IUserDirectoryResult {
+    user_id: string;
+    display_name?: string;
+    avatar_url?: string;
+    email: string;
 }
 /* eslint-enable camelcase */
 
@@ -129,6 +131,11 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             busy: false,
             errorText: null,
         };
+
+        if (props.kind === InviteKind.Invite && !props.roomId) {
+            throw new Error("When using InviteKind.Invite a roomId is required for an InviteDialog");
+        }
+        }
     }
 
     componentDidMount() {
@@ -136,9 +143,8 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     }
 
     showInvitePartnerDialog = () => {
-        const { roomId } = this.props;
         const { originalList, suggestedList, selectedList } = this.state;
-        const room = MatrixClientPeg.get()?.getRoom(roomId);
+        const room = MatrixClientPeg.get()?.getRoom(this.props.roomId);
         Modal.createDialog(InvitePartnerDialog, {
             room,
             originalList,
@@ -324,7 +330,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         if (!url) {
             url = Avatar.avatarUrlForUser(user, AVATAR_SIZE, AVATAR_SIZE) ?? undefined;
         }
-        return <BaseAvatar size={'${AVATAR_SIZE}px'} height={AVATAR_SIZE} {...{ name, url }} />;
+        return <BaseAvatar size={'${AVATAR_SIZE}px'} {...{ name, url }} />;
     };
 
     // come from src/components/views/dialogs/AddressPickerDialog.js
@@ -356,7 +362,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     }
 
     // inspired from src/components/views/dialogs/AddressPickerDialog.js
-    processResults = (results: string, query: string) => {
+    processResults = (results: IUserDirectoryResult[], query: string) => {
         const suggestedList = [];
         const client = MatrixClientPeg.get();
 
@@ -424,7 +430,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
 
         const createRoomOptions = { inlineErrors: true } as any; // XXX: Type out `createRoomOptions`
 
-        if (privateShouldBeEncrypted()) {
+        if (privateShouldBeEncrypted(client)) {
             // Check whether all users have uploaded device keys before.
             // If so, enable encryption in the new room.
             // const has3PidMembers = targets.some(t => t instanceof ThreepidMember);
@@ -472,7 +478,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             console.error(err);
             this.setState({
                 busy: false,
-                errorText: _t("inivte|error_dm"),
+                errorText: _t("invite|error_dm"),
             });
         }
     };
@@ -532,7 +538,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         return false;
     }
 
-    render() {
+    render(): React.ReactNode {
         const { kind, roomId, onFinished } = this.props;
         const { pendingSearch, query, busy, errorText } = this.state;
 
@@ -547,10 +553,10 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             invite = this.startDm;
         } else {
             // KIND_INVITE
-            const room = MatrixClientPeg.get().getRoom(roomId);
+            const room = MatrixClientPeg.get()!.getRoom(roomId);
             title = _t(
                 "Invite to <span>%(roomName)s</span>",
-                { roomName: room.name },
+                { roomName: room!.name },
                 { span: label => <span className="mx_RoomHeader_settingsHint">{ label }</span> },
             );
             invite = this.inviteUsers;
@@ -659,12 +665,12 @@ interface ISelectedListState {
 class SelectedList extends React.Component<ISelectedListProps, ISelectedListState> {
     private containerRef: React.RefObject<HTMLDivElement> = createRef();
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
-        this.state = { feedback: null };
+        this.state = { feedback: undefined };
     }
 
-    public componentDidUpdate(prevProps) {
+    public componentDidUpdate(prevProps: Props) {
         const { busy } = this.props;
         if (busy && !prevProps.busy) {
             this.validate();
@@ -672,7 +678,7 @@ class SelectedList extends React.Component<ISelectedListProps, ISelectedListStat
     }
 
     private onBlur = () => {
-        this.setState({ feedback: null });
+        this.setState({ feedback: undefined });
     };
 
     private validate() {
@@ -690,7 +696,7 @@ class SelectedList extends React.Component<ISelectedListProps, ISelectedListStat
                 </div>
             );
             this.setState({ feedback });
-            this.containerRef.current.focus();
+            this.containerRef.current!.focus();
             resume();
         }
     }
