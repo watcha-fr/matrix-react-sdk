@@ -539,7 +539,6 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     }
 
     render(): React.ReactNode {
-        const { kind, roomId, onFinished } = this.props;
         const { pendingSearch, query, busy, errorText } = this.state;
 
         const suggestedTiles = this.getSuggestedTiles();
@@ -548,22 +547,26 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         let title;
         let invite;
 
-        if (kind === InviteKind.Dm) {
+        if (this.props.kind === InviteKind.Dm){
             title = _t("action|start_chat");
             invite = this.startDm;
         } else {
             // KIND_INVITE
-            const room = MatrixClientPeg.get()!.getRoom(roomId);
-            title = _t(
-                "Invite to <span>%(roomName)s</span>",
-                { roomName: room!.name },
-                { span: label => <span className="mx_RoomHeader_settingsHint">{ label }</span> },
-            );
+            const roomId = this.props.roomId;
+            const room = MatrixClientPeg.get()?.getRoom(roomId);
+            const isSpace = room?.isSpaceRoom();
+            title = isSpace
+                ? _t("invite|to_space", {
+                      spaceName: room?.name || _t("common|unnamed_space"),
+                  })
+                : _t("invite|to_room", {
+                      roomName: room?.name || _t("common|unnamed_room"),
+                  });
             invite = this.inviteUsers;
         }
 
         return (
-            <BaseDialog className="watcha_InviteDialog" {...{ title, onFinished }}>
+            <BaseDialog className="watcha_InviteDialog" {...{ title, this.props.onFinished }}>
                 <div className="mx_Dialog_content">
                     <div className="watcha_InviteDialog_userLists">
                         <Section header={_t("invite|transfer_user_directory_tab")}>
