@@ -515,23 +515,24 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 });
                 return;
             }
-
-            inviteMultipleToRoom(client, this.props.roomId, targetIds, true)
-                .then(result => {
-                    if (!this.shouldAbortAfterInviteError(result)) {
-                        // handles setting error message too
-                        this.props.onFinished();
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    this.setState({
-                        busy: false,
-                        errorText: _t(
-                            "invite|error_invite",
-                        ),
+            if(client){
+                inviteMultipleToRoom(client, this.props.roomId, targetIds, true)
+                    .then(result => {
+                        if (!this.shouldAbortAfterInviteError(result)) {
+                            // handles setting error message too
+                            this.props.onFinished();
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        this.setState({
+                            busy: false,
+                            errorText: _t(
+                                "invite|error_invite",
+                            ),
+                        });
                     });
-                });
+            }
         }
     };
 
@@ -684,7 +685,7 @@ interface ISelectedListState {
 class SelectedList extends React.Component<ISelectedListProps, ISelectedListState> {
     private containerRef: React.RefObject<HTMLDivElement> = createRef();
 
-    constructor(props: Props) {
+    constructor(props: ISelectedListProps) {
         super(props);
         this.state = { feedback: undefined };
     }
