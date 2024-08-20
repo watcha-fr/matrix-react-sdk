@@ -24,7 +24,7 @@ import { MatrixCall } from "matrix-js-sdk/src/webrtc/call";
 import { _t } from "../../../languageHandler";
 import { findDMForUser } from "../../../utils/dm/findDMForUser";
 import { getAddressType } from "../../../UserAddress";
-import { inviteMultipleToRoom } from "../../../RoomInvite";
+import { IInviteResult, inviteMultipleToRoom } from "../../../RoomInvite";
 import { InviteKind } from "./InviteDialogTypes";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
 import { privateShouldBeEncrypted } from "../../../utils/rooms";
@@ -505,7 +505,8 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         const { selectedList } = this.state;
         const targetIds = selectedList.map(user => user.address);
         if (this.props.kind === InviteKind.Invite) {
-            const room = MatrixClientPeg.get()?.getRoom(this.props.roomId);
+            const client = MatrixClientPeg.get();
+            const room = client?.getRoom(this.props.roomId);
             if (!room) {
                 console.error("Failed to find the room to invite users to");
                 this.setState({
@@ -515,7 +516,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 return;
             }
 
-            inviteMultipleToRoom(this.props.roomId, targetIds)
+            inviteMultipleToRoom(client, this.props.roomId, targetIds, true)
                 .then(result => {
                     if (!this.shouldAbortAfterInviteError(result)) {
                         // handles setting error message too
@@ -535,7 +536,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     };
 
     // come from src/components/views/dialogs/InviteDialog.tsx
-    shouldAbortAfterInviteError(result) {
+    shouldAbortAfterInviteError(result: IInviteResult) {
         const failedUsers = Object.keys(result.states).filter(a => result.states[a] === "error");
         if (failedUsers.length > 0) {
             this.setState({
@@ -672,7 +673,7 @@ const SuggestedList: React.FC<ISuggestedListProps> = ({ pendingSearch, children,
 
 interface ISelectedListProps {
     busy: boolean;
-    invite(): void;
+    invite?: () => void;
     resume(): void;
 }
 
