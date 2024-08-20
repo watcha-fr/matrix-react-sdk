@@ -6,19 +6,19 @@ import re
 CSS_PREFIX = "_watcha-"
 VAR_PREFIX = "$dark-"
 DEST = "res/themes/watcha/css"
-DARK_CSS_PATH = "res/themes/dark/css/_dark.scss"
+DARK_CSS_PATH = "res/themes/dark/css/_dark.pcss"
 CSS_PATHS = [
-    "res/css/structures/_LeftPanel.scss",
-    "res/css/structures/_QuickSettingsButton.scss",
-    "res/css/structures/_RoomSearch.scss",
-    "res/css/structures/_SpacePanel.scss",
-    "res/css/views/avatars/_DecoratedRoomAvatar.scss",
-    "res/css/views/rooms/_NotificationBadge.scss",
-    "res/css/views/rooms/_RoomList.scss",
-    "res/css/views/rooms/_RoomListHeader.scss",
-    "res/css/views/rooms/_RoomSublist.scss",
-    "res/css/views/rooms/_RoomTile.scss",
-    "res/css/views/rooms/_VideoRoomSummary.scss",
+    "res/css/structures/_LeftPanel.pcss",
+    "res/css/structures/_QuickSettingsButton.pcss",
+    "res/css/structures/_RoomSearch.pcss",
+    "res/css/structures/_SpacePanel.pcss",
+    "res/css/views/avatars/_DecoratedRoomAvatar.pcss",
+    "res/css/views/rooms/_NotificationBadge.pcss",
+    "res/css/views/rooms/_RoomList.pcss",
+    "res/css/views/rooms/_RoomListHeader.pcss",
+    "res/css/views/rooms/_RoomSublist.pcss",
+    "res/css/views/rooms/_RoomTile.pcss",
+    "res/css/views/rooms/_VideoRoomSummary.pcss",
 ]
 VAR_PATTERN = r"\$[a-z1-9\-]+"
 
