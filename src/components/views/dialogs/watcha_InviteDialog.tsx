@@ -146,7 +146,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     showInvitePartnerDialog = () => {
         if (this.props.kind === InviteKind.Invite) {
             const { originalList, suggestedList, selectedList } = this.state;
-            const room = MatrixClientPeg.get()?.getRoom(this.props.roomId);
+            const room = MatrixClientPeg.get()?.getRoom(this.props.roomId) || undefined;
             Modal.createDialog(InvitePartnerDialog, {
                 room,
                 originalList,
@@ -193,46 +193,52 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         }
     };
 
-    addToSelectedList = (user: any) => {
+    addToSelectedList = (user: IUser) => {
         this.setState(({ suggestedList, selectedList }) => {
-            for (let i = 0; i < suggestedList.length; i++) {
-                if (suggestedList[i] === user) {
-                    suggestedList.splice(i, 1);
-                    return {
-                        suggestedList,
-                        selectedList: [user, ...selectedList],
-                    };
-                }
+            const updatedSuggestedList = [...suggestedList];
+            const index = updatedSuggestedList.findIndex((u) => u === user);
+            if (index !== -1) {
+                updatedSuggestedList.splice(index, 1);
+                return {
+                    suggestedList: updatedSuggestedList,
+                    selectedList: [user, ...selectedList],
+                };
             }
-            return {};
+            return null;
         });
     };
+    
 
-    removeEmailAddressFromSelectedList = (user: any) => {
+    removeEmailAddressFromSelectedList = (user: IUser) => {
         this.setState(({ selectedList }) => {
-            for (let i = 0; i < selectedList.length; i++) {
-                if (selectedList[i] === user) {
-                    selectedList.splice(i, 1);
-                    return { selectedList };
-                }
+            const updatedSelectedList = [...selectedList];
+            const index = updatedSelectedList.findIndex((u) => u === user);
+            if (index !== -1) {
+                updatedSelectedList.splice(index, 1);
+                return { selectedList: updatedSelectedList };
             }
-            return {};
+            return null;
         });
     };
+    
 
-    removeFromSelectedList = (user: any) => {
+    removeFromSelectedList = (user: IUser) => {
         this.setState(({ suggestedList, selectedList }) => {
-            for (let i = 0; i < selectedList.length; i++) {
-                if (selectedList[i] === user) {
-                    suggestedList = this.getSortedUserList([...suggestedList, user]);
-                    selectedList.splice(i, 1);
-                    return { suggestedList, selectedList };
-                }
+            const updatedSelectedList = [...selectedList];
+            const index = updatedSelectedList.findIndex((u) => u === user);
+    
+            if (index !== -1) {
+                updatedSelectedList.splice(index, 1);
+                const updatedSuggestedList = this.getSortedUserList([...suggestedList, user]);
+                return {
+                    suggestedList: updatedSuggestedList,
+                    selectedList: updatedSelectedList,
+                };
             }
-            return {};
+            return null;
         });
     };
-
+    
     getSortedUserList = (list: any[]) => {
         return list.slice().sort((a, b) => {
             const nameA = a.displayName.toLowerCase();
