@@ -690,7 +690,7 @@ class SelectedList extends React.Component<ISelectedListProps, ISelectedListStat
         this.state = { feedback: undefined };
     }
 
-    public componentDidUpdate(prevProps: Props) {
+    public componentDidUpdate(prevProps: ISelectedListProps) {
         const { busy } = this.props;
         if (busy && !prevProps.busy) {
             this.validate();
