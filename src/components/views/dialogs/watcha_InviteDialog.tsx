@@ -135,7 +135,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         if (props.kind === InviteKind.Invite && !props.roomId) {
             throw new Error("When using InviteKind.Invite a roomId is required for an InviteDialog");
         }
-        }
+        
     }
 
     componentDidMount() {
