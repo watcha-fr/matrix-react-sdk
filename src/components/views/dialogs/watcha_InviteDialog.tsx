@@ -539,6 +539,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     }
 
     render(): React.ReactNode {
+        const { onFinished } = this.props;
         const { pendingSearch, query, busy, errorText } = this.state;
 
         const suggestedTiles = this.getSuggestedTiles();
@@ -566,7 +567,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         }
 
         return (
-            <BaseDialog className="watcha_InviteDialog" {...{ title, this.props.onFinished }}>
+            <BaseDialog className="watcha_InviteDialog" {...{ title, onFinished }}>
                 <div className="mx_Dialog_content">
                     <div className="watcha_InviteDialog_userLists">
                         <Section header={_t("invite|transfer_user_directory_tab")}>
