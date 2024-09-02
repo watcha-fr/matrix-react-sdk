@@ -316,8 +316,10 @@ export async function setTheme(theme?: string): Promise<void> {
      * preferences
      */
     document.body.classList.remove("cpd-theme-light", "cpd-theme-dark", "cpd-theme-light-hc", "cpd-theme-dark-hc");
-
+    /* watcha!
     let compoundThemeClassName = `cpd-theme-` + (stylesheetName.includes("light") ? "light" : "dark");
+    watcha! */
+    let compoundThemeClassName = `cpd-theme-light`;
     // Always respect user OS preference!
     if (isHighContrastTheme(theme) || window.matchMedia("(prefers-contrast: more)").matches) {
         compoundThemeClassName += "-hc";
