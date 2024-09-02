@@ -26,7 +26,7 @@ limitations under the License.
 
     &.expanded {
         margin-left: 20px;
-        padding-left: 44px; // align with toggle collapse button text
+        padding-left: 44px; /* align with toggle collapse button text */
         padding-right: 8px;
     }
 
@@ -36,10 +36,10 @@ limitations under the License.
         width: 32px;
         height: 32px;
         left: 0;
-        mask-image: url('$(res)/img/element-icons/settings.svg');
+        mask-image: url("@vector-im/compound-design-tokens/icons/settings-solid.svg");
         mask-repeat: no-repeat;
         mask-position: center;
-        mask-size: 16px;
+        mask-size: 24px;
         background: $dark-secondary-content;
     }
 
@@ -56,13 +56,13 @@ limitations under the License.
     padding: 16px;
     width: max-content;
     min-width: 200px;
-    contain: unset; // let the dropdown paint beyond the context menu
+    contain: unset; /* let the dropdown paint beyond the context menu */
 
     > div > h2 {
         font-weight: var(--cpd-font-weight-semibold);
         font-size: $font-15px;
         line-height: $font-24px;
-        color: $dark-primary-content;
+        color: var(--cpd-color-text-secondary);
         margin: 0 0 16px;
     }
 
@@ -76,7 +76,7 @@ limitations under the License.
         font-size: $font-12px;
         line-height: $font-15px;
         text-transform: uppercase;
-        color: $dark-tertiary-content;
+        color: var(--cpd-color-text-secondary);
         margin: 20px 0 12px;
     }
 
@@ -97,7 +97,7 @@ limitations under the License.
             margin-left: 6px;
             font-size: $font-15px;
             line-height: $font-24px;
-            color: $dark-secondary-content;
+            color: var(--cpd-color-text-primary);
         }
     }
 
@@ -106,16 +106,18 @@ limitations under the License.
         margin-left: 22px;
         font-size: $font-15px;
         line-height: $font-24px;
-        color: $dark-secondary-content;
+        color: var(--cpd-color-text-primary);
         position: relative;
         margin-bottom: 16px;
     }
 }
 
 .mx_QuickSettingsButton_icon {
+    // TODO remove when all icons have fill=currentColor
     * {
         fill: $dark-secondary-content;
     }
+    color: $dark-secondary-content;
     width: 16px;
     height: 16px;
     position: absolute;
