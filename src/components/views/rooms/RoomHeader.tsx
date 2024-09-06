@@ -26,7 +26,7 @@ import { Icon as ErrorIcon } from "@vector-im/compound-design-tokens/icons/error
 import { Icon as PublicIcon } from "@vector-im/compound-design-tokens/icons/public.svg";
 import { EventType, JoinRule, type Room } from "matrix-js-sdk/src/matrix";
 import { ViewRoomOpts } from "@matrix-org/react-sdk-module-api/lib/lifecycles/RoomViewLifecycle";
-
+import SettingsStore from "../../../settings/SettingsStore"; // watcha+
 import { useRoomName } from "../../../hooks/useRoomName";
 import { RightPanelPhases } from "../../../stores/right-panel/RightPanelStorePhases";
 import { useTopic } from "../../../hooks/room/useTopic";
@@ -55,6 +55,7 @@ import { RoomKnocksBar } from "./RoomKnocksBar";
 import { isVideoRoom } from "../../../utils/video-rooms";
 import { notificationLevelToIndicator } from "../../../utils/notifications";
 import { CallGuestLinkButton } from "./RoomHeader/CallGuestLinkButton";
+import { UIFeature } from "../../../settings/UIFeature"; // watcha+
 
 export default function RoomHeader({
     room,
@@ -321,7 +322,7 @@ export default function RoomHeader({
                         joinCallButton
                     ) : (
                         <>
-                            {!isVideoRoom(room) && videoCallButton}
+                            {!isVideoRoom(room) && SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && videoCallButton}
                             {!useElementCallExclusively && !isVideoRoom(room) && voiceCallButton}
                         </>
                     )}
