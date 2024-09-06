@@ -322,7 +322,7 @@ export default function RoomHeader({
                         joinCallButton
                     ) : (
                         <>
-                            {!isVideoRoom(room) && SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && videoCallButton}
+                            {!isVideoRoom(room) && !SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && videoCallButton}
                             {!useElementCallExclusively && !isVideoRoom(room) && voiceCallButton}
                         </>
                     )}
