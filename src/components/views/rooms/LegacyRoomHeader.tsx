@@ -70,6 +70,7 @@ import { SessionDuration } from "../voip/CallDuration";
 import RoomCallBanner from "../beacon/RoomCallBanner";
 import { shouldShowComponent } from "../../../customisations/helpers/UIComponents";
 import { UIComponent } from "../../../settings/UIFeature";
+import { UIFeature } from "../../../settings/UIFeature"; // watcha+
 
 class DisabledWithReason {
     public constructor(public readonly reason: string) {}
@@ -292,14 +293,19 @@ const CallButtons: FC<CallButtonsProps> = ({ room }) => {
     const makeVoiceCallButton = (behavior: VoiceCallButtonProps["behavior"]): JSX.Element => (
         <VoiceCallButton room={room} busy={busy} setBusy={setBusy} behavior={behavior} />
     );
-    const makeVideoCallButton = (behavior: VideoCallButtonProps["behavior"]): JSX.Element => (
-        <VideoCallButton room={room} busy={busy} setBusy={setBusy} behavior={behavior} />
-    );
-
+    let makeVideoCallButton = null; // watcha+
+    if(!SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)){ // watcha+
+        makeVideoCallButton = (behavior: VideoCallButtonProps["behavior"]): JSX.Element => (
+            <VideoCallButton room={room} busy={busy} setBusy={setBusy} behavior={behavior} />
+        );
+    } // watcha+
     if (isVideoRoom || !showButtons) {
         return null;
     } else if (groupCallsEnabled) {
+        /* watcha!
         if (useElementCallExclusively) {
+        !watcha */
+        if (useElementCallExclusively && makeVideoCallButton) { // watcha+
             if (hasGroupCall) {
                 return makeVideoCallButton(new DisabledWithReason(_t("voip|disabled_ongoing_call")));
             } else if (mayCreateElementCalls) {
@@ -311,28 +317,28 @@ const CallButtons: FC<CallButtonsProps> = ({ room }) => {
             return (
                 <>
                     {makeVoiceCallButton(new DisabledWithReason(_t("voip|disabled_ongoing_call")))}
-                    {makeVideoCallButton(new DisabledWithReason(_t("voip|disabled_ongoing_call")))}
+                    {makeVideoCallButton && makeVideoCallButton(new DisabledWithReason(_t("voip|disabled_ongoing_call")))}
                 </>
             );
         } else if (functionalMembers.length <= 1) {
             return (
                 <>
                     {makeVoiceCallButton(new DisabledWithReason(_t("voip|disabled_no_one_here")))}
-                    {makeVideoCallButton(new DisabledWithReason(_t("voip|disabled_no_one_here")))}
+                    {makeVideoCallButton && makeVideoCallButton(new DisabledWithReason(_t("voip|disabled_no_one_here")))}
                 </>
             );
         } else if (functionalMembers.length === 2) {
             return (
                 <>
                     {makeVoiceCallButton("legacy_or_jitsi")}
-                    {makeVideoCallButton("legacy_or_element")}
+                    {makeVideoCallButton && makeVideoCallButton("legacy_or_element")}
                 </>
             );
         } else if (mayEditWidgets) {
             return (
                 <>
                     {makeVoiceCallButton("legacy_or_jitsi")}
-                    {makeVideoCallButton(mayCreateElementCalls ? "jitsi_or_element" : "legacy_or_jitsi")}
+                    {makeVideoCallButton && makeVideoCallButton(mayCreateElementCalls ? "jitsi_or_element" : "legacy_or_jitsi")}
                 </>
             );
         } else {
@@ -342,7 +348,7 @@ const CallButtons: FC<CallButtonsProps> = ({ room }) => {
             return (
                 <>
                     {makeVoiceCallButton(new DisabledWithReason(_t("voip|disabled_no_perms_start_voice_call")))}
-                    {makeVideoCallButton(videoCallBehavior)}
+                    {makeVideoCallButton && makeVideoCallButton(videoCallBehavior)}
                 </>
             );
         }
@@ -350,28 +356,28 @@ const CallButtons: FC<CallButtonsProps> = ({ room }) => {
         return (
             <>
                 {makeVoiceCallButton(new DisabledWithReason(_t("voip|disabled_ongoing_call")))}
-                {makeVideoCallButton(new DisabledWithReason(_t("voip|disabled_ongoing_call")))}
+                {makeVideoCallButton && makeVideoCallButton(new DisabledWithReason(_t("voip|disabled_ongoing_call")))}
             </>
         );
     } else if (functionalMembers.length <= 1) {
         return (
             <>
                 {makeVoiceCallButton(new DisabledWithReason(_t("voip|disabled_no_one_here")))}
-                {makeVideoCallButton(new DisabledWithReason(_t("voip|disabled_no_one_here")))}
+                {makeVideoCallButton && makeVideoCallButton(new DisabledWithReason(_t("voip|disabled_no_one_here")))}
             </>
         );
     } else if (functionalMembers.length === 2 || mayEditWidgets) {
         return (
             <>
                 {makeVoiceCallButton("legacy_or_jitsi")}
-                {makeVideoCallButton("legacy_or_jitsi")}
+                {makeVideoCallButton && makeVideoCallButton("legacy_or_jitsi")}
             </>
         );
     } else {
         return (
             <>
                 {makeVoiceCallButton(new DisabledWithReason(_t("voip|disabled_no_perms_start_voice_call")))}
-                {makeVideoCallButton(new DisabledWithReason(_t("voip|disabled_no_perms_start_video_call")))}
+                {makeVideoCallButton && makeVideoCallButton(new DisabledWithReason(_t("voip|disabled_no_perms_start_video_call")))}
             </>
         );
     }
