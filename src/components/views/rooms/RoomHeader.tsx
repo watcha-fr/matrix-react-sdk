@@ -120,14 +120,6 @@ export default function RoomHeader({
 
     const videoClick = useCallback((ev) => videoCallClick(ev, callOptions[0]), [callOptions, videoCallClick]);
 
-    const toggleCallButton = (
-        <Tooltip label={isViewingCall ? _t("voip|minimise_call") : _t("voip|maximise_call")}>
-            <IconButton onClick={toggleCall}>
-                <VideoCallIcon />
-            </IconButton>
-        </Tooltip>
-    );
-
     const joinCallButton = (
         <Tooltip label={videoCallDisabledReason ?? _t("voip|video_call")}>
             <Button
@@ -159,47 +151,73 @@ export default function RoomHeader({
         [videoCallDisabledReason],
     );
 
-    const startVideoCallButton = (
-        <>
-            {/* Can be either a menu or just a button depending on the number of call options.*/}
-            {callOptions.length > 1 ? (
-                <Menu
-                    open={menuOpen}
-                    onOpenChange={onOpenChange}
-                    title={_t("voip|video_call_using")}
-                    trigger={
-                        <IconButton
-                            disabled={!!videoCallDisabledReason}
-                            aria-label={videoCallDisabledReason ?? _t("voip|video_call")}
-                        >
-                            {callIconWithTooltip}
-                        </IconButton>
-                    }
-                    side="left"
-                    align="start"
-                >
-                    {callOptions.map((option) => (
-                        <MenuItem
-                            key={option}
-                            label={getPlatformCallTypeLabel(option)}
-                            aria-label={getPlatformCallTypeLabel(option)}
-                            onClick={(ev) => videoCallClick(ev, option)}
-                            Icon={VideoCallIcon}
-                            onSelect={() => {} /* Dummy handler since we want the click event.*/}
-                        />
-                    ))}
-                </Menu>
-            ) : (
-                <IconButton
-                    disabled={!!videoCallDisabledReason}
-                    aria-label={videoCallDisabledReason ?? _t("voip|video_call")}
-                    onClick={videoClick}
-                >
-                    {callIconWithTooltip}
+    let videoCallButton = null; // watcha+
+    if (!SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)){ // watcha+
+        const startVideoCallButton = (
+            <>
+                {/* Can be either a menu or just a button depending on the number of call options.*/}
+                {callOptions.length > 1 ? (
+                    <Menu
+                        open={menuOpen}
+                        onOpenChange={onOpenChange}
+                        title={_t("voip|video_call_using")}
+                        trigger={
+                            <IconButton
+                                disabled={!!videoCallDisabledReason}
+                                aria-label={videoCallDisabledReason ?? _t("voip|video_call")}
+                            >
+                                {callIconWithTooltip}
+                            </IconButton>
+                        }
+                        side="left"
+                        align="start"
+                    >
+                        {callOptions.map((option) => (
+                            <MenuItem
+                                key={option}
+                                label={getPlatformCallTypeLabel(option)}
+                                aria-label={getPlatformCallTypeLabel(option)}
+                                onClick={(ev) => videoCallClick(ev, option)}
+                                Icon={VideoCallIcon}
+                                onSelect={() => {} /* Dummy handler since we want the click event.*/}
+                            />
+                        ))}
+                    </Menu>
+                ) : (
+                    <IconButton
+                        disabled={!!videoCallDisabledReason}
+                        aria-label={videoCallDisabledReason ?? _t("voip|video_call")}
+                        onClick={videoClick}
+                    >
+                        {callIconWithTooltip}
+                    </IconButton>
+                )}
+            </>
+        );
+
+        const toggleCallButton = (
+            <Tooltip label={isViewingCall ? _t("voip|minimise_call") : _t("voip|maximise_call")}>
+                <IconButton onClick={toggleCall}>
+                    <VideoCallIcon />
                 </IconButton>
-            )}
-        </>
-    );
+            </Tooltip>
+        );
+
+        const closeLobbyButton = (
+            <Tooltip label={_t("voip|close_lobby")}>
+                <IconButton onClick={toggleCall} aria-label={_t("voip|close_lobby")}>
+                    <CloseCallIcon />
+                </IconButton>
+            </Tooltip>
+        );
+
+        videoCallButton = startVideoCallButton;
+        if (isConnectedToCall) {
+            videoCallButton = toggleCallButton;
+        } else if (isViewingCall) {
+            videoCallButton = closeLobbyButton;
+        }
+    } // watcha+
     const voiceCallButton = (
         <Tooltip label={voiceCallDisabledReason ?? _t("voip|voice_call")}>
             <IconButton
@@ -214,19 +232,6 @@ export default function RoomHeader({
             </IconButton>
         </Tooltip>
     );
-    const closeLobbyButton = (
-        <Tooltip label={_t("voip|close_lobby")}>
-            <IconButton onClick={toggleCall} aria-label={_t("voip|close_lobby")}>
-                <CloseCallIcon />
-            </IconButton>
-        </Tooltip>
-    );
-    let videoCallButton = startVideoCallButton;
-    if (isConnectedToCall) {
-        videoCallButton = toggleCallButton;
-    } else if (isViewingCall) {
-        videoCallButton = closeLobbyButton;
-    }
 
     return (
         <>
@@ -322,7 +327,7 @@ export default function RoomHeader({
                         joinCallButton
                     ) : (
                         <>
-                            {!isVideoRoom(room) && !SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && videoCallButton}
+                            {!isVideoRoom(room)  && videoCallButton}
                             {!useElementCallExclusively && !isVideoRoom(room) && voiceCallButton}
                         </>
                     )}
