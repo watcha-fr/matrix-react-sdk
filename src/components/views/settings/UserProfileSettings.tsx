@@ -17,7 +17,7 @@ limitations under the License.
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { logger } from "matrix-js-sdk/src/logger";
 import { EditInPlace, Alert } from "@vector-im/compound-web";
-
+import SettingsStore from "../../../settings/SettingsStore"; // watcha+
 import { _t } from "../../../languageHandler";
 import { OwnProfileStore } from "../../../stores/OwnProfileStore";
 import AvatarSetting from "./AvatarSetting";
@@ -29,6 +29,8 @@ import UserIdentifierCustomisations from "../../../customisations/UserIdentifier
 import { useId } from "../../../utils/useId";
 import CopyableText from "../elements/CopyableText";
 import { useMatrixClientContext } from "../../../contexts/MatrixClientContext";
+import { UIFeature } from "../../../settings/UIFeature"; // watcha+
+
 
 const SpinnerToast: React.FC = ({ children }) => (
     <>
@@ -167,6 +169,7 @@ const UserProfileSettings: React.FC = () => {
                     onCancel={onDisplayNameCancel}
                     onSave={onDisplayNameSave}
                     error={displayNameError ? _t("settings|general|display_name_error") : undefined}
+                    disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled )} // watcha+
                 />
             </div>
             {avatarError && (
