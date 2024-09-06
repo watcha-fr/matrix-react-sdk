@@ -1310,7 +1310,7 @@ export const SETTINGS: { [setting: string]: ISetting } = {
     },
     [UIFeature.watcha_SitivFieldDisabled]: {
         supportedLevels: LEVELS_UI_FEATURE,
-        default: false,
+        default: true,
     },
     "feature_watcha_webrtc": {
         isFeature: true,
