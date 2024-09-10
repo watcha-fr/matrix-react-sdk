@@ -3999,7 +3999,7 @@
         "my_documents_title": "Ouvrir mes documents dans un nouvel onglet",
         "nextcloud_share": "Partagez un dossier Nextcloud avec les membres du salon et utilisez-le comme espace de stockage commun.",
         "no_folder_selected": "Aucun dossier sélectionné",
-        "no_user_can_be_invited": "Aucun utilisateur ne peut être invité à rejoindre ce salon depuis l'annuaire.",
+        "no_user_can_be_invited": "Entrez le nom de votre contact dans le champ \"Filtrer les utilisateurs\" ci-dessus pour le voir apparaitre",
         "no_users_match": "Aucun utilisateur ne correspond à votre recherche.",
         "remove_invitation": "Cliquez pour supprimer cette invitation",
         "select_folder_share": "Sélectionnez un dossier à partager",
