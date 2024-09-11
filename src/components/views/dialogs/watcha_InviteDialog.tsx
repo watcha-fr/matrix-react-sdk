@@ -373,24 +373,11 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             })
             .catch(err => {
                 console.error("Error whilst searching user directory: ", err);
-                this.setState({ errorText: err.errcode ? err.message : _t("error|something_went_wrong") });
+                this.setState({ _t("watcha|error_start_dm") });
+                //this.setState({ errorText: err.errcode ? err.message : _t("error|something_went_wrong") });
             })
             .then(() => {
                 this.setState({ pendingSearch: false });
-            },
-            function (err) {
-                logger.error("Failed to start dm "+ err);
-                let description = _t("create_room|generic_error");
-                // watcha+
-                if (err.errcode === "M_FORBIDDEN") {
-                    description = _t("space|user_lacks_permission");
-                }
-                // +watcha
-                Modal.createDialog(ErrorDialog, {
-                    title: _t("watcha|error_start_dm"),
-                    description,
-                });
-                return null;
             });
     }
 
