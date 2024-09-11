@@ -373,7 +373,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             })
             .catch(err => {
                 console.error("Error whilst searching user directory: ", err);
-                this.setState({ errorText: _t("error|error_start_dm") });
+                this.setState({ errorText: _t("watcha|error_start_dm") });
                 //this.setState({ errorText: err.errcode ? err.message : _t("error|something_went_wrong") });
             })
             .then(() => {
