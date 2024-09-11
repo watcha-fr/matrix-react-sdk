@@ -145,11 +145,20 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     }
 
     showInvitePartnerDialog = () => {
-        if (this.props.kind === InviteKind.Invite || this.props.kind === InviteKind.Dm) {
+        if (this.props.kind === InviteKind.Invite) {
             const { originalList, suggestedList, selectedList } = this.state;
             const room = MatrixClientPeg.get()?.getRoom(this.props.roomId) || undefined;
             Modal.createDialog(InvitePartnerDialog, {
                 room,
+                originalList,
+                suggestedList,
+                selectedList,
+                addEmailAddressToSelectedList: this.addEmailAddressToSelectedList,
+            });
+        }
+        else if(this.props.kind === InviteKind.Dm) {
+            const { originalList, suggestedList, selectedList } = this.state;
+            Modal.createDialog(InvitePartnerDialog, {
                 originalList,
                 suggestedList,
                 selectedList,
