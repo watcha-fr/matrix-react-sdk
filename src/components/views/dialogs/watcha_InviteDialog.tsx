@@ -19,7 +19,7 @@ import { debounce } from "lodash";
 import { IInvite3PID } from "matrix-js-sdk/src/@types/requests";
 import { Room } from "matrix-js-sdk/src/models/room";
 import classNames from "classnames";
-import ErrorDialog from "./components/views/dialogs/ErrorDialog";
+import ErrorDialog from "./ErrorDialog";
 import { MatrixCall } from "matrix-js-sdk/src/webrtc/call";
 import { _t } from "../../../languageHandler";
 import { findDMForUser } from "../../../utils/dm/findDMForUser";
