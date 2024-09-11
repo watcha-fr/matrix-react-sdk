@@ -373,8 +373,12 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             })
             .catch(err => {
                 console.error("Error whilst searching user directory: ", err);
-                this.setState({ errorText: _t("watcha|error_start_dm") });
-                //this.setState({ errorText: err.errcode ? err.message : _t("error|something_went_wrong") });
+                if(err.errcode === "M_FORBIDDEN"){
+                    this.setState({ errorText: _t("watcha|error_start_dm") });
+                }
+                else {
+                    this.setState({ errorText: err.errcode ? err.message : _t("error|something_went_wrong") });
+                }
             })
             .then(() => {
                 this.setState({ pendingSearch: false });
