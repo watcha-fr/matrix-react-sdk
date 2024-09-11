@@ -145,7 +145,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
     }
 
     showInvitePartnerDialog = () => {
-        if (this.props.kind === InviteKind.Invite) {
+        if (this.props.kind === InviteKind.Invite || this.props.kind === InviteKind.Dm) {
             const { originalList, suggestedList, selectedList } = this.state;
             const room = MatrixClientPeg.get()?.getRoom(this.props.roomId) || undefined;
             Modal.createDialog(InvitePartnerDialog, {
@@ -570,8 +570,8 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
 
         if (this.props.kind === InviteKind.Dm){
             title = _t("action|start_chat");
-            invite = this.inviteUsers;
-            /*invite = this.startDm;*/
+            //invite = this.inviteUsers;
+            invite = this.startDm;
         } else if (this.props.kind === InviteKind.Invite) {
             // KIND_INVITE
             const roomId = this.props.roomId;
