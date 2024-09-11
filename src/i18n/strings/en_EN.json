@@ -3985,6 +3985,7 @@
         "error_changing_nextcloud_description": "An error occurred changing the room's Nextcloud share.",
         "error_email_domain": "Users with an email address belonging to this domain <b></b> should not be invited as external partners",
         "error_two_ressources": "It is not possible to share two resources of the same type within the same room",
+        "error_start_dm":"Failure to start DM",
         "filter_users": "Filter users",
         "ignore_user_button": "Show button to ignore user",
         "ignore_user_button_description": "Also visible on incoming invitations",

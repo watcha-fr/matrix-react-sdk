@@ -3987,6 +3987,7 @@
         "error_changing_nextcloud_description": "Une erreur s'est produite lors de la modification du partage Nextcloud dans le salon.",
         "error_email_domain": "Les utilisateurs possédant une adresse e-mail appartenant à ce domaine <b></b> ne doivent pas être invités en tant que partenaires externes",
         "error_two_ressources": "Il n'est pas possible de partager deux ressources du même type au sein d'un même salon",
+        "error_start_dm":"Echec de création de message privé",
         "filter_users": "Filtrer les utilisateurs",
         "ignore_user_button": "Afficher le bouton pour ignorer l'utilisateur",
         "ignore_user_button_description": "Également visible sur les invitations entrantes",

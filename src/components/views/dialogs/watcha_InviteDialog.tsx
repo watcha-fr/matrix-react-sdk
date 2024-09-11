@@ -19,7 +19,7 @@ import { debounce } from "lodash";
 import { IInvite3PID } from "matrix-js-sdk/src/@types/requests";
 import { Room } from "matrix-js-sdk/src/models/room";
 import classNames from "classnames";
-
+import ErrorDialog from "./components/views/dialogs/ErrorDialog";
 import { MatrixCall } from "matrix-js-sdk/src/webrtc/call";
 import { _t } from "../../../languageHandler";
 import { findDMForUser } from "../../../utils/dm/findDMForUser";
@@ -377,6 +377,20 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             })
             .then(() => {
                 this.setState({ pendingSearch: false });
+            },
+            function (err) {
+                logger.error("Failed to start dm "+ err);
+                let description = _t("create_room|generic_error");
+                // watcha+
+                if (err.errcode === "M_FORBIDDEN") {
+                    description = _t("space|user_lacks_permission");
+                }
+                // +watcha
+                Modal.createDialog(ErrorDialog, {
+                    title: _t("watcha|error_start_dm"),
+                    description,
+                });
+                return null;
             });
     }
 
