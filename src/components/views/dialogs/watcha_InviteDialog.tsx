@@ -349,7 +349,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
         if (!url) {
             url = Avatar.avatarUrlForUser(user, AVATAR_SIZE, AVATAR_SIZE) ?? undefined;
         }
-        return <BaseAvatar size={'${AVATAR_SIZE}px'} {...{ name, url }} />;
+        return <BaseAvatar size={`${AVATAR_SIZE}px`} {...{ name, url }} />;
     };
 
     // come from src/components/views/dialogs/AddressPickerDialog.js
