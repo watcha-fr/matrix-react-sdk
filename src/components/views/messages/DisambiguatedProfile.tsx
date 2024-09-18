@@ -71,7 +71,7 @@ export default class DisambiguatedProfile extends React.Component<IProps> {
         return (
             <div className="mx_DisambiguatedProfile" title={withTooltip ? title : undefined} onClick={onClick}>
                 <span className={displayNameClasses} dir="auto">
-                    {rawDisplayName}
+                    {mxid}
                 </span>
                 {mxidElement}
             </div>
