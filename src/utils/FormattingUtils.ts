@@ -77,7 +77,9 @@ export function formatCryptoKey(key: string): string {
 
 export function getUserNameColorClass(userId: string): string {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const number = useIdColorHash(userId);
+    let number = useIdColorHash(userId);
+    if(userId.includes("watchatest.watcha.fr"))
+        number = 1;
     return `mx_Username_color${number}`;
 }
 
