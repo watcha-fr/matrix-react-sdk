@@ -32,6 +32,7 @@ import UserIdentifierCustomisations from "../../../customisations/UserIdentifier
 import { E2EState } from "./E2EIcon";
 import { asyncSome } from "../../../utils/arrays";
 import { getUserDeviceIds } from "../../../utils/crypto/deviceInfo";
+import { ThirdPartyIdentifier } from "../../../AddThreepid";
 
 interface IProps {
     member: RoomMember;
@@ -41,6 +42,7 @@ interface IProps {
 interface IState {
     isRoomEncrypted: boolean;
     e2eStatus?: E2EState;
+    email: ThirdPartyIdentifier;
 }
 
 export default class MemberTile extends React.Component<IProps, IState> {
@@ -216,7 +218,7 @@ export default class MemberTile extends React.Component<IProps, IState> {
             e2eStatus = this.state.e2eStatus;
         }
 
-        const nameJSX = <DisambiguatedProfile member={member} fallbackName={name || ""} />;
+        const nameJSX = <DisambiguatedProfile member={member} fallbackName={name || ""} email={this.props.email.address} />;
 
         return (
             <EntityTile
