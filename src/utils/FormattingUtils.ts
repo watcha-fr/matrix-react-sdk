@@ -16,7 +16,7 @@ limitations under the License.
 */
 
 import { ReactElement, ReactNode } from "react";
-import { useIdColorHash } from "@vector-im/compound-web";
+//import { useIdColorHash } from "@vector-im/compound-web";
 
 import { _t, getCurrentLanguage, getUserLanguage } from "../languageHandler";
 import { jsxJoin } from "./ReactUtils";
