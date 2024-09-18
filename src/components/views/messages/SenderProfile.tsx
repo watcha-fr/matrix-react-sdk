@@ -20,13 +20,11 @@ import { MatrixEvent, MsgType } from "matrix-js-sdk/src/matrix";
 
 import DisambiguatedProfile from "./DisambiguatedProfile";
 import { useRoomMemberProfile } from "../../../hooks/room/useRoomMemberProfile";
-import { ThirdPartyIdentifier } from "../../../AddThreepid";
 
 interface IProps {
     mxEvent: MatrixEvent;
     onClick?(): void;
     withTooltip?: boolean;
-    email: ThirdPartyIdentifier;
 }
 
 export default function SenderProfile({ mxEvent, onClick, withTooltip }: IProps): JSX.Element {
@@ -43,7 +41,6 @@ export default function SenderProfile({ mxEvent, onClick, withTooltip }: IProps)
             colored={true}
             emphasizeDisplayName={true}
             withTooltip={withTooltip}
-            email={this.props.email.address}
         />
     ) : (
         <></>

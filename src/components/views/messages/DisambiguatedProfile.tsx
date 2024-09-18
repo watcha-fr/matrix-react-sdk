@@ -31,7 +31,7 @@ interface IProps {
     colored?: boolean;
     emphasizeDisplayName?: boolean;
     withTooltip?: boolean;
-    email: ThirdPartyIdentifier;
+    email?: ThirdPartyIdentifier;
 }
 
 export default class DisambiguatedProfile extends React.Component<IProps> {
