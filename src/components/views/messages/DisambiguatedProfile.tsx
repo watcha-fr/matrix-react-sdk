@@ -35,10 +35,7 @@ interface IProps {
 export default class DisambiguatedProfile extends React.Component<IProps> {
     public render(): React.ReactNode {
         const { fallbackName, member, colored, emphasizeDisplayName, withTooltip, onClick } = this.props;
-        /* watcha+
         const rawDisplayName = member?.rawDisplayName || fallbackName;
-        +watcha */
-        const rawDisplayName = member?.name || fallbackName;
         const mxid = member?.userId;
 
         let colorClass: string | undefined;
@@ -71,7 +68,7 @@ export default class DisambiguatedProfile extends React.Component<IProps> {
         return (
             <div className="mx_DisambiguatedProfile" title={withTooltip ? title : undefined} onClick={onClick}>
                 <span className={displayNameClasses} dir="auto">
-                    {mxid}
+                    {rawDisplayName}
                 </span>
                 {mxidElement}
             </div>
