@@ -22,7 +22,6 @@ import classNames from "classnames";
 import { _t } from "../../../languageHandler";
 import { getUserNameColorClass } from "../../../utils/FormattingUtils";
 import UserIdentifier from "../../../customisations/UserIdentifier";
-import { ThirdPartyIdentifier } from "../../../AddThreepid";
 
 interface IProps {
     member?: RoomMember | null;
@@ -31,7 +30,6 @@ interface IProps {
     colored?: boolean;
     emphasizeDisplayName?: boolean;
     withTooltip?: boolean;
-    email: ThirdPartyIdentifier;
 }
 
 export default class DisambiguatedProfile extends React.Component<IProps> {
