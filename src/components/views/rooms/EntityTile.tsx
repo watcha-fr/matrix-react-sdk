@@ -183,6 +183,7 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
                     <div className="mx_EntityTile_avatar">
                         {av}
                         {e2eIcon}
+                        <div className="mx_EntityTile_avatar_circle"></div> {/* Cercle rouge */}
                     </div>
                     {nameAndPresence}
                     {powerLabel}
