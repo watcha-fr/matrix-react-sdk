@@ -70,15 +70,25 @@ limitations under the License.
     line-height: 0;
 }
 
-.mx_EntityTile_avatar_circle {
+.mx_EntityTile_avatar_crown {
     position: absolute;
-    top: 0; /* Aligner en haut de l'avatar */
-    right: 0; /* Aligner à droite de l'avatar */
-    width: 10px; /* Taille du cercle */
-    height: 10px; /* Taille du cercle */
-    background-color: red; /* Couleur rouge */
-    border-radius: 50%; /* Rendre la forme circulaire */
-    border: 2px solid white; /* Si vous voulez ajouter une bordure blanche */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto; /* Centrer la couronne */
+    width: 100%; /* La couronne occupe tout l'espace du conteneur */
+    height: 100%;
+    border: 4px solid red; /* Bordure rouge pour la couronne */
+    border-radius: 50%; /* Pour faire un cercle */
+    box-sizing: border-box; /* S'assure que la bordure est incluse dans la taille totale */
+    z-index: 1; /* Derrière l'avatar */
+}
+
+.mx_EntityTile_avatar img, /* Si l'avatar est une image */
+.mx_EntityTile_avatar .mx_BaseAvatar {
+    position: relative;
+    z-index: 2; /* Avatar au-dessus de la couronne */
 }
 
 .mx_EntityTile_name {
