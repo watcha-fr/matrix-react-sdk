@@ -233,6 +233,7 @@ export default class MemberTile extends React.Component<IProps, IState> {
                 showPresence={this.props.showPresence}
                 e2eStatus={e2eStatus}
                 onClick={this.onClick}
+                userId={member?.userId}
             />
         );
     }
