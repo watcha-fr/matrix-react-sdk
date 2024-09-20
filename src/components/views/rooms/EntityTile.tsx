@@ -182,9 +182,10 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
                     onClick={this.props.onClick}
                 >
                     <div className="mx_EntityTile_avatar">
-                        <div className="mx_EntityTile_avatar_crown"></div>
+                        <div className="mx_EntityTile_avatar_crown">
                         {av}
                         {e2eIcon}
+                        </div>
                     </div>
                     {nameAndPresence}
                     {powerLabel}
