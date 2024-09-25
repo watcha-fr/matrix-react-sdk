@@ -1066,7 +1066,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                 );
             avatar = (
                 <div className="mx_EventTile_avatar">
-                    <div className="mx_EventTile_avatar_crown mx_Username_color_${this.props.userId?.split(":")[1].split(".")[0] || "0"}" 
+                    <div className={`mx_EventTile_avatar_crown mx_Username_color_${this.props.userId?.split(":")[1].split(".")[0] || "0"}`} 
                     style={{ width: avatarCrownSize, height: avatarCrownSize }}></div> 
                     <MemberAvatar
                         member={member}
