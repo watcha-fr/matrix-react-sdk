@@ -43,21 +43,18 @@ $left-gutter: 64px;
 
     .mx_EventTile_avatar_crown {
     position: absolute;
-    top: 50%;
-    left: 51%;
-    width: 39px;  /* Largeur fixe de 44px */
+    width: 36;  /* Largeur fixe de 44px */
     height: 39px; /* Hauteur fixe de 44px */
-    border: 4px solid red; /* Bordure rouge pour la couronne */
+    border: 2px solid red; /* Bordure rouge pour la couronne */
     border-radius: 50%; /* Pour créer un cercle */
     box-sizing: border-box; /* Inclure la bordure dans la taille totale */
-    transform: translate(-50%, -50%); /* Pour centrer la couronne autour de l'avatar */
-    z-index: 1; /* Derrière l'avatar */
+    z-index: 2; /* Derrière l'avatar */
     }
 
     .mx_EventTile_avatar img, /* Si l'avatar est une image */
     .mx_EventTile_avatar .mx_BaseAvatar {
         position: relative;
-        z-index: 2; /* Avatar au-dessus de la couronne */
+        z-index: 1; /* Avatar au-dessus de la couronne */
     }
 
     .mx_EventTile_body {
