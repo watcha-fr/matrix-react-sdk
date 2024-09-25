@@ -1014,6 +1014,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
 
         if (isRenderingNotification) {
             avatarSize = "24px";
+            avatarCrownSize = "28px"; // watcha+
             needsSenderProfile = true;
         } else if (isInfoMessage) {
             // a small avatar, with no sender profile, for
@@ -1026,9 +1027,11 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
             (this.context.timelineRenderingType === TimelineRenderingType.Thread && !this.props.continuation)
         ) {
             avatarSize = "32px";
+            avatarCrownSize = "36px"; // watcha+
             needsSenderProfile = true;
         } else if (eventType === EventType.RoomCreate || isBubbleMessage) {
             avatarSize = null;
+            avatarCrownSize = null; // watcha+
             needsSenderProfile = false;
         } else if (this.props.layout == Layout.IRC) {
             avatarSize = "14px";
@@ -1041,6 +1044,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
         ) {
             // no avatar or sender profile for continuation messages and call tiles
             avatarSize = null;
+            avatarCrownSize = null; // watcha+
             needsSenderProfile = false;
         } else {
             avatarSize = "30px";
@@ -1066,7 +1070,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                 );
             avatar = (
                 <div className="mx_EventTile_avatar">
-                    <div className={`mx_EventTile_avatar_crown mx_Username_color_${this.props.userId?.split(":")[1].split(".")[0] || "0"}`} 
+                    <div className={`mx_EventTile_avatar_crown mx_Username_color_${member.userId?.split(":")[1].split(".")[0] || "0"}`} 
                     style={{ width: avatarCrownSize, height: avatarCrownSize }}></div> 
                     <MemberAvatar
                         member={member}
