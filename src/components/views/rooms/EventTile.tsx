@@ -1009,6 +1009,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
         let avatar: JSX.Element | null = null;
         let sender: JSX.Element | null = null;
         let avatarSize: string | null;
+        let avatarCrownSize: string | null; // watcha+
         let needsSenderProfile: boolean;
 
         if (isRenderingNotification) {
@@ -1018,6 +1019,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
             // a small avatar, with no sender profile, for
             // joins/parts/etc
             avatarSize = "14px";
+            avatarCrownSize = "18px"; // watcha+
             needsSenderProfile = false;
         } else if (
             this.context.timelineRenderingType === TimelineRenderingType.ThreadsList ||
@@ -1030,6 +1032,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
             needsSenderProfile = false;
         } else if (this.props.layout == Layout.IRC) {
             avatarSize = "14px";
+            avatarCrownSize = "18px";
             needsSenderProfile = true;
         } else if (
             (this.props.continuation && this.context.timelineRenderingType !== TimelineRenderingType.File) ||
@@ -1041,6 +1044,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
             needsSenderProfile = false;
         } else {
             avatarSize = "30px";
+            avatarCrownSize = "34px"; // watcha+
             needsSenderProfile = true;
         }
 
@@ -1062,7 +1066,8 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                 );
             avatar = (
                 <div className="mx_EventTile_avatar">
-                    <div className="mx_EventTile_avatar_crown"></div>
+                    <div className="mx_EventTile_avatar_crown mx_Username_color_${this.props.userId?.split(":")[1].split(".")[0] || "0"}" 
+                    style={{ width: avatarCrownSize, height: avatarCrownSize }}></div> 
                     <MemberAvatar
                         member={member}
                         size={avatarSize}
