@@ -1009,7 +1009,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
         let avatar: JSX.Element | null = null;
         let sender: JSX.Element | null = null;
         let avatarSize: string | null;
-        let avatarCrownSize: string | null; // watcha+
+        let avatarCrownSize: string; // watcha+
         let needsSenderProfile: boolean;
 
         if (isRenderingNotification) {
@@ -1044,7 +1044,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
         ) {
             // no avatar or sender profile for continuation messages and call tiles
             avatarSize = null;
-            avatarCrownSize = null; // watcha+
+            avatarCrownSize = "0px"; // watcha+
             needsSenderProfile = false;
         } else {
             avatarSize = "30px";
@@ -1070,7 +1070,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                 );
             avatar = (
                 <div className="mx_EventTile_avatar">
-                    <div className={`mx_EventTile_avatar_crown mx_Username_color_${member.userId?.split(":")[1].split(".")[0] || "0"}`} 
+                    <div className={`mx_EventTile_avatar_crown mx_Username_color_${member?.userId?.split(":")[1].split(".")[0] || "0"}`} 
                     style={{ width: avatarCrownSize, height: avatarCrownSize }}></div> 
                     <MemberAvatar
                         member={member}
