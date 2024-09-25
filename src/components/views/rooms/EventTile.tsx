@@ -1031,7 +1031,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
             needsSenderProfile = true;
         } else if (eventType === EventType.RoomCreate || isBubbleMessage) {
             avatarSize = null;
-            avatarCrownSize = null; // watcha+
+            avatarCrownSize = "0px"; // watcha+
             needsSenderProfile = false;
         } else if (this.props.layout == Layout.IRC) {
             avatarSize = "14px";
