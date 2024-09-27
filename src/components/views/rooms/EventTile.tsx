@@ -1009,7 +1009,6 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
         let avatar: JSX.Element | null = null;
         let sender: JSX.Element | null = null;
         let avatarSize: string | null;
-        let avatarCrownSize: string; // watcha+
         let needsSenderProfile: boolean;
 
         if (isRenderingNotification) {
