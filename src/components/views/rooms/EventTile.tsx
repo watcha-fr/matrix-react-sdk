@@ -1013,28 +1013,23 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
 
         if (isRenderingNotification) {
             avatarSize = "24px";
-            avatarCrownSize = "28px"; // watcha+
             needsSenderProfile = true;
         } else if (isInfoMessage) {
             // a small avatar, with no sender profile, for
             // joins/parts/etc
             avatarSize = "14px";
-            avatarCrownSize = "18px"; // watcha+
             needsSenderProfile = false;
         } else if (
             this.context.timelineRenderingType === TimelineRenderingType.ThreadsList ||
             (this.context.timelineRenderingType === TimelineRenderingType.Thread && !this.props.continuation)
         ) {
             avatarSize = "32px";
-            avatarCrownSize = "36px"; // watcha+
             needsSenderProfile = true;
         } else if (eventType === EventType.RoomCreate || isBubbleMessage) {
             avatarSize = null;
-            avatarCrownSize = "0px"; // watcha+
             needsSenderProfile = false;
         } else if (this.props.layout == Layout.IRC) {
             avatarSize = "14px";
-            avatarCrownSize = "18px";
             needsSenderProfile = true;
         } else if (
             (this.props.continuation && this.context.timelineRenderingType !== TimelineRenderingType.File) ||
@@ -1043,11 +1038,9 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
         ) {
             // no avatar or sender profile for continuation messages and call tiles
             avatarSize = null;
-            avatarCrownSize = "0px"; // watcha+
             needsSenderProfile = false;
         } else {
             avatarSize = "30px";
-            avatarCrownSize = "34px"; // watcha+
             needsSenderProfile = true;
         }
 
