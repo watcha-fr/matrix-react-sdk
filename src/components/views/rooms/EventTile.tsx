@@ -1060,10 +1060,21 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                 ![TimelineRenderingType.ThreadsList, TimelineRenderingType.Notification].includes(
                     this.context.timelineRenderingType,
                 );
+
+            // watcha+   
+            const allowedValues = ["watchatest", "sitiv", "mdl", "vdl"]; // Liste des valeurs autorisées
+            const userIdPart = member?.userId?.split(":")[1]?.split(".")[0]; // Extrait de l'ID utilisateur
+
+            // Vérifie si userIdPart est dans la liste
+            const crownClass = allowedValues.includes(userIdPart) ? `mx_EventTile_avatar_crown_${userIdPart}` : '';
             avatar = (
                 <div className="mx_EventTile_avatar">
-                    <div className={`mx_EventTile_avatar_crown_${member?.userId?.split(":")[1].split(".")[0] || "0"}`} 
-                    style={{ width: avatarSize, height: avatarSize }}></div> 
+                     {crownClass && (
+                            <div 
+                                className={crownClass} 
+                                style={{ width: avatarSize, height: avatarSize }}>
+                            </div>
+                        )} 
                     <MemberAvatar
                         member={member}
                         size={avatarSize}
@@ -1072,6 +1083,8 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                     />
                 </div>
             );
+
+            // +watcha
         }
 
         if (needsSenderProfile && this.props.hideSender !== true) {
