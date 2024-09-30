@@ -180,7 +180,7 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
         const userIdPart = this.props.userId?.split(":")[1]?.split(".")[0]; // Extrait de l'ID utilisateur
 
         // Vérifie si userIdPart est dans la liste
-        const crownClass = allowedValues.includes(userIdPart) ? `mx_EventTile_avatar_crown_${userIdPart}` : '';
+        const crownClass = userIdPart && allowedValues.includes(userIdPart) ? `mx_EventTile_avatar_crown_${userIdPart}` : '';
         return (
             <div>
                 <AccessibleButton
