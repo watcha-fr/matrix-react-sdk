@@ -124,6 +124,7 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
     }
 
     public render(): React.ReactNode {
+        console.log("User ID:", this.props.userId); 
         const mainClassNames: Record<string, boolean> = {
             mx_EntityTile: true,
         };
@@ -192,9 +193,6 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
                         {crownClass && ( <div  className={crownClass} ></div>)} 
                         {av}
                         {e2eIcon}
-                    </div>
-                    <div>
-                        <p>User Id: {this.props.userId}</p>
                     </div>
                     {nameAndPresence}
                     {powerLabel}
