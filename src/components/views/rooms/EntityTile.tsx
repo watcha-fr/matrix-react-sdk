@@ -179,10 +179,10 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
         // watcha+   
         const allowedValues = ["watchatest.watcha.fr", "discuter.sitiv.fr", "discuter-vdl.territoirenumeriqueouvert.org", "discuter-mdl.territoirenumeriqueouvert.org"]; // Liste des valeurs autorisées
         const userIdPart = this.props.userId?.split(":")[1]?.split(".")[0]; // Extrait de l'ID utilisateur
-        const userIdReplace = userIdPart.replace(/\./g, "_")
+        const userIdReplace = userIdPart?.replace(/\./g, "_")
 
         // Vérifie si userIdPart est dans la liste
-        const crownClass = userIdPart && allowedValues.includes(userIdPart) ? `mx_EventTile_avatar_crown_${userIdReplace}` : '';
+        const crownClass = userIdReplace && allowedValues.includes(userIdPart) ? `mx_EventTile_avatar_crown_${userIdReplace}` : '';
         return (
             <div>
                 <AccessibleButton
