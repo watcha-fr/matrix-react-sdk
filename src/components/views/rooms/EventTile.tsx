@@ -1062,7 +1062,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                 );
 
             // watcha+   
-            const allowedValues = ["watchatest.watcha.fr", "discuter.sitiv.fr", "discuter-vdl.territoirenumeriqueouvert.org", "discuter-mdl.territoirenumeriqueouvert.org"]; // Liste des valeurs autorisées
+            const allowedValues = ["watchatest.watcha.fr", "teamnetdev.watcha.fr", "discuter.sitiv.fr", "discuter-vdl.territoirenumeriqueouvert.org", "discuter-mdl.territoirenumeriqueouvert.org"]; // Liste des valeurs autorisées
             const userIdPart = member?.userId?.split(":")[1]; // Extrait de l'ID utilisateur
             const userIdReplace = userIdPart?.replace(/\./g, "_")
 
