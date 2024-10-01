@@ -280,6 +280,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             return user.membership && subtextLabel.hasOwnProperty(user.membership) && (user.membership === "join" || user.membership === "invite") ? (
                 <EntityTile
                     {...commonProps}
+                    userId={user.address}
                     className="watcha_InviteDialog_EntityTile_roomMember"
                     subtextLabel={subtextLabel[user.membership]}
                     presenceState="offline"
@@ -315,6 +316,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             return user.isKnown ? (
                 <EntityTile
                     {...commonProps}
+                    userId={user.address}
                     subtextLabel={user.displayName !== user.email ? user.email : undefined}
                     avatarJsx={this.getBaseAvatar(user)}
                     onClick={() => {
@@ -324,6 +326,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             ) : (
                 <EntityTile
                     {...commonProps}
+                    userId={user.address}
                     className={classNames(commonProps.className, "watcha_InviteDialog_EntityTile_partner")}
                     subtextLabel={_t("watcha|send_invitation_mail")}
                     avatarJsx={this.getBaseAvatar(
