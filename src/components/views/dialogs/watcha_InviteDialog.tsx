@@ -72,7 +72,6 @@ export interface IUser {
     email?: string;
     membership?: "invite" | "join" | "leave" | "ban";
     isKnown?: boolean;
-    userId: string;
 }
 
 interface IInviteDialogState {
@@ -273,7 +272,6 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 key: user.address,
                 name: user.displayName,
                 avatarJsx: this.getBaseAvatar(user),
-                userId: user.userId,
             };
             const subtextLabel = {
                 join: _t("watcha|already_room_member"),
@@ -289,6 +287,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             ) : (
                 <EntityTile
                     {...commonProps}
+                    userId={user.address}
                     subtextLabel={user.displayName !== user.email ? user.email : undefined}
                     title={_t("watcha|invite_user")}
                     showPresence={false}
