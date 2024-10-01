@@ -72,6 +72,7 @@ export interface IUser {
     email?: string;
     membership?: "invite" | "join" | "leave" | "ban";
     isKnown?: boolean;
+    userId: string;
 }
 
 interface IInviteDialogState {
