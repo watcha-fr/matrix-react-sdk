@@ -272,6 +272,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                 key: user.address,
                 name: user.displayName,
                 avatarJsx: this.getBaseAvatar(user),
+                userId: user.userId,
             };
             const subtextLabel = {
                 join: _t("watcha|already_room_member"),

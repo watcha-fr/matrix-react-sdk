@@ -189,11 +189,7 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
                     onClick={this.props.onClick}
                 >
                     <div className="mx_EntityTile_avatar">
-                    {crownClass && (
-                            <div 
-                                className={crownClass} >
-                            </div>
-                        )} 
+                        {crownClass && ( <div  className={crownClass} ></div>)} 
                         {av}
                         {e2eIcon}
                     </div>
