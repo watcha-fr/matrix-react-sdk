@@ -1067,7 +1067,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
             const userIdReplace = userIdPart?.replace(/\./g, "_")
 
             // Vérifie si userIdPart est dans la liste
-            const crownClass = userIdReplace && allowedValues.includes(userIdPart) ? `mx_EventTile_avatar_crown_${userIdReplace}` : '';
+            const crownClass = userIdReplace && userIdPart && allowedValues.includes(userIdPart) ? `mx_EventTile_avatar_crown_${userIdReplace}` : '';
             avatar = (
                 <div className="mx_EventTile_avatar">
                      {crownClass && (
