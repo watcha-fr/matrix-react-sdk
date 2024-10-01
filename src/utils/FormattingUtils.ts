@@ -77,8 +77,11 @@ export function formatCryptoKey(key: string): string {
 
 export function getUserNameColorClass(userId: string): string {
     // eslint-disable-next-line react-hooks/rules-of-hooks
+    // watcha!
     //let number = useIdColorHash(userId);
-    return `mx_Username_color_${userId.split(":")[1].split(".")[0]}`;
+    //return `mx_Username_color_${number}`;
+    // !watcha
+    return `mx_Username_color_${userId.split(":")[1].replace(/\./g, "_")}`; //watcha+
 }
 
 /**

@@ -1062,11 +1062,12 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                 );
 
             // watcha+   
-            const allowedValues = ["watchatest", "sitiv", "mdl", "vdl"]; // Liste des valeurs autorisées
-            const userIdPart = member?.userId?.split(":")[1]?.split(".")[0]; // Extrait de l'ID utilisateur
+            const allowedValues = ["watchatest.watcha.fr", "discuter.sitiv.fr", "discuter-vdl.territoirenumeriqueouvert.org", "discuter-mdl.territoirenumeriqueouvert.org"]; // Liste des valeurs autorisées
+            const userIdPart = member?.userId?.split(":")[1]; // Extrait de l'ID utilisateur
+            const userIdReplace = userIdPart.replace(/\./g, "_")
 
             // Vérifie si userIdPart est dans la liste
-            const crownClass = userIdPart && allowedValues.includes(userIdPart) ? `mx_EventTile_avatar_crown_${userIdPart}` : '';
+            const crownClass = userIdPart && allowedValues.includes(userIdPart) ? `mx_EventTile_avatar_crown_${userIdReplace}` : '';
             avatar = (
                 <div className="mx_EventTile_avatar">
                      {crownClass && (

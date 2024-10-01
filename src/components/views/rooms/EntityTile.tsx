@@ -140,7 +140,7 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
         const name = this.props.nameJSX || this.props.name;
         const nameAndPresence = (
             <div className="mx_EntityTile_details">
-                <div className={`mx_EntityTile_name mx_Username_color_${this.props.userId?.split(":")[1].split(".")[0] || "0"}`}>{name}</div>
+                <div className={`mx_EntityTile_name mx_Username_color_${this.props.userId?.split(":")[1].replace(/\./g, "_") || "0"}`}>{name}</div>
                 {this.getPresenceLabel()}
             </div>
         );
@@ -177,11 +177,12 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
         // The wrapping div is required to make the magic mouse listener work, for some reason.
 
         // watcha+   
-        const allowedValues = ["watchatest", "sitiv", "mdl", "vdl"]; // Liste des valeurs autorisées
+        const allowedValues = ["watchatest.watcha.fr", "discuter.sitiv.fr", "discuter-vdl.territoirenumeriqueouvert.org", "discuter-mdl.territoirenumeriqueouvert.org"]; // Liste des valeurs autorisées
         const userIdPart = this.props.userId?.split(":")[1]?.split(".")[0]; // Extrait de l'ID utilisateur
+        const userIdReplace = userIdPart.replace(/\./g, "_")
 
         // Vérifie si userIdPart est dans la liste
-        const crownClass = userIdPart && allowedValues.includes(userIdPart) ? `mx_EntityTile_avatar_crown_${userIdPart}` : '';
+        const crownClass = userIdPart && allowedValues.includes(userIdPart) ? `mx_EventTile_avatar_crown_${userIdReplace}` : '';
         return (
             <div>
                 <AccessibleButton
