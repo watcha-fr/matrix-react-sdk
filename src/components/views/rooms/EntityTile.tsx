@@ -193,6 +193,9 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
                         {av}
                         {e2eIcon}
                     </div>
+                    <div>
+                        <p>User Id: {this.props.userId}</p>
+                    </div>
                     {nameAndPresence}
                     {powerLabel}
                     {inviteButton}
