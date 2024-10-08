@@ -176,7 +176,7 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
         // The wrapping div is required to make the magic mouse listener work, for some reason.
 
         // watcha+   
-        const allowedValues = ["watchatest.watcha.fr", "teamnetdev.watcha.fr", "discuter-test.territoirenumeriqueouvert.org", "discuter.sitiv.fr", "discuter-vdl-test.territoirenumeriqueouvert.org", "discuter-vdl.territoirenumeriqueouvert.org", "discuter-mdl-test.territoirenumeriqueouvert.org", "discuter-mdl.territoirenumeriqueouvert.org"]; // Liste des valeurs autorisées
+        const allowedValues = ["watchatest.watcha.fr", "teamnetdev.watcha.fr", "discuter.sitiv.fr", "discuter-vdl.territoirenumeriqueouvert.org", "discuter-mdl.territoirenumeriqueouvert.org"]; // Liste des valeurs autorisées
         const userIdPart = this.props.userId?.split(":")[1]; // Extrait de l'ID utilisateur
         let userIdForReplacement;
 
