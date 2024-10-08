@@ -1062,7 +1062,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                 );
 
             // watcha+   
-            const allowedValues = ["watchatest.watcha.fr", "teamnetdev.watcha.fr", "discuter.sitiv.fr", "discuter-vdl.territoirenumeriqueouvert.org", "discuter-mdl.territoirenumeriqueouvert.org"]; // Liste des valeurs autorisées
+            const allowedValues = ["watchatest.watcha.fr", "teamnetdev.watcha.fr", "discuter-test.territoirenumeriqueouvert.org", "discuter.sitiv.fr", "discuter-vdl-test.territoirenumeriqueouvert.org", "discuter-vdl.territoirenumeriqueouvert.org", "discuter-mdl-test.territoirenumeriqueouvert.org", "discuter-mdl.territoirenumeriqueouvert.org"]; // Liste des valeurs autorisées
             const userIdPart = member?.userId?.split(":")[1]; // Extrait de l'ID utilisateur
             let userIdForReplacement;
 
@@ -1079,7 +1079,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
             const userIdReplace = userIdForReplacement?.replace(/\./g, "_")
 
             // Vérifie si userIdPart est dans la liste
-            const crownClass = userIdReplace && userIdPart && allowedValues.includes(userIdPart) ? `mx_EventTile_avatar_crown_${userIdReplace}` : '';
+            const crownClass = userIdReplace && userIdPart && allowedValues.includes(userIdPart) ? `mx_EntityTile_avatar_crown_${userIdReplace}` : '';
             avatar = (
                 <div className="mx_EventTile_avatar">
                      {crownClass && (
