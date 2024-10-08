@@ -81,7 +81,24 @@ export function getUserNameColorClass(userId: string): string {
     //let number = useIdColorHash(userId);
     //return `mx_Username_color_${number}`;
     // !watcha
-    return `mx_Username_color_${userId.split(":")[1].replace(/\./g, "_")}`; //watcha+
+    
+    // watcha+
+    const userIdPart = userId.split(":")[1]; // Extrait de l'ID utilisateur
+    let userIdForReplacement;
+
+    if (userIdPart === "discuter-test.territoirenumeriqueouvert.org") {
+        userIdForReplacement = "discuter.sitiv.fr";
+    } else if (userIdPart === "discuter-vdl-test.territoirenumeriqueouvert.org") {
+        userIdForReplacement = "discuter-vdl.territoirenumeriqueouvert.org";
+    } else if (userIdPart === "discuter-mdl-test.territoirenumeriqueouvert.org") {
+        userIdForReplacement = "discuter-mdl.territoirenumeriqueouvert.org";
+    } else {
+        userIdForReplacement = userIdPart;
+    }
+
+    const userIdReplace = userIdForReplacement?.replace(/\./g, "_")
+    return `mx_Username_color_${userIdReplace}`;
+    // +watcha
 }
 
 /**
