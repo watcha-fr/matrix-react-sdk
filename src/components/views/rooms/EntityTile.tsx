@@ -124,7 +124,6 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
     }
 
     public render(): React.ReactNode {
-        console.log("User ID:", this.props.userId); 
         const mainClassNames: Record<string, boolean> = {
             mx_EntityTile: true,
         };
