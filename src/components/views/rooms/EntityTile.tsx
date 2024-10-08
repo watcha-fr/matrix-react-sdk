@@ -176,9 +176,21 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
         // The wrapping div is required to make the magic mouse listener work, for some reason.
 
         // watcha+   
-        const allowedValues = ["watchatest.watcha.fr", "teamnetdev.watcha.fr", "discuter.sitiv.fr", "discuter-vdl.territoirenumeriqueouvert.org", "discuter-mdl.territoirenumeriqueouvert.org"]; // Liste des valeurs autorisées
+        const allowedValues = ["watchatest.watcha.fr", "teamnetdev.watcha.fr", "discuter-test.territoirenumeriqueouvert.org", "discuter.sitiv.fr", "discuter-vdl-test.territoirenumeriqueouvert.org", "discuter-vdl.territoirenumeriqueouvert.org", "discuter-mdl-test.territoirenumeriqueouvert.org", "discuter-mdl.territoirenumeriqueouvert.org"]; // Liste des valeurs autorisées
         const userIdPart = this.props.userId?.split(":")[1]; // Extrait de l'ID utilisateur
-        const userIdReplace = userIdPart?.replace(/\./g, "_")
+        let userIdForReplacement;
+
+        if (userIdPart === "discuter-test.territoirenumeriqueouvert.org") {
+            userIdForReplacement = "discuter.sitiv.fr";
+        } else if (userIdPart === "discuter-vdl-test.territoirenumeriqueouvert.org") {
+            userIdForReplacement = "discuter-vdl.territoirenumeriqueouvert.org";
+        } else if (userIdPart === "discuter-mdl-test.territoirenumeriqueouvert.org") {
+            userIdForReplacement = "discuter-mdl.territoirenumeriqueouvert.org";
+        } else {
+            userIdForReplacement = userIdPart;
+        }
+
+        const userIdReplace = userIdForReplacement?.replace(/\./g, "_")
 
         // Vérifie si userIdPart est dans la liste
         const crownClass = userIdReplace && userIdPart && allowedValues.includes(userIdPart) ? `mx_EntityTile_avatar_crown_${userIdReplace}` : '';
