@@ -251,6 +251,9 @@ export default class LogoutDialog extends React.Component<IProps, IState> {
             case BackupStatus.ERROR:
                 if(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)) // watcha+
                     return this.renderSetupBackupDialog();
+                else
+                    this.onLogoutConfirm() // watcha+
+                
         }
     }
 }
