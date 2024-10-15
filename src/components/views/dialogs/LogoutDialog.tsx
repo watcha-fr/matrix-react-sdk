@@ -29,6 +29,8 @@ import QuestionDialog from "./QuestionDialog";
 import BaseDialog from "./BaseDialog";
 import Spinner from "../elements/Spinner";
 import DialogButtons from "../elements/DialogButtons";
+import SettingsStore from "../../../settings/SettingsStore";
+import { UIFeature } from "../../../settings/UIFeature";
 
 interface IProps {
     onFinished: (success: boolean) => void;
@@ -247,7 +249,8 @@ export default class LogoutDialog extends React.Component<IProps, IState> {
             case BackupStatus.NO_BACKUP:
             case BackupStatus.SERVER_BACKUP_BUT_DISABLED:
             case BackupStatus.ERROR:
-                return this.renderSetupBackupDialog();
+                if(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)) // watcha+
+                    return this.renderSetupBackupDialog();
         }
     }
 }
