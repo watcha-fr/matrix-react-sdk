@@ -276,6 +276,7 @@ export default class AccessSecretStorageDialog extends React.PureComponent<IProp
     }
 
     public render(): React.ReactNode {
+        if(!SettingsStore.getValue("showE2EEUI")) return;
         const hasPassphrase = this.props.keyInfo?.passphrase?.salt && this.props.keyInfo?.passphrase?.iterations;
 
         const resetLine = (

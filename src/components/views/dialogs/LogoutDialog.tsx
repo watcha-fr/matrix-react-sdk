@@ -249,7 +249,7 @@ export default class LogoutDialog extends React.Component<IProps, IState> {
             case BackupStatus.NO_BACKUP:
             case BackupStatus.SERVER_BACKUP_BUT_DISABLED:
             case BackupStatus.ERROR:
-                if(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)) // watcha+
+                if(SettingsStore.getValue("showE2EEUI")) // watcha+
                     return this.renderSetupBackupDialog();
                 else
                     this.onLogoutConfirm() // watcha+
