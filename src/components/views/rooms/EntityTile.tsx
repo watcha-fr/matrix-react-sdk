@@ -149,8 +149,9 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
         } else {
             userIdForReplacement = userIdPart;
         }
-
+        console.log("Before Replace : " + userIdForReplacement)
         const userIdReplace = userIdForReplacement?.replace(/\./g, "_")
+        console.log("After Replace : " + userIdReplace)
         
 
 
