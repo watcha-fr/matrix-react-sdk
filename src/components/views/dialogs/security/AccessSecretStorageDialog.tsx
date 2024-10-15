@@ -31,6 +31,8 @@ import DialogButtons from "../../elements/DialogButtons";
 import BaseDialog from "../BaseDialog";
 import { chromeFileInputFix } from "../../../../utils/BrowserWorkarounds";
 
+import SettingsStore from "../../../../settings/SettingsStore";
+
 // Maximum acceptable size of a key file. It's 59 characters including the spaces we encode,
 // so this should be plenty and allow for people putting extra whitespace in the file because
 // maybe that's a thing people would do?

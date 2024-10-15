@@ -30,7 +30,6 @@ import BaseDialog from "./BaseDialog";
 import Spinner from "../elements/Spinner";
 import DialogButtons from "../elements/DialogButtons";
 import SettingsStore from "../../../settings/SettingsStore";
-import { UIFeature } from "../../../settings/UIFeature";
 
 interface IProps {
     onFinished: (success: boolean) => void;
