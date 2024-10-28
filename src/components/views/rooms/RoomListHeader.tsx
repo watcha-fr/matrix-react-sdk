@@ -164,7 +164,7 @@ const RoomListHeader: React.FC<IProps> = ({ onVisibilityChange }) => {
     /* watcha+
     const canShowPlusMenu = canCreateRooms || canExploreRooms || canCreateSpaces || activeSpace;
     +watcha */
-    const canShowPlusMenu = (canCreateRooms || canExploreRooms || canCreateSpaces || activeSpace) && !cli.isPartner; // watcha+
+    const canShowPlusMenu = (canCreateRooms || canExploreRooms || canCreateSpaces || activeSpace) && !cli.isPartner(); // watcha+
 
     let contextMenu: JSX.Element | undefined;
     if (mainMenuDisplayed && mainMenuHandle.current) {
