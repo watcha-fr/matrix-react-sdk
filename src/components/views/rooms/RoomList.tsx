@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { EventType, RoomType, Room } from "matrix-js-sdk/src/matrix";
-import React, { ComponentType, createRef, ReactComponentElement, SyntheticEvent } from "react";
+import React, { ComponentType, createRef, ReactComponentElement, SyntheticEvent, useContext } from "react";
 
 import { IState as IRovingTabIndexState, RovingTabIndexProvider } from "../../../accessibility/RovingTabIndex";
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
@@ -121,11 +121,14 @@ const DmAuxButton: React.FC<IAuxButtonProps> = ({ tabIndex, dispatcher = default
     const activeSpace = useEventEmitterState(SpaceStore.instance, UPDATE_SELECTED_SPACE, () => {
         return SpaceStore.instance.activeSpaceRoom;
     });
-
+    const cli = useContext(MatrixClientContext);
     const showCreateRooms = shouldShowComponent(UIComponent.CreateRooms);
     const showInviteUsers = shouldShowComponent(UIComponent.InviteUsers);
 
+    /* watcha+
     if (activeSpace && (showCreateRooms || showInviteUsers)) {
+    +watcha */
+    if (activeSpace && (showCreateRooms || showInviteUsers) && !cli.isPartner()) { // watcha+
         let contextMenu: JSX.Element | undefined;
         if (menuDisplayed && handle.current) {
             const canInvite = shouldShowSpaceInvite(activeSpace);
@@ -183,7 +186,10 @@ const DmAuxButton: React.FC<IAuxButtonProps> = ({ tabIndex, dispatcher = default
                 {contextMenu}
             </>
         );
+    /* watcha+
     } else if (!activeSpace && showCreateRooms) {
+    +watcha */
+    } else if (!activeSpace && showCreateRooms && !cli.isPartner()) {
         return (
             <AccessibleButton
                 tabIndex={tabIndex}
@@ -202,6 +208,8 @@ const DmAuxButton: React.FC<IAuxButtonProps> = ({ tabIndex, dispatcher = default
 };
 
 const UntaggedAuxButton: React.FC<IAuxButtonProps> = ({ tabIndex }) => {
+
+    const cli = useContext(MatrixClientContext);
     const [menuDisplayed, handle, openMenu, closeMenu] = useContextMenu<HTMLDivElement>();
     const activeSpace = useEventEmitterState<Room | null>(SpaceStore.instance, UPDATE_SELECTED_SPACE, () => {
         return SpaceStore.instance.activeSpaceRoom;
@@ -350,7 +358,10 @@ const UntaggedAuxButton: React.FC<IAuxButtonProps> = ({ tabIndex }) => {
         );
     }
 
+    /* watcha+
     if (showCreateRoom || showExploreRooms) {
+    +watcha */
+    if ((showCreateRoom || showExploreRooms) && !cli.isPartner()) { // watcha+
         return (
             <>
                 <ContextMenuTooltipButton

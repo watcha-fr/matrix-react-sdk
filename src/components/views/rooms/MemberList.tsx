@@ -134,7 +134,7 @@ export default class MemberList extends React.Component<IProps, IState> {
         const cli = MatrixClientPeg.safeGet();
         const room = cli.getRoom(this.props.roomId);
 
-        return !!room && canInviteTo(room);
+        return !!room && canInviteTo(room) && !cli.isPartner();
     }
 
     private getMembersState(invitedMembers: Array<RoomMember>, joinedMembers: Array<RoomMember>): IState {

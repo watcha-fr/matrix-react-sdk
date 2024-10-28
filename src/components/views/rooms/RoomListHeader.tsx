@@ -161,7 +161,10 @@ const RoomListHeader: React.FC<IProps> = ({ onVisibilityChange }) => {
     // If the user can't do anything on the plus menu, don't show it. This aims to target the
     // plus menu shown on the Home tab primarily: the user has options to use the menu for
     // communities and spaces, but is at risk of no options on the Home tab.
+    /* watcha+
     const canShowPlusMenu = canCreateRooms || canExploreRooms || canCreateSpaces || activeSpace;
+    +watcha */
+    const canShowPlusMenu = (canCreateRooms || canExploreRooms || canCreateSpaces || activeSpace) && !cli.isPartner; // watcha+
 
     let contextMenu: JSX.Element | undefined;
     if (mainMenuDisplayed && mainMenuHandle.current) {
@@ -182,7 +185,10 @@ const RoomListHeader: React.FC<IProps> = ({ onVisibilityChange }) => {
         );
     } else if (plusMenuDisplayed && activeSpace) {
         let inviteOption: JSX.Element | undefined;
+        /* watcha+
         if (shouldShowSpaceInvite(activeSpace)) {
+        +watcha */
+        if (shouldShowSpaceInvite(activeSpace) && !cli.isPartner()) {
             inviteOption = (
                 <IconizedContextMenuOption
                     label={_t("action|invite")}
