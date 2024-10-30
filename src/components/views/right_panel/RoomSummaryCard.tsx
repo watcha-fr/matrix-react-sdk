@@ -526,7 +526,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
     );
     const canInviteToState = useEventEmitterState(room, RoomStateEvent.Update, () => canInviteTo(room));
     const isFavorite = roomTags.includes(DefaultTagID.Favourite);
-
+    console.log("isPartner : " + cli.isPartner())
     return (
         <BaseCard header={null} className="mx_RoomSummaryCard" onClose={onClose}>
             <Flex
