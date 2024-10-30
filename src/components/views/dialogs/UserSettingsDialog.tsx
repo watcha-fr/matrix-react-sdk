@@ -87,7 +87,7 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
     const voipEnabled = useSettingValue<boolean>(UIFeature.Voip);
     const mjolnirEnabled = useSettingValue<boolean>("feature_mjolnir");
     // store this prop in state as changing tabs back and forth should clear it
-    const [showMsc4108QrCode, setShowMsc4108QrCode] = useState(props.showMsc4108QrCode);
+    const [, setShowMsc4108QrCode] = useState(props.showMsc4108QrCode);
 
     const getTabs = (): NonEmptyArray<Tab<UserTab>> => {
         const tabs: Tab<UserTab>[] = [];
@@ -101,15 +101,17 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
                 "UserSettingsGeneral",
             ),
         );
-        tabs.push(
-            new Tab(
-                UserTab.SessionManager,
-                _td("settings|sessions|title"),
-                "mx_UserSettingsDialog_sessionsIcon",
-                <SessionManagerTab showMsc4108QrCode={showMsc4108QrCode} />,
-                undefined,
-            ),
-        );
+        /* watcha!
+            tabs.push(
+                new Tab(
+                    UserTab.SessionManager,
+                    _td("settings|sessions|title"),
+                    "mx_UserSettingsDialog_sessionsIcon",
+                    <SessionManagerTab showMsc4108QrCode={showMsc4108QrCode} />,
+                    undefined,
+                ),
+            );
+        !watcha */
         // watcha+
         if (
             SettingsStore.getValue(UIFeature.watcha_SSOProfile)
