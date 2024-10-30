@@ -34,7 +34,7 @@ import { UIFeature } from "../../../settings/UIFeature";
 import BaseDialog from "./BaseDialog";
 import SidebarUserSettingsTab from "../settings/tabs/user/SidebarUserSettingsTab";
 import KeyboardUserSettingsTab from "../settings/tabs/user/KeyboardUserSettingsTab";
-import SessionManagerTab from "../settings/tabs/user/SessionManagerTab";
+//import SessionManagerTab from "../settings/tabs/user/SessionManagerTab";
 import { UserTab } from "./UserTab";
 import { MatrixClientPeg } from '../../../MatrixClientPeg'; // watcha+
 import SSOProfileTab from "../settings/tabs/user/watcha_SSOProfileTab"; // watcha+
