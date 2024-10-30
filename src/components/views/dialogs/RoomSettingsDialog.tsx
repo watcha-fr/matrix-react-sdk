@@ -41,9 +41,9 @@ import { PollHistoryTab } from "../settings/tabs/room/PollHistoryTab";
 import ErrorBoundary from "../elements/ErrorBoundary";
 import { PeopleRoomSettingsTab } from "../settings/tabs/room/PeopleRoomSettingsTab";
 // watcha+
-import { CALENDAR_EVENT_TYPE } from "../../../utils/watcha_nextcloudUtils";
+//import { CALENDAR_EVENT_TYPE } from "../../../utils/watcha_nextcloudUtils";
 import { SettingLevel } from "../../../settings/SettingLevel";
-import NextcloudCalendarSettingsTab from "../settings/tabs/room/watcha_NextcloudCalendarSettingsTab";
+//import NextcloudCalendarSettingsTab from "../settings/tabs/room/watcha_NextcloudCalendarSettingsTab";
 import NextcloudDocumentsSettingsTab from "../settings/tabs/room/watcha_NextcloudDocumentsSettingsTab";
 // +watcha
 
@@ -188,9 +188,9 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
                     ),
                 );
             }
-            const client = MatrixClientPeg.get();
+            /*const client = MatrixClientPeg.get();
             const room = client?.getRoom(this.state.room.roomId);
-            /*if(client!.getUserId() !== null){
+            if(client!.getUserId() !== null){
                 const canSetCalendar = room?.currentState.maySendStateEvent(CALENDAR_EVENT_TYPE, client!.getUserId()!);
                 if (canSetCalendar) {
                     tabs.push(
