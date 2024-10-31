@@ -24,6 +24,7 @@ import { QueryDict } from "matrix-js-sdk/src/utils";
 import { logger } from "matrix-js-sdk/src/logger";
 
 import { IMatrixClientCreds, MatrixClientPeg, MatrixClientPegAssignOpts } from "./MatrixClientPeg";
+import SecurityCustomisations from "./customisations/Security"; // watcha+
 import { ModuleRunner } from "./modules/ModuleRunner";
 import EventIndexPeg from "./indexing/EventIndexPeg";
 import createMatrixClient from "./utils/createMatrixClient";
@@ -894,6 +895,7 @@ async function persistCredentials(credentials: IMatrixClientCreds): Promise<void
     }
 
     ModuleRunner.instance.extensions.cryptoSetup?.persistCredentials(credentials);
+    SecurityCustomisations.persistCredentials?.(credentials); // watcha+ 
 
     logger.log(`Session persisted for ${credentials.userId}`);
 }
