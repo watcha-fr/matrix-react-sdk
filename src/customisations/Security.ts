@@ -22,6 +22,11 @@ import { Kind as SetupEncryptionKind } from "../toasts/SetupEncryptionToast";
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 function examineLoginResponse(response: any, credentials: IMatrixClientCreds): void {
     // E.g. add additional data to the persisted credentials
+    // watcha+
+    const { is_partner: isPartner } = response;
+    if (isPartner) {
+        credentials.partner = isPartner;
+    }
 }
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
@@ -79,5 +84,7 @@ export interface ISecurityCustomisations {
 // A real customisation module will define and export one or more of the
 // customisation points that make up `ISecurityCustomisations`.
 export default {
+    examineLoginResponse,
+    persistCredentials,
     SHOW_ENCRYPTION_SETUP_UI: true,
 } as ISecurityCustomisations;
