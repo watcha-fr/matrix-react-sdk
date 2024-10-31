@@ -25,7 +25,7 @@ import {
     OidcClientConfig,
 } from "matrix-js-sdk/src/matrix";
 import { logger } from "matrix-js-sdk/src/logger";
-
+import SecurityCustomisations from "./customisations/Security"; // watcha+
 import { IMatrixClientCreds } from "./MatrixClientPeg";
 import { ModuleRunner } from "./modules/ModuleRunner";
 import { getOidcClientId } from "./utils/oidc/registerClient";
@@ -301,6 +301,6 @@ export async function sendLoginRequest(
     };
 
     ModuleRunner.instance.extensions.cryptoSetup.examineLoginResponse(data, creds);
-
+    SecurityCustomisations.examineLoginResponse?.(data, creds); // watcha+
     return creds;
 }
