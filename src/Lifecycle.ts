@@ -835,7 +835,7 @@ async function doSetLoggedIn(credentials: IMatrixClientCreds, clearStorageEnable
     checkSessionLock();
 
     dis.fire(Action.OnLoggedIn);
-
+    /* watcha!
     const clientPegOpts: MatrixClientPegAssignOpts = {};
     if (credentials.pickleKey) {
         // The pickleKey, if provided, is probably a base64-encoded 256-bit key, so can be used for the crypto store.
@@ -848,11 +848,11 @@ async function doSetLoggedIn(credentials: IMatrixClientCreds, clearStorageEnable
     }
 
     try {
-        await startMatrixClient(client, /*startSyncing=*/ !softLogout, clientPegOpts);
+        await startMatrixClient(client, startSyncing= !softLogout, clientPegOpts);
     } finally {
         clientPegOpts.rustCryptoStoreKey?.fill(0);
     }
-
+    !watcha */
     return client;
 }
 
