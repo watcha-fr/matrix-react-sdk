@@ -27,6 +27,7 @@ function examineLoginResponse(response: any, credentials: IMatrixClientCreds): v
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 function persistCredentials(credentials: IMatrixClientCreds): void {
     // E.g. store any additional credential fields
+    localStorage.setItem("watcha_is_partner", JSON.stringify(credentials.partner));// watcha+
 }
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
