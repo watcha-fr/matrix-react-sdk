@@ -568,13 +568,12 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
                 // XXX: https://github.com/element-hq/compound/issues/288
                 onSelect={() => {}}
             />
-            {!cli.isPartner && /* watcha+ */
-                <MenuItem
-                Icon={UserAddIcon}
-                label={_t("action|invite")}
-                disabled={!canInviteToState}
-                onSelect={() => inviteToRoom(room)}
-            />}
+            <MenuItem
+            Icon={UserAddIcon}
+            label={_t("action|invite")}
+            disabled={!canInviteToState}
+            onSelect={() => inviteToRoom(room)}
+            />
             {showShareRoomButton && <MenuItem Icon={LinkIcon} label={_t("watcha|share_room")} onSelect={onShareRoomClick} /> /* watcha+ */}
             <MenuItem Icon={SettingsIcon} label={_t("common|settings")} onSelect={onRoomSettingsClick} />
 
