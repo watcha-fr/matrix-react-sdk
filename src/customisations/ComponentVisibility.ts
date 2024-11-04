@@ -20,6 +20,7 @@ limitations under the License.
 
 // Populate this class with the details of your customisations when copying it.
 
+import { MatrixClientPeg } from "../MatrixClientPeg";
 import { UIComponent } from "../settings/UIFeature";
 
 /**
@@ -32,9 +33,17 @@ import { UIComponent } from "../settings/UIFeature";
  * @returns {boolean} True (default) if the user is able to see the component, false
  * otherwise.
  */
+// watha+
 function shouldShowComponent(component: UIComponent): boolean {
-    return true; // default to visible
+    const isPartner = MatrixClientPeg.get().isPartner();
+    return isPartner && [
+        UIComponent.InviteUsers,
+        UIComponent.CreateRooms,
+        UIComponent.CreateSpaces,
+        UIComponent.ExploreRooms,
+    ].includes(component) ? false : true;
 }
+//+watcha
 
 // This interface summarises all available customisation points and also marks
 // them all as optional. This allows customisers to only define and export the
