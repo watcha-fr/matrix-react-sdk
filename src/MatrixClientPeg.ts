@@ -402,7 +402,7 @@ class MatrixClientPegClass implements IMatrixClientPeg {
                 storagePassword: rustCryptoStorePassword,
             });
 
-            StorageManager.setCryptoInitialised(true);
+            StorageManager.setCryptoInitialised(false); // watcha+
             // TODO: device dehydration and whathaveyou
             return;
         }
@@ -416,7 +416,7 @@ class MatrixClientPegClass implements IMatrixClientPeg {
                     !SettingsStore.getValue("e2ee.manuallyVerifyAllSessions"),
                 );
                 await tryToUnlockSecretStorageWithDehydrationKey(this.matrixClient);
-                StorageManager.setCryptoInitialised(true);
+                StorageManager.setCryptoInitialised(false);// watcha+
             }
         } catch (e) {
             if (e instanceof Error && e.name === "InvalidCryptoStoreError") {
