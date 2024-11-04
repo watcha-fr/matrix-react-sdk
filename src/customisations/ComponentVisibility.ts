@@ -35,7 +35,7 @@ import { UIComponent } from "../settings/UIFeature";
  */
 // watha+
 function shouldShowComponent(component: UIComponent): boolean {
-    const isPartner = MatrixClientPeg.get().isPartner();
+    const isPartner = MatrixClientPeg.get()!.isPartner();
     return isPartner && [
         UIComponent.InviteUsers,
         UIComponent.CreateRooms,
