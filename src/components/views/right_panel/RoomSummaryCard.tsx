@@ -399,7 +399,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
     });
     const showAttachmentsButton = useSettingValue("showExploreChatAttachmentsButton");
     const showShareRoomButton = useSettingValue("showShareRoomButton");
-    const showE2EEUI = useSettingValue("showE2EEUI");
+    const showE2EEUI = useSettingValue(UIFeature.watcha_E2EEUISetting);
     // +watcha
 
     const onShareRoomClick = (): void => {

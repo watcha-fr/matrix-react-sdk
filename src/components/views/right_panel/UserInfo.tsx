@@ -83,6 +83,7 @@ import { asyncSome } from "../../../utils/arrays";
 import UIStore from "../../../stores/UIStore";
 import { SpaceScopeHeader } from "../rooms/SpaceScopeHeader";
 import { useSettingValue } from "../../../hooks/useSettings"; // watcha+
+import { UIFeature } from "../../../settings/UIFeature";
 
 export interface IDevice extends Device {
     ambiguous?: boolean;
@@ -1352,7 +1353,7 @@ const BasicUserInfo: React.FC<{
     isRoomEncrypted: boolean;
 }> = ({ room, member, devices, isRoomEncrypted }) => {
     const showDeactivateButton = useSettingValue("showDeactivateUserButton"); // watcha+
-    const showE2EEUI = useSettingValue("showE2EEUI"); // watcha+
+    const showE2EEUI = useSettingValue(UIFeature.watcha_E2EEUISetting); // watcha+
     const cli = useContext(MatrixClientContext);
 
     const powerLevels = useRoomPowerLevels(cli, room);

@@ -326,7 +326,7 @@ export default class SecurityUserSettingsTab extends React.Component<IProps, ISt
     }
 
     public render(): React.ReactNode {
-        const showE2EEUI = SettingsStore.getValue("showE2EEUI"); // watcha+
+        const showE2EEUI = SettingsStore.getValue(UIFeature.watcha_E2EEUISetting); // watcha+
 
         const secureBackup = (
             <SettingsSubsection heading={_t("common|secure_backup")}>

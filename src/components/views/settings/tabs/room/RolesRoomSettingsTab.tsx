@@ -35,6 +35,7 @@ import SettingsTab from "../SettingsTab";
 import { SettingsSection } from "../../shared/SettingsSection";
 import MatrixClientContext from "../../../../../contexts/MatrixClientContext";
 import { PowerLevelSelector } from "../../PowerLevelSelector";
+import { UIFeature } from "../../../../../settings/UIFeature";
 
 interface IEventShowOpts {
     isState?: boolean;
@@ -437,7 +438,7 @@ export default class RolesRoomSettingsTab extends React.Component<IProps> {
 
 
         // watcha+
-        if (!SettingsStore.getValue("showE2EEUI")) {
+        if (!SettingsStore.getValue(UIFeature.watcha_E2EEUISetting)) {
             delete eventsLevels["m.room.encryption"];
         }
         // +watcha

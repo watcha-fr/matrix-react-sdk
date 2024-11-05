@@ -17,7 +17,7 @@ limitations under the License.
 
 import React from "react";
 import { logger } from "matrix-js-sdk/src/logger";
-
+import { UIFeature } from "../../../settings/UIFeature";
 import type CreateKeyBackupDialog from "../../../async-components/views/dialogs/security/CreateKeyBackupDialog";
 import type ExportE2eKeysDialog from "../../../async-components/views/dialogs/security/ExportE2eKeysDialog";
 import Modal from "../../../Modal";
@@ -248,7 +248,7 @@ export default class LogoutDialog extends React.Component<IProps, IState> {
             case BackupStatus.NO_BACKUP:
             case BackupStatus.SERVER_BACKUP_BUT_DISABLED:
             case BackupStatus.ERROR:
-                if(SettingsStore.getValue("showE2EEUI")) // watcha+
+                if(SettingsStore.getValue(UIFeature.watcha_E2EEUISetting)) // watcha+
                     return this.renderSetupBackupDialog();
                 else
                     this.onLogoutConfirm() // watcha+

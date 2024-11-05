@@ -446,7 +446,7 @@ export default class SecurityRoomSettingsTab extends React.Component<IProps, ISt
         return (
             <SettingsTab>
                 <SettingsSection heading={_t("room_settings|security|title")}>
-                { SettingsStore.getValue("showE2EEUI") && // watcha+
+                { SettingsStore.getValue(UIFeature.watcha_E2EEUISetting) && // watcha+
                     <SettingsFieldset
                         legend={_t("settings|security|encryption_section")}
                         description={

@@ -30,7 +30,7 @@ import InteractiveAuthDialog from "../InteractiveAuthDialog";
 import DialogButtons from "../../elements/DialogButtons";
 import BaseDialog from "../BaseDialog";
 import { chromeFileInputFix } from "../../../../utils/BrowserWorkarounds";
-
+import { UIFeature } from "../../../../settings/UIFeature";
 import SettingsStore from "../../../../settings/SettingsStore";
 
 // Maximum acceptable size of a key file. It's 59 characters including the spaces we encode,
@@ -278,7 +278,7 @@ export default class AccessSecretStorageDialog extends React.PureComponent<IProp
     }
 
     public render(): React.ReactNode {
-        if(!SettingsStore.getValue("showE2EEUI")) return;
+        if(!SettingsStore.getValue(UIFeature.watcha_E2EEUISetting)) return;
         const hasPassphrase = this.props.keyInfo?.passphrase?.salt && this.props.keyInfo?.passphrase?.iterations;
 
         const resetLine = (

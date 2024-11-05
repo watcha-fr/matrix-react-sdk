@@ -32,7 +32,7 @@ import {
 import { VerificationMethod } from "matrix-js-sdk/src/types";
 import * as utils from "matrix-js-sdk/src/utils";
 import { logger } from "matrix-js-sdk/src/logger";
-
+import { UIFeature } from "./settings/UIFeature";
 import createMatrixClient from "./utils/createMatrixClient";
 import SettingsStore from "./settings/SettingsStore";
 import MatrixActionCreators from "./actions/MatrixActionCreators";
@@ -322,7 +322,7 @@ class MatrixClientPegClass implements IMatrixClientPeg {
         this.matrixClient.store.on?.("closed", this.onUnexpectedStoreClose);
 
         // try to initialise e2e on the new client
-        if (!SettingsStore.getValue("lowBandwidth") && SettingsStore.getValue("showE2EEUI")) { // watcha+
+        if (!SettingsStore.getValue("lowBandwidth") && SettingsStore.getValue(UIFeature.watcha_E2EEUISetting)) { // watcha+
             await this.initClientCrypto(assignOpts.rustCryptoStoreKey, assignOpts.rustCryptoStorePassword);
         }
 

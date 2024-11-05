@@ -290,7 +290,7 @@ export default class DeviceListener {
     }
 
     private async doRecheck(): Promise<void> {
-        if (!SettingsStore.getValue("showE2EEUI")) return; // watcha+
+        if (!SettingsStore.getValue(UIFeature.watcha_E2EEUISetting)) return; // watcha+
         if (!this.running || !this.client) return; // we have been stopped
         const cli = this.client;
 
