@@ -484,35 +484,37 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
             {/* watcha!
             <Flex as="section" justify="center" gap="var(--cpd-space-2x)" className="mx_RoomSummaryCard_badges">
              !watcha */}
-            <Flex as="section" justify="center" gap="var(--cpd-space-2x)" className={classNames("mx_RoomSummaryCard_badges", {watcha_RoomSummaryCard_e2ee_hidden: !showE2EEUI,})}> {/* watcha+ */}
-                {!isDirectMessage && roomState.getJoinRule() === JoinRule.Public && (
-                    <Badge kind="default">
-                        <PublicIcon width="1em" />
-                        {_t("common|public_room")}
-                    </Badge>
-                )}
+            {showE2EEUI && (
+                <Flex as="section" justify="center" gap="var(--cpd-space-2x)" className={classNames("mx_RoomSummaryCard_badges", {watcha_RoomSummaryCard_e2ee_hidden: !showE2EEUI,})}> {/* watcha+ */}
+                    {!isDirectMessage && roomState.getJoinRule() === JoinRule.Public && (
+                        <Badge kind="default">
+                            <PublicIcon width="1em" />
+                            {_t("common|public_room")}
+                        </Badge>
+                    )}
 
-                {isRoomEncrypted && e2eStatus !== E2EStatus.Warning && (
-                    <Badge kind="success">
-                        <LockIcon width="1em" />
-                        {_t("common|encrypted")}
-                    </Badge>
-                )}
+                    {isRoomEncrypted && e2eStatus !== E2EStatus.Warning && (
+                        <Badge kind="success">
+                            <LockIcon width="1em" />
+                            {_t("common|encrypted")}
+                        </Badge>
+                    )}
 
-                {!e2eStatus && (
-                    <Badge kind="default">
-                        <LockOffIcon width="1em" />
-                        {_t("common|unencrypted")}
-                    </Badge>
-                )}
+                    {!e2eStatus && (
+                        <Badge kind="default">
+                            <LockOffIcon width="1em" />
+                            {_t("common|unencrypted")}
+                        </Badge>
+                    )}
 
-                {e2eStatus === E2EStatus.Warning && (
-                    <Badge kind="critical">
-                        <ErrorIcon width="1em" />
-                        {_t("common|not_trusted")}
-                    </Badge>
-                )}
-            </Flex>
+                    {e2eStatus === E2EStatus.Warning && (
+                        <Badge kind="critical">
+                            <ErrorIcon width="1em" />
+                            {_t("common|not_trusted")}
+                        </Badge>
+                    )}
+                </Flex>
+            )} 
 
             <RoomTopic room={room} />
         </header>

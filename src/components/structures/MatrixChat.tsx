@@ -453,7 +453,6 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             // private keys.
 
             const cryptoExtension = ModuleRunner.instance.extensions.cryptoSetup;
-            console.log("Valeur show E2EE : "+ SettingsStore.getValue("showE2EEUI")); // watcha+
             if (cryptoExtension.SHOW_ENCRYPTION_SETUP_UI == false) {
                 this.onLoggedIn();
             } else if (!SettingsStore.getValue("showE2EEUI")) { // watcha+
