@@ -110,6 +110,7 @@ export default class CompleteSecurity extends React.Component<IProps, IState> {
                         {skipButton}
                     </h1>
                     <div className="mx_CompleteSecurity_body">
+                        <p>coucou</p>
                         <SetupEncryptionBody onFinished={this.props.onFinished} />
                     </div>
                 </CompleteSecurityBody>
