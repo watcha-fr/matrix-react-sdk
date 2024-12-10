@@ -341,7 +341,7 @@ export default class ChangePassword extends React.Component<IProps, IState> {
                     <form className={this.props.className} onSubmit={this.onClickChange}>
                         <div className={rowClassName}>
                             <Field
-                                disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)} // watcha++
+                                disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && localStorage.getItem("watcha_is_partner") === "false"} // watcha++
                                 ref={(field) => (this[FIELD_OLD_PASSWORD] = field)}
                                 type="password"
                                 label={_t("auth|change_password_current_label")}
@@ -352,7 +352,7 @@ export default class ChangePassword extends React.Component<IProps, IState> {
                         </div>
                         <div className={rowClassName}>
                             <PassphraseField
-                                disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)} // watcha++
+                                disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && localStorage.getItem("watcha_is_partner") === "false"} // watcha++
                                 fieldRef={(field) => (this[FIELD_NEW_PASSWORD] = field)}
                                 type="password"
                                 label={_td("auth|change_password_new_label")}
@@ -366,7 +366,7 @@ export default class ChangePassword extends React.Component<IProps, IState> {
                         </div>
                         <div className={rowClassName}>
                             <Field
-                                disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)} // watcha++
+                                disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && localStorage.getItem("watcha_is_partner") === "false"} // watcha++
                                 ref={(field) => (this[FIELD_NEW_PASSWORD_CONFIRM] = field)}
                                 type="password"
                                 label={_t("auth|change_password_confirm_label")}
@@ -377,7 +377,7 @@ export default class ChangePassword extends React.Component<IProps, IState> {
                             />
                         </div>
                         <AccessibleButton
-                            disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)} // watcha++
+                            disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && localStorage.getItem("watcha_is_partner") === "false"} // watcha++
                                           className={buttonClassName}
                             kind={this.props.buttonKind}
                             onClick={this.onClickChange}
