@@ -294,11 +294,11 @@ const CallButtons: FC<CallButtonsProps> = ({ room }) => {
         <VoiceCallButton room={room} busy={busy} setBusy={setBusy} behavior={behavior} />
     );
     let makeVideoCallButton = null; // watcha+
-    if(!SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)){ // watcha+
+    //if(!SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)){ // watcha+
         makeVideoCallButton = (behavior: VideoCallButtonProps["behavior"]): JSX.Element => (
             <VideoCallButton room={room} busy={busy} setBusy={setBusy} behavior={behavior} />
         );
-    } // watcha+
+    //} // watcha+
     if (isVideoRoom || !showButtons) {
         return null;
     } else if (groupCallsEnabled) {
