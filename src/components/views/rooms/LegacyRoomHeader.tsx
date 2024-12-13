@@ -70,7 +70,7 @@ import { SessionDuration } from "../voip/CallDuration";
 import RoomCallBanner from "../beacon/RoomCallBanner";
 import { shouldShowComponent } from "../../../customisations/helpers/UIComponents";
 import { UIComponent } from "../../../settings/UIFeature";
-import { UIFeature } from "../../../settings/UIFeature"; // watcha+
+//import { UIFeature } from "../../../settings/UIFeature"; // watcha+
 
 class DisabledWithReason {
     public constructor(public readonly reason: string) {}
