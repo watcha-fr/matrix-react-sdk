@@ -194,7 +194,7 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
             ),
         );
 
-        if (showLabsFlags() || SettingsStore.getFeatureSettingNames().some((k) => SettingsStore.getBetaInfo(k))) {
+        if ((showLabsFlags() || SettingsStore.getFeatureSettingNames().some((k) => SettingsStore.getBetaInfo(k))) && !SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) ) { //watcha+
             tabs.push(
                 new Tab(
                     UserTab.Labs,
