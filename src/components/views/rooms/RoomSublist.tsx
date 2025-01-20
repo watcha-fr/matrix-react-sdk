@@ -528,16 +528,7 @@ export default class RoomSublist extends React.Component<IProps, IState> {
         if (this.state.rooms) {
             let visibleRooms = this.state.rooms;
             if (!this.props.forceExpanded) {
-                // watcha+
-                if(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)){
-                    visibleRooms = visibleRooms.slice(0, this.numVisibleTiles-1);
-                }else{
                 visibleRooms = visibleRooms.slice(0, this.numVisibleTiles);
-                }
-                // +watcha
-                /* watcha!
-                visibleRooms = visibleRooms.slice(0, this.numVisibleTiles);
-                !watcha */
             }
 
             for (const room of visibleRooms) {
@@ -566,23 +557,10 @@ export default class RoomSublist extends React.Component<IProps, IState> {
         // as users are unlikely to have more than a handful of tiles when the extra
         // tiles are used.
 
-        // watcha+
-        if(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)){
-            if (tiles.length > this.numVisibleTiles-1 && !this.props.forceExpanded) {
-                return tiles.slice(0, this.numVisibleTiles-1);
-            }
-        }else{
-            if (tiles.length > this.numVisibleTiles && !this.props.forceExpanded) {
-                return tiles.slice(0, this.numVisibleTiles);
-            }
-        }
-        // +watcha
-
-        /* watcha!
+        
         if (tiles.length > this.numVisibleTiles && !this.props.forceExpanded) {
                 return tiles.slice(0, this.numVisibleTiles);
             }
-        !watcha */
 
         return tiles;
     }
@@ -789,8 +767,8 @@ export default class RoomSublist extends React.Component<IProps, IState> {
             );
         } else if (visibleTiles.length > 0) {
             const layout = this.layout; // to shorten calls
-
-            const minTiles = Math.min(layout.minVisibleTiles, this.numTiles);
+            const minTiles = Math.min(layout.minVisibleTiles-1, this.numTiles);
+            //const minTiles = Math.min(layout.minVisibleTiles, this.numTiles);
             const showMoreAtMinHeight = minTiles < this.numTiles;
             const minHeightPadding = RESIZE_HANDLE_HEIGHT + (showMoreAtMinHeight ? SHOW_N_BUTTON_HEIGHT : 0);
             const minTilesPx = layout.tilesToPixelsWithPadding(minTiles, minHeightPadding);
