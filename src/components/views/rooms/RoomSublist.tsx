@@ -528,11 +528,20 @@ export default class RoomSublist extends React.Component<IProps, IState> {
         if (this.state.rooms) {
             let visibleRooms = this.state.rooms;
             if (!this.props.forceExpanded) {
+                // watcha+
+                if(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)){
+                    visibleRooms = visibleRooms.slice(0, this.numVisibleTiles-1);
+                }else{
                 visibleRooms = visibleRooms.slice(0, this.numVisibleTiles);
+                }
+                // +watcha
+                /* watcha!
+                visibleRooms = visibleRooms.slice(0, this.numVisibleTiles);
+                !watcha */
             }
 
             for (const room of visibleRooms) {
-                if(!(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && room.name=="Salutations"))
+                if(!(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && room.name=="Salutations")) // watcha+
                 {
                     tiles.push(
                         <RoomTile
@@ -556,9 +565,24 @@ export default class RoomSublist extends React.Component<IProps, IState> {
         // to avoid spending cycles on slicing. It's generally fine to do this though
         // as users are unlikely to have more than a handful of tiles when the extra
         // tiles are used.
-        if (tiles.length > this.numVisibleTiles && !this.props.forceExpanded) {
-            return tiles.slice(0, this.numVisibleTiles);
+
+        // watcha+
+        if(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)){
+            if (tiles.length > this.numVisibleTiles-1 && !this.props.forceExpanded) {
+                return tiles.slice(0, this.numVisibleTiles-1);
+            }
+        }else{
+            if (tiles.length > this.numVisibleTiles && !this.props.forceExpanded) {
+                return tiles.slice(0, this.numVisibleTiles);
+            }
         }
+        // +watcha
+
+        /* watcha!
+        if (tiles.length > this.numVisibleTiles && !this.props.forceExpanded) {
+                return tiles.slice(0, this.numVisibleTiles);
+            }
+        !watcha */
 
         return tiles;
     }
