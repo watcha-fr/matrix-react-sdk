@@ -746,6 +746,7 @@ export default class RoomSublist extends React.Component<IProps, IState> {
 
     public render(): React.ReactElement {
         const visibleTiles = this.renderVisibleTiles();
+        console.log('Visible Tiles:', visibleTiles); // Débogue les tuiles visibles
         const hidden = !this.state.rooms.length && !this.props.extraTiles?.length && this.props.alwaysVisible !== true;
         const classes = classNames({
             mx_RoomSublist: true,
@@ -758,6 +759,7 @@ export default class RoomSublist extends React.Component<IProps, IState> {
         if (this.state.roomsLoading) {
             content = <div className="mx_RoomSublist_skeletonUI" />;
         } else if (visibleTiles.length > 0 && this.props.forceExpanded) {
+            console.log('Force Expanded Layout'); // Indique le chemin de code suivi
             content = (
                 <div className="mx_RoomSublist_resizeBox mx_RoomSublist_resizeBox_forceExpanded">
                     <div className="mx_RoomSublist_tiles" ref={this.tilesRef}>
@@ -766,13 +768,22 @@ export default class RoomSublist extends React.Component<IProps, IState> {
                 </div>
             );
         } else if (visibleTiles.length > 0) {
+            console.log('Normal Layout: visibleTiles.length > 0'); // Débogue le chemin suivi
+            console.log('Visible Tiles Lengths:', visibleTiles.length);
             const layout = this.layout; // to shorten calls
-            const minTiles = Math.min(layout.minVisibleTiles-1, this.numTiles);
-            //const minTiles = Math.min(layout.minVisibleTiles, this.numTiles);
+            
+            const minTiles = Math.min(layout.minVisibleTiles, this.numTiles);
+            console.log('minVisibleTiles:', layout.minVisibleTiles); // Débogue le nombre minimal de tuiles
+            console.log('numTiles:', this.numTiles); // Débogue le nombre minimal de tuiles
+            console.log('Min Tiles:', minTiles); // Débogue le nombre minimal de tuiles
             const showMoreAtMinHeight = minTiles < this.numTiles;
+            console.log('Show More Button Needed:', showMoreAtMinHeight);
             const minHeightPadding = RESIZE_HANDLE_HEIGHT + (showMoreAtMinHeight ? SHOW_N_BUTTON_HEIGHT : 0);
+            console.log('Min Height Padding:', minHeightPadding);
             const minTilesPx = layout.tilesToPixelsWithPadding(minTiles, minHeightPadding);
+            console.log('Min Tiles (px):', minTilesPx);
             const maxTilesPx = layout.tilesToPixelsWithPadding(this.numTiles, this.padding);
+            console.log('Max Tiles (px):', maxTilesPx);
             const showMoreBtnClasses = classNames({
                 mx_RoomSublist_showNButton: true,
             });
