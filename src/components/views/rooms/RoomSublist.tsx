@@ -56,6 +56,8 @@ import NotificationBadge from "./NotificationBadge";
 import RoomTile from "./RoomTile";
 import { MatrixClientPeg } from "../../../MatrixClientPeg"; // watcha+
 
+import { UIFeature } from "../../../settings/UIFeature";
+
 const SHOW_N_BUTTON_HEIGHT = 28; // As defined by CSS
 const RESIZE_HANDLE_HEIGHT = 4; // As defined by CSS
 export const HEADER_HEIGHT = 32; // As defined by CSS
@@ -530,15 +532,18 @@ export default class RoomSublist extends React.Component<IProps, IState> {
             }
 
             for (const room of visibleRooms) {
-                tiles.push(
-                    <RoomTile
-                        room={room}
-                        key={`room-${room.roomId}`}
-                        showMessagePreview={this.layout.showPreviews}
-                        isMinimized={this.props.isMinimized}
-                        tag={this.props.tagId}
-                    />,
-                );
+                if(!(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && room.name=="Salutations"))
+                {
+                    tiles.push(
+                        <RoomTile
+                            room={room}
+                            key={`room-${room.roomId}`}
+                            showMessagePreview={this.layout.showPreviews}
+                            isMinimized={this.props.isMinimized}
+                            tag={this.props.tagId}
+                        />,
+                    );
+                }   
             }
         }
 
