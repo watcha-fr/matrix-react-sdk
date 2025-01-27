@@ -788,6 +788,7 @@ export default class RoomSublist extends React.Component<IProps, IState> {
                 mx_RoomSublist_showNButton: true,
             });
             console.log('State Height:', this.state.height);
+            console.log('Layout Default Visibles Tiles:', this.layout.defaultVisibleTiles);
 
             // If we're hiding rooms, show a 'show more' button to the user. This button
             // floats above the resize handle, if we have one present. If the user has all
