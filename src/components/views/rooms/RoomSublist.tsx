@@ -171,7 +171,7 @@ export default class RoomSublist extends React.Component<IProps, IState> {
     }
 
     private get numTiles(): number {
-        return RoomSublist.calcNumTiles(this.state.rooms, this.extraTiles);
+        return RoomSublist.calcNumTiles(this.state.rooms, this.extraTiles)-1;
     }
 
     private static calcNumTiles(rooms: Room[], extraTiles?: any[] | null): number {
