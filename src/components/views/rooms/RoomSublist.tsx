@@ -171,11 +171,15 @@ export default class RoomSublist extends React.Component<IProps, IState> {
     }
 
     private get numTiles(): number {
-        return RoomSublist.calcNumTiles(this.state.rooms, this.extraTiles)-1;
+        return RoomSublist.calcNumTiles(this.state.rooms, this.extraTiles);
     }
 
     private static calcNumTiles(rooms: Room[], extraTiles?: any[] | null): number {
-        return (rooms || []).length + (extraTiles || []).length;
+        let calcNumTilesNumber = (rooms || []).length
+        if (SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)) {
+            calcNumTilesNumber = (rooms || []).filter(room => room.name !== "Salutations").length;
+        }
+        return calcNumTilesNumber + (extraTiles || []).length;
     }
 
     private get numVisibleTiles(): number {
