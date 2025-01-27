@@ -534,10 +534,12 @@ export default class RoomSublist extends React.Component<IProps, IState> {
 
         if (this.state.rooms) {
             let visibleRooms = this.state.rooms;
+            console.log('RENDER VISIBLE TILES - Visible Rooms avant:', visibleRooms.length); // Débogue les rooms visibles
             if (!this.props.forceExpanded) {
                 visibleRooms = visibleRooms.slice(0, this.numVisibleTiles);
             }
-
+            console.log('RENDER VISIBLE TILES - Visible Rooms après:', visibleRooms.length); // Débogue les rooms visibles
+            console.log('RENDER VISIBLE TILES - Visible Tiles:', this.numVisibleTiles); // Débogue les rooms visibles
             for (const room of visibleRooms) {
                 if(!(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && room.name=="Salutations")) // watcha+
                 {
