@@ -176,9 +176,9 @@ export default class RoomSublist extends React.Component<IProps, IState> {
 
     private static calcNumTiles(rooms: Room[], extraTiles?: any[] | null): number {
         let calcNumTilesNumber = (rooms || []).length
-        /*if (SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)) {
+        if (SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)) {
             calcNumTilesNumber = (rooms || []).filter(room => room.name !== "Salutations").length;
-        }*/
+        }
         return calcNumTilesNumber + (extraTiles || []).length;
     }
 
@@ -534,9 +534,7 @@ export default class RoomSublist extends React.Component<IProps, IState> {
 
         if (this.state.rooms) {
             //let visibleRooms = this.state.rooms;
-            let visibleRooms = this.state.rooms.filter(
-                room => !(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && room.name === "Salutations") // watcha+
-            );
+            let visibleRooms = this.state.rooms.filter((room: Room) => room.name !== "Salutations");
             console.log('RENDER VISIBLE TILES - Visible Rooms avant:', visibleRooms.length); // Débogue les rooms visibles
             if (!this.props.forceExpanded) {
                 visibleRooms = visibleRooms.slice(0, this.numVisibleTiles);
