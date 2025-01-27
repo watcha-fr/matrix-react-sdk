@@ -140,10 +140,7 @@ export default class RoomSublist extends React.Component<IProps, IState> {
 
     private calculateInitialHeight(): number {
         const requestedVisibleTiles = Math.max(Math.floor(this.layout.visibleTiles), this.layout.minVisibleTiles);
-        console.log('Requested Visible Tiles:', requestedVisibleTiles); // Débogue le nombre de tuiles visibles demandées
         const tileCount = Math.min(this.numTiles, requestedVisibleTiles);
-        console.log('Tile Count (Effective):', tileCount); // Débogue le nombre effectif de tuiles à afficher
-        console.log('Initial Height (px):', this.layout.tilesToPixelsWithPadding(tileCount, this.padding)); // Débogue la hauteur calculée en pixels
         return this.layout.tilesToPixelsWithPadding(tileCount, this.padding);
     }
 
@@ -176,9 +173,11 @@ export default class RoomSublist extends React.Component<IProps, IState> {
 
     private static calcNumTiles(rooms: Room[], extraTiles?: any[] | null): number {
         let calcNumTilesNumber = (rooms || []).length
+        // watcha+
         if (SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)) {
             calcNumTilesNumber = (rooms || []).filter(room => room.name !== "Salutations").length;
         }
+        // +watcha 
         return calcNumTilesNumber + (extraTiles || []).length;
     }
 
@@ -534,16 +533,11 @@ export default class RoomSublist extends React.Component<IProps, IState> {
 
         if (this.state.rooms) {
             //let visibleRooms = this.state.rooms;
-            let visibleRooms = this.state.rooms.filter((room: Room) => !(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && room.name === "Salutations"));
-            console.log('RENDER VISIBLE TILES - Visible Rooms avant:', visibleRooms.length); // Débogue les rooms visibles
+            let visibleRooms = this.state.rooms.filter((room: Room) => !(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && room.name === "Salutations")); // watcha+
             if (!this.props.forceExpanded) {
                 visibleRooms = visibleRooms.slice(0, this.numVisibleTiles);
             }
-            console.log('RENDER VISIBLE TILES - Visible Rooms après:', visibleRooms.length); // Débogue les rooms visibles
-            console.log('RENDER VISIBLE TILES - Visible Tiles:', this.numVisibleTiles); // Débogue les rooms visibles
             for (const room of visibleRooms) {
-                //if(!(SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) && room.name=="Salutations")) // watcha+
-                //{
                     tiles.push(
                         <RoomTile
                             room={room}
@@ -552,8 +546,7 @@ export default class RoomSublist extends React.Component<IProps, IState> {
                             isMinimized={this.props.isMinimized}
                             tag={this.props.tagId}
                         />,
-                    );
-                //}   
+                    ); 
             }
         }
 
@@ -756,7 +749,6 @@ export default class RoomSublist extends React.Component<IProps, IState> {
 
     public render(): React.ReactElement {
         const visibleTiles = this.renderVisibleTiles();
-        console.log('Visible Tiles:', visibleTiles); // Débogue les tuiles visibles
         const hidden = !this.state.rooms.length && !this.props.extraTiles?.length && this.props.alwaysVisible !== true;
         const classes = classNames({
             mx_RoomSublist: true,
@@ -769,7 +761,6 @@ export default class RoomSublist extends React.Component<IProps, IState> {
         if (this.state.roomsLoading) {
             content = <div className="mx_RoomSublist_skeletonUI" />;
         } else if (visibleTiles.length > 0 && this.props.forceExpanded) {
-            console.log('Force Expanded Layout'); // Indique le chemin de code suivi
             content = (
                 <div className="mx_RoomSublist_resizeBox mx_RoomSublist_resizeBox_forceExpanded">
                     <div className="mx_RoomSublist_tiles" ref={this.tilesRef}>
@@ -778,28 +769,17 @@ export default class RoomSublist extends React.Component<IProps, IState> {
                 </div>
             );
         } else if (visibleTiles.length > 0) {
-            console.log('Normal Layout: visibleTiles.length > 0'); // Débogue le chemin suivi
-            console.log('Visible Tiles Lengths:', visibleTiles.length);
             const layout = this.layout; // to shorten calls
             
             const minTiles = Math.min(layout.minVisibleTiles, this.numTiles);
-            console.log('minVisibleTiles:', layout.minVisibleTiles); // Débogue le nombre minimal de tuiles
-            console.log('numTiles:', this.numTiles); // Débogue le nombre minimal de tuiles
-            console.log('Min Tiles:', minTiles); // Débogue le nombre minimal de tuiles
             const showMoreAtMinHeight = minTiles < this.numTiles;
-            console.log('Show More Button Needed:', showMoreAtMinHeight);
             const minHeightPadding = RESIZE_HANDLE_HEIGHT + (showMoreAtMinHeight ? SHOW_N_BUTTON_HEIGHT : 0);
-            console.log('Min Height Padding:', minHeightPadding);
             const minTilesPx = layout.tilesToPixelsWithPadding(minTiles, minHeightPadding);
-            console.log('Min Tiles (px):', minTilesPx);
             const maxTilesPx = layout.tilesToPixelsWithPadding(this.numTiles, this.padding);
-            console.log('Max Tiles (px):', maxTilesPx);
             const showMoreBtnClasses = classNames({
                 mx_RoomSublist_showNButton: true,
             });
-            console.log('State Height:', this.state.height);
-            console.log('Layout Default Visibles Tiles:', this.layout.defaultVisibleTiles);
-
+            
             // If we're hiding rooms, show a 'show more' button to the user. This button
             // floats above the resize handle, if we have one present. If the user has all
             // tiles visible, it becomes 'show less'.
