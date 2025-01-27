@@ -140,7 +140,10 @@ export default class RoomSublist extends React.Component<IProps, IState> {
 
     private calculateInitialHeight(): number {
         const requestedVisibleTiles = Math.max(Math.floor(this.layout.visibleTiles), this.layout.minVisibleTiles);
+        console.log('Requested Visible Tiles:', requestedVisibleTiles); // Débogue le nombre de tuiles visibles demandées
         const tileCount = Math.min(this.numTiles, requestedVisibleTiles);
+        console.log('Tile Count (Effective):', tileCount); // Débogue le nombre effectif de tuiles à afficher
+        console.log('Initial Height (px):', this.layout.tilesToPixelsWithPadding(tileCount, this.padding)); // Débogue la hauteur calculée en pixels
         return this.layout.tilesToPixelsWithPadding(tileCount, this.padding);
     }
 
