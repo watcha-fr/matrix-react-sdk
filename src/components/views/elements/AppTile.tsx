@@ -527,13 +527,12 @@ export default class AppTile extends React.Component<IProps, IState> {
     }
 
     private getTileTitle(): JSX.Element {
-        const name = this.formatAppTileName();
+        const name = this.formatAppTileName() === "Jitsi" ? "Echanger" : this.formatAppTileName(); // watcha+
         const titleSpacer = <span>&nbsp;-&nbsp;</span>;
         let title = "";
         if (this.props.widgetPageTitle && this.props.widgetPageTitle !== this.formatAppTileName()) {
             title = this.props.widgetPageTitle;
         }
-        console.log("Titre : ", this.props.widgetPageTitle);
         return (
             <span>
                 <WidgetAvatar app={this.props.app} size="20px" />
