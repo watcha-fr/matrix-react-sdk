@@ -828,7 +828,7 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
             } else {
                 content = results[Section.PublicRoomsAndSpaces].slice(0, SECTION_LIMIT).map(resultMapper);
             }
-
+            console.log("Content", content);
             publicRoomsSection = (
                 <div
                     className="mx_SpotlightDialog_section mx_SpotlightDialog_results"
