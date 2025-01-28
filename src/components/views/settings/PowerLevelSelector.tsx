@@ -103,7 +103,7 @@ export function PowerLevelSelector({
                     <PowerSelector
                         value={userLevel}
                         disabled={!canChange}
-                        label={dispName}
+                        label={dispName.displayName}
                         key={userId}
                         onChange={(value) => setCurrentPowerLevel({ value, userId })}
                     />
