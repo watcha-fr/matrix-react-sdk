@@ -128,7 +128,7 @@ interface IAppRowProps {
 }
 
 const AppRow: React.FC<IAppRowProps> = ({ app, room }) => {
-    const name = WidgetUtils.getWidgetName(app);
+    const name = WidgetUtils.getWidgetName(app) === "Jitsi" ? "Echanger" : WidgetUtils.getWidgetName(app);
     const dataTitle = WidgetUtils.getWidgetDataTitle(app);
     const subtitle = dataTitle && " - " + dataTitle;
     const [canModifyWidget, setCanModifyWidget] = useState<boolean>();
