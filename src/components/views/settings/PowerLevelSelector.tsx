@@ -95,7 +95,6 @@ export function PowerLevelSelector({
                 // If I can change levels, I can change the level of anyone with a lower level than mine
                 const canChange = canChangeLevels && (userLevels[userId] < currentUserLevel || isMe);
                 const user = matrixClient.getUser(userId);// watcha+
-                console.log("Users :", user);
                 // When the new power level is selected, the fields are rerendered and we need to keep the current value
                 const userLevel = currentPowerLevel?.userId === userId ? currentPowerLevel?.value : userLevels[userId];
 

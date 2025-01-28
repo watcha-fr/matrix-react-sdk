@@ -341,7 +341,6 @@ export default class RolesRoomSettingsTab extends React.Component<IProps> {
             powerLevelDescriptors.users_default.defaultValue,
         );
 
-        console.log("User @e9a79ed5-7ec7-4c74-96ce-cae19da5dead:teamnetdev.watcha.fr : ", client.getUser("@e9a79ed5-7ec7-4c74-96ce-cae19da5dead:teamnetdev.watcha.fr"));
         let currentUserLevel = userLevels[client.getUserId()!];
         if (currentUserLevel === undefined) {
             currentUserLevel = defaultUserLevel;
