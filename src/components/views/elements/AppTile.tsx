@@ -533,7 +533,7 @@ export default class AppTile extends React.Component<IProps, IState> {
         if (this.props.widgetPageTitle && this.props.widgetPageTitle !== this.formatAppTileName()) {
             title = this.props.widgetPageTitle;
         }
-
+        console.log("Titre : ", this.props.widgetPageTitle);
         return (
             <span>
                 <WidgetAvatar app={this.props.app} size="20px" />
