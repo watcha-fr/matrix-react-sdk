@@ -255,9 +255,7 @@ export default class RolesRoomSettingsTab extends React.Component<IProps> {
         const isSpaceRoom = room.isSpaceRoom();
 
         const plEvent = room.currentState.getStateEvents(EventType.RoomPowerLevels, "");
-        console.log("plEvent : ", plEvent);
         const plContent = plEvent ? plEvent.getContent() || {} : {};
-        console.log("plContent : ", plContent);
         const canChangeLevels = room.currentState.mayClientSendStateEvent(EventType.RoomPowerLevels, client);
 
         const plEventsToLabels: Record<EventType | string, TranslationKey | null> = {

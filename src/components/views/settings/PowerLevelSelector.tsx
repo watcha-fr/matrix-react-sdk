@@ -82,7 +82,6 @@ export function PowerLevelSelector({
     const users = Object.keys(userLevels)
         .sort((userA, userB) => sortUser(userA, userB, userLevels))
         .filter(filter);
-    console.log("usersLevels : ", userLevels);
     // No user to display, we return the children into fragment to convert it to JSX.Element type
     if (!users.length) return <>{children}</>;
 
@@ -95,7 +94,7 @@ export function PowerLevelSelector({
                 const isMe = userId === matrixClient.getUserId();
                 // If I can change levels, I can change the level of anyone with a lower level than mine
                 const canChange = canChangeLevels && (userLevels[userId] < currentUserLevel || isMe);
-
+                const dispName = matrixClient.getUser(userId)["displayName"];// watcha+
                 // When the new power level is selected, the fields are rerendered and we need to keep the current value
                 const userLevel = currentPowerLevel?.userId === userId ? currentPowerLevel?.value : userLevels[userId];
 
@@ -103,7 +102,7 @@ export function PowerLevelSelector({
                     <PowerSelector
                         value={userLevel}
                         disabled={!canChange}
-                        label={userId}
+                        label={dispName}
                         key={userId}
                         onChange={(value) => setCurrentPowerLevel({ value, userId })}
                     />
