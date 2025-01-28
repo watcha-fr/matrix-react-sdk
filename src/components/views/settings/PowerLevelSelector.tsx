@@ -82,7 +82,7 @@ export function PowerLevelSelector({
     const users = Object.keys(userLevels)
         .sort((userA, userB) => sortUser(userA, userB, userLevels))
         .filter(filter);
-
+    console.log("users : ", users);
     // No user to display, we return the children into fragment to convert it to JSX.Element type
     if (!users.length) return <>{children}</>;
 
