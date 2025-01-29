@@ -413,7 +413,7 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
             ...publicRooms.map(toPublicRoomResult),
         ].filter((result) => filter === null || result.filter.includes(filter));
     }, [cli, userDirectorySearchResults, profile, publicRooms, filter, msc3946ProcessDynamicPredecessor]);
-
+    console.log("possibleResults :", possibleResults);
     const results = useMemo<Record<Section, Result[]>>(() => {
         const results: Record<Section, Result[]> = {
             [Section.People]: [],
@@ -493,7 +493,7 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
 
         return results;
     }, [trimmedQuery, filter, cli, possibleResults, userDirectorySearchResults, memberComparator]);
-
+    console.log("Results :", results);
     const numResults = sum(Object.values(results).map((it) => it.length));
     useWebSearchMetrics(numResults, query.length, true);
 
@@ -611,7 +611,7 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
             </div>
         );
     }
-    console.log("Results :", results);
+    
     let content: JSX.Element;
     if (trimmedQuery || filter !== null) {
         const resultMapper = (result: Result): JSX.Element => {
