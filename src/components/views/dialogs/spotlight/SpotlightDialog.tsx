@@ -611,7 +611,7 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
             </div>
         );
     }
-
+    console.log("Results :", results);
     let content: JSX.Element;
     if (trimmedQuery || filter !== null) {
         const resultMapper = (result: Result): JSX.Element => {
