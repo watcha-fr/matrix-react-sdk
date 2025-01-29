@@ -335,7 +335,9 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
         error: publicRoomsError,
     } = usePublicRoomDirectory();
     console.log("publicRooms", publicRooms);
-    console.log("config", config);
+    console.log("config avant", config);
+    setConfig({roomServer: 'teamnetdev.watcha.fr', instanceId: undefined}) //console
+    console.log("config après", config);
     const { loading: peopleLoading, users: userDirectorySearchResults, search: searchPeople } = useUserDirectory();
     const { loading: profileLoading, profile, search: searchProfileInfo } = useProfileInfo();
     const searchParams: [IDirectoryOpts] = useMemo(
