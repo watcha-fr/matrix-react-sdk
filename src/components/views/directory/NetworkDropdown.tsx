@@ -179,7 +179,7 @@ export const NetworkDropdown: React.FC<IProps> = ({ protocols, config, setConfig
               }
             : {}),
     }));
-
+    console.log("options :", options);
     const addNewServer = useCallback(
         ({ closeMenu }) => (
             <>
