@@ -334,6 +334,8 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
         search: searchPublicRooms,
         error: publicRoomsError,
     } = usePublicRoomDirectory();
+    console.log("publicRooms", publicRooms);
+    console.log("config", config);
     const { loading: peopleLoading, users: userDirectorySearchResults, search: searchPeople } = useUserDirectory();
     const { loading: profileLoading, profile, search: searchProfileInfo } = useProfileInfo();
     const searchParams: [IDirectoryOpts] = useMemo(
