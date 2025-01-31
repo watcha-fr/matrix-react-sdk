@@ -66,7 +66,7 @@ import { goto, join } from "./slash-commands/join";
 
 export { CommandCategories, Command };
 
-export const Commands = [
+export const Commands = SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) ? [] :[ // watcha+
     new Command({
         command: "spoiler",
         args: "<message>",
