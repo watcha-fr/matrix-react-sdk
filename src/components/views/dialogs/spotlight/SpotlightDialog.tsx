@@ -815,7 +815,6 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                 </div>
             );
         }
-        setConfig({roomServer: 'teamnetdev.watcha.fr', instanceId: undefined}) //console
         console.log("config après", config);
         let publicRoomsSection: JSX.Element | undefined;
         if (filter === Filter.PublicRooms || filter === Filter.PublicSpaces) {
