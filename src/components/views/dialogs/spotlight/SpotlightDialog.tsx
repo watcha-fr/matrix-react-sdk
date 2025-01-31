@@ -336,8 +336,6 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
     } = usePublicRoomDirectory();
     console.log("publicRooms", publicRooms);
     console.log("config avant", config);
-    //setConfig({roomServer: 'teamnetdev.watcha.fr', instanceId: undefined}) //console
-    console.log("config après", config);
     const { loading: peopleLoading, users: userDirectorySearchResults, search: searchPeople } = useUserDirectory();
     const { loading: profileLoading, profile, search: searchProfileInfo } = useProfileInfo();
     const searchParams: [IDirectoryOpts] = useMemo(
@@ -817,7 +815,8 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                 </div>
             );
         }
-
+        setConfig({roomServer: 'teamnetdev.watcha.fr', instanceId: undefined}) //console
+        console.log("config après", config);
         let publicRoomsSection: JSX.Element | undefined;
         if (filter === Filter.PublicRooms || filter === Filter.PublicSpaces) {
             let content: JSX.Element | JSX.Element[];
