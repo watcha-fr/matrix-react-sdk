@@ -179,8 +179,7 @@ export const NetworkDropdown: React.FC<IProps> = ({ protocols, config, setConfig
               }
             : {}),
     }));
-    console.log("options :", options);
-    setConfig({roomServer: 'teamnetdev.watcha.fr', instanceId: undefined}) //console
+    
     const addNewServer = useCallback(
         ({ closeMenu }) => (
             <>

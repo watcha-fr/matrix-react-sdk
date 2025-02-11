@@ -118,6 +118,8 @@ export function pendingVerificationRequestForUser(
     user: User | RoomMember,
 ): VerificationRequest | undefined {
     const dmRoom = findDMForUser(matrixClient, user.userId);
+    console.log("DM Room : ", dmRoom)
+    console.log("userId : ", user.userId)
     if (dmRoom) {
         return matrixClient.getCrypto()!.findVerificationRequestDMInProgress(dmRoom.roomId, user.userId);
     }

@@ -334,8 +334,6 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
         search: searchPublicRooms,
         error: publicRoomsError,
     } = usePublicRoomDirectory();
-    console.log("publicRooms", publicRooms);
-    console.log("config avant", config);
     const { loading: peopleLoading, users: userDirectorySearchResults, search: searchPeople } = useUserDirectory();
     const { loading: profileLoading, profile, search: searchProfileInfo } = useProfileInfo();
     const searchParams: [IDirectoryOpts] = useMemo(
@@ -415,7 +413,6 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
             ...publicRooms.map(toPublicRoomResult),
         ].filter((result) => filter === null || result.filter.includes(filter));
     }, [cli, userDirectorySearchResults, profile, publicRooms, filter, msc3946ProcessDynamicPredecessor]);
-    console.log("possibleResults :", possibleResults);
     const results = useMemo<Record<Section, Result[]>>(() => {
         const results: Record<Section, Result[]> = {
             [Section.People]: [],
@@ -495,7 +492,6 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
 
         return results;
     }, [trimmedQuery, filter, cli, possibleResults, userDirectorySearchResults, memberComparator]);
-    console.log("Results :", results);
     const numResults = sum(Object.values(results).map((it) => it.length));
     useWebSearchMetrics(numResults, query.length, true);
 
@@ -815,7 +811,6 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
                 </div>
             );
         }
-        console.log("config après", config);
         let publicRoomsSection: JSX.Element | undefined;
         if (filter === Filter.PublicRooms || filter === Filter.PublicSpaces) {
             let content: JSX.Element | JSX.Element[];
@@ -830,7 +825,6 @@ const SpotlightDialog: React.FC<IProps> = ({ initialText = "", initialFilter = n
             } else {
                 content = results[Section.PublicRoomsAndSpaces].slice(0, SECTION_LIMIT).map(resultMapper);
             }
-            console.log("Content", content);
             publicRoomsSection = (
                 <div
                     className="mx_SpotlightDialog_section mx_SpotlightDialog_results"

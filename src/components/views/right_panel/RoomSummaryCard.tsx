@@ -128,7 +128,8 @@ interface IAppRowProps {
 }
 
 const AppRow: React.FC<IAppRowProps> = ({ app, room }) => {
-    const name = WidgetUtils.getWidgetName(app) === "Jitsi" && SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) ? "Echanger" : WidgetUtils.getWidgetName(app);
+    //const name = WidgetUtils.getWidgetName(app) === "Jitsi" && SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled) ? "Echanger" : WidgetUtils.getWidgetName(app); SITIV+
+    const name = WidgetUtils.getWidgetName(app);
     const dataTitle = WidgetUtils.getWidgetDataTitle(app);
     const subtitle = dataTitle && " - " + dataTitle;
     const [canModifyWidget, setCanModifyWidget] = useState<boolean>();

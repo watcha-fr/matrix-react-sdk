@@ -24,7 +24,7 @@ import { Room, RoomEvent } from "matrix-js-sdk/src/matrix";
 import { KnownMembership } from "matrix-js-sdk/src/types";
 import { logger } from "matrix-js-sdk/src/logger";
 import { ApprovalOpts, WidgetLifecycle } from "@matrix-org/react-sdk-module-api/lib/lifecycles/WidgetLifecycle";
-import { UIFeature } from "../../../settings/UIFeature";
+//import { UIFeature } from "../../../settings/UIFeature"; SITIV+
 import AccessibleButton from "./AccessibleButton";
 import { _t } from "../../../languageHandler";
 import AppPermission from "./AppPermission";
@@ -527,12 +527,14 @@ export default class AppTile extends React.Component<IProps, IState> {
     }
 
     private getTileTitle(): JSX.Element {
-        const name = this.formatAppTileName() === "Jitsi"  && SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)  ? "Echanger" : this.formatAppTileName(); // watcha+
+        //const name = this.formatAppTileName() === "Jitsi"  && SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)  ? "Echanger" : this.formatAppTileName(); // watcha+ SITIV+
+        const name = this.formatAppTileName();
         const titleSpacer = <span>&nbsp;-&nbsp;</span>;
         let title = "";
         if (this.props.widgetPageTitle && this.props.widgetPageTitle !== this.formatAppTileName()) {
             title = this.props.widgetPageTitle;
         }
+
         return (
             <span>
                 <WidgetAvatar app={this.props.app} size="20px" />
