@@ -121,8 +121,6 @@ export function pendingVerificationRequestForUser(
     if (dmRoom) {
         if (matrixClient.getCrypto()) {
             return matrixClient.getCrypto()!.findVerificationRequestDMInProgress(dmRoom.roomId, user.userId);
-        } else {
-            return null;
         }
     }
 }
