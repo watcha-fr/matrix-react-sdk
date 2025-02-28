@@ -172,6 +172,7 @@ export default class RoomSublist extends React.Component<IProps, IState> {
     }
 
     private static calcNumTiles(rooms: Room[], extraTiles?: any[] | null): number {
+        console.log(rooms)
         let calcNumTilesNumber = (rooms || []).length
         // watcha+
         if (SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled)) {
