@@ -173,10 +173,11 @@ export default class RoomSublist extends React.Component<IProps, IState> {
 
     private static calcNumTiles(rooms: Room[], extraTiles?: any[] | null): number {
         rooms.forEach((room, index) => {
+            const members = room.getMembers();
             console.log(`Room ${index + 1}:`);
             console.log("ID:", room.roomId);
             console.log("Nom:", room.name);
-            console.log("Membres:", room.getJoinedMemberCount());
+            console.log("Membres dans la room :", members.map(m => m.name));
             console.log("-----------------");
         });
         let calcNumTilesNumber = (rooms || []).length
