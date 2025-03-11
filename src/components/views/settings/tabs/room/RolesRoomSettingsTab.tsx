@@ -64,11 +64,11 @@ const plEventsToShow: Record<string, IEventShowOpts> = {
     [EventType.RoomPinnedEvents]: { isState: true, hideForSpace: true },
     [EventType.Reaction]: { isState: false, hideForSpace: true },
     [EventType.RoomRedaction]: { isState: false, hideForSpace: true },
-
+    /* watcha!
     // MSC3401: Native Group VoIP signaling
     [ElementCall.CALL_EVENT_TYPE.name]: { isState: true, hideForSpace: true },
     [ElementCall.MEMBER_EVENT_TYPE.name]: { isState: true, hideForSpace: true },
-
+    !watcha */
     // TODO: Enable support for m.widget event type (https://github.com/vector-im/element-web/issues/13111)
     "im.vector.modular.widgets": { isState: true, hideForSpace: true },
     [VoiceBroadcastInfoEventType]: { isState: true, hideForSpace: true },
