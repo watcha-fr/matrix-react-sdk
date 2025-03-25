@@ -87,10 +87,10 @@ function getIframeUrl(
     const url = getNextcloudBaseUrl();
     url.pathname += `apps/${appName}`;
     for (const [key, value] of searchParams.entries()) {
-        /*
+        /* watcha!
         if (key == "dir" && skipDirParam && searchParams.get("fileid")) {
             continue;
-        }*/
+        } !watcha */
         url.searchParams.append(key, value);
     }
     for (const target of refineTargets) {
