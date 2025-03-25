@@ -91,9 +91,6 @@ function getIframeUrl(
         if (key == "dir" && skipDirParam && searchParams.get("fileid")) {
             continue;
         }*/
-        if (key == "fileid") {
-            continue;
-        }
         url.searchParams.append(key, value);
     }
     for (const target of refineTargets) {
