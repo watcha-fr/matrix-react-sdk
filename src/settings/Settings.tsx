@@ -645,7 +645,7 @@ export const SETTINGS: { [setting: string]: ISetting } = {
         supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS,
         displayName: _td("settings|preferences|compact_modern"),
         default: false,
-        controller: new IncompatibleController("layout", false, (v: Layout) => v !== Layout.Group),
+        controller: new IncompatibleController("layout", false, (v: Layout) => v !== Layout.Bubble),
     },
     "showRedactions": {
         supportedLevels: LEVELS_ROOM_SETTINGS_WITH_ROOM,
@@ -1064,7 +1064,7 @@ export const SETTINGS: { [setting: string]: ISetting } = {
     },
     "layout": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
-        default: Layout.Group,
+        default: Layout.Bubble,
     },
     "Images.size": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,

@@ -29,6 +29,7 @@ import { getDocumentWidgetUrl } from "../../utils/watcha_nextcloudUtils";
 export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
     const [iframeLoading, setIframeLoading] = useState(true);
     const nextcloudShare = useSettingValue("nextcloudShare", roomId);
+    console.log("DLA NextcloudShare : " + nextcloudShare);
 
     useEffect(() => {
         if (nextcloudShare) {
