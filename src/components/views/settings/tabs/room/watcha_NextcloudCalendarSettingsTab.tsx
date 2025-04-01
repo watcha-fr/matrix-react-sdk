@@ -64,7 +64,7 @@ export default ({ roomId }: IProps) => {
 
     const isShared = (stateKey: StateKeys) => Boolean(calendarEvents[stateKey]?.getContent()?.id);
 
-    const isSharedByMe = (stateKey: StateKeys) => calendarEvents[stateKey] && isOwnedByMe(calendarEvents[stateKey]!);
+    const isSharedByMe = (stateKey: StateKeys) => calendarEvents[stateKey] && isOwnedByMe(calendarEvents[stateKey]);
 
     const serviceShareAny = calendarEvents[StateKeys.VEVENT_VTODO]?.getContent()?.is_personal === false;
 
@@ -164,11 +164,11 @@ export default ({ roomId }: IProps) => {
 
     for (const stateKey of Object.values(StateKeys)) {
         const calendarEvent = calendarEvents[stateKey];
-        const calendar: ICalendarEventContent | undefined = calendarEvent?.getContent();
-        if (!calendar || isEmpty(calendar) || (calendarEvent && !isOwnedByAnUser(calendarEvent)) || (calendarEvent && isOwnedByMe(calendarEvent))) {
+        const calendar: ICalendarEventContent = calendarEvent?.getContent();
+        if (!calendar || isEmpty(calendar) || !isOwnedByAnUser(calendarEvent) || isOwnedByMe(calendarEvent)) {
             continue;
         }
-        const ownerId = calendarEvent && isOwnedByAnUser(calendarEvent) ? calendarEvent.getSender() ?? "" : "";
+        const ownerId = isOwnedByAnUser(calendarEvent) ? calendarEvent.getSender() : null;
         sharedCalendarsList.push(
             <SharedCalendar key={stateKey} {...{ roomId, stateKey, ownerId }} calendarId={calendar.id} />,
         );
@@ -198,7 +198,7 @@ export default ({ roomId }: IProps) => {
                     })}
                     stateKey={StateKeys.VEVENT_VTODO}
                     calendars={ownCalendars.VEVENT_VTODO}
-                    sharedCalendarId={getSharedCalendarId(StateKeys.VEVENT_VTODO) ?? undefined}
+                    sharedCalendarId={getSharedCalendarId(StateKeys.VEVENT_VTODO)}
                     disabled={!canBeShared(StateKeys.VEVENT_VTODO)}
                     key={StateKeys.VEVENT_VTODO}
                 />,
@@ -211,7 +211,7 @@ export default ({ roomId }: IProps) => {
                     subheading={_t("watcha|count_calendar", { count: ownCalendars.VEVENT.length })}
                     stateKey={StateKeys.VEVENT}
                     calendars={ownCalendars.VEVENT}
-                    sharedCalendarId={getSharedCalendarId(StateKeys.VEVENT) ?? undefined}
+                    sharedCalendarId={getSharedCalendarId(StateKeys.VEVENT)}
                     disabled={!canBeShared(StateKeys.VEVENT)}
                     key={StateKeys.VEVENT}
                 />,
@@ -224,7 +224,7 @@ export default ({ roomId }: IProps) => {
                     subheading={_t("watcha|count_tasks", { count: ownCalendars.VTODO.length })}
                     stateKey={StateKeys.VTODO}
                     calendars={ownCalendars.VTODO}
-                    sharedCalendarId={getSharedCalendarId(StateKeys.VTODO) ?? undefined}
+                    sharedCalendarId={getSharedCalendarId(StateKeys.VTODO)}
                     disabled={!canBeShared(StateKeys.VTODO)}
                     key={StateKeys.VTODO}
                 />,
