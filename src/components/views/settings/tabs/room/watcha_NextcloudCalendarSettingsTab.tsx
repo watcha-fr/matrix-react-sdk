@@ -167,18 +167,32 @@ export default ({ roomId }: IProps) => {
     const sharedCalendarsList = [];
 
     for (const stateKey of Object.values(StateKeys)) {
+        console.log(`Processing stateKey: ${stateKey}`);
         const calendarEvent = calendarEvents[stateKey];
+        if (!calendarEvent) {
+            console.warn(`Skipping ${stateKey}: calendarEvent is null or undefined`);
+            continue;
+        }
+        console.log(`calendarEvent found for ${stateKey}`, calendarEvent);
         const calendarContent = calendarEvent?.getContent();
-
+        console.log(`calendarContent for ${stateKey}:`, calendarContent);
         const calendar: ICalendarEventContent | undefined = calendarContent as ICalendarEventContent;
         
         if (!calendar || isEmpty(calendar) || (calendarEvent && !isOwnedByAnUser(calendarEvent)) || (calendarEvent && isOwnedByMe(calendarEvent))) {
+            console.warn(`Skipping ${stateKey}:`, {
+                calendar,
+                isEmpty: isEmpty(calendar),
+                isOwnedByAnUser: calendarEvent ? isOwnedByAnUser(calendarEvent) : "N/A",
+                isOwnedByMe: calendarEvent ? isOwnedByMe(calendarEvent) : "N/A"
+            });
             continue;
         }
         const ownerId = calendarEvent && isOwnedByAnUser(calendarEvent) ? calendarEvent.getSender() : null;
+        console.log(`ownerId for ${stateKey}:`, ownerId);
         sharedCalendarsList.push(
             <SharedCalendar key={stateKey} {...{ roomId, stateKey, ownerId: ownerId ?? ""}} calendarId={calendar.id} />,
         );
+        console.log(`Added calendar ${calendar.id} for stateKey: ${stateKey}`);
     }
 
     let sharedCalendars: React.ReactNode;
