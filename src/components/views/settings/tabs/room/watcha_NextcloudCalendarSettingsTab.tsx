@@ -168,7 +168,11 @@ export default ({ roomId }: IProps) => {
 
     for (const stateKey of Object.values(StateKeys)) {
         const calendarEvent = calendarEvents[stateKey];
-        const calendar: ICalendarEventContent = calendarEvent?.getContent() ?? {};
+        const calendarContent = calendarEvent?.getContent();
+        if (!calendarContent) {
+            return; // ou gérer le cas où le contenu est inexistant
+        }
+        const calendar: ICalendarEventContent = calendarContent;
         if (!calendar || isEmpty(calendar) || (calendarEvent && !isOwnedByAnUser(calendarEvent)) || (calendarEvent && isOwnedByMe(calendarEvent))) {
             continue;
         }
@@ -202,7 +206,7 @@ export default ({ roomId }: IProps) => {
                     })}
                     stateKey={StateKeys.VEVENT_VTODO}
                     calendars={ownCalendars.VEVENT_VTODO}
-                    sharedCalendarId={getSharedCalendarId(StateKeys.VEVENT_VTODO)}
+                    sharedCalendarId={getSharedCalendarId(StateKeys.VEVENT_VTODO) ?? undefined}
                     disabled={!canBeShared(StateKeys.VEVENT_VTODO)}
                     key={StateKeys.VEVENT_VTODO}
                 />,
