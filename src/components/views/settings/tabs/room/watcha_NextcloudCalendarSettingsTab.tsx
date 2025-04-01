@@ -170,7 +170,7 @@ export default ({ roomId }: IProps) => {
         const calendarEvent = calendarEvents[stateKey];
         const calendarContent = calendarEvent?.getContent();
 
-        const calendar: ICalendarEventContent | null = calendarContent;
+        const calendar: ICalendarEventContent | undefined = calendarContent;
         
         if (!calendar || isEmpty(calendar) || (calendarEvent && !isOwnedByAnUser(calendarEvent)) || (calendarEvent && isOwnedByMe(calendarEvent))) {
             continue;
