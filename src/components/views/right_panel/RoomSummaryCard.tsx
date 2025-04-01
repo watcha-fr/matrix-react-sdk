@@ -45,8 +45,8 @@ import { Icon as ErrorIcon } from "@vector-im/compound-design-tokens/icons/error
 import { Icon as ChevronDownIcon } from "@vector-im/compound-design-tokens/icons/chevron-down.svg";
 import { EventType, JoinRule, Room, RoomStateEvent } from "matrix-js-sdk/src/matrix";
 import { Icon as DocumentsIcon } from "../../../../res/img/watcha/watcha_documents.svg"; // watcha+
-//import { Icon as CalendarIcon } from "../../../../res/img/watcha/watcha_calendar.svg"; // watcha+
-//import { Icon as TaskIcon } from "../../../../res/img/watcha/watcha_tasks.svg"; // watcha+
+import { Icon as CalendarIcon } from "../../../../res/img/watcha/watcha_calendar.svg"; // watcha+
+import { Icon as TaskIcon } from "../../../../res/img/watcha/watcha_tasks.svg"; // watcha+
 
 
 
@@ -299,14 +299,14 @@ const onRoomSettingsClick = (ev: Event): void => {
 const onRoomDocumentsClick = () => {
     RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudDocumentPanel }, true);
 };
-/*
+
 const onRoomCalendarClick = () => {
     RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudCalendarPanel }, true);
 };
 
 const onRoomTasksClick = () => {
     RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudTaskPanel }, true);
-};*/
+};
 // +watcha
 
 const RoomTopic: React.FC<Pick<IProps, "room">> = ({ room }): JSX.Element | null => {
@@ -607,7 +607,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
                                 label={_t("watcha|show_documents")}
                                 onSelect={onRoomDocumentsClick}
                             />
-                            {/*<MenuItem
+                            {<MenuItem
                                 Icon={CalendarIcon}
                                 label={_t("watcha|show_calendar")}
                                 onSelect={onRoomCalendarClick}
@@ -616,7 +616,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
                                 Icon={TaskIcon}
                                 label={_t("watcha|show_task")}
                                 onSelect={onRoomTasksClick}
-                            />*/}
+                            />}
                         </>
                     ) /* +watcha*/}
                 </>
