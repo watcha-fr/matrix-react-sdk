@@ -607,7 +607,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
                                 label={_t("watcha|show_documents")}
                                 onSelect={onRoomDocumentsClick}
                             />
-                            {<MenuItem
+                            <MenuItem
                                 Icon={CalendarIcon}
                                 label={_t("watcha|show_calendar")}
                                 onSelect={onRoomCalendarClick}
@@ -616,7 +616,7 @@ const RoomSummaryCard: React.FC<IProps> = ({ room, permalinkCreator, onClose, on
                                 Icon={TaskIcon}
                                 label={_t("watcha|show_task")}
                                 onSelect={onRoomTasksClick}
-                            />}
+                            />
                         </>
                     ) /* +watcha*/}
                 </>
