@@ -172,7 +172,7 @@ export default ({ roomId }: IProps) => {
         if (!calendarContent) {
             return; // ou gérer le cas où le contenu est inexistant
         }
-        const calendar: ICalendarEventContent = calendarContent;
+        const calendar = calendarContent as ICalendarEventContent;
         if (!calendar || isEmpty(calendar) || (calendarEvent && !isOwnedByAnUser(calendarEvent)) || (calendarEvent && isOwnedByMe(calendarEvent))) {
             continue;
         }
