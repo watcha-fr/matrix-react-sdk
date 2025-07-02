@@ -224,6 +224,7 @@ export const Commands = [
         command: "nick",
         args: "<display_name>",
         description: _td("slash_command|nick"),
+        isEnabled: () => !SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled), // watcha+
         runFn: function (cli, roomId, threadId, args) {
             if (args) {
                 return success(cli.setDisplayName(args));
