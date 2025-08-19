@@ -3994,6 +3994,8 @@
         "invite_user": "Click to add this user to the invitation list",
         "invtation_externe": "You want to collaborate with a partner from outside your organisation: invite them by e-mail",
         "limited_rights": "You are logged in from a partner account with limited rights",
+        "my_email": "My email",
+        "my_email_title": "Open my email in a new tab",
         "my_documents": "My documents",
         "my_documents_title": "Open my documents in a new tab",
         "nextcloud_share": "Share a Nextcloud folder with room members and use it as a common storage space.",
