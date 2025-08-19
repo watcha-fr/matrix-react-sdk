@@ -3996,6 +3996,8 @@
         "invite_user": "Cliquez pour ajouter cet utilisateur à la liste d'invitation",
         "invtation_externe": "Vous souhaitez collaborer avec un partenaire extérieur à votre organisation : invitez-le par e-mail",
         "limited_rights": "Vous êtes connecté depuis un compte partenaire avec des droits limités",
+        "my_email": "Ma boite e-mail",
+        "my_email_title": "Ouvrir ma boite e-mail dans un nouvel onglet",
         "my_documents": "Mes documents",
         "my_documents_title": "Ouvrir mes documents dans un nouvel onglet",
         "nextcloud_share": "Partagez un dossier Nextcloud avec les membres du salon et utilisez-le comme espace de stockage commun.",

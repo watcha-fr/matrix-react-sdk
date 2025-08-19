@@ -43,6 +43,7 @@ export const enum UIFeature {
     watcha_StickersSetting = "UIFeature.watcha_stickersSetting",
     watcha_ReportEvent = "UIFeature.watcha_reportEvent",
     watcha_SitivFieldDisabled = "UIFeature.watcha_sitivFieldDisabled",
+    watcha_Mail = "UIFeature.watcha_mail",
     /* eslint-enable camelcase */
     // +watcha
     BulkUnverifiedSessionsReminder = "UIFeature.BulkUnverifiedSessionsReminder",

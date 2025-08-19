@@ -371,6 +371,12 @@ export default class UserMenu extends React.Component<IProps, IState> {
         window.open(jitsiBaseUrl);
         this.setState({ contextMenuPosition: null }); // also close the menu
     };
+
+    private onEmailClick = () => {
+        const emailBaseUrl = SdkConfig.get().watcha_email_url;
+        window.open(emailBaseUrl);
+        this.setState({ contextMenuPosition: null }); // also close the menu
+    };
     // +watcha
 
     private renderContextMenu = (): React.ReactNode => {
@@ -501,6 +507,14 @@ export default class UserMenu extends React.Component<IProps, IState> {
                             label={_t("watcha|videoconferencing")}
                             title={_t("watcha|videoconferencing_title")}
                             onClick={this.onJitsiClick}
+                        />
+                    }
+                    { SettingsStore.getValue(UIFeature.watcha_Mail) &&
+                        <IconizedContextMenuOption
+                            iconClassName="mx_UserMenu_iconNextcloud"
+                            label={_t("watcha|my_email")}
+                            title={_t("watcha|my_email_title")}
+                            onClick={this.onEmailClick}
                         />
                     }
                 </IconizedContextMenuOptionList>
