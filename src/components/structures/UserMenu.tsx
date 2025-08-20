@@ -373,7 +373,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
     };
 
     private onEmailClick = () => {
-        const emailBaseUrl = SdkConfig.get().watcha_email_url;
+        const emailBaseUrl = SdkConfig.get().watcha_email_base_url;
         window.open(emailBaseUrl);
         this.setState({ contextMenuPosition: null }); // also close the menu
     };
