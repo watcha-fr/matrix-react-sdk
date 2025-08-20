@@ -224,7 +224,7 @@ export interface IConfigOptions {
     watcha_jitsi_home_url?: string;
     watcha_nextcloud_base_url?: string;
     watcha_sso_profile_url?: string;
-    watcha_email_url?: string;
+    watcha_email_base_url?: string;
     watcha_support_email_address?: string;
     // +watcha
 }

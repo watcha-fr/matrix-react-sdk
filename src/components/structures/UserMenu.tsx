@@ -511,7 +511,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
                     }
                     { SettingsStore.getValue(UIFeature.watcha_Mail) &&
                         <IconizedContextMenuOption
-                            iconClassName="mx_UserMenu_iconNextcloud"
+                            iconClassName="mx_UserMenu_iconEmail"
                             label={_t("watcha|my_email")}
                             title={_t("watcha|my_email_title")}
                             onClick={this.onEmailClick}
