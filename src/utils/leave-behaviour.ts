@@ -179,6 +179,7 @@ export async function leaveRoomBehaviour(
 
     // watcha+ SITIV+
     const roomAfterLeave = matrixClient.getRoom(roomId);
+    console.log(`roomAfterLeave ${roomId}`);
     if (roomAfterLeave) {
         const joinedMembers = roomAfterLeave.currentState.getJoinedMemberCount();
         if (joinedMembers === 0) {
