@@ -182,6 +182,7 @@ export async function leaveRoomBehaviour(
     console.log(`roomAfterLeave ${roomId}`);
     if (roomAfterLeave) {
         const joinedMembers = roomAfterLeave.currentState.getJoinedMemberCount();
+        console.log(`roomAfterLeave - joinedMembers ${joinedMembers}`);
         if (joinedMembers === 0) {
             console.log(`Suppression du salon vide ${roomId}`);
             try {
