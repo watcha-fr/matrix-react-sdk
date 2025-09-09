@@ -176,6 +176,21 @@ export async function leaveRoomBehaviour(
             });
         }
     }
+
+    // watcha+ SITIV+
+    const roomAfterLeave = matrixClient.getRoom(roomId);
+    if (roomAfterLeave) {
+        const joinedMembers = roomAfterLeave.currentState.getJoinedMemberCount();
+        if (joinedMembers === 0) {
+            console.log(`🧹 Suppression du salon vide ${roomId}`);
+            try {
+                await matrixClient.deleteEmptyRoom(roomId);
+            } catch (err) {
+                console.error("❌ Erreur lors de la suppression du salon vide :", err);
+            }
+        }
+    }
+    // +watcha
 }
 
 export const leaveSpace = (space: Room): void => {
