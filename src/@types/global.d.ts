@@ -16,7 +16,7 @@ limitations under the License.
 
 // eslint-disable-next-line no-restricted-imports
 import "matrix-js-sdk/src/@types/global"; // load matrix-js-sdk's type extensions first
-import "@types/modernizr";
+import "modernizr";
 
 import ContentMessages from "../ContentMessages";
 import { IMatrixClientPeg } from "../MatrixClientPeg";
