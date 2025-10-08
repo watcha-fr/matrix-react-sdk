@@ -1314,7 +1314,7 @@ export const SETTINGS: { [setting: string]: ISetting } = {
     },
     [UIFeature.watcha_Mail]: {
         supportedLevels: LEVELS_UI_FEATURE,
-        default: true,
+        default: false,
     },
     "feature_watcha_webrtc": {
         isFeature: true,
