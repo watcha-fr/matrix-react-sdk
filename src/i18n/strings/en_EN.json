@@ -3709,6 +3709,7 @@
         "title": "Change the room access level"
     },
     "upload_failed_generic": "The file '%(fileName)s' failed to upload.",
+    "upload_failed_forbidden": "You do not have permission to send a %(fileName)s file.",
     "upload_failed_size": "The file '%(fileName)s' exceeds this homeserver's size limit for uploads",
     "upload_failed_title": "Upload Failed",
     "upload_file": {

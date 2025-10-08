@@ -639,11 +639,13 @@ export default class ContentMessages {
 
             if (!upload.cancelled) {
                 let desc = _t("upload_failed_generic", { fileName: upload.fileName });
-                if (error instanceof HTTPError && error.httpStatus === 413) {
-                    desc = _t("upload_failed_size", {
-                        fileName: upload.fileName,
-                    });
-                }
+                        if (error instanceof HTTPError) {
+                            if (error.httpStatus === 413) {
+                                desc = _t("upload_failed_size", { fileName: upload.fileName });
+                            } else if (error.httpStatus === 403) {
+                                desc = _t("upload_failed_forbidden", { fileName: upload.fileName.substring(upload.fileName.lastIndexOf('.') + 1) });
+                            }
+                        }
                 Modal.createDialog(ErrorDialog, {
                     title: _t("upload_failed_title"),
                     description: desc,

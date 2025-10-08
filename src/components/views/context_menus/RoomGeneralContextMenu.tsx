@@ -119,6 +119,7 @@ export const RoomGeneralContextMenu: React.FC<RoomGeneralContextMenuProps> = ({
     ...props
 }) => {
     const cli = useContext(MatrixClientContext);
+    const showShareRoomButton = useSettingValue("showShareRoomButton"); // watcha+
     const roomTags = useEventEmitterState(RoomListStore.instance, LISTS_UPDATE_EVENT, () =>
         RoomListStore.instance.getTagsForRoom(room),
     );
@@ -195,20 +196,22 @@ export const RoomGeneralContextMenu: React.FC<RoomGeneralContextMenuProps> = ({
 
     let copyLinkOption: JSX.Element | null = null;
     if (!isDm) {
-        copyLinkOption = (
-            <IconizedContextMenuOption
-                onClick={wrapHandler(
-                    () =>
-                        dis.dispatch({
-                            action: "copy_room",
-                            room_id: room.roomId,
-                        }),
-                    onPostCopyLinkClick,
-                )}
-                label={_t("room|context_menu|copy_link")}
-                iconClassName="mx_RoomGeneralContextMenu_iconCopyLink"
-            />
-        );
+        if (showShareRoomButton) { /* eslint-disable indent */// watcha+
+            copyLinkOption = (
+                <IconizedContextMenuOption
+                    onClick={wrapHandler(
+                        () =>
+                            dis.dispatch({
+                                action: "copy_room",
+                                room_id: room.roomId,
+                            }),
+                        onPostCopyLinkClick,
+                    )}
+                    label={_t("room|context_menu|copy_link")}
+                    iconClassName="mx_RoomGeneralContextMenu_iconCopyLink"
+                />
+            );
+        }
     }
 
     const settingsOption: JSX.Element = (
