@@ -47,6 +47,7 @@ export const showToast = (version: string, newVersion: string, releaseNotes?: st
 
     let onAccept;
     let acceptLabel = _t("update|see_changes_button");
+    /* watcha+
     if (releaseNotes) {
         onAccept = () => {
             Modal.createDialog(QuestionDialog, {
@@ -76,7 +77,7 @@ export const showToast = (version: string, newVersion: string, releaseNotes?: st
         onAccept = installUpdate;
         acceptLabel = _t("action|update");
     }
-
+    +watcha */
     const brand = SdkConfig.get().brand;
     ToastStore.sharedInstance().addOrReplaceToast({
         key: TOAST_KEY,
