@@ -81,6 +81,7 @@ interface IProps {
     e2eStatus?: E2EState;
     powerStatus?: PowerStatus;
     userId?: string;
+    email?: string;
 }
 
 interface IState {
@@ -156,9 +157,11 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
 
 
         const name = this.props.nameJSX || this.props.name;
+        const email = this.props.email;
         const nameAndPresence = (
             <div className="mx_EntityTile_details">
                 <div className={`mx_EntityTile_name mx_Username_color_${userIdReplace || "0"}`}>{name}</div>
+                <div className="mx_EntityTile_subtext">{email}</div>
                 {this.getPresenceLabel()}
             </div>
         );

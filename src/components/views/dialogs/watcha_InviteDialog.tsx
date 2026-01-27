@@ -271,6 +271,7 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
             const commonProps = {
                 key: user.address,
                 name: user.displayName,
+                email: user.email,
                 avatarJsx: this.getBaseAvatar(user),
             };
             const subtextLabel = {
