@@ -32,7 +32,7 @@ import BaseEventIndexManager from "./indexing/BaseEventIndexManager";
 import { ActionPayload } from "./dispatcher/payloads";
 import { CheckUpdatesPayload } from "./dispatcher/payloads/CheckUpdatesPayload";
 import { Action } from "./dispatcher/actions";
-import { hideToast as hideUpdateToast } from "./toasts/UpdateToast";
+//import { hideToast as hideUpdateToast } from "./toasts/UpdateToast";
 import { MatrixClientPeg } from "./MatrixClientPeg";
 import { idbLoad, idbSave, idbDelete } from "./utils/StorageAccess";
 import { ViewRoomPayload } from "./dispatcher/payloads/ViewRoomPayload";
@@ -112,7 +112,7 @@ export default abstract class BasePlatform {
     }
 
     public startUpdateCheck(): void {
-        hideUpdateToast();
+        //hideUpdateToast();
         localStorage.removeItem(UPDATE_DEFER_KEY);
         dis.dispatch<CheckUpdatesPayload>({
             action: Action.CheckUpdates,
@@ -150,7 +150,7 @@ export default abstract class BasePlatform {
         const date = new Date(Date.now() + 24 * 60 * 60 * 1000);
         date.setHours(8, 0, 0, 0); // set to next 8am
         localStorage.setItem(UPDATE_DEFER_KEY, JSON.stringify([newVersion, date.getTime()]));
-        hideUpdateToast();
+        //hideUpdateToast();
     }
 
     /**
