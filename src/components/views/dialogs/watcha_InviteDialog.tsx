@@ -627,7 +627,9 @@ export default class InviteDialog extends React.PureComponent<Props, IInviteDial
                             onClick={this.showInvitePartnerDialog}
                         >
                             <>
-                                { _t("watcha|invtation_externe",) }
+                                { _t(SettingsStore.getValue(UIFeature.watcha_ComUE)
+                                        ? "watcha|invitation_externe_comue"
+                                        : "watcha|invtation_externe") }
                                 <img src={require("../../../../res/img/watcha/watcha_paper-plane.svg").default} />
                             </>
                         </AccessibleButton>

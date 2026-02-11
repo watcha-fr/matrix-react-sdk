@@ -1316,6 +1316,10 @@ export const SETTINGS: { [setting: string]: ISetting } = {
         supportedLevels: LEVELS_UI_FEATURE,
         default: false,
     },
+    [UIFeature.watcha_ComUE]: {
+        supportedLevels: LEVELS_UI_FEATURE,
+        default: false,
+    },
     "feature_watcha_webrtc": {
         isFeature: true,
         labsGroup: LabGroup.Experimental,

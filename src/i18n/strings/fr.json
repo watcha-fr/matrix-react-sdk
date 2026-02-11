@@ -3996,6 +3996,7 @@
         "invite_dialog": "Sélectionnez des utilisateurs<br/>Invitez-les<br/>Collaborez !",
         "invite_user": "Cliquez pour ajouter cet utilisateur à la liste d'invitation",
         "invtation_externe": "Vous souhaitez collaborer avec un partenaire extérieur à votre organisation : invitez-le par e-mail",
+        "invitation_externe_comue": "Votre contact n'est pas dans la liste : cliquez ici pour l'inviter par e-mail",
         "limited_rights": "Vous êtes connecté depuis un compte partenaire avec des droits limités",
         "my_email": "Ma boite e-mail",
         "my_email_title": "Ouvrir ma boite e-mail dans un nouvel onglet",

@@ -3994,6 +3994,7 @@
         "invite_dialog": "Select users<br/>Invite them<br/>Collaborate!",
         "invite_user": "Click to add this user to the invitation list",
         "invtation_externe": "You want to collaborate with a partner from outside your organisation: invite them by e-mail",
+        "invitation_externe_comue": "Your contact is not in the list: click here to invite them by e-mail",
         "limited_rights": "You are logged in from a partner account with limited rights",
         "my_email": "My email",
         "my_email_title": "Open my email in a new tab",

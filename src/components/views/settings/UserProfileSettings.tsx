@@ -169,7 +169,7 @@ const UserProfileSettings: React.FC = () => {
                     onCancel={onDisplayNameCancel}
                     onSave={onDisplayNameSave}
                     error={displayNameError ? _t("settings|general|display_name_error") : undefined}
-                    disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled )} // watcha+
+                    disabled={SettingsStore.getValue(UIFeature.watcha_SitivFieldDisabled ) && !SettingsStore.getValue(UIFeature.watcha_ComUE )} // watcha+
                 />
             </div>
             {avatarError && (

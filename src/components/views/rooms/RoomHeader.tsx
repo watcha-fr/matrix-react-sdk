@@ -20,6 +20,7 @@ import { Icon as VideoCallIcon } from "@vector-im/compound-design-tokens/icons/v
 import { Icon as VoiceCallIcon } from "@vector-im/compound-design-tokens/icons/voice-call.svg";
 import { Icon as CloseCallIcon } from "@vector-im/compound-design-tokens/icons/close.svg";
 import { Icon as ThreadsIcon } from "@vector-im/compound-design-tokens/icons/threads-solid.svg";
+import { Icon as DocumentsIcon } from "../../../../res/img/watcha/watcha_documents.svg"; // watcha+
 import { Icon as NotificationsIcon } from "@vector-im/compound-design-tokens/icons/notifications-solid.svg";
 import { Icon as VerifiedIcon } from "@vector-im/compound-design-tokens/icons/verified.svg";
 import { Icon as ErrorIcon } from "@vector-im/compound-design-tokens/icons/error.svg";
@@ -65,7 +66,6 @@ export default function RoomHeader({
     additionalButtons?: ViewRoomOpts["buttons"];
 }): JSX.Element {
     const client = useMatrixClientContext();
-
     const roomName = useRoomName(room);
     const roomTopic = useTopic(room);
     const roomState = useRoomState(room);
@@ -331,7 +331,6 @@ export default function RoomHeader({
                             {!useElementCallExclusively && !isVideoRoom(room) && voiceCallButton}
                         </>
                     )}
-
                     <Tooltip label={_t("common|threads")}>
                         <IconButton
                             indicator={notificationLevelToIndicator(threadNotifications)}
@@ -345,6 +344,19 @@ export default function RoomHeader({
                             <ThreadsIcon />
                         </IconButton>
                     </Tooltip>
+                    {/* watcha+*/}
+                    <Tooltip label={_t("watcha|show_documents")}>
+                        <IconButton
+                            onClick={(evt) => {
+                                evt.stopPropagation();
+                                RightPanelStore.instance.pushCard({ phase: RightPanelPhases.NextcloudDocumentPanel }, true);
+                            }}
+                            aria-label={_t("watcha|show_documents")}
+                        >
+                            <DocumentsIcon />
+                        </IconButton>
+                    </Tooltip>
+                    {/* +watcha*/}
                     {notificationsEnabled && (
                         <Tooltip label={_t("notifications|enable_prompt_toast_title")}>
                             <IconButton

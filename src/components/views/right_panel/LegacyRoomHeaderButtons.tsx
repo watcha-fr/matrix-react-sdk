@@ -287,6 +287,19 @@ export default class LegacyRoomHeaderButtons extends HeaderButtons<IProps> {
                 <UnreadIndicator color={this.state.threadNotificationLevel} />
             </HeaderButton>,
         );
+        rightPanelPhaseButtons.set(
+            RightPanelPhases.NextcloudDocumentPanel,
+            <HeaderButton
+                key="nextcloudDocsButton"
+                name="nextcloudDocsButton"
+                title={_t("watcha|show_documents")}
+                isHighlighted={this.isPhase(RightPanelPhases.NextcloudDocumentPanel)}
+                onClick={() => {
+                    RightPanelStore.instance.showOrHidePanel(RightPanelPhases.NextcloudDocumentPanel);
+                }}
+            />,
+        );
+
         if (this.state.notificationsEnabled) {
             rightPanelPhaseButtons.set(
                 RightPanelPhases.NotificationPanel,
