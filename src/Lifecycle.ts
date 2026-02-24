@@ -1067,8 +1067,9 @@ export async function onLoggedOut(): Promise<void> {
     // watcha+
     const client = MatrixClientPeg.get();
     const isPartner = client!.isPartner();
-    const capabilities = await client!.getCapabilities();
-    const externalAuthenticationForPartners = capabilities.watcha?.external_authentication_for_partners?.enabled;
+    //const capabilities = await client!.getCapabilities();
+    //const externalAuthenticationForPartners = capabilities.watcha?.external_authentication_for_partners?.enabled;
+    const externalAuthenticationForPartners = SettingsStore.getValue("feature_watcha_external_account")
     // +watcha
     // Ensure that we dispatch a view change **before** stopping the client,
     // that React components unmount first. This avoids React soft crashes

@@ -1328,6 +1328,14 @@ export const SETTINGS: { [setting: string]: ISetting } = {
         default: false,
         controller: new ReloadOnChangeController(),
     },
+        "feature_watcha_external_account": {
+        isFeature: true,
+        labsGroup: LabGroup.Experimental,
+        supportedLevels: LEVELS_UI_FEATURE,
+        displayName: _td("watcha|enable_external_account"),
+        default: false,
+        controller: new ReloadOnChangeController(),
+    },
     "showExploreChatAttachmentsButton": {
         supportedLevels: LEVELS_ACCOUNT_SETTINGS,
         displayName: _td("watcha|attachment_button"),

@@ -3981,6 +3981,7 @@
         "empty_documents": "No document shared with this room",
         "empty_task": "No to-do list shared with this room",
         "enable_webrtc": "Enable WebRTC for one-to-one calls",
+        "enable_external_account": "Enable external account authentication",
         "enter_valid_email": "Please enter a valid email address",
         "error_changing_nextcloud": "Error changing Nextcloud share",
         "error_changing_nextcloud_description": "An error occurred changing the room's Nextcloud share.",

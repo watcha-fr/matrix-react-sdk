@@ -3983,6 +3983,7 @@
         "empty_documents": "Aucun document partagé avec ce salon",
         "empty_task": "Aucune liste de tâches partagée avec ce salon",
         "enable_webrtc": "Activer WebRTC pour les appels individuels",
+        "enable_external_account": "Authentifier un compte externe",
         "enter_valid_email": "S'il vous plaît, mettez une adresse email valide",
         "error_changing_nextcloud": "Erreur lors de la modification du partage Nextcloud",
         "error_changing_nextcloud_description": "Une erreur s'est produite lors de la modification du partage Nextcloud dans le salon.",
