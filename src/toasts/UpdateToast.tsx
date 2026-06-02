@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-/*
+
 import React from "react";
 
 import { _t } from "../languageHandler";
@@ -31,7 +31,6 @@ const TOAST_KEY = "update";
  * Check a version string is compatible with the Changelog
  * dialog ([element-version]-react-[react-sdk-version]-js-[js-sdk-version])
  */
-/*
 function checkVersion(ver: string): boolean {
     const parts = ver.split("-");
     return parts.length === 5 && parts[1] === "react" && parts[3] === "js";
@@ -98,4 +97,3 @@ export const showToast = (version: string, newVersion: string, releaseNotes?: st
 export const hideToast = (): void => {
     ToastStore.sharedInstance().dismissToast(TOAST_KEY);
 };
-*/

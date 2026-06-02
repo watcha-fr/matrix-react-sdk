@@ -24,16 +24,43 @@ import BaseCard from "../views/right_panel/BaseCard";
 import defaultDispatcher from "../../dispatcher/dispatcher";
 import SettingsStore from "../../settings/SettingsStore";
 import Spinner from "../views/elements/Spinner";
-import { getDocumentWidgetUrl } from "../../utils/watcha_nextcloudUtils";
+import {
+    getDocumentWidgetUrl,
+    warmUpNextcloudSession,
+    isNextcloudSessionWarm,
+} from "../../utils/watcha_nextcloudUtils";
 
 export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
     const [iframeLoading, setIframeLoading] = useState(true);
+    // Whether the Nextcloud SSO session is being warmed up in a popup.
+    const [warmingUp, setWarmingUp] = useState(false);
     const nextcloudShare = useSettingValue("nextcloudShare", roomId);
 
     useEffect(() => {
         if (nextcloudShare) {
             setIframeLoading(true);
         }
+    }, [nextcloudShare]);
+
+    // Establish the Nextcloud SSO session in a top-level popup before loading
+    // the iframe, to avoid the browser's Local Network Access block on the
+    // in-iframe SSO redirect (Nextcloud -> Keycloak -> CAS over VPN).
+    // Runs at most once per browser tab session (cf. isNextcloudSessionWarm).
+    // If the popup is blocked or fails, we simply fall through to the iframe.
+    useEffect(() => {
+        if (!nextcloudShare || isNextcloudSessionWarm()) {
+            return;
+        }
+        let cancelled = false;
+        setWarmingUp(true);
+        warmUpNextcloudSession().finally(() => {
+            if (!cancelled) {
+                setWarmingUp(false);
+            }
+        });
+        return () => {
+            cancelled = true;
+        };
     }, [nextcloudShare]);
 
     const onRoomSettingsClick = () => {
@@ -46,7 +73,9 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
 
     let panel;
     if (SettingsStore.getValue(UIFeature.watcha_Nextcloud)) {
-        if (nextcloudShare) {
+        if (nextcloudShare && warmingUp) {
+            panel = <Spinner />;
+        } else if (nextcloudShare) {
             panel = (
                 <>
                     { iframeLoading && <Spinner /> }
