@@ -61,6 +61,11 @@ export function getNextcloudBaseUrl() {
 const WARMUP_PARAM = "watcha_warmup";
 const WARMUP_MESSAGE = "watcha_warmup-ok";
 const WARMUP_TIMEOUT_MS = 20000;
+// Sent by the Nextcloud connector (refine-iframe.js) when the embedded document
+// widget has finished loading in the iframe. Its absence after a short delay means
+// the in-iframe SSO redirect was blocked (Local Network Access over VPN), and a
+// top-level warm-up is needed.
+export const WIDGET_READY_MESSAGE = "watcha_widget-ready";
 // Persisted in sessionStorage so the warm-up popup runs at most once per browser
 // tab session (and not again on every reload, since the Nextcloud session cookie
 // survives reloads). Cleared automatically when the tab is closed.
