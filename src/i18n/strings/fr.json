@@ -2338,7 +2338,7 @@
             "publish_room": "Rendez ce salon visible dans l’annuaire des salons publics.",
             "publish_space": "Rendez cet espace visible dans le répertoires des salons publics.",
             "retention_custom_days_label": "Durée de rétention (jours)",
-            "retention_description": "Choisissez combien de temps les messages sont conservés dans ce salon avant que le serveur ne les supprime automatiquement.",
+            "retention_description": "Choisissez la durée de conservation des messages pour ce salon.",
             "retention_legend": "Rétention des messages",
             "retention_pinned_note": "Les messages épinglés sont toujours conservés, même au-delà de cette durée.",
             "retention_preset_1_month": "1 mois",
