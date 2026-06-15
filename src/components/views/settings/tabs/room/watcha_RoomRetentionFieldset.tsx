@@ -19,7 +19,7 @@ limitations under the License.
 // messages are kept before the server purges them. Pinned messages are always
 // kept (enforced server-side in Synapse's purge logic).
 
-import React, { ChangeEvent, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { Room } from "matrix-js-sdk/src/matrix";
 import { logger } from "matrix-js-sdk/src/logger";
 
@@ -69,6 +69,26 @@ function presetLabel(days: number): string {
 const RoomRetentionFieldset: React.FC<IProps> = ({ room }) => {
     const cli = useMatrixClientContext();
     const canEdit = room.currentState.mayClientSendStateEvent(RETENTION_EVENT_TYPE, cli);
+
+    // The server admin can disable per-room retention management from the admin
+    // console. The flag is exposed in the `watcha` capabilities namespace; when
+    // absent (older server) we default to allowing it.
+    const [allowAdminSet, setAllowAdminSet] = useState<boolean>(true);
+    useEffect(() => {
+        let cancelled = false;
+        cli.getCapabilities()
+            .then(capabilities => {
+                if (cancelled) return;
+                const allowed = (capabilities as any)?.watcha?.room_retention?.allow_admin_set;
+                setAllowAdminSet(allowed !== false);
+            })
+            .catch(e => {
+                logger.warn("Failed to read retention capability, defaulting to allowed", e);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [cli]);
 
     // Derive the initial selection from the current room state.
     const initial = useMemo(() => {
@@ -138,6 +158,11 @@ const RoomRetentionFieldset: React.FC<IProps> = ({ room }) => {
             {_t("room_settings|security|retention_preset_custom")}
         </option>,
     );
+
+    // The server disallows room-level retention management: hide the whole section.
+    if (!allowAdminSet) {
+        return null;
+    }
 
     return (
         <SettingsFieldset
