@@ -3980,6 +3980,8 @@
         "empty_calendar": "No calendar shared with this room",
         "empty_documents": "No document shared with this room",
         "empty_task": "No to-do list shared with this room",
+        "enable_document_access": "Enable document access",
+        "enable_document_access_prompt": "Click to enable access to the shared documents.",
         "enable_webrtc": "Enable WebRTC for one-to-one calls",
         "enable_external_account": "Enable external account authentication",
         "enter_valid_email": "Please enter a valid email address",

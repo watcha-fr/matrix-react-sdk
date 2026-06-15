@@ -28,6 +28,7 @@ import Spinner from "../views/elements/Spinner";
 import {
     getDocumentWidgetUrl,
     getNextcloudBaseUrl,
+    isNextcloudSessionWarm,
     warmUpNextcloudSession,
     WIDGET_READY_MESSAGE,
 } from "../../utils/watcha_nextcloudUtils";
@@ -66,7 +67,13 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
             }
         };
         window.addEventListener("message", onMessage);
-        timer = setTimeout(() => setShowWarmupButton(true), WIDGET_READY_TIMEOUT_MS);
+        // Once the session has been warmed up in this tab, the iframe loads with the
+        // Nextcloud cookie and the in-iframe SSO is no longer blocked, so we never need
+        // to surface the button again on reopen (avoids re-prompting VPN users who
+        // already warmed up). The flag is cleared when the tab is closed.
+        if (!isNextcloudSessionWarm()) {
+            timer = setTimeout(() => setShowWarmupButton(true), WIDGET_READY_TIMEOUT_MS);
+        }
 
         return () => {
             window.removeEventListener("message", onMessage);
@@ -102,10 +109,10 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
                 <div className="mx_RoomView_messagePanel mx_RoomView_messageListWrapper">
                     <div className="mx_RoomView_empty">
                         <div className={classNames("mx_RightPanel_empty", emptyClass)}>
-                            <h2>{ _t("Document sharing") }</h2>
-                            <p>{ _t("Click to enable access to the shared documents.") }</p>
+                            <h2>{ _t("watcha|document_sharing") }</h2>
+                            <p>{ _t("watcha|enable_document_access_prompt") }</p>
                             <AccessibleButton kind="primary" onClick={onWarmupClick}>
-                                { _t("Enable document access") }
+                                { _t("watcha|enable_document_access") }
                             </AccessibleButton>
                         </div>
                     </div>
@@ -122,7 +129,7 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
                             "watcha_NextcloudPanel-hidden": !iframeReady,
                         })}
                         src={getDocumentWidgetUrl(nextcloudShare)}
-                        title={_t("Document sharing")}
+                        title={_t("watcha|document_sharing")}
                     />
                 </>
             );
