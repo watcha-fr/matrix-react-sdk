@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import classNames from "classnames";
 
 import { _t } from "../../languageHandler";
@@ -25,62 +25,24 @@ import AccessibleButton from "../views/elements/AccessibleButton";
 import defaultDispatcher from "../../dispatcher/dispatcher";
 import SettingsStore from "../../settings/SettingsStore";
 import Spinner from "../views/elements/Spinner";
-import {
-    getDocumentWidgetUrl,
-    getNextcloudBaseUrl,
-    warmUpNextcloudSession,
-    WIDGET_READY_MESSAGE,
-} from "../../utils/watcha_nextcloudUtils";
-
-// Delay after which, if the embedded widget hasn't signalled readiness, we assume
-// the in-iframe SSO redirect was blocked (LNA over VPN) and offer a manual warm-up.
-const WIDGET_READY_TIMEOUT_MS = 7000;
+import { getDocumentWidgetUrl, warmUpNextcloudSession } from "../../utils/watcha_nextcloudUtils";
 
 export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
-    // Reactive Nextcloud warm-up:
-    // We load the iframe directly. The connector posts WIDGET_READY_MESSAGE once the
-    // Nextcloud page has loaded inside the iframe. If that signal arrives (the common
-    // case: off-VPN, or session already warm), no popup is ever shown. If it does NOT
-    // arrive within WIDGET_READY_TIMEOUT_MS (in-iframe SSO blocked by LNA on VPN), we
-    // surface a button that runs a top-level warm-up popup on user click.
-    const [iframeReady, setIframeReady] = useState(false);
-    const [showWarmupButton, setShowWarmupButton] = useState(false);
+    const [iframeLoading, setIframeLoading] = useState(true);
     const [warmingUp, setWarmingUp] = useState(false);
-    const [reloadNonce, setReloadNonce] = useState(0);
+    // DEMO MODE: the warm-up button is shown to EVERYONE on first open (not only when
+    // the in-iframe SSO is blocked over VPN), so the SSO warm-up popup flow can be
+    // reproduced/demonstrated without a VPN. Once clicked, the iframe is loaded.
+    // (For the real, conditional behaviour see the branch villeurbanne-nextcloud-warmup.)
+    const [started, setStarted] = useState(false);
     const nextcloudShare = useSettingValue("nextcloudShare", roomId);
 
-    useEffect(() => {
-        if (!nextcloudShare) {
-            return;
-        }
-        setIframeReady(false);
-        setShowWarmupButton(false);
-
-        const expectedOrigin = getNextcloudBaseUrl().origin;
-        let timer;
-        const onMessage = event => {
-            if (event.origin === expectedOrigin && event.data === WIDGET_READY_MESSAGE) {
-                clearTimeout(timer);
-                setIframeReady(true);
-                setShowWarmupButton(false);
-            }
-        };
-        window.addEventListener("message", onMessage);
-        timer = setTimeout(() => setShowWarmupButton(true), WIDGET_READY_TIMEOUT_MS);
-
-        return () => {
-            window.removeEventListener("message", onMessage);
-            clearTimeout(timer);
-        };
-    }, [nextcloudShare, reloadNonce]);
-
     const onWarmupClick = async () => {
-        setShowWarmupButton(false);
         setWarmingUp(true);
         await warmUpNextcloudSession();
         setWarmingUp(false);
-        // Reload the iframe so it retries with the now-warm Nextcloud session.
-        setReloadNonce(n => n + 1);
+        setIframeLoading(true);
+        setStarted(true);
     };
 
     const onRoomSettingsClick = () => {
@@ -95,9 +57,8 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
     if (SettingsStore.getValue(UIFeature.watcha_Nextcloud)) {
         if (nextcloudShare && warmingUp) {
             panel = <Spinner />;
-        } else if (nextcloudShare && showWarmupButton) {
-            // The widget never signalled readiness (in-iframe SSO blocked on VPN):
-            // offer a manual, user-triggered top-level warm-up.
+        } else if (nextcloudShare && !started) {
+            // DEMO: button shown to everyone before loading the iframe.
             panel = (
                 <div className="mx_RoomView_messagePanel mx_RoomView_messageListWrapper">
                     <div className="mx_RoomView_empty">
@@ -114,14 +75,16 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
         } else if (nextcloudShare) {
             panel = (
                 <>
-                    { !iframeReady && <Spinner /> }
+                    { iframeLoading && <Spinner /> }
                     <iframe
-                        key={reloadNonce}
                         id="watcha_NextcloudPanel"
                         className={classNames("watcha_NextcloudPanel", {
-                            "watcha_NextcloudPanel-hidden": !iframeReady,
+                            "watcha_NextcloudPanel-hidden": iframeLoading,
                         })}
                         src={getDocumentWidgetUrl(nextcloudShare)}
+                        onLoad={() => {
+                            setIframeLoading(false);
+                        }}
                         title={_t("Document sharing")}
                     />
                 </>
