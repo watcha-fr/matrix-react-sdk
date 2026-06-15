@@ -3982,6 +3982,8 @@
         "empty_calendar": "Aucun agenda partagé avec ce salon",
         "empty_documents": "Aucun document partagé avec ce salon",
         "empty_task": "Aucune liste de tâches partagée avec ce salon",
+        "enable_document_access": "Activer l'accès aux documents",
+        "enable_document_access_prompt": "Cliquez pour activer l'accès aux documents partagés.",
         "enable_webrtc": "Activer WebRTC pour les appels individuels",
         "enable_external_account": "Authentifier un compte externe",
         "enter_valid_email": "S'il vous plaît, mettez une adresse email valide",

@@ -25,7 +25,7 @@ import AccessibleButton from "../views/elements/AccessibleButton";
 import defaultDispatcher from "../../dispatcher/dispatcher";
 import SettingsStore from "../../settings/SettingsStore";
 import Spinner from "../views/elements/Spinner";
-import { getDocumentWidgetUrl, warmUpNextcloudSession } from "../../utils/watcha_nextcloudUtils";
+import { getDocumentWidgetUrl, warmUpNextcloudSession, isNextcloudSessionWarm } from "../../utils/watcha_nextcloudUtils";
 
 export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
     const [iframeLoading, setIframeLoading] = useState(true);
@@ -34,7 +34,10 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
     // the in-iframe SSO is blocked over VPN), so the SSO warm-up popup flow can be
     // reproduced/demonstrated without a VPN. Once clicked, the iframe is loaded.
     // (For the real, conditional behaviour see the branch villeurbanne-nextcloud-warmup.)
-    const [started, setStarted] = useState(false);
+    // Initialise from the session warm-up flag so that, once the session has been warmed
+    // up in this tab, reopening the panel goes straight to the iframe instead of showing
+    // the button again. The flag is cleared automatically when the tab is closed.
+    const [started, setStarted] = useState(() => isNextcloudSessionWarm());
     const nextcloudShare = useSettingValue("nextcloudShare", roomId);
 
     const onWarmupClick = async () => {
@@ -63,10 +66,10 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
                 <div className="mx_RoomView_messagePanel mx_RoomView_messageListWrapper">
                     <div className="mx_RoomView_empty">
                         <div className={classNames("mx_RightPanel_empty", emptyClass)}>
-                            <h2>{ _t("Document sharing") }</h2>
-                            <p>{ _t("Click to enable access to the shared documents.") }</p>
+                            <h2>{ _t("watcha|document_sharing") }</h2>
+                            <p>{ _t("watcha|enable_document_access_prompt") }</p>
                             <AccessibleButton kind="primary" onClick={onWarmupClick}>
-                                { _t("Enable document access") }
+                                { _t("watcha|enable_document_access") }
                             </AccessibleButton>
                         </div>
                     </div>
@@ -85,7 +88,7 @@ export default ({ roomId, initialTabId, empty, emptyClass, onClose }) => {
                         onLoad={() => {
                             setIframeLoading(false);
                         }}
-                        title={_t("Document sharing")}
+                        title={_t("watcha|document_sharing")}
                     />
                 </>
             );
