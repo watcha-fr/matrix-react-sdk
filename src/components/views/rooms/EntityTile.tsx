@@ -44,6 +44,15 @@ const PRESENCE_CLASS: Record<PresenceState, string> = {
     "io.element.unreachable": "mx_EntityTile_unreachable",
 };
 
+// watcha+ : classe de la pastille de présence affichée sur l'avatar (liste des membres).
+// "busy" relève de MSC3026 (org.matrix.msc3026.busy) et n'est pas dans le type PresenceState.
+const PRESENCE_DOT_CLASS: Record<string, string> = {
+    "online": "mx_EntityTile_presenceDot_online",
+    "unavailable": "mx_EntityTile_presenceDot_unavailable",
+    "org.matrix.msc3026.busy": "mx_EntityTile_presenceDot_busy",
+};
+// +watcha
+
 function presenceClassForMember(presenceState?: PresenceState, lastActiveAgo?: number, showPresence?: boolean): string {
     if (showPresence === false) {
         return "mx_EntityTile_online_beenactive";
@@ -201,6 +210,14 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
         
         // Vérifie si userIdPart est dans la liste
         const crownClass = userIdReplace && userIdPart && allowedValues.includes(userIdPart) ? `mx_EntityTile_avatar_crown_${userIdReplace}` : '';
+
+        // Pastille de présence sur l'avatar (disponible / occupé / absent / hors ligne)
+        let presenceDot;
+        if (this.props.showPresence) {
+            const presenceDotClass =
+                PRESENCE_DOT_CLASS[this.props.presenceState as string] || "mx_EntityTile_presenceDot_offline";
+            presenceDot = <span className={classNames("mx_EntityTile_presenceDot", presenceDotClass)} />;
+        }
         return (
             <div>
                 <AccessibleButton
@@ -209,8 +226,9 @@ export default class EntityTile extends React.PureComponent<IProps, IState> {
                     onClick={this.props.onClick}
                 >
                     <div className="mx_EntityTile_avatar">
-                        {crownClass && ( <div  className={crownClass} ></div>)} 
+                        {crownClass && ( <div  className={crownClass} ></div>)}
                         {av}
+                        {presenceDot}
                         {e2eIcon}
                     </div>
                     {nameAndPresence}

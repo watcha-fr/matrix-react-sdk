@@ -126,6 +126,42 @@ limitations under the License.
     z-index: 1;
 }
 
+/* watcha+ : pastille de présence sur l'avatar (liste des membres) */
+.mx_EntityTile_presenceDot {
+    position: absolute;
+    left: 28px;
+    bottom: 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border: 2px solid $background;
+    z-index: 3;
+}
+
+.mx_EntityTile_presenceDot_online {
+    background-color: #2dbd59; /* vert : disponible */
+}
+
+.mx_EntityTile_presenceDot_busy {
+    background-color: #ff5b55; /* rouge : occupé */
+}
+
+.mx_EntityTile_presenceDot_unavailable {
+    background-color: #fdbd64; /* orange : absent */
+}
+
+.mx_EntityTile_presenceDot_offline {
+    background-color: $secondary-content; /* gris : hors ligne */
+}
+
+/* Salons chiffrés : l'icône E2E occupe le coin bas-droit, on remonte la pastille en haut-droit */
+.mx_EntityTile_avatar:has(.mx_E2EIcon) .mx_EntityTile_presenceDot {
+    top: 3px;
+    bottom: auto;
+}
+/* +watcha */
+
 .mx_EntityTile_name {
     flex: 1 1 0;
     overflow: hidden;
