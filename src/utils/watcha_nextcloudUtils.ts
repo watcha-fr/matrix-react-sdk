@@ -96,7 +96,12 @@ export function getWarmupUrl(): string {
  */
 export function warmUpNextcloudSession(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-        const popup = window.open(getWarmupUrl(), "watcha_nc_warmup", "width=520,height=640");
+        // We request a 1x1 popup to be as discreet as possible: the user never
+        // interacts with it (the SSO chain is fully automatic), we only wait for
+        // the connector's postMessage. Browsers clamp the size to their minimum
+        // (~100x100) and force the window on-screen — a truly hidden popup is not
+        // allowed — so this is the smallest discreet window we can ask for.
+        const popup = window.open(getWarmupUrl(), "watcha_nc_warmup", "width=1,height=1,left=0,top=0");
         if (!popup) {
             // Popup blocked: the caller should offer a manual, user-triggered warm-up.
             resolve(false);
