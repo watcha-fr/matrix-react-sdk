@@ -4031,6 +4031,8 @@
         "show_documents": "Show documents shared with the room",
         "show_task": "Show the to-do list shared with the room",
         "sso_profile": "SSO Profile",
+        "status_automatic": "Automatic",
+        "status_title": "Status",
         "stop_sharing": "Stop sharing",
         "stop_sharing_description": "Please note that only the owner of this resource will be able to share it again.",
         "stop_sharing_title": "Are you sure you want to end this sharing?",

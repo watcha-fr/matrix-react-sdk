@@ -41,6 +41,7 @@ import { SettingLevel } from "../../settings/SettingLevel";
 import IconizedContextMenu, {
     IconizedContextMenuOption,
     IconizedContextMenuOptionList,
+    IconizedContextMenuRadio, // watcha+
 } from "../views/context_menus/IconizedContextMenu";
 import { UIFeature } from "../../settings/UIFeature";
 import SpaceStore from "../../stores/spaces/SpaceStore";
@@ -50,6 +51,7 @@ import UserIdentifierCustomisations from "../../customisations/UserIdentifier";
 import PosthogTrackers from "../../PosthogTrackers";
 import { ViewHomePagePayload } from "../../dispatcher/payloads/ViewHomePagePayload";
 import { getNextcloudBaseUrl } from "../../utils/watcha_nextcloudUtils"; // watcha+
+import Presence, { ManualPresence } from "../../Presence"; // watcha+
 import { Jitsi } from "../../widgets/Jitsi"; // watcha+
 import { Icon as LiveIcon } from "../../../res/img/compound/live-8px.svg";
 import { VoiceBroadcastRecording, VoiceBroadcastRecordingsStoreEvent } from "../../voice-broadcast";
@@ -377,6 +379,15 @@ export default class UserMenu extends React.Component<IProps, IState> {
         window.open(emailBaseUrl);
         this.setState({ contextMenuPosition: null }); // also close the menu
     };
+
+    // Statut de présence choisi manuellement (disponible / absent / occupé) ou retour au mode automatique.
+    private onPresenceClick = (ev: ButtonEvent, presence: ManualPresence | null): void => {
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        Presence.setManualPresence(presence);
+        this.setState({ contextMenuPosition: null }); // also close the menu
+    };
     // +watcha
 
     private renderContextMenu = (): React.ReactNode => {
@@ -459,8 +470,41 @@ export default class UserMenu extends React.Component<IProps, IState> {
             );
         }
 
+        // watcha+ : sélecteur de statut de présence (disponible / absent / occupé)
+        const currentManualPresence = Presence.getManualPresence();
+        const statusOptionList = (
+            <IconizedContextMenuOptionList label={_t("watcha|status_title")}>
+                <IconizedContextMenuRadio
+                    iconClassName="mx_UserMenu_iconStatusAvailable"
+                    label={_t("presence|online")}
+                    active={currentManualPresence === ManualPresence.Available}
+                    onClick={(e) => this.onPresenceClick(e, ManualPresence.Available)}
+                />
+                <IconizedContextMenuRadio
+                    iconClassName="mx_UserMenu_iconStatusBusy"
+                    label={_t("presence|busy")}
+                    active={currentManualPresence === ManualPresence.Busy}
+                    onClick={(e) => this.onPresenceClick(e, ManualPresence.Busy)}
+                />
+                <IconizedContextMenuRadio
+                    iconClassName="mx_UserMenu_iconStatusAway"
+                    label={_t("presence|away")}
+                    active={currentManualPresence === ManualPresence.Away}
+                    onClick={(e) => this.onPresenceClick(e, ManualPresence.Away)}
+                />
+                <IconizedContextMenuRadio
+                    iconClassName="mx_UserMenu_iconStatusAuto"
+                    label={_t("watcha|status_automatic")}
+                    active={currentManualPresence === null}
+                    onClick={(e) => this.onPresenceClick(e, null)}
+                />
+            </IconizedContextMenuOptionList>
+        );
+        // +watcha
+
         let primaryOptionList = (
             <> { /* eslint-disable indent *//* watcha+ */ }
+            {statusOptionList}
             <IconizedContextMenuOptionList>
                 {homeButton}
                 {linkNewDeviceButton}

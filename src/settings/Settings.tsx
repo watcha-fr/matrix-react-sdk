@@ -1276,6 +1276,12 @@ export const SETTINGS: { [setting: string]: ISetting } = {
         default: true,
     },
     // watcha+
+    // Statut de présence choisi manuellement par l'utilisateur (disponible / absent / occupé).
+    // null => détection automatique de la présence (comportement par défaut d'Element).
+    "watcha_manualPresence": {
+        supportedLevels: LEVELS_DEVICE_ONLY_SETTINGS,
+        default: null,
+    },
     [UIFeature.watcha_Administration]: {
         supportedLevels: LEVELS_UI_FEATURE,
         default: true,
