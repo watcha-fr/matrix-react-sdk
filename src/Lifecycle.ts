@@ -29,6 +29,7 @@ import { ModuleRunner } from "./modules/ModuleRunner";
 import EventIndexPeg from "./indexing/EventIndexPeg";
 import createMatrixClient from "./utils/createMatrixClient";
 import Notifier from "./Notifier";
+import WatchaJitsiWidgetSound from "./watcha_JitsiWidgetSound"; // watcha+
 import UserActivity from "./UserActivity";
 import Presence from "./Presence";
 import dis from "./dispatcher/dispatcher";
@@ -1012,6 +1013,7 @@ async function startMatrixClient(
 
     DialogOpener.instance.prepare(client);
     Notifier.start();
+    WatchaJitsiWidgetSound.start(); // watcha+
     UserActivity.sharedInstance().start();
     DMRoomMap.makeShared(client).start();
     IntegrationManagers.sharedInstance().startWatching();
@@ -1156,6 +1158,7 @@ async function clearStorage(opts?: { deleteEverything?: boolean }): Promise<void
  */
 export function stopMatrixClient(unsetClient = true): void {
     Notifier.stop();
+    WatchaJitsiWidgetSound.stop(); // watcha+
     LegacyCallHandler.instance.stop();
     UserActivity.sharedInstance().stop();
     SdkContextClass.instance.typingStore.reset();

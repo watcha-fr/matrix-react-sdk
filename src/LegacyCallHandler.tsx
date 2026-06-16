@@ -108,6 +108,7 @@ export enum AudioID {
     Ringback = "ringbackAudio",
     CallEnd = "callendAudio",
     Busy = "busyAudio",
+    JitsiStart = "jitsiStartAudio", // watcha+ : son joué au lancement d'un widget Jitsi
 }
 
 /* istanbul ignore next */
