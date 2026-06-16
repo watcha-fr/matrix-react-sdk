@@ -131,32 +131,35 @@ class Presence {
             await SettingsStore.setValue(MANUAL_PRESENCE_SETTING, null, SettingLevel.DEVICE, presence);
         }
 
-        if (presence === null) {
-            // Reprise du mode automatique : on repasse en ligne et on réarme le minuteur d'inactivité.
-            this.state = null;
-            await this.setState(SetPresence.Online);
-            this.unavailableTimer?.restart();
-            return;
-        }
-
         if (MatrixClientPeg.safeGet().isGuest()) {
             return; // don't try to set presence when a guest; it won't work.
         }
 
-        // Le paramètre set_presence des appels /sync n'accepte que online/unavailable/offline.
-        // L'état "busy" (MSC3026) est conservé côté serveur et ne doit donc être poussé que via
-        // l'API /presence/{userId}/status, sans modifier la présence de synchronisation.
-        if (presence === ManualPresence.Away) {
+        // État effectif à pousser au serveur ; en mode automatique (null) on repart de "online".
+        const target: ManualPresence = presence ?? ManualPresence.Available;
+
+        // Aligne la présence de synchronisation (paramètre set_presence des /sync), qui n'accepte
+        // que online/unavailable/offline. Pour "busy" on laisse la synchro sur "online".
+        if (target === ManualPresence.Away) {
             await this.setState(SetPresence.Unavailable);
-        } else if (presence === ManualPresence.Available) {
+        } else {
+            this.state = null; // force le ré-envoi même si déjà "online" (cas sortie de "busy")
             await this.setState(SetPresence.Online);
         }
 
+        // Un setPresence direct (PUT /presence/{userId}/status) est INDISPENSABLE pour sortir de
+        // l'état "busy" : Synapse protège "busy" contre l'écrasement par le set_presence des /sync
+        // (MSC3026). Sans cet appel, le statut "occupé" resterait collé côté serveur.
         try {
-            await MatrixClientPeg.safeGet().setPresence({ presence });
-            logger.debug("Manual presence:", presence);
+            await MatrixClientPeg.safeGet().setPresence({ presence: target });
+            logger.debug("Manual presence:", presence ?? "automatic");
         } catch (err) {
             logger.error("Failed to set manual presence:", err);
+        }
+
+        // Reprise de la détection automatique d'inactivité.
+        if (presence === null) {
+            this.unavailableTimer?.restart();
         }
     }
     // +watcha

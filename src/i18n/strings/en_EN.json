@@ -4032,6 +4032,7 @@
         "show_task": "Show the to-do list shared with the room",
         "sso_profile": "SSO Profile",
         "status_automatic": "Automatic",
+        "status_description": "Choose the status shown to other users. In automatic mode, your status follows your activity (online, then idle).",
         "status_title": "Status",
         "stop_sharing": "Stop sharing",
         "stop_sharing_description": "Please note that only the owner of this resource will be able to share it again.",

@@ -27,5 +27,6 @@ export enum UserTab {
     Mjolnir = "USER_MJOLNIR_TAB",
     Help = "USER_HELP_TAB",
     SSOProfile = "USER_SSO_PROFILE_TAB", // watcha+
+    Presence = "USER_PRESENCE_TAB", // watcha+
     SessionManager = "USER_SESSION_MANAGER_TAB",
 }

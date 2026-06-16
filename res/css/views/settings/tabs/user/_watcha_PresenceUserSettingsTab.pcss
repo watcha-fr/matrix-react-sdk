@@ -1,0 +1,50 @@
+/*
+Copyright 2026 Watcha
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+.watcha_PresenceUserSettingsTab_option {
+    margin-bottom: var(--cpd-space-3x);
+
+    .mx_StyledRadioButton_content {
+        display: flex;
+        align-items: center;
+    }
+}
+
+/* Pastille de couleur correspondant au statut */
+.watcha_PresenceUserSettingsTab_dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: var(--cpd-space-2x);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.watcha_PresenceUserSettingsTab_dot_available {
+    background-color: #2dbd59; /* vert : disponible */
+}
+
+.watcha_PresenceUserSettingsTab_dot_busy {
+    background-color: #ff5b55; /* rouge : occupé */
+}
+
+.watcha_PresenceUserSettingsTab_dot_away {
+    background-color: #fdbd64; /* orange : absent */
+}
+
+.watcha_PresenceUserSettingsTab_dot_auto {
+    background-color: $secondary-content; /* gris : détection automatique */
+}

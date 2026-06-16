@@ -228,35 +228,6 @@ limitations under the License.
     .mx_UserMenu_iconJitsi::before {
         mask-image: url('$(res)/img/element-icons/call/video-call.svg');
     }
-
-    // Sélecteur de statut : pastilles de couleur (disponible / occupé / absent / automatique)
-    .mx_UserMenu_iconStatusAvailable::before,
-    .mx_UserMenu_iconStatusBusy::before,
-    .mx_UserMenu_iconStatusAway::before,
-    .mx_UserMenu_iconStatusAuto::before {
-        mask: none;
-        -webkit-mask: none;
-        width: 10px;
-        height: 10px;
-        margin: 3px;
-        border-radius: 50%;
-    }
-
-    .mx_UserMenu_iconStatusAvailable::before {
-        background-color: #2dbd59; // vert : disponible
-    }
-
-    .mx_UserMenu_iconStatusBusy::before {
-        background-color: #ff5b55; // rouge : occupé
-    }
-
-    .mx_UserMenu_iconStatusAway::before {
-        background-color: #fdbd64; // orange : absent
-    }
-
-    .mx_UserMenu_iconStatusAuto::before {
-        background-color: $secondary-content; // gris : détection automatique
-    }
     // +watcha
 }
 

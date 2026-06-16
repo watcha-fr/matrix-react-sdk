@@ -38,6 +38,7 @@ import KeyboardUserSettingsTab from "../settings/tabs/user/KeyboardUserSettingsT
 import { UserTab } from "./UserTab";
 import { MatrixClientPeg } from '../../../MatrixClientPeg'; // watcha+
 import SSOProfileTab from "../settings/tabs/user/watcha_SSOProfileTab"; // watcha+
+import PresenceUserSettingsTab from "../settings/tabs/user/watcha_PresenceUserSettingsTab"; // watcha+
 import SdkConfig from "../../../SdkConfig";// watcha+
 import { NonEmptyArray } from "../../../@types/common";
 import { SDKContext, SdkContextClass } from "../../../contexts/SDKContext";
@@ -80,6 +81,10 @@ function titleForTabID(tabId: UserTab): React.ReactNode {
             return _t("settings|labs_mjolnir|dialog_title", undefined, subs);
         case UserTab.Help:
             return _t("setting|help_about|dialog_title", undefined, subs);
+        // watcha+
+        case UserTab.Presence:
+            return _t("watcha|status_title");
+        // +watcha
     }
 }
 
@@ -101,6 +106,16 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
                 "UserSettingsGeneral",
             ),
         );
+        // watcha+ : onglet de gestion du statut de présence (disponible / occupé / absent)
+        tabs.push(
+            new Tab(
+                UserTab.Presence,
+                _td("watcha|status_title"),
+                "mx_UserSettingsDialog_watcha_presenceIcon",
+                <PresenceUserSettingsTab />,
+            ),
+        );
+        // +watcha
         /* watcha!
             tabs.push(
                 new Tab(
