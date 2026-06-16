@@ -9,6 +9,7 @@ Comportement :
  - ne sonne pas pour la personne qui a lancé le widget (l'émetteur) ;
  - ne sonne pas pendant la synchronisation initiale (évite de sonner au démarrage
    pour les widgets Jitsi déjà présents) ;
+ - respecte le réglage « Notifications sonores » (audioNotificationsEnabled) ;
  - réutilise le son de sonnerie d'appel, joué une seule fois.
 */
 
@@ -18,6 +19,7 @@ import { logger } from "matrix-js-sdk/src/logger";
 
 import { MatrixClientPeg } from "./MatrixClientPeg";
 import LegacyCallHandler, { AudioID } from "./LegacyCallHandler";
+import Notifier from "./Notifier";
 import { WidgetType } from "./widgets/WidgetType";
 
 const WIDGET_STATE_EVENT_TYPE = "im.vector.modular.widgets";
@@ -53,6 +55,7 @@ class WatchaJitsiWidgetSound {
 
     private onRoomStateEvent = (ev: MatrixEvent): void => {
         if (!this.isSyncing) return; // pas de son pour les widgets déjà présents au démarrage
+        if (!Notifier.isAudioEnabled()) return; // respecte le réglage « Notifications sonores »
         if (ev.getType() !== WIDGET_STATE_EVENT_TYPE) return;
 
         // À la suppression d'un widget, le contenu est vide : WidgetType.JITSI.matches renvoie false.
