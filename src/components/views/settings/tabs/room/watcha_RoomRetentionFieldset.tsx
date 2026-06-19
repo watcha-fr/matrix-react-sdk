@@ -19,7 +19,7 @@ limitations under the License.
 // messages are kept before the server purges them. Pinned messages are always
 // kept (enforced server-side in Synapse's purge logic).
 
-import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Room } from "matrix-js-sdk/src/matrix";
 import { logger } from "matrix-js-sdk/src/logger";
 
@@ -66,21 +66,78 @@ function presetLabel(days: number): string {
     }
 }
 
+// Human-readable label for an arbitrary number of days (uses a preset label
+// when it matches one, otherwise "N days").
+function durationLabel(days: number): string {
+    if (days !== 0 && (PRESET_DAYS as readonly number[]).includes(days)) {
+        return presetLabel(days);
+    }
+    return _t("room_settings|security|retention_days_value", { days });
+}
+
+// Convert a max_lifetime in ms (or null for "unlimited") to a select state.
+function msToSelection(ms: number | null): { selection: string; customDays: string } {
+    if (ms === null) {
+        return { selection: "0", customDays: "" };
+    }
+    const days = Math.round(ms / MS_PER_DAY);
+    if ((PRESET_DAYS as readonly number[]).includes(days)) {
+        return { selection: String(days), customDays: "" };
+    }
+    return { selection: CUSTOM, customDays: String(days) };
+}
+
 const RoomRetentionFieldset: React.FC<IProps> = ({ room }) => {
     const cli = useMatrixClientContext();
     const canEdit = room.currentState.mayClientSendStateEvent(RETENTION_EVENT_TYPE, cli);
 
-    // The server admin can disable per-room retention management from the admin
-    // console. The flag is exposed in the `watcha` capabilities namespace; when
-    // absent (older server) we default to allowing it.
+    // Server-side settings exposed in the `watcha` capabilities namespace:
+    //  - allow_admin_set: whether room admins may manage retention at all;
+    //  - default_max_lifetime: the server-wide default duration, which also acts
+    //    as the ceiling (a room may not keep messages longer than this).
+    // Both default to permissive values when absent (older server).
     const [allowAdminSet, setAllowAdminSet] = useState<boolean>(true);
+    const [ceilingMs, setCeilingMs] = useState<number | null>(null);
+
+    // Initial selection from the room's own policy (overridden once the server
+    // default loads, if the room has no policy of its own).
+    const initial = msToSelection(getCurrentMaxLifetimeMs(room));
+    const [selection, setSelection] = useState<string>(initial.selection);
+    const [customDays, setCustomDays] = useState<string>(initial.customDays);
+    const [busy, setBusy] = useState<boolean>(false);
+
+    // Only normalise the selection from capabilities once, so it does not clobber
+    // an edit the user makes before the (cached) capabilities request resolves.
+    const normalisedFromCaps = useRef<boolean>(false);
     useEffect(() => {
         let cancelled = false;
         cli.getCapabilities()
             .then(capabilities => {
                 if (cancelled) return;
-                const allowed = (capabilities as any)?.watcha?.room_retention?.allow_admin_set;
-                setAllowAdminSet(allowed !== false);
+                const roomRetention = (capabilities as any)?.watcha?.room_retention;
+                setAllowAdminSet(roomRetention?.allow_admin_set !== false);
+
+                const dml = roomRetention?.default_max_lifetime;
+                const ceiling = typeof dml === "number" && dml > 0 ? dml : null;
+                setCeilingMs(ceiling);
+
+                if (!normalisedFromCaps.current) {
+                    normalisedFromCaps.current = true;
+                    const ownMs = getCurrentMaxLifetimeMs(room);
+                    // No room policy → show the inherited default. Policy above the
+                    // ceiling → show the clamped (server-enforced) value.
+                    let effective = ownMs;
+                    if (ownMs === null) {
+                        effective = ceiling;
+                    } else if (ceiling !== null && ownMs > ceiling) {
+                        effective = ceiling;
+                    }
+                    if (effective !== ownMs) {
+                        const sel = msToSelection(effective);
+                        setSelection(sel.selection);
+                        setCustomDays(sel.customDays);
+                    }
+                }
             })
             .catch(e => {
                 logger.warn("Failed to read retention capability, defaulting to allowed", e);
@@ -88,24 +145,9 @@ const RoomRetentionFieldset: React.FC<IProps> = ({ room }) => {
         return () => {
             cancelled = true;
         };
-    }, [cli]);
+    }, [cli, room]);
 
-    // Derive the initial selection from the current room state.
-    const initial = useMemo(() => {
-        const maxLifetimeMs = getCurrentMaxLifetimeMs(room);
-        if (maxLifetimeMs === null) {
-            return { selection: "0", customDays: "" };
-        }
-        const days = Math.round(maxLifetimeMs / MS_PER_DAY);
-        if ((PRESET_DAYS as readonly number[]).includes(days)) {
-            return { selection: String(days), customDays: "" };
-        }
-        return { selection: CUSTOM, customDays: String(days) };
-    }, [room]);
-
-    const [selection, setSelection] = useState<string>(initial.selection);
-    const [customDays, setCustomDays] = useState<string>(initial.customDays);
-    const [busy, setBusy] = useState<boolean>(false);
+    const ceilingDays = ceilingMs !== null ? Math.round(ceilingMs / MS_PER_DAY) : null;
 
     const onSelectionChange = (e: ChangeEvent<HTMLSelectElement>): void => {
         setSelection(e.target.value);
@@ -116,11 +158,15 @@ const RoomRetentionFieldset: React.FC<IProps> = ({ room }) => {
     };
 
     // Resolve the chosen value into a max_lifetime in milliseconds, or null for
-    // "unlimited". Returns `undefined` when the custom input is invalid.
+    // "unlimited". Returns `undefined` when the custom input is invalid (empty,
+    // non-positive, or above the admin ceiling).
     const resolveMaxLifetimeMs = (): number | null | undefined => {
         if (selection === CUSTOM) {
             const days = Number(customDays);
             if (!Number.isFinite(days) || days <= 0) {
+                return undefined;
+            }
+            if (ceilingDays !== null && Math.round(days) > ceilingDays) {
                 return undefined;
             }
             return Math.round(days) * MS_PER_DAY;
@@ -148,7 +194,14 @@ const RoomRetentionFieldset: React.FC<IProps> = ({ room }) => {
         }
     };
 
-    const presetOptions = PRESET_DAYS.map(days => (
+    // Hide presets that exceed the admin ceiling; "unlimited" (0) is dropped as
+    // soon as a finite ceiling exists.
+    const availablePresetDays = PRESET_DAYS.filter(days => {
+        if (ceilingDays === null) return true;
+        if (days === 0) return false;
+        return days <= ceilingDays;
+    });
+    const presetOptions = availablePresetDays.map(days => (
         <option key={days} value={String(days)}>
             {presetLabel(days)}
         </option>
@@ -182,11 +235,19 @@ const RoomRetentionFieldset: React.FC<IProps> = ({ room }) => {
                 <Field
                     type="number"
                     min={1}
+                    max={ceilingDays ?? undefined}
                     label={_t("room_settings|security|retention_custom_days_label")}
                     value={customDays}
                     onChange={onCustomDaysChange}
                     disabled={!canEdit || busy}
                 />
+            )}
+            {ceilingDays !== null && (
+                <Caption>
+                    {_t("room_settings|security|retention_max_allowed", {
+                        duration: durationLabel(ceilingDays),
+                    })}
+                </Caption>
             )}
             <Caption>{_t("room_settings|security|retention_pinned_note")}</Caption>
             {canEdit && (
