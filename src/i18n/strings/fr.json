@@ -1702,6 +1702,7 @@
     },
     "poll": {
         "create_poll_action": "Créer un sondage",
+        "create_poll_allow_multiple": "Autoriser la sélection de plusieurs réponses",
         "create_poll_title": "Créer un sondage",
         "disclosed_notes": "Les participants voient les résultats dès qu'ils ont voté",
         "edit_poll_title": "Modifier le sondage",
