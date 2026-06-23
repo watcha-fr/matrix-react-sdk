@@ -47,6 +47,7 @@ import { highlightEvent, isLocationEvent } from "./utils/EventUtils";
 import { ElementCall } from "./models/Call";
 import { textForVoiceBroadcastStoppedEvent, VoiceBroadcastInfoEventType } from "./voice-broadcast";
 import { getSenderName } from "./utils/event/getSenderName";
+import { PRESENCE_STATE_KEY_PREFIX as WATCHA_JITSI_PRESENCE_STATE_KEY_PREFIX } from "./watcha_JitsiPinnedWidgetPresence"; // watcha+
 
 function getRoomMemberDisplayname(client: MatrixClient, event: MatrixEvent, userId = event.getSender()): string {
     const roomId = event.getRoomId();
@@ -668,6 +669,11 @@ function textForPinnedEvent(event: MatrixEvent, client: MatrixClient, allowJSX: 
 }
 
 function textForWidgetEvent(event: MatrixEvent): (() => string) | null {
+    // watcha+ : les marqueurs de présence Jitsi réutilisent le type d'event widget (seul type
+    // écrivable en PL0) mais ne sont pas de vrais widgets ; ne pas générer de notice
+    // « widget ajouté/supprimé » dans le fil ni dans les aperçus.
+    if (event.getStateKey()?.startsWith(WATCHA_JITSI_PRESENCE_STATE_KEY_PREFIX)) return null;
+    // watcha+ end
     const senderName = getSenderName(event);
     const { name: prevName, type: prevType, url: prevUrl } = event.getPrevContent();
     const { name, type, url } = event.getContent() || {};

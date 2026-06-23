@@ -41,7 +41,9 @@ import { isVideoRoom } from "./utils/video-rooms";
 // Type de state event PL0 réutilisé pour porter la présence (cf. en-tête).
 const WIDGET_STATE_EVENT_TYPE = "im.vector.modular.widgets";
 // Préfixe de state_key des marqueurs de présence (distinct des IDs de widgets réels).
-const PRESENCE_STATE_KEY_PREFIX = "re.watcha.jitsi.presence|";
+// Exporté pour que le rendu de timeline (TextForEvent) puisse masquer ces events (sinon ils
+// s'afficheraient comme « Widget supprimé par X » à chaque connexion/raccrochage).
+export const PRESENCE_STATE_KEY_PREFIX = "re.watcha.jitsi.presence|";
 // Durée de validité d'une présence et période de rafraîchissement (3/4 de l'expiration).
 const PRESENCE_EXPIRY_MS = 60 * 60 * 1000; // 1 h
 const PRESENCE_REFRESH_MS = (PRESENCE_EXPIRY_MS * 3) / 4; // 45 min
