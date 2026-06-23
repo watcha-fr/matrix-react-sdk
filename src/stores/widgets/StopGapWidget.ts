@@ -64,6 +64,7 @@ import { ViewRoomPayload } from "../../dispatcher/payloads/ViewRoomPayload";
 import Modal from "../../Modal";
 import ErrorDialog from "../../components/views/dialogs/ErrorDialog";
 import { SdkContextClass } from "../../contexts/SDKContext";
+import { isVideoRoom } from "../../utils/video-rooms"; // watcha+
 
 // TODO: Destroy all of this code
 
@@ -420,9 +421,30 @@ export class StopGapWidget extends EventEmitter {
                     });
                 }
                 this.messaging?.transport.reply(ev.detail, <IWidgetApiRequestEmptyData>{});
+                // watcha+ : fermeture automatique du widget Jitsi quand le dernier participant quitte la conférence
+                this.watchaMaybeRemoveJitsiWidget(ev.detail.data?.isLastParticipant);
+                // watcha+ end
             });
         }
     }
+
+    // watcha+
+    // Retire automatiquement le widget Jitsi épinglé du salon une fois la conférence terminée.
+    // N'agit que si l'émetteur du hangup était le dernier participant (isLastParticipant), afin de
+    // ne pas faire disparaître le widget pour les autres personnes encore en appel. Le retrait du
+    // state event vaut pour tous les membres du salon, on vérifie donc d'abord la permission.
+    // Les salons vidéo (video rooms) sont exclus : l'appel doit y persister.
+    private watchaMaybeRemoveJitsiWidget(isLastParticipant?: boolean): void {
+        if (!isLastParticipant || !this.roomId) return;
+        const room = this.client.getRoom(this.roomId);
+        if (!room || isVideoRoom(room)) return;
+        const userId = this.client.getSafeUserId();
+        if (!room.currentState.maySendStateEvent("im.vector.modular.widgets", userId)) return;
+        WidgetUtils.setRoomWidget(this.client, this.roomId, this.mockWidget.id).catch((e) => {
+            logger.error(`watcha: échec de la fermeture automatique du widget Jitsi ${this.mockWidget.id}`, e);
+        });
+    }
+    // watcha+ end
 
     public async prepare(): Promise<void> {
         // Ensure the variables are ready for us to be rendered before continuing
