@@ -150,6 +150,17 @@ export function watchaJitsiPresenceOnJoin(client: MatrixClient, roomId: string, 
     const key = timerKey(roomId, widgetId);
     if (!refreshTimers.has(key)) {
         const timer = window.setInterval(() => {
+            // Si le widget a disparu (p. ex. fermé à la main pendant l'appel), l'iframe est détruite
+            // sans envoyer HangupCall : on ne reçoit donc pas onHangup. On se nettoie ici → on arrête
+            // de rafraîchir et on retire notre présence. (Le marqueur résiduel serait de toute façon
+            // sans effet car filtré par widgetId, et finirait par expirer.)
+            const r = client.getRoom(roomId);
+            const widgetStillExists = !!r && WidgetUtils.getRoomWidgets(r).some((w) => w.getStateKey() === widgetId);
+            if (!widgetStillExists) {
+                watchaStopPresenceRefresh(roomId, widgetId);
+                writeMyDevices(client, roomId, widgetId, () => []).catch(() => {});
+                return;
+            }
             writeMyDevices(client, roomId, widgetId, addMe).catch((e) =>
                 logger.error("watcha: échec du rafraîchissement de présence Jitsi", e),
             );
@@ -158,17 +169,21 @@ export function watchaJitsiPresenceOnJoin(client: MatrixClient, roomId: string, 
     }
 }
 
-/** À appeler quand on quitte la conférence (action HangupCall). */
-export async function watchaJitsiPresenceOnHangup(client: MatrixClient, roomId: string, widgetId: string): Promise<void> {
-    const room = client.getRoom(roomId);
-    if (!room || isVideoRoom(room)) return;
-
+function watchaStopPresenceRefresh(roomId: string, widgetId: string): void {
     const key = timerKey(roomId, widgetId);
     const timer = refreshTimers.get(key);
     if (timer !== undefined) {
         clearInterval(timer);
         refreshTimers.delete(key);
     }
+}
+
+/** À appeler quand on quitte la conférence (action HangupCall). */
+export async function watchaJitsiPresenceOnHangup(client: MatrixClient, roomId: string, widgetId: string): Promise<void> {
+    const room = client.getRoom(roomId);
+    if (!room || isVideoRoom(room)) return;
+
+    watchaStopPresenceRefresh(roomId, widgetId);
 
     const deviceId = client.getDeviceId();
     if (!deviceId) return;
