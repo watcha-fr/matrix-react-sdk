@@ -42,7 +42,6 @@ export enum ElementWidgetActions {
 export interface IHangupCallApiRequest extends IWidgetApiRequest {
     data: {
         errorMessage?: string;
-        isLastParticipant?: boolean; // watcha+ : true si l'émetteur était le dernier participant de la conférence
     };
 }
 

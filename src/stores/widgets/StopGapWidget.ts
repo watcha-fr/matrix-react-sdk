@@ -64,7 +64,12 @@ import { ViewRoomPayload } from "../../dispatcher/payloads/ViewRoomPayload";
 import Modal from "../../Modal";
 import ErrorDialog from "../../components/views/dialogs/ErrorDialog";
 import { SdkContextClass } from "../../contexts/SDKContext";
-import { isVideoRoom } from "../../utils/video-rooms"; // watcha+
+// watcha+
+import {
+    watchaJitsiPresenceOnJoin,
+    watchaJitsiPresenceOnHangup,
+} from "../../watcha_JitsiPinnedWidgetPresence";
+// watcha+ end
 
 // TODO: Destroy all of this code
 
@@ -410,6 +415,15 @@ export class StopGapWidget extends EventEmitter {
         }
 
         if (WidgetType.JITSI.matches(this.mockWidget.type)) {
+            // watcha+ : suivi de présence pour la fermeture automatique du widget Jitsi épinglé.
+            // À la connexion on inscrit notre présence dans l'état du salon ; au raccrochage on la retire
+            // et, si plus personne n'est connecté, on retire le widget. Voir watcha_JitsiPinnedWidgetPresence.
+            this.messaging.on(`action:${ElementWidgetActions.JoinCall}`, () => {
+                if (this.roomId) {
+                    watchaJitsiPresenceOnJoin(this.client, this.roomId, this.mockWidget.id);
+                }
+            });
+            // watcha+ end
             this.messaging.on(`action:${ElementWidgetActions.HangupCall}`, (ev: CustomEvent<IHangupCallApiRequest>) => {
                 ev.preventDefault();
                 if (ev.detail.data?.errorMessage) {
@@ -421,30 +435,14 @@ export class StopGapWidget extends EventEmitter {
                     });
                 }
                 this.messaging?.transport.reply(ev.detail, <IWidgetApiRequestEmptyData>{});
-                // watcha+ : fermeture automatique du widget Jitsi quand le dernier participant quitte la conférence
-                this.watchaMaybeRemoveJitsiWidget(ev.detail.data?.isLastParticipant);
+                // watcha+ : retrait de notre présence + fermeture du widget si l'on était le dernier
+                if (this.roomId) {
+                    watchaJitsiPresenceOnHangup(this.client, this.roomId, this.mockWidget.id);
+                }
                 // watcha+ end
             });
         }
     }
-
-    // watcha+
-    // Retire automatiquement le widget Jitsi épinglé du salon une fois la conférence terminée.
-    // N'agit que si l'émetteur du hangup était le dernier participant (isLastParticipant), afin de
-    // ne pas faire disparaître le widget pour les autres personnes encore en appel. Le retrait du
-    // state event vaut pour tous les membres du salon, on vérifie donc d'abord la permission.
-    // Les salons vidéo (video rooms) sont exclus : l'appel doit y persister.
-    private watchaMaybeRemoveJitsiWidget(isLastParticipant?: boolean): void {
-        if (!isLastParticipant || !this.roomId) return;
-        const room = this.client.getRoom(this.roomId);
-        if (!room || isVideoRoom(room)) return;
-        const userId = this.client.getSafeUserId();
-        if (!room.currentState.maySendStateEvent("im.vector.modular.widgets", userId)) return;
-        WidgetUtils.setRoomWidget(this.client, this.roomId, this.mockWidget.id).catch((e) => {
-            logger.error(`watcha: échec de la fermeture automatique du widget Jitsi ${this.mockWidget.id}`, e);
-        });
-    }
-    // watcha+ end
 
     public async prepare(): Promise<void> {
         // Ensure the variables are ready for us to be rendered before continuing
