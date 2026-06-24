@@ -47,7 +47,7 @@ interface IState {
     poll?: Poll;
     // poll instance has fetched at least one page of responses
     pollInitialised: boolean;
-    selected?: string | null | undefined; // Which option was clicked by the local user
+    selected?: string[] | null | undefined; // Which option(s) the local user has selected
     voteRelations?: Relations; // Voting (response) events
 }
 
@@ -149,6 +149,9 @@ export default class MPollBody extends React.Component<IBodyProps, IState> {
     public static contextType = MatrixClientContext;
     public context!: React.ContextType<typeof MatrixClientContext>;
     private seenEventIds: string[] = []; // Events we have already seen
+    // A single click on an option fires both the row onClick and the input's onChange.
+    // Track answers handled in the current tick so a multi-select toggle isn't cancelled out.
+    private togglingAnswerIds = new Set<string>();
 
     public constructor(props: IBodyProps) {
         super(props);
@@ -217,14 +220,42 @@ export default class MPollBody extends React.Component<IBodyProps, IState> {
         if (this.state.poll?.isEnded) {
             return;
         }
-        const userVotes = this.collectUserVotes();
-        const userId = this.context.getSafeUserId();
-        const myVote = userVotes.get(userId)?.answers[0];
-        if (answerId === myVote) {
+
+        // A single physical click on an option triggers both the row onClick and the
+        // input onChange. For a multi-select toggle these two calls would cancel out, so
+        // ignore a repeated call for the same answer within the same event cycle.
+        if (this.togglingAnswerIds.has(answerId)) {
             return;
         }
+        this.togglingAnswerIds.add(answerId);
+        setTimeout(() => this.togglingAnswerIds.delete(answerId), 0);
 
-        const response = PollResponseEvent.from([answerId], this.props.mxEvent.getId()!).serialize();
+        const maxSelections = this.state.poll?.pollEvent?.maxSelections ?? 1;
+        const userVotes = this.collectUserVotes();
+        const userId = this.context.getSafeUserId();
+        const myVotes = userVotes.get(userId)?.answers ?? [];
+
+        let newSelected: string[];
+        if (maxSelections > 1) {
+            // Multi-select: toggle this answer in/out of the current selection.
+            if (myVotes.includes(answerId)) {
+                newSelected = myVotes.filter((a) => a !== answerId);
+            } else {
+                newSelected = [...myVotes, answerId];
+                // Keep only the most recent selections when the cap is reached.
+                if (newSelected.length > maxSelections) {
+                    newSelected = newSelected.slice(newSelected.length - maxSelections);
+                }
+            }
+        } else {
+            // Single-select: clicking the current answer again is a no-op.
+            if (answerId === myVotes[0]) {
+                return;
+            }
+            newSelected = [answerId];
+        }
+
+        const response = PollResponseEvent.from(newSelected, this.props.mxEvent.getId()!).serialize();
 
         this.context
             .sendEvent(
@@ -241,7 +272,7 @@ export default class MPollBody extends React.Component<IBodyProps, IState> {
                 });
             });
 
-        this.setState({ selected: answerId });
+        this.setState({ selected: newSelected });
     }
 
     /**
@@ -304,12 +335,14 @@ export default class MPollBody extends React.Component<IBodyProps, IState> {
         const totalVotes = this.totalVotes(votes);
         const winCount = Math.max(...votes.values());
         const userId = this.context.getSafeUserId();
-        const myVote = userVotes?.get(userId)?.answers[0];
+        const myVotes = userVotes?.get(userId)?.answers ?? [];
+        const hasVoted = myVotes.length > 0;
+        const isMultiSelect = (pollEvent.maxSelections ?? 1) > 1;
         const disclosed = M_POLL_KIND_DISCLOSED.matches(pollEvent.kind.name);
 
         // Disclosed: votes are hidden until I vote or the poll ends
         // Undisclosed: votes are hidden until poll ends
-        const showResults = poll.isEnded || (disclosed && myVote !== undefined);
+        const showResults = poll.isEnded || (disclosed && hasVoted);
 
         let totalText: string;
         if (showResults && poll.undecryptableRelationsCount) {
@@ -318,7 +351,7 @@ export default class MPollBody extends React.Component<IBodyProps, IState> {
             totalText = _t("right_panel|poll|final_result", { count: totalVotes });
         } else if (!disclosed) {
             totalText = _t("poll|total_not_ended");
-        } else if (myVote === undefined) {
+        } else if (!hasVoted) {
             if (totalVotes === 0) {
                 totalText = _t("poll|total_no_votes");
             } else {
@@ -347,7 +380,8 @@ export default class MPollBody extends React.Component<IBodyProps, IState> {
                         }
 
                         const checked =
-                            (!poll.isEnded && myVote === answer.id) || (poll.isEnded && answerVotes === winCount);
+                            (!poll.isEnded && myVotes.includes(answer.id)) ||
+                            (poll.isEnded && answerVotes === winCount);
 
                         return (
                             <PollOption
@@ -356,6 +390,7 @@ export default class MPollBody extends React.Component<IBodyProps, IState> {
                                 answer={answer}
                                 isChecked={checked}
                                 isEnded={poll.isEnded}
+                                isMultiSelect={isMultiSelect}
                                 voteCount={answerVotes}
                                 totalVoteCount={totalVotes}
                                 displayVoteCount={showResults}
@@ -400,15 +435,15 @@ export function allVotes(voteRelations: Relations): Array<UserVote> {
 /**
  * Figure out the correct vote for each user.
  * @param userResponses current vote responses in the poll
- * @param {string?} userId The userId for which the `selected` option will apply to.
+ * @param {string?} userId The userId for which the `selected` option(s) will apply to.
  *                  Should be set to the current user ID.
- * @param {string?} selected Local echo selected option for the userId
+ * @param {string[]?} selected Local echo of the selected option(s) for the userId
  * @returns a Map of user ID to their vote info
  */
 export function collectUserVotes(
     userResponses: Array<UserVote>,
     userId?: string | null | undefined,
-    selected?: string | null | undefined,
+    selected?: string[] | null | undefined,
 ): Map<string, UserVote> {
     const userVotes: Map<string, UserVote> = new Map();
 
@@ -420,7 +455,7 @@ export function collectUserVotes(
     }
 
     if (selected && userId) {
-        userVotes.set(userId, new UserVote(0, userId, [selected]));
+        userVotes.set(userId, new UserVote(0, userId, selected));
     }
 
     return userVotes;

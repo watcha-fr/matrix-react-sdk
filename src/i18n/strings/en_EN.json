@@ -1700,6 +1700,7 @@
     },
     "poll": {
         "create_poll_action": "Create Poll",
+        "create_poll_allow_multiple": "Allow people to select more than one answer",
         "create_poll_title": "Create poll",
         "disclosed_notes": "Voters see results as soon as they have voted",
         "edit_poll_title": "Edit poll",

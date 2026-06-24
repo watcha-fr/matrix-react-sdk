@@ -21,6 +21,7 @@ import { PollAnswerSubevent } from "matrix-js-sdk/src/extensible_events_v1/PollS
 import { _t } from "../../../languageHandler";
 import { Icon as TrophyIcon } from "../../../../res/img/element-icons/trophy.svg";
 import StyledRadioButton from "../elements/StyledRadioButton";
+import StyledCheckbox from "../elements/StyledCheckbox";
 
 type PollOptionContentProps = {
     answer: PollAnswerSubevent;
@@ -46,6 +47,9 @@ interface PollOptionProps extends PollOptionContentProps {
     totalVoteCount: number;
     isEnded?: boolean;
     isChecked?: boolean;
+    // When true, the poll allows selecting more than one answer, so options are
+    // rendered as checkboxes rather than radio buttons.
+    isMultiSelect?: boolean;
     onOptionSelected?: (id: string) => void;
     children?: ReactNode;
 }
@@ -68,20 +72,24 @@ const EndedPollOption: React.FC<Omit<PollOptionProps, "voteCount" | "totalVoteCo
 const ActivePollOption: React.FC<Omit<PollOptionProps, "voteCount" | "totalVoteCount">> = ({
     pollId,
     isChecked,
+    isMultiSelect,
     children,
     answer,
     onOptionSelected,
-}) => (
-    <StyledRadioButton
-        className="mx_PollOption_live-option"
-        name={`poll_answer_select-${pollId}`}
-        value={answer.id}
-        checked={isChecked}
-        onChange={() => onOptionSelected?.(answer.id)}
-    >
-        {children}
-    </StyledRadioButton>
-);
+}) => {
+    const inputProps = {
+        className: "mx_PollOption_live-option",
+        name: `poll_answer_select-${pollId}`,
+        value: answer.id,
+        checked: isChecked,
+        onChange: () => onOptionSelected?.(answer.id),
+    };
+    return isMultiSelect ? (
+        <StyledCheckbox {...inputProps}>{children}</StyledCheckbox>
+    ) : (
+        <StyledRadioButton {...inputProps}>{children}</StyledRadioButton>
+    );
+};
 
 export const PollOption: React.FC<PollOptionProps> = ({
     pollId,
@@ -91,6 +99,7 @@ export const PollOption: React.FC<PollOptionProps> = ({
     displayVoteCount,
     isEnded,
     isChecked,
+    isMultiSelect,
     onOptionSelected,
 }) => {
     const cls = classNames({
@@ -107,6 +116,7 @@ export const PollOption: React.FC<PollOptionProps> = ({
                 pollId={pollId}
                 answer={answer}
                 isChecked={isChecked}
+                isMultiSelect={isMultiSelect}
                 onOptionSelected={onOptionSelected}
             >
                 <PollOptionContent
