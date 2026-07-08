@@ -435,6 +435,13 @@ export class SpaceStoreClass extends AsyncStoreWithClient<IState> {
     }
 
     public isRoomInSpace(space: SpaceKey, roomId: string, includeDescendantSpaces = true): boolean {
+        // watcha+ : les salons de téléphonie XiVO ne doivent jamais apparaître dans Home,
+        // y compris via le fallback DM plus bas ou le réglage « tous les salons dans Home ».
+        if (space === MetaSpace.Home) {
+            const room = this.matrixClient?.getRoom(roomId);
+            if (room && this.isTelephonyRoom(room)) return false;
+        }
+        // +watcha
         if (space === MetaSpace.Home && this.allRoomsInHome) {
             return true;
         }
@@ -476,7 +483,9 @@ export class SpaceStoreClass extends AsyncStoreWithClient<IState> {
     ): Set<string> => {
         if (space === MetaSpace.Home && this.allRoomsInHome) {
             return new Set(
-                this.matrixClient!.getVisibleRooms(this._msc3946ProcessDynamicPredecessor).map((r) => r.roomId),
+                this.matrixClient!.getVisibleRooms(this._msc3946ProcessDynamicPredecessor)
+                    .filter((r) => !this.isTelephonyRoom(r)) // watcha+ : masquer la téléphonie de Home
+                    .map((r) => r.roomId),
             );
         }
 
@@ -723,7 +732,36 @@ export class SpaceStoreClass extends AsyncStoreWithClient<IState> {
         }
     };
 
+    // watcha+
+    // Les salons liés à la téléphonie XiVO (salons d'appel + « Historique
+    // téléphonique ») sont regroupés dans l'espace « Téléphonie ». On les masque
+    // de l'espace Home pour ne pas polluer la liste principale des salons.
+    private static readonly XIVO_GHOST_USER_ID_PREFIX = "@_xivo_";
+    private static readonly TELEPHONY_SPACE_NAME = "Téléphonie";
+
+    private isTelephonySpace(room: Room): boolean {
+        return room.isSpaceRoom() && room.name === SpaceStoreClass.TELEPHONY_SPACE_NAME;
+    }
+
+    private isTelephonyRoom = (room: Room): boolean => {
+        // Salon d'appel : il contient un utilisateur « ghost » XiVO (@_xivo_<numéro>:…).
+        if (room.getMembers().some((member) => member.userId.startsWith(SpaceStoreClass.XIVO_GHOST_USER_ID_PREFIX))) {
+            return true;
+        }
+        // Autres salons de l'espace (ex. « Historique téléphonique ») : un de leurs
+        // espaces parents (directs ou ancêtres) est l'espace « Téléphonie ».
+        for (const parentId of this.getKnownParents(room.roomId, true)) {
+            const parent = this.matrixClient?.getRoom(parentId);
+            if (parent && this.isTelephonySpace(parent)) {
+                return true;
+            }
+        }
+        return false;
+    };
+    // +watcha
+
     private showInHomeSpace = (room: Room): boolean => {
+        if (this.isTelephonyRoom(room)) return false; // watcha+
         if (this.allRoomsInHome) return true;
         if (room.isSpaceRoom()) return false;
         return (

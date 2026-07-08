@@ -152,6 +152,66 @@ describe("SpaceStore", () => {
         await testUtils.resetAsyncStoreWithClient(store);
     });
 
+    // watcha+ : les salons de l'espace de téléphonie XiVO doivent rester masqués de Home
+    describe("XiVO telephony rooms are hidden from Home", () => {
+        const telephonySpace = "!telephony:server";
+        const callRoom = "!call:server"; // salon d'appel, contient un ghost @_xivo_ et est un DM
+        const historyRoom = "!history:server"; // « Historique téléphonique », enfant de l'espace, ni ghost ni DM
+        const orphan = "!orphan:server"; // salon normal, témoin
+
+        beforeEach(async () => {
+            const callRoomObj = mkRoom(callRoom);
+            mkRoom(historyRoom);
+            mkRoom(orphan);
+            const space = mkSpace(telephonySpace, [callRoom, historyRoom]);
+            space.name = "Téléphonie";
+
+            // le salon d'appel contient un utilisateur « ghost » XiVO
+            callRoomObj.getMembers.mockReturnValue([{ userId: "@_xivo_101:server" } as any]);
+
+            // ... et il est aussi un DM (c'est ce qui le maintenait dans Home malgré son espace parent)
+            getUserIdForRoomId.mockImplementation((roomId: string) =>
+                roomId === callRoom ? "@_xivo_101:server" : undefined,
+            );
+
+            await run();
+        });
+
+        afterEach(() => {
+            // restaure l'implémentation partagée du DMRoomMap pour les autres suites
+            getUserIdForRoomId.mockImplementation(
+                (roomId: string) =>
+                    ({ [dm1]: dm1Partner.userId, [dm2]: dm2Partner.userId, [dm3]: dm3Partner.userId })[roomId],
+            );
+        });
+
+        it("hides call rooms detected via their XiVO ghost member, even when they are DMs", () => {
+            expect(store.isRoomInSpace(MetaSpace.Home, callRoom)).toBeFalsy();
+        });
+
+        it("hides the other telephony space children (history room)", () => {
+            expect(store.isRoomInSpace(MetaSpace.Home, historyRoom)).toBeFalsy();
+        });
+
+        it("still shows unrelated rooms in Home", () => {
+            expect(store.isRoomInSpace(MetaSpace.Home, orphan)).toBeTruthy();
+        });
+
+        it("keeps them hidden even when allRoomsInHome is enabled", async () => {
+            await setShowAllRooms(true);
+            try {
+                expect(store.isRoomInSpace(MetaSpace.Home, callRoom)).toBeFalsy();
+                expect(store.isRoomInSpace(MetaSpace.Home, historyRoom)).toBeFalsy();
+                expect(store.getSpaceFilteredRoomIds(MetaSpace.Home).has(callRoom)).toBeFalsy();
+                expect(store.getSpaceFilteredRoomIds(MetaSpace.Home).has(historyRoom)).toBeFalsy();
+                expect(store.isRoomInSpace(MetaSpace.Home, orphan)).toBeTruthy();
+            } finally {
+                await setShowAllRooms(false);
+            }
+        });
+    });
+    // +watcha
+
     describe("static hierarchy resolution tests", () => {
         it("handles no spaces", async () => {
             await run();
